@@ -1,13 +1,7 @@
-import { useState } from 'react'
-function App() {
+import { AppRouter } from "./router/AppRouter";
 
-  return (
-    <>
-      <h1 className='text-3xl text-red-400 font-bold underline'>
-        Hello World!
-      </h1>
-    </>
-  )
+function App() {
+  return <AppRouter />;
 }
 
-export default App
+export default App;

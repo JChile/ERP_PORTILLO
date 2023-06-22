@@ -35,7 +35,7 @@ export const Login = () => {
         </h1>
         <form
           method='post'
-          className='flex flex-col gap-y-6'
+          className='min-w-[242px] flex flex-col gap-y-6'
           onSubmit={handleSubmit}
         >
 
@@ -78,7 +78,7 @@ export const Login = () => {
           </button>
 
 
-          <p className='text-white text-xs'>
+          <p className='text-white text-xs text-center'>
             ¿No tienes cuenta?
             <a
               href="#"

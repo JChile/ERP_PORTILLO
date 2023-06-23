@@ -1,7 +1,12 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import logoPortillo from "../../../assets/portillo-logo-port.png";
+import { AuthContext } from "../../../auth";
 
 export const NavBarRRHH = () => {
+  // context
+  const { user, logoutUser } = useContext(AuthContext);
+
+  // handled show/hide items
   const [mostrarMenu, setMostrarMenu] = useState(true);
   const [mostrarOptions, setMostrarOptions] = useState(true);
 
@@ -20,7 +25,10 @@ export const NavBarRRHH = () => {
           <img src={logoPortillo} className="h-10 mr-3" alt="Flowbite Logo" />
         </a>
         <div className="flex items-center md:order-2">
-          <button className="text-gray-800 dark:text-white hover:bg-gray-50 focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-4 py-2 md:px-5 md:py-2.5 mr-1 md:mr-2 dark:hover:bg-gray-700 focus:outline-none dark:focus:ring-gray-800">
+          <button
+            onClick={logoutUser}
+            className="text-gray-800 dark:text-white hover:bg-gray-50 focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-4 py-2 md:px-5 md:py-2.5 mr-1 md:mr-2 dark:hover:bg-gray-700 focus:outline-none dark:focus:ring-gray-800"
+          >
             Logout
           </button>
           <button

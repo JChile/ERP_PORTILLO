@@ -39,7 +39,7 @@ export const Login = () => {
           onSubmit={handleSubmit}
         >
 
-          <label className="block">
+          <label className="block flex flex-col gap-y-1">
             <span className="after:content-['*'] after:ml-0.5 after:text-yellow-500 block text-sm font-medium text-white">
               Usuario
             </span>
@@ -54,7 +54,7 @@ export const Login = () => {
             />
           </label>
 
-          <label className="block">
+          <label className="block flex flex-col gap-y-1">
             <span className="after:content-['*'] after:ml-0.5 after:text-yellow-500 block text-sm font-medium text-white">
               Contraseña
             </span>

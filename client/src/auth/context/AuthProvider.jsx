@@ -20,7 +20,7 @@ export const AuthProvider = ({ children }) => {
   const navigate = useNavigate();
 
   const loginUser = async ({ dni, password }) => {
-    const ENDPOINT = "";
+    const ENDPOINT = "http://127.0.0.1:8000/auth/token/";
     const response = await fetch(ENDPOINT, {
       method: "POST",
       headers: {

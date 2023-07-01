@@ -14,9 +14,9 @@ import ListRol from "../pages/roles/ListRol";
 export const RRHHRoutes = () => {
   return (
     <>
-      <NavBarRRHH />
-      <div className="container mx-auto my-2">
+      <NavBarRRHH>
         <Routes>
+          <Route path="" element={<h1>HOME RR.HH</h1>}></Route>
           <Route path="usuario/*">
             <Route path="" element={<ListUsuarios />} />
             <Route path="create" element={<CreateUsuarios />} />
@@ -25,12 +25,12 @@ export const RRHHRoutes = () => {
           </Route>
           {/* Se añadio esta seccion para crear los roles para el manejo de RRHH  */}
           <Route path="roles/*">
-              <Route path="" element={<ListRol />} />
-              <Route path="create" element={<CreateRol />} />
-              <Route path="update/:idRol" element={ <UpdateRol />} />
+            <Route path="" element={<ListRol />} />
+            <Route path="create" element={<CreateRol />} />
+            <Route path="update/:idRol" element={<UpdateRol />} />
           </Route>
         </Routes>
-      </div>
+      </NavBarRRHH>
     </>
   );
 };

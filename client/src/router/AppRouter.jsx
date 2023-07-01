@@ -7,8 +7,8 @@ import { PrivateRouterRRHH } from "./PrivateRouterRRHH";
 export const AppRouter = () => {
   return (
     <>
-      <Routes>
-        <AuthProvider>
+      <AuthProvider>
+        <Routes>
           <Route
             path="login/*"
             element={
@@ -26,13 +26,16 @@ export const AppRouter = () => {
             }
           />
 
-          <Route path="rrhh/*" element={<RRHHRoutes />} />
-          {/* THIS MODULE REPRESENT TO RR.HH*/}
-          {/* <PrivateRouterRRHH>
-            <Route path="rrhh/*" element={<RRHHRoutes />} />
-          </PrivateRouterRRHH> */}
-        </AuthProvider>
-      </Routes>
+          <Route
+            path="rrhh/*"
+            element={
+              <PrivateRouterRRHH>
+                <RRHHRoutes />
+              </PrivateRouterRRHH>
+            }
+          />
+        </Routes>
+      </AuthProvider>
     </>
   );
 };

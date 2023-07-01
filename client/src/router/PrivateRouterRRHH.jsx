@@ -1,10 +1,13 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
 import { AuthContext } from "../auth";
 import { Navigate } from "react-router-dom";
 
 export const PrivateRouterRRHH = ({ children }) => {
   const { user } = useContext(AuthContext);
-  const { idArea } = user;
+
+  if (!user) {
+    return <Navigate to={"/login"} replace />;
+  }
   // the id 1 represent to RR.HH
-  return idArea == 1 ? children : <Navigate to={"/login"} />;
+  return user.groupsId == "1" ? children : <Navigate to={"/login"} replace />;
 };

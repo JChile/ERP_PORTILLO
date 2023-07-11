@@ -4,6 +4,8 @@ from django.contrib.auth.models import User, Permission
 from django.core.validators import RegexValidator
 from django.contrib.auth.models import AbstractUser
 from django.contrib.auth.models import Group
+from django.dispatch import receiver
+from django.db.models.signals import post_save
 
 
 #class CustomUser(AbstractUser):
@@ -256,8 +258,8 @@ class Usuario_detalle(models.Model):
 
 
 
-    usuario = models.OneToOneField(User, on_delete=models.CASCADE, related_name='usu')
-    dni = models.CharField(max_length=8,unique=True, blank=True, null=True)
+    userId = models.OneToOneField(User, on_delete=models.CASCADE, related_name='usu')
+    dni = models.CharField(max_length=8,unique=True, null=True)
     fecha = models.DateTimeField(blank=True, null=True)
     nacionalidad = models.CharField(max_length=200,default='PE',choices=PAISES,blank=True, null=True)
     estadoCivil =  models.CharField(max_length=200, default='s',choices=ESTADO_CIVIL,blank=True,null=True)
@@ -289,7 +291,9 @@ class Usuario_detalle(models.Model):
    
 
     def __str__(self):
-        return self.usuario.username
+        return self.userId.username
+    
+
 
 
 class Prueba(models.Model):
@@ -298,6 +302,11 @@ class Prueba(models.Model):
         return self.nombre
 
 
+@receiver(post_save, sender=User)
+def create_usuario_detalle(sender, instance, created, **kwargs):
+    if created:
+        user_detail = Usuario_detalle.objects.create(userId=instance)
+        user_detail.save()
 
 
 

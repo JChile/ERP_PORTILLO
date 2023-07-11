@@ -57,7 +57,7 @@ class UserDetail(generics.RetrieveUpdateDestroyAPIView):
     """
         Clase generica para  lectura y escritura de perfiles
     """
-    permission_classes = [IsAuthenticated]
+    #permission_classes = [IsAuthenticated]
     queryset = User.objects.all()
     serializer_class = UserSerializer
 

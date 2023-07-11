@@ -6,13 +6,13 @@ from django.contrib.auth.models import AbstractUser
 from django.contrib.auth.models import Group
 
 
-class CustomUser(AbstractUser):
-    # Agrega campos adicionales o modifica los existentes según tus necesidades
-    phone_number = models.CharField(max_length=20, blank=True, null=True)
+#class CustomUser(AbstractUser):
+#    # Agrega campos adicionales o modifica los existentes según tus necesidades
+#    phone_number = models.CharField(max_length=20, blank=True, null=True)
 
     
-class CustomGroup(Group):
-    codigo = models.CharField(max_length=100,unique=True)
+#class CustomGroup(Group):
+#    codigo = models.CharField(max_length=100,unique=True)
 
     # Resto de los campos adicionales o modificaciones necesarios
 
@@ -286,7 +286,8 @@ class Usuario_detalle(models.Model):
     horaio = models.CharField(max_length=200,blank=True, null=True)
     #recibo_agua = models.CharField(choices=TRUE_FALSE_CHOICES,max_length=200,blank=True, null=True)
     #recibo_luz = models.CharField(choices=TRUE_FALSE_CHOICES,max_length=200,blank=True, null=True)
-    
+   
+
     def __str__(self):
         return self.usuario.username
 

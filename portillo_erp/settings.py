@@ -186,3 +186,10 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+
+AUTH_GROUP_MODEL = 'cuenta.CustomGroup'
+
+#AUTH_USER_MODEL = 'cuenta.CustomUser'
+

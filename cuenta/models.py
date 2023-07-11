@@ -2,9 +2,22 @@ from django.db import models
 from django.contrib.postgres.fields import ArrayField
 from django.contrib.auth.models import User, Permission
 from django.core.validators import RegexValidator
+from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.models import Group
 
-   
-class Usuario(models.Model):
+
+class CustomUser(AbstractUser):
+    # Agrega campos adicionales o modifica los existentes según tus necesidades
+    phone_number = models.CharField(max_length=20, blank=True, null=True)
+
+    
+class CustomGroup(Group):
+    codigo = models.CharField(max_length=100,unique=True)
+
+    # Resto de los campos adicionales o modificaciones necesarios
+
+
+class Usuario_detalle(models.Model):
     
 
     FONDO_PENSIONES = (
@@ -263,16 +276,16 @@ class Usuario(models.Model):
     primerTrabajo = models.CharField(max_length=200,blank=True, null=True)
     hijos = models.PositiveIntegerField(blank=True, null=True)
     conyuge= models.CharField(max_length=200,blank=True, null=True)
-    a_penales = models.CharField(choices=TRUE_FALSE_CHOICES,max_length=200,blank=True, null=True)
-    a_policiales = models.CharField(choices=TRUE_FALSE_CHOICES,max_length=200,blank=True, null=True)
-    a_judiciales = models.CharField(choices=TRUE_FALSE_CHOICES,max_length=200,blank=True, null=True)  
+    #a_penales = models.CharField(choices=TRUE_FALSE_CHOICES,max_length=200,blank=True, null=True)
+    #a_policiales = models.CharField(choices=TRUE_FALSE_CHOICES,max_length=200,blank=True, null=True)
+    #a_judiciales = models.CharField(choices=TRUE_FALSE_CHOICES,max_length=200,blank=True, null=True)  
     p_mp = models.CharField(max_length=200,blank=True, null=True)
     fecha_inicio_contrato = models.DateField(max_length=200,blank=True, null=True)
     fecha_fin_contrato = models.DateField(max_length=200,blank=True, null=True)
     sueldo = models.FloatField(max_length=200,blank=True, null=True)
     horaio = models.CharField(max_length=200,blank=True, null=True)
-    recibo_agua = models.CharField(choices=TRUE_FALSE_CHOICES,max_length=200,blank=True, null=True)
-    recibo_luz = models.CharField(choices=TRUE_FALSE_CHOICES,max_length=200,blank=True, null=True)
+    #recibo_agua = models.CharField(choices=TRUE_FALSE_CHOICES,max_length=200,blank=True, null=True)
+    #recibo_luz = models.CharField(choices=TRUE_FALSE_CHOICES,max_length=200,blank=True, null=True)
     
     def __str__(self):
         return self.usuario.username

@@ -49,7 +49,6 @@ class UserList(generics.ListCreateAPIView):
     """
         Clase generica para  lectura y escritura de perfiles
     """
-
     serializer_class = UserSerializer
     queryset = User.objects.all()
 

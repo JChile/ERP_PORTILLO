@@ -19,8 +19,7 @@ const ListRol = () => {
    * Obtenemos la lista de roles registrados
    */
   React.useEffect(() => {
-
-
+    
 
     return () => {
 

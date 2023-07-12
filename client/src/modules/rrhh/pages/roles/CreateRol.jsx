@@ -1,6 +1,6 @@
-import React from 'react'
-import { Button } from '@mui/material'
-import { Link, useNavigate } from 'react-router-dom'
+import React from "react";
+import { Button } from "@mui/material";
+import { Link, useNavigate } from "react-router-dom";
 
 const CreateRol = () => {
 
@@ -9,12 +9,12 @@ const CreateRol = () => {
   const { rolName } = form
 
   const handleChange = (event) => {
-    const {name, value } = event.target
-    setForm(prev => ({
+    const { name, value } = event.target;
+    setForm((prev) => ({
       ...prev,
-      [name]: value
-    }))
-  }
+      [name]: value,
+    }));
+  };
 
   const handleSubmit = (event) => {
     event.preventDefault()
@@ -24,12 +24,12 @@ const CreateRol = () => {
   }
 
   return (
-    <div className='w-4/5  max-w-screen-sm mx-auto flex flex-col gap-y-5'>
-      <h1 className='text-center font-semibold text-2xl'>Registrar Rol</h1>
+    <div className="w-4/5  max-w-screen-sm mx-auto flex flex-col gap-y-5">
+      <h1 className="text-center font-semibold text-2xl">Registrar Rol</h1>
       <form
         onSubmit={handleSubmit}
-        method='post'
-        className='min-w-[242px] flex flex-col gap-y-6'
+        method="post"
+        className="min-w-[242px] flex flex-col gap-y-6"
       >
         <label className="block flex flex-col gap-y-1">
           <span className="after:content-['*'] after:ml-0.5 after:text-yellow-500 block text-sm font-medium">
@@ -46,11 +46,11 @@ const CreateRol = () => {
           />
         </label>
 
-        <div className='flex justify-end gap-x-5'>
+        <div className="flex justify-end gap-x-5">
           <Link to={""}>
             <Button
-              variant='contained'
-              color='error'
+              variant="contained"
+              color="error"
               size="small"
               onClick={() => navigate(-1)}
             >
@@ -58,17 +58,17 @@ const CreateRol = () => {
             </Button>
           </Link>
           <Button
-            variant='contained'
-            color='success'
-            type='submit'
+            variant="contained"
+            color="success"
+            type="submit"
             size="small"
           >
             Guardar
           </Button>
         </div>
-      </form >
-    </div >
-  )
-}
+      </form>
+    </div>
+  );
+};
 
-export default CreateRol
+export default CreateRol;

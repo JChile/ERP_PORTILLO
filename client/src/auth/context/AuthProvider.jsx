@@ -25,7 +25,7 @@ export const AuthProvider = ({ children }) => {
   const loginUser = async (dni, password) => {
     const DOMAIN = import.meta.env.VITE_BACKEND_URL;
     // ENDOINT AUTENTICACION
-    const ENDPOINT = `http://127.0.0.1:8000/auth/token/`;
+    const ENDPOINT = `http://127.0.0.1:8000/api/token/`;
     const response = await fetch(ENDPOINT, {
       method: "POST",
       headers: {

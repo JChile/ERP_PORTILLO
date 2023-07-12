@@ -10,6 +10,9 @@ export const ListUsuarios = () => {
   return (
     <>
       <h1>LIST USUARIOS</h1>
+      <div>
+        
+      </div>
     </>
   );
 };

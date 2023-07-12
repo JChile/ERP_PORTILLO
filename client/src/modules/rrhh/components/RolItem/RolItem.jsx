@@ -1,17 +1,14 @@
-import React from 'react'
-import "./rolItem.css"
-import EditIcon from "../../../../assets/edit-icon.svg"
+import React from "react";
+import "./rolItem.css";
+import EditIcon from "../../../../assets/edit-icon.svg";
 
-const RolItem = (props) => {
+const RolItem = ({ item }) => {
+  return (
+    <div className="rol_item">
+      <h3>{item.name}</h3>
+      <img src={EditIcon} alt="edit" />
+    </div>
+  );
+};
 
-    const { name } = props
-
-    return (
-        <div className='rol_item'>
-            <h3>{name}</h3>
-            <img src={EditIcon} alt="edit" />
-        </div>
-    )
-}
-
-export default RolItem
+export default RolItem;

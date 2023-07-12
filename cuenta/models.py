@@ -288,7 +288,7 @@ class Usuario_detalle(models.Model):
     horaio = models.CharField(max_length=200,blank=True, null=True)
     #recibo_agua = models.CharField(choices=TRUE_FALSE_CHOICES,max_length=200,blank=True, null=True)
     #recibo_luz = models.CharField(choices=TRUE_FALSE_CHOICES,max_length=200,blank=True, null=True)
-   
+    documentos = models.FileField(upload_to='documentos/', blank=True, null=True)
 
     def __str__(self):
         return self.userId.username

@@ -6,6 +6,7 @@ const CreateRol = () => {
 
   const navigate = useNavigate()
   const [form, setForm] = React.useState({rolName: ""})
+  const { rolName } = form
 
   const handleChange = (event) => {
     const {name, value } = event.target
@@ -17,7 +18,9 @@ const CreateRol = () => {
 
   const handleSubmit = (event) => {
     event.preventDefault()
-    console.log(form)
+    if ( rolName ) {
+      
+    }
   }
 
   return (
@@ -38,7 +41,7 @@ const CreateRol = () => {
             className="mt-1 px-3 py-2 bg-white border shadow-sm border-slate-300 placeholder-slate-400 focus:outline-none focus:border-sky-500 focus:ring-sky-500 block w-full rounded-md sm:text-sm focus:ring-1"
             placeholder="Administrador"
             id='rolName'
-            value={form.rolName}
+            value={rolName}
             onChange={handleChange}
           />
         </label>

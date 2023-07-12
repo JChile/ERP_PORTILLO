@@ -33,29 +33,123 @@ export const CreateUsuarios = () => {
   useEffect(() => {}, []);
 
   return (
-    <>
-      <form method="post" className="min-w-[242px] flex flex-col gap-y-6">
-        <input
-          name="username"
-          value={username}
-          onChange={handledForm}
-          className="mt-1 px-3 py-2 bg-white border shadow-sm border-slate-300 placeholder-slate-400 focus:outline-none focus:border-sky-500 focus:ring-sky-500 block w-full rounded-md sm:text-sm focus:ring-1"
-        />
-        <input
-          name="password"
-          value={password}
-          onChange={handledForm}
-          className="mt-1 px-3 py-2 bg-white border shadow-sm border-slate-300 placeholder-slate-400 focus:outline-none focus:border-sky-500 focus:ring-sky-500 block w-full rounded-md sm:text-sm focus:ring-1"
-        />
-        <input
-          name="grupo"
-          onChange={handledForm}
-          value={grupo}
-          className="mt-1 px-3 py-2 bg-white border shadow-sm border-slate-300 placeholder-slate-400 focus:outline-none focus:border-sky-500 focus:ring-sky-500 block w-full rounded-md sm:text-sm focus:ring-1"
-        />
+    <div className="border-2 rounded-md border-inherit  p-5">
+      <h1 className="text-2xl my-1">Login y Rol Usuarios</h1>
+      <hr className="my-4"></hr>
+      <form method="post" className="min-w-[242px] flex gap-y-6 gap-x-8">
+        <div className="w-6/12 flex flex-col gap-y-5">
+          <label className="block flex flex-col gap-y-1 ">
+            <span className="after:content-['*'] after:ml-0.5 after:text-yellow-500 block text-sm font-medium">
+              Nombre Usuario
+            </span>
+            <input
+              type="text"
+              name="rolName"
+              className="mt-1 px-3 py-2 bg-white border shadow-sm border-slate-300 placeholder-slate-400 focus:outline-none focus:border-sky-500 focus:ring-sky-500 block w-full rounded-md sm:text-sm focus:ring-1"
+              placeholder="Nombre Usuario"
+              id="rolName"
+              value={username}
+              onChange={handledForm}
+            />
+          </label>
 
-        <button onClick={mostrarValores}>Crear usuario</button>
+          <label className="block flex flex-col gap-y-1">
+            <span className="after:content-['*'] after:ml-0.5 after:text-yellow-500 block text-sm font-medium">
+              Nombre
+            </span>
+            <input
+              type="text"
+              name="rolName"
+              className="mt-1 px-3 py-2 bg-white border shadow-sm border-slate-300 placeholder-slate-400 focus:outline-none focus:border-sky-500 focus:ring-sky-500 block w-full rounded-md sm:text-sm focus:ring-1"
+              placeholder="Nombre"
+              id="rolName"
+              value={password}
+              onChange={handledForm}
+            />
+          </label>
+
+          <label className="block flex flex-col gap-y-1">
+            <span className="after:content-['*'] after:ml-0.5 after:text-yellow-500 block text-sm font-medium">
+              Contraseña
+            </span>
+            <input
+              type="text"
+              name="rolName"
+              className="mt-1 px-3 py-2 bg-white border shadow-sm border-slate-300 placeholder-slate-400 focus:outline-none focus:border-sky-500 focus:ring-sky-500 block w-full rounded-md sm:text-sm focus:ring-1"
+              placeholder="Contraseña"
+              id="rolName"
+              value={grupo}
+              onChange={handledForm}
+            />
+          </label>
+        </div>
+
+        <div className="w-6/12 flex flex-col gap-y-5">
+
+        <label className="block flex flex-col gap-y-1">
+            <span className="after:content-['*'] after:ml-0.5 after:text-yellow-500 block text-sm font-medium">
+              Correo Trabajo
+            </span>
+            <input
+              type="text"
+              name="rolName"
+              className="mt-1 px-3 py-2 bg-white border shadow-sm border-slate-300 placeholder-slate-400 focus:outline-none focus:border-sky-500 focus:ring-sky-500 block w-full rounded-md sm:text-sm focus:ring-1"
+              placeholder="Contraseña"
+              id="rolName"
+              value={grupo}
+              onChange={handledForm}
+            />
+          </label>
+
+          <label className="block flex flex-col gap-y-1">
+            <span className="after:content-['*'] after:ml-0.5 after:text-yellow-500 block text-sm font-medium">
+              Apellido
+            </span>
+            <input
+              type="text"
+              name="rolName"
+              className="mt-1 px-3 py-2 bg-white border shadow-sm border-slate-300 placeholder-slate-400 focus:outline-none focus:border-sky-500 focus:ring-sky-500 block w-full rounded-md sm:text-sm focus:ring-1"
+              placeholder="Contraseña"
+              id="rolName"
+              value={grupo}
+              onChange={handledForm}
+            />
+          </label>
+
+          <label className="block flex flex-col gap-y-1">
+            <span className="after:content-['*'] after:ml-0.5 after:text-yellow-500 block text-sm font-medium">
+              Confirmar contraseña
+            </span>
+            <input
+              type="text"
+              name="rolName"
+              className="mt-1 px-3 py-2 bg-white border shadow-sm border-slate-300 placeholder-slate-400 focus:outline-none focus:border-sky-500 focus:ring-sky-500 block w-full rounded-md sm:text-sm focus:ring-1"
+              placeholder="Contraseña"
+              id="rolName"
+              value={grupo}
+              onChange={handledForm}
+            />
+          </label>
+
+          <label className="block flex flex-col gap-y-1">
+            <span className="after:content-['*'] after:ml-0.5 after:text-yellow-500 block text-sm font-medium">
+              Rol
+            </span>
+            <input
+              type="text"
+              name="rolName"
+              className="mt-1 px-3 py-2 bg-white border shadow-sm border-slate-300 placeholder-slate-400 focus:outline-none focus:border-sky-500 focus:ring-sky-500 block w-full rounded-md sm:text-sm focus:ring-1"
+              placeholder="Contraseña"
+              id="rolName"
+              value={grupo}
+              onChange={handledForm}
+            />
+          </label>
+
+        </div>
+
       </form>
+
       <div className="fixed bottom-0 left-0 w-full bg-white p-4 flex justify-center">
         <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 mr-2">
           Crear
@@ -64,6 +158,6 @@ export const CreateUsuarios = () => {
           Cancelar
         </button>
       </div>
-    </>
+    </div>
   );
 };

@@ -1,4 +1,4 @@
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, Group , Permission
 from rest_framework import serializers
 from .models import *
 from django.contrib.auth.hashers import make_password
@@ -8,7 +8,17 @@ from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
     Clases serializadoras, toman el modelo y retornan la data en fomato Json
 """
 
+class GruopSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Group
+        fields = '__all__'
 
+
+class PermissionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Permission
+        fields = '__all__'
+        
 class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
     @classmethod
     def get_token(cls, user):
@@ -32,12 +42,12 @@ class UserSerializer(serializers.ModelSerializer):
         return super(UserSerializer, self).create(validated_data)
     
 
-class UsuariosSerializer(serializers.ModelSerializer):
+class UsuarioDetalleSerializer(serializers.ModelSerializer):
     """
         Serializador de los perfiles de los usuarios
     """
     class Meta:
-        model = Usuario
+        model = Usuario_detalle
         fields = '__all__'
 
 

@@ -37,7 +37,7 @@ export const AuthProvider = ({ children }) => {
     const data = await response.json();
 
     if (response.status == 200) {
-      console.log("Pasaste 200",data);
+      console.log("Pasaste 200", data);
       const payloadUser = jwt_decode(data.access);
       const { groupsId } = payloadUser;
 
@@ -48,7 +48,7 @@ export const AuthProvider = ({ children }) => {
       // condicional module
       switch (groupsId) {
         // case rrhh
-        case "2":
+        case "1":
           navigate("/rrhh");
           break;
         // other, navigate to login

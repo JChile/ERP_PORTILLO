@@ -104,7 +104,7 @@ const ListRol = () => {
         <DialogContent>
           <DialogContentText>
             Por favor, completa el siguiente campo con el nombre del rol que
-            deseas crear. Recuerda que el campo no puede estar vacío y solo se
+            desea crear. Recuerda que el campo no puede estar vacío y solo se
             aceptan caracteres alfabéticos.
           </DialogContentText>
           <DialogContent>
@@ -128,6 +128,39 @@ const ListRol = () => {
           </DialogActions>
         </DialogContent>
       </Dialog>
+
+
+      {/* Dialog actualizar*/}
+      <Dialog open={openForm} onClose={handleOpenCreateDialog}>
+        <DialogTitle>Actualizar rol</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Por favor, completa el siguiente campo con el nuevo nombre del rol que
+            desea crear. Recuerda que el campo no puede estar vacío y solo se
+            aceptan caracteres alfabéticos.
+          </DialogContentText>
+          <DialogContent>
+
+            <TextField
+              autoFocus
+              margin="dense"
+              id="itemName"
+              name="itemName"
+              value={newItemForm.itemName}
+              onChange={handleChangeNewItemForm}
+              label="Nuevo rol"
+              type="text"
+              fullWidth
+              variant="standard"
+            />
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleOpenCreateDialog}>Cancel</Button>
+            <Button onClick={handleSaveItemDialog}>Guardar</Button>
+          </DialogActions>
+        </DialogContent>
+      </Dialog>
+
     </div>
   );
 };

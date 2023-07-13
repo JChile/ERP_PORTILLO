@@ -45,20 +45,34 @@ class PermissionDetail(generics.RetrieveUpdateDestroyAPIView):
 
 
 
+
+
 class UserList(generics.ListCreateAPIView):
     """
-        Clase generica para  lectura y escritura de perfiles
+        Clase generica para  lectura y escritura de Users
     """
     serializer_class = UserSerializer
     queryset = User.objects.all()
 
 class UserDetail(generics.RetrieveUpdateDestroyAPIView):
     """
-        Clase generica para  lectura y escritura de perfiles
+        Clase generica para  lectura y escritura de Users
     """
     #permission_classes = [IsAuthenticated]
     queryset = User.objects.all()
     serializer_class = UserSerializer
+
+@api_view(['GET'])
+def usuario_final_view(request):
+    if request.method == 'GET':
+        # first we get the querysets
+        user = User.objects.all()
+        usuario_detalle = Usuario_detalle.objects.all()
+        # then we serializer the data
+        user_ser = UserSerializer(user, many=True, context={'request': request})
+        usuario_detalle_ser = UsuarioDetalleSerializer(usuario_detalle, many=True, context=  {'request': request})
+        data = user_ser.data + usuario_detalle_ser.data
+        return Response(data)
 
 
 class UsuarioList(generics.ListCreateAPIView):

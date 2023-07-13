@@ -258,7 +258,7 @@ class Usuario_detalle(models.Model):
 
 
 
-    userId = models.OneToOneField(User, on_delete=models.CASCADE, related_name='usu')
+    user_id = models.OneToOneField(User, on_delete=models.CASCADE, related_name='usu')
     dni = models.CharField(max_length=8,unique=True, null=True)
     fecha = models.DateTimeField(blank=True, null=True)
     nacionalidad = models.CharField(max_length=200,default='PE',choices=PAISES,blank=True, null=True)
@@ -291,7 +291,7 @@ class Usuario_detalle(models.Model):
     documentos = models.FileField(upload_to='documentos/', blank=True, null=True)
 
     def __str__(self):
-        return self.userId.username
+        return self.user_id.username
     
 
 
@@ -305,7 +305,7 @@ class Prueba(models.Model):
 @receiver(post_save, sender=User)
 def create_usuario_detalle(sender, instance, created, **kwargs):
     if created:
-        user_detail = Usuario_detalle.objects.create(userId=instance)
+        user_detail = Usuario_detalle.objects.get_or_create(userId=instance)
         user_detail.save()
 
 

@@ -6,22 +6,16 @@ from django.contrib.auth.models import AbstractUser
 from django.contrib.auth.models import Group
 from django.dispatch import receiver
 from django.db.models.signals import post_save
+from django.utils.translation import gettext_lazy as _
 
-
-#class CustomUser(AbstractUser):
-#    # Agrega campos adicionales o modifica los existentes según tus necesidades
-#    phone_number = models.CharField(max_length=20, blank=True, null=True)
 
     
-#class CustomGroup(Group):
-#    codigo = models.CharField(max_length=100,unique=True)
-
+class CustomGroup(Group):
+    codigo = models.CharField(max_length=100,unique=True)
     # Resto de los campos adicionales o modificaciones necesarios
 
-
-class Usuario_detalle(models.Model):
+class Profile(models.Model):
     
-
     FONDO_PENSIONES = (
         ('o','ONP'),
         ('a','AFP'),
@@ -256,9 +250,7 @@ class Usuario_detalle(models.Model):
         (False, 'No')
     )
 
-
-
-    user_id = models.OneToOneField(User, on_delete=models.CASCADE, related_name='usu')
+ 
     dni = models.CharField(max_length=8,unique=True, null=True)
     fecha = models.DateTimeField(blank=True, null=True)
     nacionalidad = models.CharField(max_length=200,default='PE',choices=PAISES,blank=True, null=True)
@@ -291,22 +283,26 @@ class Usuario_detalle(models.Model):
     documentos = models.FileField(upload_to='documentos/', blank=True, null=True)
 
     def __str__(self):
-        return self.user_id.username
+        return self.dni
     
 
-
-
-class Prueba(models.Model):
-    nombre = models.CharField(max_length=200,blank=True, null=True)
+class CustomUser(AbstractUser):
+    
+    #groups = None
+    user_permissions = None
+    perfil = models.OneToOneField(Profile, on_delete=models.CASCADE,null=True)
     def __str__(self):
-        return self.nombre
+        return self.username
 
-
-@receiver(post_save, sender=User)
+'''
+@receiver(post_save, sender=CustomUser)
 def create_usuario_detalle(sender, instance, created, **kwargs):
     if created:
-        user_detail = Usuario_detalle.objects.get_or_create(userId=instance)
-        user_detail.save()
+        Profile.objects.get_or_create(dni=instance)
+        print( '\033[91m'+"validated data ------------------------->", "HOla jeje",'\033[0m')
+
+        
+'''
 
 
 

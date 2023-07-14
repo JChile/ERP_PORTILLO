@@ -7,9 +7,7 @@ from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 """
     Clases serializadoras, toman el modelo y retornan la data en fomato Json
 """
-
 class GruopSerializer(serializers.ModelSerializer):
-
     class Meta:
         model = Group
         fields = '__all__'
@@ -31,29 +29,14 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
         return token
 
 
-class UserSerializer(serializers.ModelSerializer):
 
-    #groups = GruopSerializer(many=True)
+
+class ProfileSerializer(serializers.ModelSerializer):
     class Meta:
-        model = User
-        #fields = ['id','last_login','is_superuser','username','first_name','last_name','email','is_staff','is_active','date_joined','groups','user_permissions']
-        fields = '__all__'
-
-    def create(self, validated_data):
-        validated_data['password'] = make_password(validated_data.get('password'))
-        return super(UserSerializer, self).create(validated_data)
-
-
-class UsuarioDetalleSerializer(serializers.ModelSerializer):
-    """
-        Serializador de los perfiles de los usuarios
-    """
-    user_id = UserSerializer()
-    class Meta:
-        model = Usuario_detalle
+        model = Profile
         fields = '__all__'
     
-
+    '''
     def create(self, validated_data):
         user_data = validated_data.pop('user_id')
         print( '\033[91m'+"validated data ------------------------->", user_data,'\033[0m')
@@ -62,12 +45,36 @@ class UsuarioDetalleSerializer(serializers.ModelSerializer):
         #UserProfile.objects.create(user=user, **profile_data)
 
         return user
-    
+    '''
 
-class PruebasSerializer(serializers.ModelSerializer):
-    """
-        Serializador de los perfiles de los usuarios
-    """
+class UserSerializer(serializers.ModelSerializer):
+
+    perfil = ProfileSerializer()
     class Meta:
-        model = Prueba
+        model = CustomUser
+        #fields = ['id','last_login','is_superuser','username','first_name','last_name','email','is_staff','is_active','date_joined','groups','user_permissions']
         fields = '__all__'
+
+    def create(self, validated_data):
+        validated_data['password'] = make_password(validated_data.get('password'))
+        profile_data = validated_data.pop('perfil')
+        groups_data = validated_data.pop('groups')
+        #print( '\033[91m'+"validated data ------------------------->", groups_data,'\033[0m')
+        user = CustomUser.objects.create(**validated_data)
+        profile_data['id'] = user.id
+        profile = Profile.objects.create(**profile_data)
+        for i in groups_data:
+            user.groups.add(i)
+     
+        profile.save()
+        user.perfil = profile 
+        user.save()
+
+        '''
+        profile = Profile.objects.create(id=user.id, **profile_data)
+        current_user = CustomUser.objects.filter(id=user.id)
+        current_user.update(perfil=profile.id)
+        '''
+
+
+        return user

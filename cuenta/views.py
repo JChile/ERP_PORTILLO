@@ -14,10 +14,10 @@ def index(request):
 
 class GroupList(generics.ListCreateAPIView):
     serializer_class = GruopSerializer
-    queryset = CustomGroup.objects.all()
+    queryset = Group.objects.all()
 
 class GroupDetail(generics.RetrieveUpdateDestroyAPIView):
-    queryset = CustomGroup.objects.all()
+    queryset = Group.objects.all()
     serializer_class = GruopSerializer
 
 
@@ -31,9 +31,6 @@ class PermissionDetail(generics.RetrieveUpdateDestroyAPIView):
 
 
 class UserList(generics.ListCreateAPIView):
-    """
-        Clase generica para  lectura y escritura de Users
-    """
     serializer_class = UserSerializer
     queryset = CustomUser.objects.all()
 
@@ -41,6 +38,28 @@ class UserDetail(generics.RetrieveUpdateDestroyAPIView):
     #permission_classes = [IsAuthenticated]
     queryset = CustomUser.objects.all()
     serializer_class = UserSerializer
+
+
+
+class UserProfileList(generics.ListCreateAPIView):
+    serializer_class = UserProfileSerializer
+    queryset = CustomUser.objects.all()
+
+class UserProfileDetail(generics.RetrieveUpdateDestroyAPIView):
+    #permission_classes = [IsAuthenticated]
+    queryset = CustomUser.objects.all()
+    serializer_class = UserProfileSerializer
+
+
+class ProfileList(generics.ListCreateAPIView):
+    serializer_class = ProfileSerializer
+    queryset = Profile.objects.all()
+
+class ProfileDetail(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Profile.objects.all()
+    serializer_class = ProfileSerializer
+
+
 
 '''
 @api_view(['GET'])
@@ -55,14 +74,6 @@ def usuario_final_view(request):
         data = user_ser.data + usuario_detalle_ser.data
         return Response(data)
 '''
-
-class ProfileList(generics.ListCreateAPIView):
-    serializer_class = ProfileSerializer
-    queryset = Profile.objects.all()
-
-class ProfileDetail(generics.RetrieveUpdateDestroyAPIView):
-    queryset = Profile.objects.all()
-    serializer_class = ProfileSerializer
 
 
 

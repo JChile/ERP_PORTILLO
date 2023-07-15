@@ -9,7 +9,7 @@ from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 """
 class GruopSerializer(serializers.ModelSerializer):
     class Meta:
-        model = CustomGroup
+        model = Group
         fields = '__all__'
 
 
@@ -35,7 +35,14 @@ class ProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = Profile
         fields = '__all__'
+
+
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CustomUser
+        fields = '__all__'
     
+
     '''
     def create(self, validated_data):
         user_data = validated_data.pop('user_id')
@@ -47,7 +54,7 @@ class ProfileSerializer(serializers.ModelSerializer):
         return user
     '''
 
-class UserSerializer(serializers.ModelSerializer):
+class UserProfileSerializer(serializers.ModelSerializer):
     perfil = ProfileSerializer()
     class Meta:
         model = CustomUser

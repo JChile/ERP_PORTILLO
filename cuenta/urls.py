@@ -14,7 +14,8 @@ urlpatterns = [
     re_path(r'^user/(?P<pk>[0-9]+)$', views.UserDetail.as_view()),
     re_path(r'^profile/$', views.ProfileList.as_view()),
     re_path(r'^profile/(?P<pk>[0-9]+)$', views.ProfileDetail.as_view()),
-
+    re_path(r'^user_profile/$', views.UserProfileList.as_view()),
+    re_path(r'^user_profile/(?P<pk>[0-9]+)$', views.UserProfileDetail.as_view()),
     re_path(r'^group/$', views.GroupList.as_view()),
     re_path(r'^group/(?P<pk>[0-9]+)$', views.GroupDetail.as_view()),
     re_path(r'^permission/$', views.PermissionList.as_view()),

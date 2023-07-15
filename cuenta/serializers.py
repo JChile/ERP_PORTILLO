@@ -9,7 +9,7 @@ from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 """
 class GruopSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Group
+        model = CustomGroup
         fields = '__all__'
 
 
@@ -48,33 +48,68 @@ class ProfileSerializer(serializers.ModelSerializer):
     '''
 
 class UserSerializer(serializers.ModelSerializer):
-
     perfil = ProfileSerializer()
     class Meta:
         model = CustomUser
         #fields = ['id','last_login','is_superuser','username','first_name','last_name','email','is_staff','is_active','date_joined','groups','user_permissions']
         fields = '__all__'
-
     def create(self, validated_data):
         validated_data['password'] = make_password(validated_data.get('password'))
         profile_data = validated_data.pop('perfil')
         groups_data = validated_data.pop('groups')
+        permission_data = validated_data.pop('user_permissions')
         #print( '\033[91m'+"validated data ------------------------->", groups_data,'\033[0m')
         user = CustomUser.objects.create(**validated_data)
         profile_data['id'] = user.id
         profile = Profile.objects.create(**profile_data)
+        
         for i in groups_data:
-            user.groups.add(i)
-     
+            user.groups.add(i)        
+        for j in permission_data:
+            user.user_permissions.add(j)
         profile.save()
         user.perfil = profile 
-        user.save()
-
+        user.save()   
         '''
         profile = Profile.objects.create(id=user.id, **profile_data)
         current_user = CustomUser.objects.filter(id=user.id)
         current_user.update(perfil=profile.id)
         '''
+        return user
 
+    def update(self, instance ,validated_data):
+
+        print("iNSTANCE ->>>>>>>>>>>>>>>>>>>",instance)
+        user = CustomUser.objects.get(id = instance.id)
+        
+
+        
+        
+        profile_data = validated_data.pop('perfil')
+
+
+        try:
+            groups_data = validated_data.pop('groups')
+            user.groups.clear()
+            for i in groups_data:
+                user.groups.add(i)        
+        except :
+            print("Error, no se envio el campo gropus")
+   
+        try:
+            permission_data = validated_data.pop('user_permissions')
+            user.user_permissions.clear() 
+            for j in permission_data:
+                user.user_permissions.add(j)
+        except :
+            print("Error, no se envio el campo user_permissions")
+
+        
+        print(profile_data)
+        Profile.objects.filter(id=user.id).update(**profile_data)
+        CustomUser.objects.filter(id=user.id).update(**validated_data)
+        
+
+        user.save()
 
         return user

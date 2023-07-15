@@ -197,7 +197,3 @@ CORS_ALLOWED_ORIGINS = [
 ]
 
 
-dependencies = [
-    ('ook', '__first__'),
-    ('eek', '0002_auto_20151029_1040'),
-]

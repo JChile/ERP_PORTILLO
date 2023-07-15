@@ -14,10 +14,10 @@ def index(request):
 
 class GroupList(generics.ListCreateAPIView):
     serializer_class = GruopSerializer
-    queryset = Group.objects.all()
+    queryset = CustomGroup.objects.all()
 
 class GroupDetail(generics.RetrieveUpdateDestroyAPIView):
-    queryset = Group.objects.all()
+    queryset = CustomGroup.objects.all()
     serializer_class = GruopSerializer
 
 

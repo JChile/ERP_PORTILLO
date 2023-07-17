@@ -47,15 +47,15 @@ class UserSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         user_data = validated_data.pop('user_id')
         print( '\033[91m'+"validated data ------------------------->", user_data,'\033[0m')
-
         user = User.objects.create(**validated_data)
         #UserProfile.objects.create(user=user, **profile_data)
-
         return user
     '''
 
 class UserProfileSerializer(serializers.ModelSerializer):
     perfil = ProfileSerializer()
+    #groups = GruopSerializer(many=True)
+
     class Meta:
         model = CustomUser
         #fields = ['id','last_login','is_superuser','username','first_name','last_name','email','is_staff','is_active','date_joined','groups','user_permissions']
@@ -69,7 +69,6 @@ class UserProfileSerializer(serializers.ModelSerializer):
         user = CustomUser.objects.create(**validated_data)
         profile_data['id'] = user.id
         profile = Profile.objects.create(**profile_data)
-        
         for i in groups_data:
             user.groups.add(i)        
         for j in permission_data:
@@ -85,8 +84,7 @@ class UserProfileSerializer(serializers.ModelSerializer):
         return user
 
     def update(self, instance ,validated_data):
-
-        print("iNSTANCE ->>>>>>>>>>>>>>>>>>>",instance)
+        print("iNSTANCE ->>>>>>>>>>>>>>>>>>>",validated_data)
         user = CustomUser.objects.get(id = instance.id)                        
         profile_data = validated_data.pop('perfil')
         try:
@@ -96,7 +94,6 @@ class UserProfileSerializer(serializers.ModelSerializer):
                 user.groups.add(i)        
         except :
             print("Error, no se envio el campo gropus")
-   
         try:
             permission_data = validated_data.pop('user_permissions')
             user.user_permissions.clear() 
@@ -104,13 +101,10 @@ class UserProfileSerializer(serializers.ModelSerializer):
                 user.user_permissions.add(j)
         except :
             print("Error, no se envio el campo user_permissions")
-
-        
         print(profile_data)
+
         Profile.objects.filter(id=user.id).update(**profile_data)
         CustomUser.objects.filter(id=user.id).update(**validated_data)
-        
-
+        user = CustomUser.objects.get(id = user.id) 
         user.save()
-
         return user

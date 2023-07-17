@@ -288,7 +288,7 @@ class Profile(models.Model):
 
 class CustomUser(AbstractUser): 
     pass
-    perfil = models.OneToOneField(Profile, on_delete=models.CASCADE,null=True)
+    perfil = models.OneToOneField(Profile, on_delete=models.CASCADE,null=True,blank=True)
     def __str__(self):
         return self.username
 

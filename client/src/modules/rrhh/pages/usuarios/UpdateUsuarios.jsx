@@ -84,9 +84,11 @@ export const UpdateUsuarios = () => {
     const validate = validarDatosUsuario(first_name, last_name, email, groups);
 
     if (validate.length === 0) {
-      console.log(usuario);
+      const usuarioJSON = { ...usuario };
+      delete usuarioJSON.id;
+      console.log(usuarioJSON);
       setVisibleProgress(true);
-      const result = await updateUsuario(idUsuario, usuario);
+      const result = await updateUsuario(idUsuario, usuarioJSON);
       // comprobar si se realizo con exito la creación del usuario
       setVisibleProgress(false);
       // navegamos atras

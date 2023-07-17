@@ -38,11 +38,11 @@ class ProfileSerializer(serializers.ModelSerializer):
 
 
 class UserSerializer(serializers.ModelSerializer):
+    groups = GruopSerializer(many=True, read_only = True)
     class Meta:
         model = CustomUser
         fields = '__all__'
     
-
     '''
     def create(self, validated_data):
         user_data = validated_data.pop('user_id')
@@ -87,14 +87,8 @@ class UserProfileSerializer(serializers.ModelSerializer):
     def update(self, instance ,validated_data):
 
         print("iNSTANCE ->>>>>>>>>>>>>>>>>>>",instance)
-        user = CustomUser.objects.get(id = instance.id)
-        
-
-        
-        
+        user = CustomUser.objects.get(id = instance.id)                        
         profile_data = validated_data.pop('perfil')
-
-
         try:
             groups_data = validated_data.pop('groups')
             user.groups.clear()

@@ -10,34 +10,9 @@ import Button from "@mui/material/Button";
 import { getRoles } from "./helpers/getRoles";
 
 const ListRol = () => {
-<<<<<<< HEAD
-  const [openForm, setOpenForm] = React.useState(false);
-  const [newItemForm, setNewItemForm] = React.useState({ itemName: "" });
-  const [itemList, setItemList] = React.useState({items: ["Marketing", "Ventas", "RRHH"]})
-
-  
-  /**
-   * Obtenemos la lista de roles registrados
-   */
-  React.useEffect(() => {
-    
-
-    return () => {
-
-    };
-  },[])
-
-  const listRoles = itemList.items;
-
-  const list = listRoles.map((value, index) => (
-    <RolItem key={index} name={value} />
-  ));
-
-=======
   const [openForm, setOpenForm] = useState(false);
   const [newItemForm, setNewItemForm] = useState({ itemName: "" });
   const [itemList, setItemList] = useState([]);
->>>>>>> ceb9796 (helpers comunicacion conbackend - usuario y roles)
   /**
    * Inicia cerrar el dialog para crear un nuevo rol
    */
@@ -127,18 +102,16 @@ const ListRol = () => {
         </DialogContent>
       </Dialog>
 
-
       {/* Dialog actualizar*/}
       <Dialog open={openForm} onClose={handleOpenCreateDialog}>
         <DialogTitle>Actualizar rol</DialogTitle>
         <DialogContent>
           <DialogContentText>
-            Por favor, completa el siguiente campo con el nuevo nombre del rol que
-            desea crear. Recuerda que el campo no puede estar vacío y solo se
-            aceptan caracteres alfabéticos.
+            Por favor, completa el siguiente campo con el nuevo nombre del rol
+            que desea crear. Recuerda que el campo no puede estar vacío y solo
+            se aceptan caracteres alfabéticos.
           </DialogContentText>
           <DialogContent>
-
             <TextField
               autoFocus
               margin="dense"
@@ -158,7 +131,6 @@ const ListRol = () => {
           </DialogActions>
         </DialogContent>
       </Dialog>
-
     </div>
   );
 };

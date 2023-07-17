@@ -60,6 +60,9 @@ class UserProfileSerializer(serializers.ModelSerializer):
         model = CustomUser
         #fields = ['id','last_login','is_superuser','username','first_name','last_name','email','is_staff','is_active','date_joined','groups','user_permissions']
         fields = '__all__'
+    
+    username = serializers.CharField(required=False)
+    password = serializers.CharField(required=False)
     def create(self, validated_data):
         validated_data['password'] = make_password(validated_data.get('password'))
         profile_data = validated_data.pop('perfil')

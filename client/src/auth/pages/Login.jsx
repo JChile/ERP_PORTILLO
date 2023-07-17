@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import { AuthContext } from "../context";
 import PortilloLogo from "../../assets/portillo-logo-port.png";
 // Manejo de alertas
@@ -9,7 +9,7 @@ export const Login = () => {
   // context
   const { loginUser } = useContext(AuthContext);
   // Estado de credenciales
-  const [form, setForm] = React.useState({ username: "", password: "" });
+  const [form, setForm] = useState({ username: "", password: "" });
   const { username, password } = form;
   // hook alert
   const {

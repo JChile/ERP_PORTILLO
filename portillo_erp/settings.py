@@ -43,9 +43,12 @@ INSTALLED_APPS = [
     'corsheaders',
     'rest_framework_simplejwt.token_blacklist',
     
+    
 
 ]
 
+
+AUTH_USER_MODEL = 'cuenta.CustomUser'
 REST_FRAMEWORK = {
 
     'DEFAULT_AUTHENTICATION_CLASSES': (
@@ -178,6 +181,7 @@ USE_I18N = True
 USE_TZ = True
 
 
+
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
@@ -191,3 +195,5 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 CORS_ALLOWED_ORIGINS = [
     'http://localhost:5173'
 ]
+
+

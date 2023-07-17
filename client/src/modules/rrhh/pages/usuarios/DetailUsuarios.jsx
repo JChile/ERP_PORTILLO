@@ -10,8 +10,7 @@ export const DetailUsuarios = () => {
     groups: [2],
   };
 
-
-  const [user, setUser] = useState(userObject)
+  const [user, setUser] = useState(userObject);
 
   const { username, firstName, lastName, email, groups } = user;
 

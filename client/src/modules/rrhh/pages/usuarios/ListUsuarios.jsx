@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
@@ -7,26 +6,43 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
-import TablePagination from "@mui/material/TablePagination";
 import { getUsuarios } from "./helpers/getUsuarios";
+import { RowItemUsuario } from "./components/RowItemUsuario";
+import { CustomTablePagination } from "../../../../components/CustomTablePagination";
+import { DialogDeleteUsuario } from "./components/DialogDeleteUsuario";
+import { RiUserAddLine } from "react-icons/ri";
+import { Link } from "react-router-dom";
 
 export const ListUsuarios = () => {
   const [usuarios, setusuarios] = useState([]);
 
-  // MANEJADORES DE LA PAGINACION
-  const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(5);
-  const handleChangePage = (event, newPage) => {
-    setPage(newPage);
+  // ESTADOS PARA EL DIALOG DELETE
+  const [mostrarDialog, setMostrarDialog] = useState(false);
+  const [itemSeleccionado, setItemSeleccionado] = useState(null);
+
+  // PARA ELIMINAR UN ITEM SELECCIONADO
+  const onCloseDeleteDialog = () => {
+    // ocultamos el modal
+    setMostrarDialog(false);
+    // dejamos el null la data del detalle
+    setItemSeleccionado(null);
   };
-  const handleChangeRowsPerPage = (event) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0);
+
+  // MOSTRAR Y OCULTAR DETALLE DE USUARIO
+  const onShowDeleteDialog = (item) => {
+    setItemSeleccionado(item);
+    setMostrarDialog(true);
+  };
+
+  // ELIMINAR DETALLE DE FORMULA
+  const onDeleteItemSelected = async (idItem) => {
+    console.log("delete item: " + idItem);
+    onCloseDeleteDialog();
   };
 
   const obtenerUsuarios = async () => {
     const result = await getUsuarios();
-    console.log(result);
+    // console.log(result);
     setusuarios(result);
   };
 
@@ -36,13 +52,18 @@ export const ListUsuarios = () => {
 
   return (
     <>
-      <h1>LIST USUARIOS</h1>
-<<<<<<< HEAD
-      <div>
-        
+      <div className="flex items-center justify-end bg-gray-100 p-4">
+        {/* Botón de "Agregar usuario" en el extremo derecho */}
+        <Link
+          to={"/rrhh/usuario/create"}
+          className="bg-transparent hover:bg-blue-500 text-blue-500 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded flex items-center"
+        >
+          <RiUserAddLine className="mr-2" /> Añadir usuario
+        </Link>
       </div>
-=======
       <Paper>
+        {/* PAGINACION DE LA TABLA */}
+        <CustomTablePagination count={usuarios.length} />
         <TableContainer>
           <Table sx={{ minWidth: 700 }} aria-label="customized table">
             <TableHead>
@@ -73,34 +94,25 @@ export const ListUsuarios = () => {
             </TableHead>
             <TableBody>
               {usuarios.map((item) => (
-                <TableRow
+                <RowItemUsuario
                   key={item.id}
-                  sx={{
-                    "&:last-child td, &:last-child th": { border: 0 },
-                  }}
-                >
-                  <TableCell>Done</TableCell>
-                  <TableCell>{`${item.first_name} ${item.last_name}`}</TableCell>
-                  <TableCell>{item.groups[0]}</TableCell>
-                  <TableCell>{item.username}</TableCell>
-                  <TableCell>{item.email}</TableCell>
-                </TableRow>
+                  item={item}
+                  onShowDeleteDialog={onShowDeleteDialog}
+                />
               ))}
             </TableBody>
           </Table>
         </TableContainer>
-        {/* PAGINACION DE LA TABLA */}
-        <TablePagination
-          rowsPerPageOptions={[5, 10, 25]}
-          component="div"
-          count={usuarios.length}
-          rowsPerPage={rowsPerPage}
-          page={page}
-          onPageChange={handleChangePage}
-          onRowsPerPageChange={handleChangeRowsPerPage}
-        />
       </Paper>
->>>>>>> ceb9796 (helpers comunicacion conbackend - usuario y roles)
+
+      {mostrarDialog && (
+        <DialogDeleteUsuario
+          item={itemSeleccionado}
+          showDialog={mostrarDialog}
+          onDeleteItemSelected={onDeleteItemSelected}
+          onCloseDeleteDialog={onCloseDeleteDialog}
+        />
+      )}
     </>
   );
 };

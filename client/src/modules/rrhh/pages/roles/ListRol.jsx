@@ -8,9 +8,11 @@ import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 import Button from "@mui/material/Button";
 import { getRoles } from "./helpers/getRoles";
+import { createRoles } from "./helpers/createRoles";
 
 const ListRol = () => {
   const [openForm, setOpenForm] = useState(false);
+  const [openUpdate, setOpenUpdate] = useState(false);
   const [newItemForm, setNewItemForm] = useState({ itemName: "" });
   const [itemList, setItemList] = useState([]);
   /**
@@ -29,13 +31,18 @@ const ListRol = () => {
     });
   };
 
-  const handleSaveItemDialog = (event) => {
+  const handleSaveItemDialog =  async (event) => {
     event.preventDefault();
     if (newItemForm.itemName) {
-      console.log(newItemForm.itemName);
-      setItemList({ items: [...itemList.items, newItemForm.itemName] });
-      handleOpenCreateDialog();
+      try {
+        createRoles({"name": newItemForm.itemName, "permissions": [13]})
+        handleOpenCreateDialog();
+      }
+      catch (err) { 
+        console.error(err);
+      }
       setNewItemForm({ itemName: "" });
+
     } else {
       console.log("Complete los campos.");
     }
@@ -46,9 +53,11 @@ const ListRol = () => {
     setItemList(result);
   };
 
-  useEffect(() => {
+  useEffect( () => {
     obtenerRoles();
-  }, []);
+    return () => {
+    }
+  }, [openForm]);
 
   return (
     <div className="flex flex-col gap-y-6 items-center">

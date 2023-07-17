@@ -277,7 +277,7 @@ class Profile(models.Model):
     fecha_inicio_contrato = models.DateField(max_length=200,blank=True, null=True)
     fecha_fin_contrato = models.DateField(max_length=200,blank=True, null=True)
     sueldo = models.FloatField(max_length=200,blank=True, null=True)
-    horaio = models.CharField(max_length=200,blank=True, null=True)
+    horario = models.CharField(max_length=200,blank=True, null=True)
     #recibo_agua = models.CharField(choices=TRUE_FALSE_CHOICES,max_length=200,blank=True, null=True)
     #recibo_luz = models.CharField(choices=TRUE_FALSE_CHOICES,max_length=200,blank=True, null=True)
     documentos = models.FileField(upload_to='documentos/', blank=True, null=True)
@@ -288,7 +288,7 @@ class Profile(models.Model):
 
 class CustomUser(AbstractUser): 
     pass
-    perfil = models.OneToOneField(Profile, on_delete=models.CASCADE,null=True,blank=True)
+    perfil = models.OneToOneField(Profile, on_delete=models.CASCADE,blank=True,null=True)
     def __str__(self):
         return self.username
 

@@ -10,34 +10,9 @@ import Button from "@mui/material/Button";
 import { getRoles } from "./helpers/getRoles";
 
 const ListRol = () => {
-<<<<<<< HEAD
-  const [openForm, setOpenForm] = React.useState(false);
-  const [newItemForm, setNewItemForm] = React.useState({ itemName: "" });
-  const [itemList, setItemList] = React.useState({items: ["Marketing", "Ventas", "RRHH"]})
-
-  
-  /**
-   * Obtenemos la lista de roles registrados
-   */
-  React.useEffect(() => {
-    
-
-    return () => {
-
-    };
-  },[])
-
-  const listRoles = itemList.items;
-
-  const list = listRoles.map((value, index) => (
-    <RolItem key={index} name={value} />
-  ));
-
-=======
   const [openForm, setOpenForm] = useState(false);
   const [newItemForm, setNewItemForm] = useState({ itemName: "" });
   const [itemList, setItemList] = useState([]);
->>>>>>> ceb9796 (helpers comunicacion conbackend - usuario y roles)
   /**
    * Inicia cerrar el dialog para crear un nuevo rol
    */

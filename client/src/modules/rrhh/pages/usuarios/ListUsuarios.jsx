@@ -37,11 +37,6 @@ export const ListUsuarios = () => {
   return (
     <>
       <h1>LIST USUARIOS</h1>
-<<<<<<< HEAD
-      <div>
-        
-      </div>
-=======
       <Paper>
         <TableContainer>
           <Table sx={{ minWidth: 700 }} aria-label="customized table">
@@ -100,7 +95,6 @@ export const ListUsuarios = () => {
           onRowsPerPageChange={handleChangeRowsPerPage}
         />
       </Paper>
->>>>>>> ceb9796 (helpers comunicacion conbackend - usuario y roles)
     </>
   );
 };

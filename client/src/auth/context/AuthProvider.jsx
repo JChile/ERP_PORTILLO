@@ -49,7 +49,7 @@ export const AuthProvider = ({ children }) => {
       // condicional module
       switch (groupsId) {
         // case rrhh
-        case "1":
+        case "2":
           navigate("/rrhh");
           break;
         // other, navigate to login

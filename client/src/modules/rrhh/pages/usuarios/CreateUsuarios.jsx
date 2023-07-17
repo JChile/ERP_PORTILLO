@@ -33,7 +33,7 @@ export const CreateUsuarios = () => {
   useEffect(() => {}, []);
 
   return (
-    <div className="border-2 rounded-md border-inherit  p-5">
+    <div className="relative border-2 rounded-md border-inherit p-5">
       <h1 className="text-2xl my-1">Login y Rol Usuarios</h1>
       <hr className="my-4"></hr>
       <form method="post" className="min-w-[242px] flex gap-y-6 gap-x-8">
@@ -150,6 +150,7 @@ export const CreateUsuarios = () => {
 
       </form>
 
+      
       <div className="fixed bottom-0 left-0 w-full bg-white p-4 flex justify-center">
         <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 mr-2">
           Crear

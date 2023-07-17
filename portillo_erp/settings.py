@@ -98,7 +98,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'portillo_erp',
         'USER': 'postgres',
-        'PASSWORD': 'qwerty',
+        'PASSWORD': '123',
         'HOST': 'localhost',
         'PORT': '',
     }

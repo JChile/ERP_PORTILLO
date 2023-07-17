@@ -25,7 +25,8 @@ export const AuthProvider = ({ children }) => {
   const loginUser = async (dni, password) => {
     const DOMAIN = import.meta.env.VITE_BACKEND_URL;
     // ENDOINT AUTENTICACION
-    const ENDPOINT = `http://127.0.0.1:8000/auth/token/`;
+
+    const ENDPOINT = `${DOMAIN}/api/token/`;
     const response = await fetch(ENDPOINT, {
       method: "POST",
       headers: {
@@ -37,7 +38,7 @@ export const AuthProvider = ({ children }) => {
     const data = await response.json();
 
     if (response.status == 200) {
-      console.log("Pasaste 200",data);
+      console.log("Pasaste 200", data);
       const payloadUser = jwt_decode(data.access);
       const { groupsId } = payloadUser;
 
@@ -48,7 +49,7 @@ export const AuthProvider = ({ children }) => {
       // condicional module
       switch (groupsId) {
         // case rrhh
-        case "2":
+        case "1":
           navigate("/rrhh");
           break;
         // other, navigate to login

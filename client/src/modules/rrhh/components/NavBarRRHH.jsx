@@ -66,7 +66,7 @@ export const NavBarRRHH = ({ children }) => {
           ))}
         </ul>
       </div>
-      <div className="h-screen flex-1 p-7">{children}</div>
+      <div className="relative h-screen flex-1 p-7">{children}</div>
     </div>
   );
 };

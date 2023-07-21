@@ -2,7 +2,9 @@ import React from "react";
 import { AuthProvider, Login } from "../auth";
 import { Route, Routes } from "react-router-dom";
 import { RRHHRoutes } from "../modules/rrhh";
+import { MarketingRoutes } from "../modules/marketing";
 import { PrivateRouterRRHH } from "./PrivateRouterRRHH";
+import { PrivateRouterMarketing } from "./PrivateRouterMarketing";
 
 export const AppRouter = () => {
   return (
@@ -25,13 +27,22 @@ export const AppRouter = () => {
               </Routes>
             }
           />
-
+          {/* RUTAS RECURSOS HUMANOS */}
           <Route
             path="rrhh/*"
             element={
               <PrivateRouterRRHH>
                 <RRHHRoutes />
               </PrivateRouterRRHH>
+            }
+          />
+          {/* RUTAS MERKETING */}
+          <Route
+            path="marketing/*"
+            element={
+              <PrivateRouterMarketing>
+                <MarketingRoutes />
+              </PrivateRouterMarketing>
             }
           />
         </Routes>

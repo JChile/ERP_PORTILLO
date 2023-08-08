@@ -84,7 +84,7 @@ class UserProfileSerializer(serializers.ModelSerializer):
             print("Error, no se envio el campo user_permissions")
         
         
-        user = CustomUser.objects.create(**validated_data)
+        user = User.objects.create(**validated_data)
 
         try:
             for i in groups_data:
@@ -98,10 +98,7 @@ class UserProfileSerializer(serializers.ModelSerializer):
             print("Error, no se envio el campo user_permissions")
 
         
-<<<<<<< HEAD
-        user = User.objects.create(**validated_data)
-=======
->>>>>>> origin/client
+        
         profile_data['id'] = user.id
         profile = Profile.objects.create(**profile_data)
         profile.save()

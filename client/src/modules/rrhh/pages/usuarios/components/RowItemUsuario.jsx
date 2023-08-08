@@ -23,6 +23,7 @@ export const RowItemUsuario = ({ item, onShowDeleteDialog }) => {
     >
       <TableCell>
         <CustomMoreVerticalActions
+          activeOnDelete={item.is_active}
           onEdit={onEditItemSelected}
           onDelete={onDeleteItemSelected}
         />

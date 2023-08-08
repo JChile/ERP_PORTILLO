@@ -17,7 +17,7 @@ class PermissionSerializer(serializers.ModelSerializer):
 
 
 class GruopSerializer(serializers.ModelSerializer):
-    permissions = PermissionSerializer(many=True, read_only = True)
+    #permissions = PermissionSerializer(many=True, read_only = True)
     class Meta:
         model = Group
         fields = '__all__'

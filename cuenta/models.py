@@ -1,6 +1,5 @@
 from django.db import models
 from django.contrib.postgres.fields import ArrayField
-from django.contrib.auth.models import User, Permission
 from django.core.validators import RegexValidator
 from django.contrib.auth.models import AbstractUser
 from django.contrib.auth.models import Group
@@ -286,7 +285,7 @@ class Profile(models.Model):
     ##    return self.dni
     
 
-class CustomUser(AbstractUser): 
+class User(AbstractUser): 
     pass
     perfil = models.OneToOneField(Profile, on_delete=models.CASCADE,blank=True,null=True)
     def __str__(self):

@@ -1,4 +1,5 @@
-from django.contrib.auth.models import User, Group , Permission
+from django.contrib.auth.models import Group , Permission
+
 from rest_framework import serializers
 from .models import *
 from django.contrib.auth.hashers import make_password
@@ -7,17 +8,21 @@ from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 """
     Clases serializadoras, toman el modelo y retornan la data en fomato Json
 """
-class GruopSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Group
-        fields = '__all__'
 
 
 class PermissionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Permission
         fields = '__all__'
-        
+
+
+class GruopSerializer(serializers.ModelSerializer):
+    permissions = PermissionSerializer(many=True, read_only = True)
+    class Meta:
+        model = Group
+        fields = '__all__'
+
+
 class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
     @classmethod
     def get_token(cls, user):
@@ -40,7 +45,7 @@ class ProfileSerializer(serializers.ModelSerializer):
 class UserSerializer(serializers.ModelSerializer):
     groups = GruopSerializer(many=True, read_only = True)
     class Meta:
-        model = CustomUser
+        model = User
         fields = '__all__'
     
     '''
@@ -57,7 +62,7 @@ class UserProfileSerializer(serializers.ModelSerializer):
     #groups = GruopSerializer(many=True)
 
     class Meta:
-        model = CustomUser
+        model = User
         #fields = ['id','last_login','is_superuser','username','first_name','last_name','email','is_staff','is_active','date_joined','groups','user_permissions']
         fields = '__all__'
     def create(self, validated_data):
@@ -80,7 +85,7 @@ class UserProfileSerializer(serializers.ModelSerializer):
             print("Error, no se envio el campo user_permissions")
 
         
-        user = CustomUser.objects.create(**validated_data)
+        user = User.objects.create(**validated_data)
         profile_data['id'] = user.id
         profile = Profile.objects.create(**profile_data)
         profile.save()
@@ -95,7 +100,7 @@ class UserProfileSerializer(serializers.ModelSerializer):
 
     def update(self, instance ,validated_data):
         print("iNSTANCE ->>>>>>>>>>>>>>>>>>>",validated_data)
-        user = CustomUser.objects.get(id = instance.id)                        
+        user = User.objects.get(id = instance.id)                        
         profile_data = validated_data.pop('perfil')
         try:
             groups_data = validated_data.pop('groups')
@@ -114,7 +119,7 @@ class UserProfileSerializer(serializers.ModelSerializer):
         print(profile_data)
 
         Profile.objects.filter(id=user.id).update(**profile_data)
-        CustomUser.objects.filter(id=user.id).update(**validated_data)
-        user = CustomUser.objects.get(id = user.id) 
+        User.objects.filter(id=user.id).update(**validated_data)
+        user = User.objects.get(id = user.id) 
         user.save()
         return user

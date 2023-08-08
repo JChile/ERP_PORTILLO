@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     'cuenta.apps.CuentaConfig',
+    'marketing.apps.MarketingConfig',
     'rest_framework',
     'corsheaders',
     'rest_framework_simplejwt.token_blacklist',
@@ -48,7 +49,7 @@ INSTALLED_APPS = [
 ]
 
 
-AUTH_USER_MODEL = 'cuenta.CustomUser'
+AUTH_USER_MODEL = 'cuenta.User'
 REST_FRAMEWORK = {
 
     'DEFAULT_AUTHENTICATION_CLASSES': (

@@ -1,6 +1,5 @@
 import React from "react";
 
-// const Icon = React.lazy(() => import("react-icons/md"));
 import * as Icons from "react-icons/md";
 const DynamicIcon = ({ name, ...props }) => {
   const IconComponent = Icons[name];

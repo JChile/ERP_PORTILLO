@@ -18,6 +18,7 @@ export const CreateUsuarios = () => {
     email: "",
     groups: [0],
     is_active: true,
+    perfil: {},
   });
 
   const {
@@ -111,7 +112,6 @@ export const CreateUsuarios = () => {
 
   // CREAR USUARIO
   const crearUsuario = async () => {
-    console.log(usuario);
     const validate = validarDatosUsuario(
       first_name,
       last_name,
@@ -122,9 +122,11 @@ export const CreateUsuarios = () => {
       groups
     );
     if (validate.length === 0) {
-      console.log(usuario);
       setVisibleProgress(true);
-      // const result = await createUsuario(usuario);
+      const usuarioJSON = { ...usuario };
+      delete usuarioJSON.confirm_password;
+      console.log(usuarioJSON);
+      const result = await createUsuario(usuarioJSON);
       // comprobar si se realizo con exito la creación del usuario
       setVisibleProgress(false);
       // navegamos atras

@@ -1,6 +1,6 @@
 import axios from "axios";
 
-export const updateUsuario = async (idUsuario, body) => {
+export const deleteLogicUsuario = async (idUsuario, body) => {
   const DOMAIN = import.meta.env.VITE_BACKEND_URL;
   const URL = `${DOMAIN}/api/user_profile/${idUsuario}`;
 

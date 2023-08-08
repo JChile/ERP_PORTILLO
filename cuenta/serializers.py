@@ -65,27 +65,43 @@ class UserProfileSerializer(serializers.ModelSerializer):
         model = User
         #fields = ['id','last_login','is_superuser','username','first_name','last_name','email','is_staff','is_active','date_joined','groups','user_permissions']
         fields = '__all__'
+    
+    username = serializers.CharField(required=False)
+    password = serializers.CharField(required=False)
     def create(self, validated_data):
         validated_data['password'] = make_password(validated_data.get('password'))
         profile_data = validated_data.pop('perfil')
-        #print( '\033[91m'+"validated data ------------------------->", groups_data,'\033[0m')
-
-
+        #print( '\033[91m'+"validated data ------------------------->", groups_data,'\033[0m')S
         try:
             groups_data = validated_data.pop('groups')
+                
+        except :
+            print("Error, no se envio el campo gropus")
+        try:
+            permission_data = validated_data.pop('user_permissions')
+
+        except :
+            print("Error, no se envio el campo user_permissions")
+        
+        
+        user = CustomUser.objects.create(**validated_data)
+
+        try:
             for i in groups_data:
                 user.groups.add(i)        
         except :
             print("Error, no se envio el campo gropus")
         try:
-            permission_data = validated_data.pop('user_permissions')
             for j in permission_data:
                 user.user_permissions.add(j)
         except :
             print("Error, no se envio el campo user_permissions")
 
         
+<<<<<<< HEAD
         user = User.objects.create(**validated_data)
+=======
+>>>>>>> origin/client
         profile_data['id'] = user.id
         profile = Profile.objects.create(**profile_data)
         profile.save()

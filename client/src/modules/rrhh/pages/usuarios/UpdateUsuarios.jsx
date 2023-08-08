@@ -17,6 +17,7 @@ export const UpdateUsuarios = () => {
     email: "",
     groups: [],
     is_active: false,
+    perfil: {},
   });
   const { first_name, last_name, email, groups, is_active } = usuario;
 
@@ -83,9 +84,11 @@ export const UpdateUsuarios = () => {
     const validate = validarDatosUsuario(first_name, last_name, email, groups);
 
     if (validate.length === 0) {
-      console.log(usuario);
+      const usuarioJSON = { ...usuario };
+      delete usuarioJSON.id;
+      console.log(usuarioJSON);
       setVisibleProgress(true);
-      // const result = await updateUsuario(idUsuario, usuario);
+      const result = await updateUsuario(idUsuario, usuarioJSON);
       // comprobar si se realizo con exito la creación del usuario
       setVisibleProgress(false);
       // navegamos atras
@@ -190,7 +193,12 @@ export const UpdateUsuarios = () => {
                   Rol
                 </span>
                 <div className="flex-1">
-                  <FilterRol defaultValue={groups[0]} onNewInput={onAddGroup} />
+                  {groups.length !== 0 && (
+                    <FilterRol
+                      defaultValue={groups[0]}
+                      onNewInput={onAddGroup}
+                    />
+                  )}
                 </div>
               </label>
             </div>

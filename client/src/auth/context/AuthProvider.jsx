@@ -38,7 +38,6 @@ export const AuthProvider = ({ children }) => {
     const data = await response.json();
 
     if (response.status == 200) {
-      console.log("Pasaste 200", data);
       const payloadUser = jwt_decode(data.access);
       const { groupsId } = payloadUser;
 
@@ -46,11 +45,16 @@ export const AuthProvider = ({ children }) => {
       setuser(payloadUser);
       localStorage.setItem("authTokens", JSON.stringify(data));
 
+      console.log(groupsId);
+
       // condicional module
       switch (groupsId) {
         // case rrhh
         case "1":
           navigate("/rrhh");
+          break;
+        case "2":
+          navigate("/marketing");
           break;
         // other, navigate to login
         default:

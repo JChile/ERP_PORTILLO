@@ -2,19 +2,20 @@ import { Autocomplete, TextField } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { getRoles } from "./getRoles";
 
-export const FilterRol = ({ onNewInput, defaultValue = 0 }) => {
-  const [result, setResult] = useState([
-    {
-      value: 0,
-      label: "Selecciona un rol",
-      id: 0,
-    },
-  ]);
+const defaultOption = {
+  value: 0,
+  label: "Selecciona un opcion",
+  id: 0,
+};
+export const FilterRol = ({ onNewInput, defaultValue = null }) => {
+  const [options, setOptions] = useState([defaultOption]);
+
+  const [value, setValue] = useState(defaultOption);
 
   const obtenerDataRoles = async () => {
     const resultPeticion = await getRoles();
     const formatSelect = [
-      ...result,
+      defaultOption,
       ...resultPeticion.map((element) => {
         return {
           value: element.id,
@@ -23,7 +24,14 @@ export const FilterRol = ({ onNewInput, defaultValue = 0 }) => {
         };
       }),
     ];
-    setResult(formatSelect);
+    setOptions(formatSelect);
+    // Verificar si defaultValue coincide con alguna opción y establecer el valor inicial
+    const defaultValueOption = formatSelect.find(
+      (option) => option.id === defaultValue
+    );
+    if (defaultValueOption) {
+      setValue(defaultValueOption);
+    }
   };
 
   useEffect(() => {
@@ -32,15 +40,17 @@ export const FilterRol = ({ onNewInput, defaultValue = 0 }) => {
 
   const handledChange = (event, value) => {
     onNewInput(value);
+    setValue(value);
   };
 
   return (
     <Autocomplete
-      options={result}
-      value={result[result.findIndex((item) => item.id === defaultValue)]}
+      options={options}
+      value={value}
       disableClearable
       getOptionLabel={(option) => option.label}
       onChange={handledChange}
+      isOptionEqualToValue={(option, value) => option.id === value.id}
       renderInput={(params) => <TextField {...params} size="small" />}
     />
   );

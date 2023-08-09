@@ -9,5 +9,5 @@ export const PrivateRouterRRHH = ({ children }) => {
     return <Navigate to={"/login"} replace />;
   }
   // the id 1 represent to RR.HH
-  return user.groupsId == "2" ? children : <Navigate to={"/login"} replace />;
+  return user.groupsId == "1" ? children : <Navigate to={"/login"} replace />;
 };

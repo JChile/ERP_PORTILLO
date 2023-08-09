@@ -33,7 +33,7 @@ export const RowItemUsuario = ({ item, onShowDeleteDialog }) => {
           to={`/rrhh/usuario/detail/${item.id}`}
         >{`${item.first_name} ${item.last_name}`}</Link>
       </TableCell>
-      <TableCell>{item.groups[0]}</TableCell>
+      <TableCell>{item.groups[0].name}</TableCell>
       <TableCell>{item.username}</TableCell>
       <TableCell>{item.email}</TableCell>
     </TableRow>

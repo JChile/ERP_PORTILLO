@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import RolItem from "../../components/RolItem/RolItem";
+import RolItem from "./components/RolItem";
 import TextField from "@mui/material/TextField";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";

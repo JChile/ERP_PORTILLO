@@ -28,10 +28,7 @@ class GroupList(generics.ListCreateAPIView):
             permissions = Permission.objects.all().filter(id__in=i["permissions"])
             permissionSerializer = PermissionSerializer(permissions,many = True)
             i["permissions"] = permissionSerializer.data
-
-
-
-
+            
         return Response(dataJson)
 
  

@@ -23,8 +23,9 @@ class SubCategoria(models.Model):
 class Campania(models.Model):
     
     ESTADO = (
-        (True, 'Activo'),
-        (False, 'Inactivo')
+        ('A', 'Activo'),
+        ('I', 'Inactivo'),
+        ('E', 'Eliminado')
     )
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     nombre = models.CharField(max_length=100,null=True)
@@ -33,7 +34,7 @@ class Campania(models.Model):
     coste_estimado = models.FloatField(null=True,blank=True)
     coste_real = models.FloatField(null=True,blank=True)
     descripcion = models.TextField(null=True,blank=True)
-    estado = models.CharField(max_length=100,default=True,choices=ESTADO,null=True)
+    estado = models.CharField(max_length=100,default='A',choices=ESTADO,null=True)
     proyecto = models.ForeignKey(Proyecto,on_delete=models.CASCADE)
     subCategoria = models.ForeignKey(SubCategoria, on_delete=models.CASCADE)
     def __str__(self):

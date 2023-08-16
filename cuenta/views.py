@@ -7,6 +7,7 @@ from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework.permissions import IsAuthenticated
+from django.shortcuts import get_object_or_404
 
 
 def index(request):
@@ -15,10 +16,41 @@ def index(request):
 class GroupList(generics.ListCreateAPIView):
     serializer_class = GruopSerializer
     queryset = Group.objects.all()
+    
+    def list(self, request):
+        queryset = Group.objects.all()
+        groupserializer = GruopSerializer(queryset, many=True)
+        permissions = Permission.objects.all()
+        permissionSerializer = PermissionSerializer(permissions, many = True)
+        dataJson = groupserializer.data
+
+        for i in dataJson:
+            permissions = Permission.objects.all().filter(id__in=i["permissions"])
+            permissionSerializer = PermissionSerializer(permissions,many = True)
+            i["permissions"] = permissionSerializer.data
+
+
+
+
+        return Response(dataJson)
+
+ 
 
 class GroupDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Group.objects.all()
     serializer_class = GruopSerializer
+    def retrieve(self, request, pk=None):
+        queryset = Group.objects.all()
+        group = get_object_or_404(queryset, pk=pk)
+        serializer = GruopSerializer(group)
+        permissions = Permission.objects.all().filter(id__in=serializer.data["permissions"])
+        permissionSerializer = PermissionSerializer(permissions,many = True)
+        dataJson = serializer.data
+        dataJson["permissions"] = permissionSerializer.data
+        
+        print( '\033[91m'+"------------------------->", dataJson,'\033[0m')
+
+        return Response(dataJson)
 
 
 class PermissionList(generics.ListCreateAPIView):

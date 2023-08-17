@@ -59,7 +59,6 @@ class CampaniaList(generics.ListCreateAPIView):
             subCategoriaSerializer = SubCategoriaSerializer(subcategoria_data,many = True)
             categoriaSerializer = CategoriaSerializer(categoria_data,many = True)
 
-
             i["proyecto"] = permissionSerializer.data
             i["user"] = userSerializer.data
             i["subCategoria"] = subCategoriaSerializer.data

@@ -18,17 +18,13 @@ class GroupList(generics.ListCreateAPIView):
     queryset = Group.objects.all()
     
     def list(self, request):
-        queryset = Group.objects.all()
-        groupserializer = GruopSerializer(queryset, many=True)
-        permissions = Permission.objects.all()
-        permissionSerializer = PermissionSerializer(permissions, many = True)
+        groups_queryset = Group.objects.all()
+        groupserializer = GruopSerializer(groups_queryset, many=True)
         dataJson = groupserializer.data
-
         for i in dataJson:
-            permissions = Permission.objects.all().filter(id__in=i["permissions"])
-            permissionSerializer = PermissionSerializer(permissions,many = True)
-            i["permissions"] = permissionSerializer.data
-            
+            permissions_queryset = Permission.objects.all().filter(id__in=i["permissions"])
+            permissionSerializer = PermissionSerializer(permissions_queryset,many = True)
+            i["permissions"] = permissionSerializer.data          
         return Response(dataJson)
 
  
@@ -37,16 +33,13 @@ class GroupDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Group.objects.all()
     serializer_class = GruopSerializer
     def retrieve(self, request, pk=None):
-        queryset = Group.objects.all()
-        group = get_object_or_404(queryset, pk=pk)
-        serializer = GruopSerializer(group)
-        permissions = Permission.objects.all().filter(id__in=serializer.data["permissions"])
-        permissionSerializer = PermissionSerializer(permissions,many = True)
-        dataJson = serializer.data
+        groups_queryset = Group.objects.all()
+        group = get_object_or_404(groups_queryset, pk=pk)
+        groupserializer = GruopSerializer(group)
+        permissions_queryset = Permission.objects.all().filter(id__in=groupserializer.data["permissions"])
+        permissionSerializer = PermissionSerializer(permissions_queryset,many = True)
+        dataJson = groupserializer.data
         dataJson["permissions"] = permissionSerializer.data
-        
-        print( '\033[91m'+"------------------------->", dataJson,'\033[0m')
-
         return Response(dataJson)
 
 

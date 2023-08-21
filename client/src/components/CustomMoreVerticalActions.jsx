@@ -9,6 +9,8 @@ const ITEM_HEIGHT = 48;
 export const CustomMoreVerticalActions = ({
   onDelete = () => console.log("delete"),
   onEdit = () => console.log("edit"),
+  activeOnDelete = true,
+  activeOnEdit = true,
 }) => {
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
@@ -45,14 +47,18 @@ export const CustomMoreVerticalActions = ({
           },
         }}
       >
-        <MenuItem key={"Editar"} onClick={onEdit}>
-          <FiEdit2 />
-          <span className="ps-2">Editar</span>
-        </MenuItem>
-        <MenuItem key={"Eliminar"} onClick={onDelete}>
-          <FiDelete />
-          <span className="ps-2">Eliminar</span>
-        </MenuItem>
+        {activeOnEdit && (
+          <MenuItem key={"Editar"} onClick={onEdit}>
+            <FiEdit2 />
+            <span className="ps-2">Editar</span>
+          </MenuItem>
+        )}
+        {activeOnDelete && (
+          <MenuItem key={"Eliminar"} onClick={onDelete}>
+            <FiDelete />
+            <span className="ps-2">Eliminar</span>
+          </MenuItem>
+        )}
       </Menu>
     </>
   );

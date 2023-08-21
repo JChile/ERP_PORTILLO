@@ -291,15 +291,18 @@ class User(AbstractUser):
     def __str__(self):
         return self.username
 
-'''
-@receiver(post_save, sender=CustomUser)
-def create_usuario_detalle(sender, instance, created, **kwargs):
-    if created:
-        Profile.objects.get_or_create(dni=instance)
-        print( '\033[91m'+"validated data ------------------------->", "HOla jeje",'\033[0m')
 
-        
-'''
+
+# @receiver(post_save, sender=User)
+# def create_usuario_detalle(sender, instance, created, **kwargs):
+#     if created:
+#         profile = Profile.objects.get_or_create(id=instance.id)
+#         user = User.objects.get(id=instance.id)
+#         print( '\033[91m'+"validated data ------------------------->", user,'\033[0m')
+#         user.perfil = Profile.objects.get(id=profile[0].id)
+#         user.save()
+
+
 
 
 

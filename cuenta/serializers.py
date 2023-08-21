@@ -1,4 +1,6 @@
+import statistics
 from django.contrib.auth.models import Group , Permission
+
 
 from rest_framework import serializers
 from .models import *
@@ -21,6 +23,8 @@ class GruopSerializer(serializers.ModelSerializer):
     class Meta:
         model = Group
         fields = '__all__'
+   
+    
 
 
 class MyTokenObtainPairSerializer(TokenObtainPairSerializer):

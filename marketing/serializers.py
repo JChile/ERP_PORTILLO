@@ -22,3 +22,10 @@ class CampaniaSerializer(serializers.ModelSerializer):
     class Meta:
         model = Campania
         fields = '__all__'
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        if self.instance:
+            self.fields['user'].required = False
+            self.fields['proyecto'].required = False
+            self.fields['subCategoria'].required = False

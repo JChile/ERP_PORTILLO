@@ -47,7 +47,6 @@ class ProfileSerializer(serializers.ModelSerializer):
 
 
 class UserSerializer(serializers.ModelSerializer):
-    groups = GruopSerializer(many=True, read_only = True)
     class Meta:
         model = User
         fields = '__all__'
@@ -140,3 +139,9 @@ class UserProfileSerializer(serializers.ModelSerializer):
         user = User.objects.get(id = user.id) 
         user.save()
         return user
+
+
+class ModuloSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Modulo
+        fields = '__all__'

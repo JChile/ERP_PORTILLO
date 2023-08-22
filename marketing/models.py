@@ -27,15 +27,17 @@ class Campania(models.Model):
         ('I', 'Inactivo'),
         ('E', 'Eliminado')
     )
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE,null=True, blank=True)
     nombre = models.CharField(max_length=100,null=True)
     fecha_estimada = models.DateField(null=True,blank=True)
     fecha_cierre = models.DateField(null=True,blank=True)
     coste_estimado = models.FloatField(null=True,blank=True)
     coste_real = models.FloatField(null=True,blank=True)
     descripcion = models.TextField(null=True,blank=True)
-    estado = models.CharField(max_length=100,default='A',choices=ESTADO,null=True)
-    proyecto = models.ForeignKey(Proyecto,on_delete=models.CASCADE)
-    subCategoria = models.ForeignKey(SubCategoria, on_delete=models.CASCADE)
+    estado = models.CharField(max_length=20,default='A',choices=ESTADO,null=True, blank=True)
+    proyecto = models.ForeignKey(Proyecto,on_delete=models.CASCADE,null=True,blank=True)
+    subCategoria = models.ForeignKey(SubCategoria, on_delete=models.CASCADE,null=True,blank=True)
     def __str__(self):
         return self.nombre
+    
+

@@ -2,16 +2,13 @@ from django.db import models
 from django.contrib.postgres.fields import ArrayField
 from django.core.validators import RegexValidator
 from django.contrib.auth.models import AbstractUser
-from django.contrib.auth.models import Group
+from django.contrib.auth.models import Group , Permission
 from django.dispatch import receiver
 from django.db.models.signals import post_save
 from django.utils.translation import gettext_lazy as _
+from django.contrib.contenttypes.models import ContentType
 
 
-    
-class CustomGroup(Group):
-    codigo = models.CharField(max_length=100,unique=True,null=True)
-    # Resto de los campos adicionales o modificaciones necesarios
 
 class Profile(models.Model):
     
@@ -292,6 +289,19 @@ class User(AbstractUser):
         return self.username
 
 
+class Modulo(models.Model):
+    ESTADO = (
+        ('A', 'Activo'),
+        ('I', 'Inactivo'),
+        ('E', 'Eliminado')
+    )
+
+    nombre = models.CharField(max_length=100, null=True, default=None)
+    model = models.ForeignKey(ContentType,on_delete=models.CASCADE, blank= True, null=True)
+    permissionss = models.ManyToManyField(Permission, blank=True)
+    estado = models.CharField(max_length=20,default='A',choices=ESTADO,null=True)
+    def __str__(self):
+        return self.nombre
 
 # @receiver(post_save, sender=User)
 # def create_usuario_detalle(sender, instance, created, **kwargs):

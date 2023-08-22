@@ -83,6 +83,14 @@ class ProfileDetail(generics.RetrieveUpdateDestroyAPIView):
 
 
 
+class ModuloList(generics.ListCreateAPIView):
+    serializer_class = ModuloSerializer
+    queryset = Modulo.objects.all()
+
+class ModuloDetail(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Modulo.objects.all()
+    serializer_class = ModuloSerializer
+
 '''
 @api_view(['GET'])
 def usuario_final_view(request):

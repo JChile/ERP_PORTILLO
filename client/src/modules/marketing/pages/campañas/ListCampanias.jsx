@@ -44,6 +44,28 @@ export const ListCampanias = () => {
     setActiveButton(buttonState);
   }
 
+  const filtrar = (nameFilter, value) => {
+    let resultFilter = []
+    switch (nameFilter) {
+      case "filter_active_campaign": {
+        resultFilter = campanias.filter((element) => {
+          return element.estado === 'A'
+        })
+        setCampaniasTemporal(resultFilter)
+        break;
+      }
+      case "filter_inactive_campaign": {
+        resultFilter = campanias.filter((element) => {
+          return element.estado === 'I'
+        })
+        setCampaniasTemporal(resultFilter)
+        break;
+      }
+      default:
+        break;
+    }
+  }
+
   // OBTENEMOS LAS CAMPAÑAS
   const obtenerCampanias = async () => {
     const result = await getCampanias();
@@ -56,7 +78,7 @@ export const ListCampanias = () => {
 
   const onDeleteItemSelected = async (idItem) => {
     const body = {
-      estado: 'I'
+      estado: 'E'
     };
     const result = await deleteCampania(idItem, body);
     obtenerCampanias();
@@ -88,14 +110,20 @@ export const ListCampanias = () => {
       <Paper>
         <div className="flex justify-center mt-4 mb-4">
           <button
-            onClick={() => handleButtonState(true)}
+            onClick={() => {
+              handleButtonState(true)
+              filtrar("filter_active_campaign")
+            }}
             className={`px-4 py-2 mr-2 rounded ${
               activeButton ? "bg-blue-500 text-white": "bg-gray-300"}`}
           >
             Campañas activas
           </button>
           <button
-            onClick={() => handleButtonState(false)}
+            onClick={() => {
+              handleButtonState(false)
+              filtrar("filter_inactive_campaign")
+            }}
             className={`px-4 py-2 mr-2 rounded ${
               !activeButton ? "bg-blue-500 text-white": "bg-gray-300"
             }`}

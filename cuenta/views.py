@@ -135,36 +135,6 @@ class GroupModuloList(generics.ListCreateAPIView):
     queryset = Group.objects.all()
     serializer_class = GroupModuloSerializer
     
-    def list(self, request):
-        queryset = Group.objects.all()
-        groupSerializer = GruopSerializer(queryset, many=True)
-        dataJson = groupSerializer.data
-
-        modulo_queryset = Modulo.objects.all()
-        moduloSerializer = ModuloSerializer(modulo_queryset, many=True)
-
-        permission_queryset = Permission.objects.all()
-        permissionSerializer = PermissionSerializer(permission_queryset, many=True)
-
-        contentType_queryset = ContentType.objects.all()
-        contentTypeSerializer = ContentTypeSerializer(contentType_queryset, many=True)
- 
-        for i in moduloSerializer.data:
-            i["can_add"] = False
-            i["can_change"] = False
-            i["can_delete"] = False
-            i["can_view"] = False
-
-        for i in dataJson:
-            permissions = i.pop("permissions")
-            permissions_data = permission_queryset.filter(id__in = permissions)
-            permissions_dataSerializer = PermissionSerializer(permissions_data, many=True)
-            print(permissions_dataSerializer.data)
-            i["modulos"] = moduloSerializer.data
-            i["permissions_name"] = permissions_dataSerializer.data
-
-                           
-        return Response(dataJson)
 
 class GroupModuloDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Group.objects.all()
@@ -187,11 +157,22 @@ class GroupModuloDetail(generics.RetrieveUpdateDestroyAPIView):
         contentTypeSerializer = ContentTypeSerializer(contentType_queryset, many=True)
 
 
-        for i in moduloSerializer.data:
-            i["can_add"] = False
-            i["can_change"] = False
-            i["can_delete"] = False
-            i["can_view"] = False
+        for a in permissionSerializer.data:
+            for i in moduloSerializer.data:           
+                auxAdd = "add_"+contentType_queryset.get(id = i.get("contentType")).model
+                auxChange = "change_"+contentType_queryset.get(id = i.get("contentType")).model
+                auxDelete = "delete_"+contentType_queryset.get(id = i.get("contentType")).model
+                auxView = "view_"+contentType_queryset.get(id = i.get("contentType")).model
+            
+                if a.get("codename") == auxAdd:
+                    i["can_add"] = [False , a.get("id")]
+                elif a.get("codename") == auxChange:
+                    i["can_change"] = [False , a.get("id")]
+                elif a.get("codename") == auxDelete:
+                    i["can_delete"] = [False , a.get("id")]
+                elif a.get("codename") == auxView:
+                    i["can_view"] = [False , a.get("id")]
+
         
         dataJson["modulos"] = moduloSerializer.data
         permissions = dataJson.pop("permissions")
@@ -206,15 +187,14 @@ class GroupModuloDetail(generics.RetrieveUpdateDestroyAPIView):
                 auxDelete = "delete_"+contentType_queryset.get(id = k.get("contentType")).model
                 auxView = "view_"+contentType_queryset.get(id = k.get("contentType")).model
                     
-                print(j.get("codename"))
                 if j.get("codename") == auxAdd:
-                    k["can_add"] = True     
+                    k["can_add"] = [True , j.get("id")]
                 elif j.get("codename") == auxChange:
-                    k["can_change"] = True
+                    k["can_change"] = [True , j.get("id")]
                 elif j.get("codename") == auxDelete:
-                    k["can_delete"] = True
+                    k["can_delete"] = [True , j.get("id")]
                 elif j.get("codename") == auxView:
-                    k["can_view"] = True
+                    k["can_view"] = [True , j.get("id")]
 
         return Response(dataJson)
 

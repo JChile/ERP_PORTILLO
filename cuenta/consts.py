@@ -1,0 +1,1 @@
+MODULOS = ["Profile","User","Proyecto","Categoria","SubCategoria","Campania","Lead"]

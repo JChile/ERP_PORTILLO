@@ -30,7 +30,7 @@ export const FilterSubcategoria = ({ onNewInput, defaultValue = null }) => {
       (option) => option.id === defaultValue
     );
     if (defaultValueOption) {
-      setValue(defaultOption);
+      setValue(defaultValueOption);
     }
   };
 
@@ -43,7 +43,7 @@ export const FilterSubcategoria = ({ onNewInput, defaultValue = null }) => {
     const controller = new AbortController();
     obtenerSubcategorias();
     return () => controller.abort();
-  }, []);
+  }, [defaultValue]);
 
   return (
     <Autocomplete

@@ -30,7 +30,7 @@ export const FilterProyectos = ({ defaultValue = null, onNewInput }) => {
       (option) => option.id === defaultValue
     );
     if (defaultValueOption) {
-      setValue(defaultOption);
+      setValue(defaultValueOption);
     }
   };
 
@@ -43,7 +43,7 @@ export const FilterProyectos = ({ defaultValue = null, onNewInput }) => {
     const controller = new AbortController();
     obtenerProyectos();
     return () => controller.abort();
-  }, []);
+  }, [defaultValue]);
 
   return (
     <Autocomplete

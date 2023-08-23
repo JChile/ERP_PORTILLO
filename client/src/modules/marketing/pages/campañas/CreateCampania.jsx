@@ -160,7 +160,7 @@ export const CreateCampania = () => {
   return (
     <>
       <div className="relative border-2 rounded-md border-inherit p-5">
-        <h1 className="text-2xl my-1">Registro de Campañas</h1>
+        <h1 className="text-lg font-bold">Campañas de marketing</h1>
         <hr className="my-4"></hr>
         <form
           method="post"

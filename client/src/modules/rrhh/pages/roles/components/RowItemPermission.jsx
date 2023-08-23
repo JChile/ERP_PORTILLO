@@ -1,7 +1,7 @@
 import { Checkbox, FormControlLabel, TableCell, TableRow } from "@mui/material";
 import React, { useState } from "react";
 
-export const PermissionItem = ({
+export const RowItemPermission = ({
   item,
   modifyPermission,
   modifyAllPermissions,

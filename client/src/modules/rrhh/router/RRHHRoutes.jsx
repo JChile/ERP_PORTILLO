@@ -3,6 +3,7 @@ import { Route, Routes } from "react-router-dom";
 import {
   CreateRol,
   CreateUsuarios,
+  DetailRol,
   DetailUsuarios,
   ListRol,
   ListUsuarios,
@@ -28,6 +29,7 @@ export const RRHHRoutes = () => {
             <Route path="" element={<ListRol />} />
             <Route path="create" element={<CreateRol />} />
             <Route path="update/:idRol" element={<UpdateRol />} />
+            <Route path="detail/:idRol" element={<DetailRol />} />
           </Route>
         </Routes>
       </NavBarRRHH>

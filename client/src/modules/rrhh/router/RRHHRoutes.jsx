@@ -1,15 +1,15 @@
 import React from "react";
 import { Route, Routes } from "react-router-dom";
 import {
+  CreateRol,
   CreateUsuarios,
   DetailUsuarios,
+  ListRol,
   ListUsuarios,
+  UpdateRol,
   UpdateUsuarios,
 } from "../pages";
 import { NavBarRRHH } from "../components";
-import CreateRol from "../pages/roles/CreateRol";
-import UpdateRol from "../pages/roles/UpdateRol";
-import ListRol from "../pages/roles/ListRol";
 
 export const RRHHRoutes = () => {
   return (

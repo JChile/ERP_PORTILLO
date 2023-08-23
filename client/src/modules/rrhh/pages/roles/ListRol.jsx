@@ -1,62 +1,18 @@
 import React, { useState, useEffect } from "react";
 import RolItem from "./components/RolItem";
-import TextField from "@mui/material/TextField";
-import Dialog from "@mui/material/Dialog";
-import DialogActions from "@mui/material/DialogActions";
-import DialogContent from "@mui/material/DialogContent";
-import DialogContentText from "@mui/material/DialogContentText";
-import DialogTitle from "@mui/material/DialogTitle";
-import Button from "@mui/material/Button";
 import { getRoles } from "./helpers/getRoles";
-import { createRoles } from "./helpers/createRoles";
+import { Link } from "react-router-dom";
 
-const ListRol = () => {
-  const [openForm, setOpenForm] = useState(false);
-  const [openUpdate, setOpenUpdate] = useState(false);
-  const [newItemForm, setNewItemForm] = useState({ itemName: "" });
-  const [itemList, setItemList] = useState([]);
-  /**
-   * Inicia cerrar el dialog para crear un nuevo rol
-   */
-  const handleOpenCreateDialog = () => setOpenForm((prev) => !prev);
-
-  const handleChangeNewItemForm = (event) => {
-    const { name, value } = event.target;
-    console.log(name, value);
-    setNewItemForm((prev) => {
-      return {
-        ...prev,
-        [name]: value,
-      };
-    });
-  };
-
-  const handleSaveItemDialog =  async (event) => {
-    event.preventDefault();
-    if (newItemForm.itemName) {
-      try {
-        createRoles({"name": newItemForm.itemName, "permissions": [13]})
-        handleOpenCreateDialog();
-      }
-      catch (err) { 
-        console.error(err);
-      }
-      setNewItemForm({ itemName: "" });
-
-    } else {
-      console.log("Complete los campos.");
-    }
-  };
-
+export const ListRol = () => {
+  const [listRoles, setListRoles] = useState([]);
   const obtenerRoles = async () => {
     const result = await getRoles();
-    setItemList(result);
+    setListRoles(result);
   };
 
-  useEffect( () => {
+  useEffect(() => {
     obtenerRoles();
-    return () => {
-    }
+    return () => {};
   }, [openForm]);
 
   return (
@@ -65,83 +21,14 @@ const ListRol = () => {
       <div className="w-4/5  max-w-screen-sm">
         {/* por ahora esta asi. */}
         {/* <Link to="/rrhh/roles/create"> */}
-        <Button
-          variant="contained"
-          color="success"
-          size="small"
-          onClick={handleOpenCreateDialog}
-        >
-          Agregar rol
-        </Button>
+        <Link to={"/rrhh/roles/create"}>Agregar rol</Link>
         {/* </Link> */}
       </div>
       <div className="w-4/5 max-w-screen-sm flex flex-col gap-y-4">
-        {itemList.map((item) => (
+        {listRoles.map((item) => (
           <RolItem key={item.id} item={item} />
         ))}
       </div>
-
-      {/* Dialog */}
-      <Dialog open={openForm} onClose={handleOpenCreateDialog}>
-        <DialogTitle>Registrar nuevo rol</DialogTitle>
-        <DialogContent>
-          <DialogContentText>
-            Por favor, completa el siguiente campo con el nombre del rol que
-            desea crear. Recuerda que el campo no puede estar vacío y solo se
-            aceptan caracteres alfabéticos.
-          </DialogContentText>
-          <DialogContent>
-            <TextField
-              autoFocus
-              margin="dense"
-              id="itemName"
-              name="itemName"
-              value={newItemForm.itemName}
-              onChange={handleChangeNewItemForm}
-              label="Nuevo rol"
-              type="text"
-              fullWidth
-              variant="standard"
-            />
-          </DialogContent>
-          <DialogActions>
-            <Button onClick={handleOpenCreateDialog}>Cancel</Button>
-            <Button onClick={handleSaveItemDialog}>Guardar</Button>
-          </DialogActions>
-        </DialogContent>
-      </Dialog>
-
-      {/* Dialog actualizar*/}
-      <Dialog open={openForm} onClose={handleOpenCreateDialog}>
-        <DialogTitle>Actualizar rol</DialogTitle>
-        <DialogContent>
-          <DialogContentText>
-            Por favor, completa el siguiente campo con el nuevo nombre del rol
-            que desea crear. Recuerda que el campo no puede estar vacío y solo
-            se aceptan caracteres alfabéticos.
-          </DialogContentText>
-          <DialogContent>
-            <TextField
-              autoFocus
-              margin="dense"
-              id="itemName"
-              name="itemName"
-              value={newItemForm.itemName}
-              onChange={handleChangeNewItemForm}
-              label="Nuevo rol"
-              type="text"
-              fullWidth
-              variant="standard"
-            />
-          </DialogContent>
-          <DialogActions>
-            <Button onClick={handleOpenCreateDialog}>Cancel</Button>
-            <Button onClick={handleSaveItemDialog}>Guardar</Button>
-          </DialogActions>
-        </DialogContent>
-      </Dialog>
     </div>
   );
 };
-
-export default ListRol;

@@ -1,74 +1,164 @@
-import React from "react";
-import { Button } from "@mui/material";
-import { Link, useNavigate } from "react-router-dom";
+import React, { useState } from "react";
+import { styled } from "@mui/material/styles";
+import Table from "@mui/material/Table";
+import TableBody from "@mui/material/TableBody";
+import TableCell, { tableCellClasses } from "@mui/material/TableCell";
+import TableContainer from "@mui/material/TableContainer";
+import TableHead from "@mui/material/TableHead";
+import TableRow from "@mui/material/TableRow";
+import Paper from "@mui/material/Paper";
+import { PermissionItem } from "./components/PermissionItem";
 
-const CreateRol = () => {
+// definimos el estilo del head
+const StyledTableCell = styled(TableCell)(({ theme }) => ({
+  [`&.${tableCellClasses.head}`]: {
+    backgroundColor: theme.palette.common.black,
+    color: theme.palette.common.white,
+  },
+  [`&.${tableCellClasses.body}`]: {
+    fontSize: 14,
+  },
+}));
 
-  const navigate = useNavigate()
-  const [form, setForm] = React.useState({rolName: ""})
-  const { rolName } = form
+export const CreateRol = () => {
+  const [rol, setRol] = useState({
+    nombre: "",
+  });
+  const { nombre } = rol;
 
-  const handleChange = (event) => {
-    const { name, value } = event.target;
-    setForm((prev) => ({
-      ...prev,
+  const [permissions, setPermissions] = useState([
+    {
+      id: 1,
+      nombre: "Gestión de campañas",
+      canView: true,
+      canEdit: true,
+      canDelete: true,
+      canCreate: true,
+    },
+    {
+      id: 2,
+      nombre: "Gestión de leads",
+      canView: true,
+      canEdit: true,
+      canDelete: true,
+      canCreate: true,
+    },
+    {
+      id: 3,
+      nombre: "Gestión de usuarios",
+      canView: true,
+      canEdit: true,
+      canDelete: true,
+      canCreate: true,
+    },
+    {
+      id: 4,
+      nombre: "Gestión de roles",
+      canView: true,
+      canEdit: true,
+      canDelete: true,
+      canCreate: true,
+    },
+  ]);
+
+  // HANDLED FORM
+  const handledForm = ({ target }) => {
+    const { name, value } = target;
+    setRol({
+      ...rol,
       [name]: value,
-    }));
+    });
   };
 
-  const handleSubmit = (event) => {
-    event.preventDefault()
-    if ( rolName ) {
-      
-    }
-  }
+  const modifyAllPermissions = (id, checked) => {
+    const auxPermissions = permissions.map((item) => {
+      if (item.id === id) {
+        return {
+          ...item,
+          canView: checked,
+          canEdit: checked,
+          canDelete: checked,
+          canCreate: checked,
+        };
+      } else {
+        return item;
+      }
+    });
+    console.log(auxPermissions);
+    setPermissions(auxPermissions);
+  };
+
+  const modifyPermission = (id, name, checked) => {
+    const auxPermissions = permissions.map((item) => {
+      if (item.id === id) {
+        return {
+          ...item,
+          [name]: checked,
+        };
+      } else {
+        return item;
+      }
+    });
+    console.log(auxPermissions);
+    setPermissions(auxPermissions);
+  };
 
   return (
-    <div className="w-4/5  max-w-screen-sm mx-auto flex flex-col gap-y-5">
-      <h1 className="text-center font-semibold text-2xl">Registrar Rol</h1>
-      <form
-        onSubmit={handleSubmit}
-        method="post"
-        className="min-w-[242px] flex flex-col gap-y-6"
-      >
-        <label className="block flex flex-col gap-y-1">
-          <span className="after:content-['*'] after:ml-0.5 after:text-yellow-500 block text-sm font-medium">
-            Rol
-          </span>
-          <input
-            type="text"
-            name="rolName"
-            className="mt-1 px-3 py-2 bg-white border shadow-sm border-slate-300 placeholder-slate-400 focus:outline-none focus:border-sky-500 focus:ring-sky-500 block w-full rounded-md sm:text-sm focus:ring-1"
-            placeholder="Administrador"
-            id='rolName'
-            value={rolName}
-            onChange={handleChange}
-          />
-        </label>
+    <>
+      <div className="relative border-2 rounded-md border-inherit p-5">
+        <h1 className="text-2xl my-1">Crear rol</h1>
+        <hr className="my-4"></hr>
+        <form method="post" className="min-w-[242px] flex gap-y-6 gap-x-8">
+          <div className="w-6/12 flex flex-col gap-y-5">
+            <label className="block flex flex-col gap-y-1 ">
+              <span className="after:content-['*'] after:ml-0.5 after:text-yellow-500 block text-sm font-medium">
+                Nombre Rol
+              </span>
+              <input
+                type="text"
+                name="nombre"
+                className="mt-1 px-3 py-2 bg-white border shadow-sm border-slate-300 placeholder-slate-400 focus:outline-none focus:border-sky-500 focus:ring-sky-500 block w-full rounded-md sm:text-sm focus:ring-1"
+                value={nombre}
+                onChange={handledForm}
+              />
+            </label>
+          </div>
+        </form>
 
-        <div className="flex justify-end gap-x-5">
-          <Link to={""}>
-            <Button
-              variant="contained"
-              color="error"
-              size="small"
-              onClick={() => navigate(-1)}
-            >
-              Cancelar
-            </Button>
-          </Link>
-          <Button
-            variant="contained"
-            color="success"
-            type="submit"
-            size="small"
-          >
-            Guardar
-          </Button>
+        {/* Permisos */}
+        <div className="mt-5">
+          <div className="w-6/12 flex flex-col gap-y-5 mb-2">
+            <label className="block flex flex-col gap-y-1 ">
+              <span className="after:content-['*'] after:ml-0.5 after:text-yellow-500 block text-sm font-medium">
+                Permisos
+              </span>
+            </label>
+          </div>
+          <TableContainer component={Paper}>
+            <Table sx={{ minWidth: 700 }} aria-label="customized table">
+              <TableHead>
+                <TableRow>
+                  <StyledTableCell>Módulos</StyledTableCell>
+                  <StyledTableCell align="center">Ver</StyledTableCell>
+                  <StyledTableCell align="center">Crear</StyledTableCell>
+                  <StyledTableCell align="center">Editar</StyledTableCell>
+                  <StyledTableCell align="center">Borrar</StyledTableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {permissions.map((row) => (
+                  <PermissionItem
+                    key={row.id}
+                    item={row}
+                    modifyPermission={modifyPermission}
+                    modifyAllPermissions={modifyAllPermissions}
+                  />
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
         </div>
-      </form>
-    </div>
+      </div>
+    </>
   );
 };
-
-export default CreateRol;

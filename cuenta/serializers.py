@@ -6,6 +6,7 @@ from rest_framework import serializers
 from .models import *
 from django.contrib.auth.hashers import make_password
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+from django.contrib.contenttypes.models import ContentType
 
 """
     Clases serializadoras, toman el modelo y retornan la data en fomato Json
@@ -24,7 +25,11 @@ class GruopSerializer(serializers.ModelSerializer):
         model = Group
         fields = '__all__'
    
-    
+class ContentTypeSerializer(serializers.ModelSerializer):
+    #permissions = PermissionSerializer(many=True, read_only = True)
+    class Meta:
+        model = ContentType
+        fields = '__all__'    
 
 
 class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
@@ -51,14 +56,13 @@ class UserSerializer(serializers.ModelSerializer):
         model = User
         fields = '__all__'
     
-    '''
+    
     def create(self, validated_data):
-        user_data = validated_data.pop('user_id')
-        print( '\033[91m'+"validated data ------------------------->", user_data,'\033[0m')
-        user = User.objects.create(**validated_data)
-        #UserProfile.objects.create(user=user, **profile_data)
+        user = super(UserSerializer, self).create(validated_data)
+        user.set_password(validated_data['password'])
+        user.save()
         return user
-    '''
+
 
 class UserProfileSerializer(serializers.ModelSerializer):
     perfil = ProfileSerializer()
@@ -68,9 +72,15 @@ class UserProfileSerializer(serializers.ModelSerializer):
         model = User
         #fields = ['id','last_login','is_superuser','username','first_name','last_name','email','is_staff','is_active','date_joined','groups','user_permissions']
         fields = '__all__'
-    
-    username = serializers.CharField(required=False)
-    password = serializers.CharField(required=False)
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        if self.instance:
+            self.fields['username'].required = False
+            self.fields['password'].required = False
+
+
     def create(self, validated_data):
         validated_data['password'] = make_password(validated_data.get('password'))
         profile_data = validated_data.pop('perfil')
@@ -144,4 +154,12 @@ class UserProfileSerializer(serializers.ModelSerializer):
 class ModuloSerializer(serializers.ModelSerializer):
     class Meta:
         model = Modulo
+        fields = '__all__'
+
+
+
+
+class GroupModuloSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Group
         fields = '__all__'

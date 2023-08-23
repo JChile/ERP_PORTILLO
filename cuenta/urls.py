@@ -22,6 +22,8 @@ urlpatterns = [
     re_path(r'^permission/(?P<pk>[0-9]+)$', views.PermissionDetail.as_view()),
     re_path(r'^modulo/$', views.ModuloList.as_view()),
     re_path(r'^modulo/(?P<pk>[0-9]+)$', views.ModuloDetail.as_view()),
+    re_path(r'^group_modulo/$', views.GroupModuloList.as_view()),
+    re_path(r'^group_modulo/(?P<pk>[0-9]+)$', views.GroupModuloDetail.as_view()),
 
     path('token/', MyTokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),

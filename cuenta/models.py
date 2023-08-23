@@ -10,6 +10,7 @@ from django.contrib.contenttypes.models import ContentType
 
 
 
+
 class Profile(models.Model):
     
     FONDO_PENSIONES = (
@@ -289,17 +290,11 @@ class User(AbstractUser):
         return self.username
 
 
-class Modulo(models.Model):
-    ESTADO = (
-        ('A', 'Activo'),
-        ('I', 'Inactivo'),
-        ('E', 'Eliminado')
-    )
 
+
+class Modulo(models.Model):
     nombre = models.CharField(max_length=100, null=True, default=None)
-    model = models.ForeignKey(ContentType,on_delete=models.CASCADE, blank= True, null=True)
-    permissionss = models.ManyToManyField(Permission, blank=True)
-    estado = models.CharField(max_length=20,default='A',choices=ESTADO,null=True)
+    contentType = models.ForeignKey(ContentType,on_delete=models.CASCADE, blank= True, null=True)
     def __str__(self):
         return self.nombre
 

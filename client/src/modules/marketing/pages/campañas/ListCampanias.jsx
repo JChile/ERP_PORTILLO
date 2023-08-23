@@ -2,7 +2,7 @@ import React, {useEffect, useState} from "react";
 import { getCampanias } from "./helpers/getCampanias";
 import { deleteCampania } from "./helpers/deleteCampania";
 import { Link } from "react-router-dom";
-import { RiAddBoxFill, RiUserAddFill } from "react-icons/ri";
+import { RiAddBoxFill } from "react-icons/ri";
 import { Paper, TableContainer, TableHead, TableRow, Table, TableCell, TableBody } from "@mui/material";
 import { RowItemCampania } from "./components/RowItemCampania";
 import { CustomCircularProgress } from "../../../../components/CustomCircularProgress";

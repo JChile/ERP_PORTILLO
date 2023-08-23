@@ -28,7 +28,7 @@ export const DialogDeleteCampania = ({
       </DialogTitle>
       <DialogContent>
         <DialogContentText id="alert-dialog-description">
-          {`¿Quiere eliminar a este usuario?: ${item.nombre} (${item.proyecto.nombre}) `}
+          {`¿Quiere eliminar esta campaña?: ${item.nombre} (${item.proyecto.nombre}) `}
         </DialogContentText>
       </DialogContent>
       <DialogActions>

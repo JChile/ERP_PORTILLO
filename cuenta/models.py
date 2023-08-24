@@ -294,7 +294,7 @@ class User(AbstractUser):
 
 class Modulo(models.Model):
     nombre = models.CharField(max_length=100, null=True, default=None)
-    contentType = models.ForeignKey(ContentType,on_delete=models.CASCADE, blank= True, null=True)
+    contentType = models.ForeignKey(ContentType,on_delete=models.CASCADE, blank= True, null=True,unique=True)
     def __str__(self):
         return self.nombre
 

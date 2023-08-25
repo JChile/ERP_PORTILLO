@@ -6,6 +6,9 @@ export const ListLeads = () => {
     <div>
       <Link to={"/marketing/lead/create"}>Agregar manualmente</Link>
       <Link to={"/marketing/lead/create/sheet"}>Agregar automaticamente</Link>
+
+      
+
     </div>
   );
 };

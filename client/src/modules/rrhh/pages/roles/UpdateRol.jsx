@@ -1,11 +1,5 @@
-import React from 'react'
+import React from "react";
 
-const UpdateRol = () => {
-  return (
-    <div>
-      
-    </div>
-  )
-}
-
-export default UpdateRol
+export const UpdateRol = () => {
+  return <div></div>;
+};

@@ -1,15 +1,16 @@
 import React from "react";
 import { Route, Routes } from "react-router-dom";
 import {
+  CreateRol,
   CreateUsuarios,
+  DetailRol,
   DetailUsuarios,
+  ListRol,
   ListUsuarios,
+  UpdateRol,
   UpdateUsuarios,
 } from "../pages";
 import { NavBarRRHH } from "../components";
-import CreateRol from "../pages/roles/CreateRol";
-import UpdateRol from "../pages/roles/UpdateRol";
-import ListRol from "../pages/roles/ListRol";
 
 export const RRHHRoutes = () => {
   return (
@@ -28,6 +29,7 @@ export const RRHHRoutes = () => {
             <Route path="" element={<ListRol />} />
             <Route path="create" element={<CreateRol />} />
             <Route path="update/:idRol" element={<UpdateRol />} />
+            <Route path="detail/:idRol" element={<DetailRol />} />
           </Route>
         </Routes>
       </NavBarRRHH>

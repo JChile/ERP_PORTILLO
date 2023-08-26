@@ -3,7 +3,7 @@ import { NavLink } from "react-router-dom";
 import { DynamicIcon } from "./DynamicIcon";
 
 export const CustomNavLinkSideBar = ({ item, open }) => {
-  const { url, title, src, gap = false } = item;
+  const { url, title, gap = false } = item;
   return (
     <NavLink
       to={url}
@@ -15,7 +15,7 @@ export const CustomNavLinkSideBar = ({ item, open }) => {
           ${gap ? "mt-9" : "mt-2"}`
       }
     >
-      <DynamicIcon name={src} />
+      {/* <DynamicIcon name={src} /> */}
       <span className={`${!open && "hidden"} origin-left duration-200`}>
         {title}
       </span>

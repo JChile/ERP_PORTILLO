@@ -27,12 +27,9 @@ export const AppRouter = () => {
             element={
               <SideBarApp>
                 <Routes>
-                  <Route path="usuarios/*" element={<UsuarioRoutes />}></Route>
+                  <Route path="user/*" element={<UsuarioRoutes />}></Route>
                   <Route path="roles/*" element={<RolRoutes />}></Route>
-                  <Route
-                    path="campanias/*"
-                    element={<CampaniaRoutes />}
-                  ></Route>
+                  <Route path="campania/*" element={<CampaniaRoutes />}></Route>
                 </Routes>
               </SideBarApp>
             }

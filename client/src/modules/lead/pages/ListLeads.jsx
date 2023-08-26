@@ -1,7 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { CustomCircularProgress } from "../../../../components/CustomCircularProgress";
-import { getLeads } from "./helpers/getLeads";
 import { RiAddBoxFill } from "react-icons/ri";
 import {
   Paper,
@@ -12,8 +10,12 @@ import {
   TableCell,
   TableBody,
 } from "@mui/material";
-import { CustomTablePagination } from "../../../../components/CustomTablePagination";
-import { RowItemLead } from "./components/RowItemLead";
+import { getLeads } from "../helpers";
+import { RowItemLead } from "../components";
+import {
+  CustomCircularProgress,
+  CustomTablePagination,
+} from "../../../components";
 
 export const ListLeads = () => {
   const [leads, setLeads] = useState([]);
@@ -32,7 +34,6 @@ export const ListLeads = () => {
     return () => controller.abort();
   }, []);
 
-
   return (
     <>
       <div className="p-3 flex flex-col gap-x-5 mb">
@@ -41,7 +42,7 @@ export const ListLeads = () => {
 
       <div className="flex gap-x-6 items-center my-6 justify-center">
         <Link
-          to={"/marketing/lead/create"}
+          to={"/lead/create"}
           className="bg-transparent hover:bg-blue-500 text-blue-500 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded flex items-center"
         >
           <RiAddBoxFill className="mr-2" />
@@ -49,7 +50,7 @@ export const ListLeads = () => {
         </Link>
 
         <Link
-          to={"/marketing/lead/create/sheet"}
+          to={"/lead/create/sheet"}
           className="bg-transparent hover:bg-blue-500 text-blue-500 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded flex items-center"
         >
           <RiAddBoxFill className="mr-2" />
@@ -102,7 +103,7 @@ export const ListLeads = () => {
                   <b>Acciones</b>
                 </TableCell>
                 <TableCell align="left" width={220}>
-                  <b>Nombre y Apellido</b>
+                  <b>Nombre</b>
                 </TableCell>
                 <TableCell align="left" width={50}>
                   <b>Celular</b>

@@ -8,6 +8,7 @@ import { Route, Routes } from "react-router-dom";
 import { RolRoutes } from "../modules/roles";
 import { UsuarioRoutes } from "../modules/usuario";
 import { CampaniaRoutes } from "../modules/campania";
+import { LeadRoutes } from "../modules/lead";
 
 export const AppRouter = () => {
   return (
@@ -30,6 +31,7 @@ export const AppRouter = () => {
                   <Route path="user/*" element={<UsuarioRoutes />}></Route>
                   <Route path="group/*" element={<RolRoutes />}></Route>
                   <Route path="campania/*" element={<CampaniaRoutes />}></Route>
+                  <Route path="lead/*" element={<LeadRoutes />}></Route>
                 </Routes>
               </SideBarApp>
             }

@@ -1,13 +1,13 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 
 export const AddLeadManual = () => {
-  const [nombre, setNombre] = useState('');
-  const [apellidoPaterno, setApellidoPaterno] = useState('');
-  const [apellidoMaterno, setApellidoMaterno] = useState('');
-  const [numeroCelular, setNumeroCelular] = useState('');
-  const [campania, setCampania] = useState('');
-  const [comentario, setComentario] = useState('');
-  const [asesorAsignado, setAsesorAsignado] = useState('');
+  const [nombre, setNombre] = useState("");
+  const [apellidoPaterno, setApellidoPaterno] = useState("");
+  const [apellidoMaterno, setApellidoMaterno] = useState("");
+  const [numeroCelular, setNumeroCelular] = useState("");
+  const [campania, setCampania] = useState("");
+  const [comentario, setComentario] = useState("");
+  const [asesorAsignado, setAsesorAsignado] = useState("");
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -22,10 +22,7 @@ export const AddLeadManual = () => {
     <div className="relative border-2 rounded-md border-inherit p-5">
       <h1 className="text-lg font-bold">Añadir lead manualmente</h1>
       <hr className="my-4"></hr>
-      <form
-        onSubmit={handleSubmit}
-        className="min-w-[242px] flex gap-x-8"
-      >
+      <form onSubmit={handleSubmit} className="min-w-[242px] flex gap-x-8">
         <div className="flex-1 flex flex-col gap-y-6">
           <label className="block flex flex-col gap-y-1">
             <span className="block text-sm font-medium">Nombre</span>

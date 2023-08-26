@@ -68,8 +68,6 @@ export const AuthProvider = ({ children }) => {
           });
         }
       });
-
-      console.log(permissions_user);
       // seteamos los estados
       setauthTokens(data);
       setuser(payloadUser);

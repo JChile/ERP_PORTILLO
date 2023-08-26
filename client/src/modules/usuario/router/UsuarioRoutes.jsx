@@ -10,12 +10,10 @@ import {
 export const UsuarioRoutes = () => {
   return (
     <Routes>
-      <Route path="">
-        <Route path="" element={<ListUsuarios />} />
-        <Route path="create" element={<CreateUsuarios />} />
-        <Route path="update/:idUsuario" element={<UpdateUsuarios />} />
-        <Route path="detail/:idUsuario" element={<DetailUsuarios />} />
-      </Route>
+      <Route path="" element={<ListUsuarios />} />
+      <Route path="create" element={<CreateUsuarios />} />
+      <Route path="update/:idUsuario" element={<UpdateUsuarios />} />
+      <Route path="detail/:idUsuario" element={<DetailUsuarios />} />
     </Routes>
   );
 };

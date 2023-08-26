@@ -1,9 +1,9 @@
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { TableCell, TableRow } from "@mui/material";
-import { CustomMoreVerticalActions } from "../../../../../components/CustomMoreVerticalActions";
 import { HiPhoneIncoming } from "react-icons/hi";
 import { HiPhoneMissedCall } from "react-icons/hi";
+import { CustomMoreVerticalActions } from "../../../components";
 
 export const RowItemLead = ({ item }) => {
   const {

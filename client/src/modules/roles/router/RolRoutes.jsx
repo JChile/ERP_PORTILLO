@@ -5,12 +5,10 @@ import { CreateRol, DetailRol, ListRol, UpdateRol } from "../pages";
 export const RolRoutes = () => {
   return (
     <Routes>
-      <Route path="">
-        <Route path="" element={<ListRol />} />
-        <Route path="create" element={<CreateRol />} />
-        <Route path="update/:idRol" element={<UpdateRol />} />
-        <Route path="detail/:idRol" element={<DetailRol />} />
-      </Route>
+      <Route path="" element={<ListRol />} />
+      <Route path="create" element={<CreateRol />} />
+      <Route path="update/:idRol" element={<UpdateRol />} />
+      <Route path="detail/:idRol" element={<DetailRol />} />
     </Routes>
   );
 };

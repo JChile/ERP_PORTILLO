@@ -1,7 +1,6 @@
-import React, { useEffect, useRef } from "react";
+import React from "react";
 import { HotTable } from "@handsontable/react";
 import { registerAllModules } from "handsontable/registry";
-import { textRenderer, registerRenderer } from "handsontable/renderers";
 import "handsontable/dist/handsontable.full.min.css";
 
 // register Handsontable's modules

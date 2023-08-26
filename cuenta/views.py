@@ -106,12 +106,13 @@ class UserDetail(generics.RetrieveUpdateDestroyAPIView):
             contentType_queryset = ContentType.objects.all()
 
             for a in permissionSerializer.data:
-                for i in moduloSerializer.data:           
-                    auxAdd = "add_"+contentType_queryset.get(id = i.get("contentType")).model
-                    auxChange = "change_"+contentType_queryset.get(id = i.get("contentType")).model
-                    auxDelete = "delete_"+contentType_queryset.get(id = i.get("contentType")).model
-                    auxView = "view_"+contentType_queryset.get(id = i.get("contentType")).model
-                
+                for i in moduloSerializer.data:
+                    model_name = contentType_queryset.get(id = i.get("contentType")).model           
+                    auxAdd = "add_"+model_name
+                    auxChange = "change_"+model_name
+                    auxDelete = "delete_"+model_name
+                    auxView = "view_"+model_name
+                    i["model"] = model_name
                     if a.get("codename") == auxAdd:
                         i["can_add"] = [False , a.get("id")]
                     elif a.get("codename") == auxChange:
@@ -129,11 +130,11 @@ class UserDetail(generics.RetrieveUpdateDestroyAPIView):
 
             for j in permissions_dataSerializer.data:
                 for k in moduloSerializer.data:
-                        
-                    auxAdd = "add_"+contentType_queryset.get(id = k.get("contentType")).model
-                    auxChange = "change_"+contentType_queryset.get(id = k.get("contentType")).model
-                    auxDelete = "delete_"+contentType_queryset.get(id = k.get("contentType")).model
-                    auxView = "view_"+contentType_queryset.get(id = k.get("contentType")).model
+                    model_name = contentType_queryset.get(id = k.get("contentType")).model
+                    auxAdd = "add_"+model_name
+                    auxChange = "change_"+model_name
+                    auxDelete = "delete_"+model_name
+                    auxView = "view_"+model_name
                         
                     if j.get("codename") == auxAdd:
                         k["can_add"] = [True , j.get("id")]
@@ -215,7 +216,8 @@ class GroupModuloDetail(generics.RetrieveUpdateDestroyAPIView):
         contentType_queryset = ContentType.objects.all()
 
         for a in permissionSerializer.data:
-            for i in moduloSerializer.data:           
+            for i in moduloSerializer.data:
+                           
                 auxAdd = "add_"+contentType_queryset.get(id = i.get("contentType")).model
                 auxChange = "change_"+contentType_queryset.get(id = i.get("contentType")).model
                 auxDelete = "delete_"+contentType_queryset.get(id = i.get("contentType")).model

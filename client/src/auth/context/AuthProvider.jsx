@@ -18,11 +18,14 @@ export const AuthProvider = ({ children }) => {
       : null
   );
 
+  const [permissions, setPermissions] = useState([]);
+
   // hook navegacion
   const navigate = useNavigate();
 
   // funcion para logearse
   const loginUser = async (dni, password) => {
+    const permissions_user = [];
     const DOMAIN = import.meta.env.VITE_BACKEND_URL;
     // ENDOINT AUTENTICACION
 
@@ -38,28 +41,51 @@ export const AuthProvider = ({ children }) => {
     const data = await response.json();
 
     if (response.status == 200) {
+      // decodificamos la data del payload
       const payloadUser = jwt_decode(data.access);
-      const { groupsId } = payloadUser;
+      // const { groupsId } = payloadUser;
+      // obtenemos el grupo
+      const { groups } = payloadUser;
+      // obtenemos los modulos con permisos
+      const { modulos } = groups;
 
+      modulos.foreach((item) => {
+        if (item["can_view"][0]) {
+          permissions_user.push({
+            title: item["name"],
+            url: item["model"],
+            permissions: {
+              can_add: item["can_add"][0],
+              can_change: item["can_change"][0],
+              can_delete: item["can_delete"][0],
+              can_view: item["can_view"][0],
+            },
+          });
+        }
+      });
+
+      // seteamos los estados
       setauthTokens(data);
       setuser(payloadUser);
+      setPermissions(permissions_user);
+
       localStorage.setItem("authTokens", JSON.stringify(data));
 
-      console.log(groupsId);
+      navigate(`/${permissions_user[0]["url"]}`);
 
-      // condicional module
-      switch (groupsId) {
-        // case rrhh
-        case "1":
-          navigate("/rrhh");
-          break;
-        case "2":
-          navigate("/marketing");
-          break;
-        // other, navigate to login
-        default:
-          navigate("/login");
-      }
+      // // condicional module
+      // switch (groupsId) {
+      //   // case rrhh
+      //   case "1":
+      //     navigate("/rrhh");
+      //     break;
+      //   case "2":
+      //     navigate("/marketing");
+      //     break;
+      //   // other, navigate to login
+      //   default:
+      //     navigate("/login");
+      // }
     }
     if (response.status == 401) {
       return data;
@@ -75,6 +101,7 @@ export const AuthProvider = ({ children }) => {
 
   const contextData = {
     user,
+    permissions,
     authTokens,
     loginUser,
     logoutUser,

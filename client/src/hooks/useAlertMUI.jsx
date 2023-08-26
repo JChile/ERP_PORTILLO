@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-const useAlertMUI = () => {
+export const useAlertMUI = () => {
   const [feedbackCreate, setFeedbackCreate] = useState(false);
   const [feedbackMessages, setFeedbackMessages] = useState({
     style_message: "error",
@@ -26,5 +26,3 @@ const useAlertMUI = () => {
     setFeedbackMessages,
   };
 };
-
-export default useAlertMUI;

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { styled } from "@mui/material/styles";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
@@ -9,6 +9,7 @@ import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import { RowItemPermission } from "./components/RowItemPermission";
 import { useNavigate } from "react-router-dom";
+import { createRoles, getModulos } from "./helpers";
 
 // definimos el estilo del head
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
@@ -23,44 +24,12 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
 
 export const CreateRol = () => {
   const [rol, setRol] = useState({
-    nombre: "",
+    nameRol: "",
   });
-  const { nombre } = rol;
 
-  const [permissions, setPermissions] = useState([
-    {
-      id: 1,
-      nombre: "Gestión de campañas",
-      canView: true,
-      canEdit: true,
-      canDelete: true,
-      canCreate: true,
-    },
-    {
-      id: 2,
-      nombre: "Gestión de leads",
-      canView: true,
-      canEdit: true,
-      canDelete: true,
-      canCreate: true,
-    },
-    {
-      id: 3,
-      nombre: "Gestión de usuarios",
-      canView: true,
-      canEdit: true,
-      canDelete: true,
-      canCreate: true,
-    },
-    {
-      id: 4,
-      nombre: "Gestión de roles",
-      canView: true,
-      canEdit: true,
-      canDelete: true,
-      canCreate: true,
-    },
-  ]);
+  const { nameRol } = rol;
+
+  const [modules, setModules] = useState([]);
 
   // ESTADOS PARA LA NAVEGACION
   const navigate = useNavigate();
@@ -78,41 +47,89 @@ export const CreateRol = () => {
   };
 
   const modifyAllPermissions = (id, checked) => {
-    const auxPermissions = permissions.map((item) => {
+    const auxPermissions = modules.map((item) => {
       if (item.id === id) {
         return {
           ...item,
-          canView: checked,
-          canEdit: checked,
-          canDelete: checked,
-          canCreate: checked,
+          can_view: [checked, item["can_view"][1]],
+          can_change: [checked, item["can_change"][1]],
+          can_delete: [checked, item["can_delete"][1]],
+          can_add: [checked, item["can_add"][1]],
         };
       } else {
         return item;
       }
     });
-    console.log(auxPermissions);
-    setPermissions(auxPermissions);
+    setModules(auxPermissions);
   };
 
   const modifyPermission = (id, name, checked) => {
-    const auxPermissions = permissions.map((item) => {
+    const auxPermissions = modules.map((item) => {
       if (item.id === id) {
         return {
           ...item,
-          [name]: checked,
+          [name]: [checked, item[name][1]],
         };
       } else {
         return item;
       }
     });
-    console.log(auxPermissions);
-    setPermissions(auxPermissions);
+    setModules(auxPermissions);
   };
 
-  const crearRol = () => {
-    console.log(permissions);
+  const crearRol = async () => {
+    const auxPermissions = [];
+
+    modules.forEach((data) => {
+      for (const key in data) {
+        if (Array.isArray(data[key]) && data[key][0] === true) {
+          auxPermissions.push(data[key][1]);
+        }
+      }
+    });
+
+    if (auxPermissions.length === 0 || nameRol.trim().length === 0) {
+      console.log(
+        "no asignaste ningun permiso o el nombre no fue proporcionado"
+      );
+    } else {
+      const newRole = {
+        name: nameRol,
+        permissions: auxPermissions,
+      };
+      console.log(newRole);
+      try {
+        // realizamos la llamada API
+        const result = await createRoles(newRole);
+        console.log("rol creado exitosamente", result);
+        // navegamos a la anterior vista
+        onNavigateBack();
+      } catch (error) {
+        // mostramos el error por medio de un alert
+        console.error("Error al crear el rol:", error.message);
+      }
+    }
   };
+
+  const traerDatosModulos = async () => {
+    const result = await getModulos();
+
+    const resultParser = result.map((item) => {
+      return {
+        ...item,
+        can_view: [true, item["can_view"]],
+        can_change: [true, item["can_change"]],
+        can_delete: [true, item["can_delete"]],
+        can_add: [true, item["can_add"]],
+      };
+    });
+    setModules(resultParser);
+  };
+
+  useEffect(() => {
+    // llamada a API donde me traiga todos los modulos del sistema
+    traerDatosModulos();
+  }, []);
 
   return (
     <>
@@ -142,9 +159,9 @@ export const CreateRol = () => {
             </span>
             <input
               type="text"
-              name="nombre"
+              name="nameRol"
               className="mt-1 px-3 py-2 bg-white border shadow-sm border-slate-300 placeholder-slate-400 focus:outline-none focus:border-sky-500 focus:ring-sky-500 block w-full rounded-md sm:text-sm focus:ring-1"
-              value={nombre}
+              value={nameRol}
               onChange={handledForm}
             />
           </label>
@@ -172,7 +189,7 @@ export const CreateRol = () => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {permissions.map((row) => (
+              {modules.map((row) => (
                 <RowItemPermission
                   key={row.id}
                   item={row}

@@ -1,2 +1,3 @@
-export * from './pages';
-export * from './context';
+export * from "./pages";
+export * from "./context/index";
+export * from "./components/index";

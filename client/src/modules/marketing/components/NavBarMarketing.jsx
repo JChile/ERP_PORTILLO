@@ -1,5 +1,5 @@
 import React from "react";
-import { CustomSideBar } from "../../../components/sidebar/CustomSideBar";
+import { CustomSideBar } from "../../../components";
 
 export const NavBarMarketing = ({ children }) => {
   const location = "/marketing";

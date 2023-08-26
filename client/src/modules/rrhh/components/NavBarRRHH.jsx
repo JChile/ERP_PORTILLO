@@ -1,5 +1,5 @@
 import React from "react";
-import { CustomSideBar } from "../../../components/sidebar/CustomSideBar";
+import { CustomSideBar } from "../../../components/CustomSideBar";
 
 export const NavBarRRHH = ({ children }) => {
   const location = "/rrhh";

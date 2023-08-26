@@ -1,6 +1,6 @@
 import React from "react";
 import { NavLink } from "react-router-dom";
-import DynamicIcon from "./DynamicIcon";
+import { DynamicIcon } from "./DynamicIcon";
 
 export const CustomNavLinkSideBar = ({ item, open }) => {
   const { url, title, src, gap = false } = item;

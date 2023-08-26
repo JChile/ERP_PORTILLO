@@ -1,10 +1,10 @@
 import React, { useState } from "react";
-import { CustomNavLinkSideBar } from "../CustomNavLinkSideBar";
-import { CustomLiLogout } from "../CustomLiLogout";
-import ArrowLeft from "../../assets/control.png";
-import LogoPortillo from "../../assets/portillo-logo-port.png";
+import { CustomNavLinkSideBar } from "./CustomNavLinkSideBar";
+import { CustomLiLogout } from "./CustomLiLogout";
+import ArrowLeft from "../assets/control.png";
+import LogoPortillo from "../assets/portillo-logo-port.png";
 
-export const CustomSideBar = ({ children, menus, title }) => {
+export const CustomSideBar = ({ children, menus }) => {
   const [open, setOpen] = useState(true);
 
   return (
@@ -27,13 +27,6 @@ export const CustomSideBar = ({ children, menus, title }) => {
               open && "rotate-[360deg]"
             }`}
           />
-          <h1
-            className={`text-white origin-left font-medium text-x duration-200 ${
-              !open && "scale-0"
-            }`}
-          >
-            {title}
-          </h1>
         </div>
         <ul className="pt-6">
           {/* MENUS DE NAVEGACION */}

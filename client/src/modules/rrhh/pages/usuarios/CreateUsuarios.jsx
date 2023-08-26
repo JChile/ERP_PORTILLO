@@ -1,12 +1,14 @@
 import React, { useState } from "react";
-import { FilterRol } from "../../../../components/filters/roles/FilterRol";
 import { useNavigate } from "react-router-dom";
 import { Checkbox } from "@mui/material";
-import useAlertMUI from "../../../../hooks/useAlertMUI";
-import CustomAlert from "../../../../components/CustomAlert";
-import { createUsuario } from "./helpers/createUsuario";
-import { CustomCircularProgress } from "../../../../components/CustomCircularProgress";
-import { CustomPasswordField } from "../../../../components/CustomPasswordField";
+import { createUsuario } from "./helpers";
+import {
+  CustomCircularProgress,
+  CustomPasswordField,
+  CustomAlert,
+  FilterRol,
+} from "../../../../components";
+import { useAlertMUI } from "../../../../hooks";
 
 export const CreateUsuarios = () => {
   const [usuario, setUsuario] = useState({

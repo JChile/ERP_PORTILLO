@@ -87,7 +87,66 @@ class UserDetail(generics.RetrieveUpdateDestroyAPIView):
         groupSerializer = GruopSerializer(grops_queryset,many = True)
     
         dataJson["user_permissions"] = permissionSerializer.data
-        dataJson["groups"] = groupSerializer.data
+        
+
+
+        if len(userSerializer.data) > 0 :
+            queryset = Group.objects.all()
+            group = get_object_or_404(queryset, pk=userSerializer.data["groups"][0])
+            groupSerializer = GruopSerializer(group) 
+            dataJsonGroup = groupSerializer.data
+            
+            
+            modulo_queryset = Modulo.objects.all()
+            moduloSerializer = ModuloSerializer(modulo_queryset, many=True)
+
+            permission_queryset = Permission.objects.all()
+            permissionSerializer = PermissionSerializer(permission_queryset, many=True)
+
+            contentType_queryset = ContentType.objects.all()
+
+            for a in permissionSerializer.data:
+                for i in moduloSerializer.data:           
+                    auxAdd = "add_"+contentType_queryset.get(id = i.get("contentType")).model
+                    auxChange = "change_"+contentType_queryset.get(id = i.get("contentType")).model
+                    auxDelete = "delete_"+contentType_queryset.get(id = i.get("contentType")).model
+                    auxView = "view_"+contentType_queryset.get(id = i.get("contentType")).model
+                
+                    if a.get("codename") == auxAdd:
+                        i["can_add"] = [False , a.get("id")]
+                    elif a.get("codename") == auxChange:
+                        i["can_change"] = [False , a.get("id")]
+                    elif a.get("codename") == auxDelete:
+                        i["can_delete"] = [False , a.get("id")]
+                    elif a.get("codename") == auxView:
+                        i["can_view"] = [False , a.get("id")]
+
+            
+            dataJsonGroup["modulos"] = moduloSerializer.data
+            permissions = dataJsonGroup.pop("permissions")
+            permissions_data = permission_queryset.filter(id__in = permissions)
+            permissions_dataSerializer = PermissionSerializer(permissions_data,many = True)
+
+            for j in permissions_dataSerializer.data:
+                for k in moduloSerializer.data:
+                        
+                    auxAdd = "add_"+contentType_queryset.get(id = k.get("contentType")).model
+                    auxChange = "change_"+contentType_queryset.get(id = k.get("contentType")).model
+                    auxDelete = "delete_"+contentType_queryset.get(id = k.get("contentType")).model
+                    auxView = "view_"+contentType_queryset.get(id = k.get("contentType")).model
+                        
+                    if j.get("codename") == auxAdd:
+                        k["can_add"] = [True , j.get("id")]
+                    elif j.get("codename") == auxChange:
+                        k["can_change"] = [True , j.get("id")]
+                    elif j.get("codename") == auxDelete:
+                        k["can_delete"] = [True , j.get("id")]
+                    elif j.get("codename") == auxView:
+                        k["can_view"] = [True , j.get("id")]
+
+            dataJson["groups"] = dataJsonGroup
+
+
 
         return Response(dataJson)
 

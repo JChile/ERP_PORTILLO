@@ -193,6 +193,7 @@ export const ListCampanias = () => {
         </TableContainer>
         <CustomTablePagination count={campaniasTemporal.length} />
       </Paper>
+
       {showDialog && (
         <DialogDeleteCampania
           item={itemSeleccionado}

@@ -108,7 +108,7 @@ export const ListCampanias = () => {
       </div>
       <div className="flex items-center justify-center">
         <Link
-          to={"/marketing/campaña/create/"}
+          to={"/campania/create/"}
           className="bg-transparent hover:bg-blue-500 text-blue-500 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded flex items-center"
         >
           <RiAddBoxFill className="mr-2" />

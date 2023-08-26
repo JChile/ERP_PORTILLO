@@ -12,7 +12,7 @@ export const RowItemUsuario = ({ item, onShowDeleteDialog }) => {
   };
 
   const onEditItemSelected = () => {
-    navigate(`/rrhh/usuario/update/${item.id}`);
+    navigate(`/user/update/${item.id}`);
   };
 
   return (
@@ -31,7 +31,7 @@ export const RowItemUsuario = ({ item, onShowDeleteDialog }) => {
       <TableCell>
         <Link
           className="text-blue-500"
-          to={`/rrhh/usuario/detail/${item.id}`}
+          to={`/user/detail/${item.id}`}
         >{`${item.first_name} ${item.last_name}`}</Link>
       </TableCell>
       <TableCell>{item.groups[0].name}</TableCell>

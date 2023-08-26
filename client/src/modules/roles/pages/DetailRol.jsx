@@ -63,7 +63,7 @@ export const DetailRol = () => {
         <div className="flex justify-center mt-4">
           <Link
             className="bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded mr-2"
-            to={`/rrhh/roles/update/${idRol}`}
+            to={`/group/update/${idRol}`}
           >
             Editar
           </Link>

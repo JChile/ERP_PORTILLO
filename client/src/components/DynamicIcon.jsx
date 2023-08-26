@@ -1,7 +1,7 @@
 import React from "react";
-
 import * as Icons from "react-icons/md";
-const DynamicIcon = ({ name, ...props }) => {
+
+export const DynamicIcon = ({ name, ...props }) => {
   const IconComponent = Icons[name];
 
   if (!IconComponent) {
@@ -11,5 +11,3 @@ const DynamicIcon = ({ name, ...props }) => {
 
   return <IconComponent {...props} size={30} />;
 };
-
-export default DynamicIcon;

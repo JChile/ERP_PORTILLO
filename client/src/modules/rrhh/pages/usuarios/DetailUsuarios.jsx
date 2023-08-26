@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { getUsuarioPerfil } from "./helpers/getUsuarioPerfil";
+import { getUsuarioPerfil } from "./helpers";
 
 export const DetailUsuarios = () => {
   const { idUsuario } = useParams();

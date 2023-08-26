@@ -1,10 +1,13 @@
 import React from "react";
-import { AuthProvider, Login } from "../auth";
+import { AuthProvider, Login, SideBarApp } from "../auth";
 import { Route, Routes } from "react-router-dom";
-import { RRHHRoutes } from "../modules/rrhh";
-import { MarketingRoutes } from "../modules/marketing";
-import { PrivateRouterRRHH } from "./PrivateRouterRRHH";
-import { PrivateRouterMarketing } from "./PrivateRouterMarketing";
+// import { RRHHRoutes } from "../modules/rrhh";
+// import { MarketingRoutes } from "../modules/marketing";
+// import { PrivateRouterRRHH } from "./PrivateRouterRRHH";
+// import { PrivateRouterMarketing } from "./PrivateRouterMarketing";
+import { RolRoutes } from "../modules/roles";
+import { UsuarioRoutes } from "../modules/usuario";
+import { CampaniaRoutes } from "../modules/campania";
 
 export const AppRouter = () => {
   return (
@@ -22,12 +25,34 @@ export const AppRouter = () => {
           <Route
             path="/*"
             element={
+              <SideBarApp>
+                <Routes>
+                  <Route path="user/*" element={<UsuarioRoutes />}></Route>
+                  <Route path="roles/*" element={<RolRoutes />}></Route>
+                  <Route path="campania/*" element={<CampaniaRoutes />}></Route>
+                </Routes>
+              </SideBarApp>
+            }
+          />
+        </Routes>
+
+        {/* <Routes>
+          <Route
+            path="login/*"
+            element={
               <Routes>
                 <Route path="/*" element={<Login />} />
               </Routes>
             }
           />
-          {/* RUTAS RECURSOS HUMANOS */}
+          <Route
+            path="/*"
+            element={
+              <Routes>
+                <Route path="/*" element={<Login />} />
+              </Routes>
+            }
+          />
           <Route
             path="rrhh/*"
             element={
@@ -36,7 +61,6 @@ export const AppRouter = () => {
               </PrivateRouterRRHH>
             }
           />
-          {/* RUTAS MERKETING */}
           <Route
             path="marketing/*"
             element={
@@ -45,7 +69,7 @@ export const AppRouter = () => {
               </PrivateRouterMarketing>
             }
           />
-        </Routes>
+        </Routes> */}
       </AuthProvider>
     </>
   );

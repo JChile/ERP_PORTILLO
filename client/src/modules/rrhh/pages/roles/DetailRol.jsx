@@ -9,6 +9,7 @@ import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { RowItemDetailPermission } from "./components/RowItemDetailPermission";
+import { getRolById } from "./helpers";
 
 // definimos el estilo del head
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
@@ -25,64 +26,11 @@ export const DetailRol = () => {
   const { idRol } = useParams();
   const numericId = parseInt(idRol);
   const [rolData, setRolData] = useState({
-    id: 2,
-    name: "Jefe de Marketing",
-    modulos: [
-      {
-        id: 1,
-        nombre: "Gestión de campañas",
-        canView: true,
-        canEdit: false,
-        canDelete: false,
-        canCreate: true,
-      },
-      {
-        id: 2,
-        nombre: "Gestión de leads",
-        canView: true,
-        canEdit: true,
-        canDelete: false,
-        canCreate: true,
-      },
-    ],
+    name: "",
+    modulos: [],
   });
 
   const { name, modulos } = rolData;
-
-  const [rolDataAux, setRolDataAux] = useState([
-    {
-      id: 1,
-      nombre: "Gestión de campañas",
-      canView: true,
-      canEdit: true,
-      canDelete: true,
-      canCreate: true,
-    },
-    {
-      id: 2,
-      nombre: "Gestión de leads",
-      canView: false,
-      canEdit: false,
-      canDelete: false,
-      canCreate: false,
-    },
-    {
-      id: 3,
-      nombre: "Gestión de usuarios",
-      canView: false,
-      canEdit: false,
-      canDelete: false,
-      canCreate: false,
-    },
-    {
-      id: 4,
-      nombre: "Gestión de roles",
-      canView: false,
-      canEdit: false,
-      canDelete: false,
-      canCreate: false,
-    },
-  ]);
 
   // ESTADOS PARA LA NAVEGACION
   const navigate = useNavigate();
@@ -90,50 +38,22 @@ export const DetailRol = () => {
     navigate(-1);
   };
 
-  const traerDatosModulos = () => {
-    // traer modulos disponibles en el sistema
+  const traerDataDetalleRol = async () => {
+    // verificamos si el id pasado por parametro es numerico
     if (!isNaN(numericId) && Number.isInteger(numericId)) {
-      console.log(idRol);
-    } else {
-      console.log("INVALIDO ID ROL");
-    }
-  };
-
-  const traerDatosModulosRol = () => {
-    // traer modulos del rol
-    if (!isNaN(numericId) && Number.isInteger(numericId)) {
-      console.log(idRol);
-    } else {
-      console.log("INVALIDO ID ROL");
-    }
-  };
-
-  const updateDatosModulosDetail = () => {
-    const updatedRolDataAux = rolDataAux.map((item) => {
-      const matchingModule = modulos.find((module) => module.id === item.id);
-      if (matchingModule) {
-        return {
-          ...item,
-          canView: matchingModule.canView,
-          canEdit: matchingModule.canEdit,
-          canDelete: matchingModule.canDelete,
-          canCreate: matchingModule.canCreate,
-        };
-      } else {
-        return item;
+      try {
+        const resultDetalleRol = await getRolById(idRol);
+        setRolData(resultDetalleRol);
+      } catch (error) {
+        console.error("Ocurrio un error:", error.message);
       }
-    });
-
-    setRolDataAux(updatedRolDataAux);
+    } else {
+      console.log("INVALIDO ID ROL");
+    }
   };
 
   useEffect(() => {
-    // consulto la data de modulos disponibles en el sistema y los coloco dentro de rolDataAux
-    traerDatosModulos();
-    // consulto la data de modulo permitidos por el rol y los coloc dentro de rolData
-    traerDatosModulosRol();
-    // Actualizo rolDataAux con los datos de rolData
-    updateDatosModulosDetail();
+    traerDataDetalleRol();
   }, []);
 
   return (
@@ -143,7 +63,7 @@ export const DetailRol = () => {
         <div className="flex justify-center mt-4">
           <Link
             className="bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded mr-2"
-            to={`/rrhh/roles/edit/${idRol}`}
+            to={`/rrhh/roles/update/${idRol}`}
           >
             Editar
           </Link>
@@ -189,7 +109,7 @@ export const DetailRol = () => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {rolDataAux.map((row) => (
+              {modulos.map((row) => (
                 <RowItemDetailPermission key={row.id} item={row} />
               ))}
             </TableBody>

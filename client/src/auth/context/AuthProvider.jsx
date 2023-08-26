@@ -18,11 +18,14 @@ export const AuthProvider = ({ children }) => {
       : null
   );
 
+  const [permissions, setPermissions] = useState([]);
+
   // hook navegacion
   const navigate = useNavigate();
 
   // funcion para logearse
-  const loginUser = async (dni, password) => {
+  const loginUser = async (username, password) => {
+    const permissions_user = [];
     const DOMAIN = import.meta.env.VITE_BACKEND_URL;
     // ENDOINT AUTENTICACION
 
@@ -32,34 +35,44 @@ export const AuthProvider = ({ children }) => {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ username: dni, password: password }),
+      body: JSON.stringify({ username: username, password: password }),
     });
 
     const data = await response.json();
 
     if (response.status == 200) {
+      // decodificamos la data del payload
       const payloadUser = jwt_decode(data.access);
-      const { groupsId } = payloadUser;
+      // obtenemos el grupo
+      const { user } = payloadUser;
+      const { groups } = user;
+      // obtenemos los modulos con permisos
+      const { modulos } = groups;
 
+      modulos.forEach((item) => {
+        if (item["can_view"][0]) {
+          permissions_user.push({
+            title: item["nombre"],
+            url: item["model"],
+            permissions: {
+              can_add: item["can_add"][0],
+              can_change: item["can_change"][0],
+              can_delete: item["can_delete"][0],
+              can_view: item["can_view"][0],
+            },
+          });
+        }
+      });
+
+      console.log(permissions_user);
+      // seteamos los estados
       setauthTokens(data);
       setuser(payloadUser);
+      setPermissions(permissions_user);
+
       localStorage.setItem("authTokens", JSON.stringify(data));
 
-      console.log(groupsId);
-
-      // condicional module
-      switch (groupsId) {
-        // case rrhh
-        case "1":
-          navigate("/rrhh");
-          break;
-        case "2":
-          navigate("/marketing");
-          break;
-        // other, navigate to login
-        default:
-          navigate("/login");
-      }
+      navigate(`/${permissions_user[0]["url"]}`);
     }
     if (response.status == 401) {
       return data;
@@ -69,12 +82,14 @@ export const AuthProvider = ({ children }) => {
   const logoutUser = () => {
     setauthTokens(null);
     setuser(null);
+    setPermissions(null);
     localStorage.removeItem("authTokens");
     navigate("/login");
   };
 
   const contextData = {
     user,
+    permissions,
     authTokens,
     loginUser,
     logoutUser,

@@ -1,6 +1,6 @@
 import statistics
 from django.contrib.auth.models import Group , Permission
-
+from . import views
 
 from rest_framework import serializers
 from .models import *
@@ -8,6 +8,7 @@ from django.contrib.auth.hashers import make_password
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from django.contrib.contenttypes.models import ContentType
 
+import requests
 """
     Clases serializadoras, toman el modelo y retornan la data en fomato Json
 """
@@ -32,15 +33,6 @@ class ContentTypeSerializer(serializers.ModelSerializer):
         fields = '__all__'    
 
 
-class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
-    @classmethod
-    def get_token(cls, user):
-        token = super().get_token(user)
-        token['username'] = user.username
-        if user.groups.all() :
-            token['groups'] = str(user.groups.all()[0])
-            token['groupsId'] = str(user.groups.all()[0].id)
-        return token
 
 
 
@@ -163,3 +155,19 @@ class GroupModuloSerializer(serializers.ModelSerializer):
     class Meta:
         model = Group
         fields = '__all__'
+
+
+
+class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
+    @classmethod
+    def get_token(cls, user):
+        token = super().get_token(user)
+        token['username'] = user.username
+        if user.groups.all() :
+            token['groups'] = str(user.groups.all()[0])
+            token['groupsId'] = str(user.groups.all()[0].id)
+            id = user.id
+        
+            token['user'] = (requests.get("http://127.0.0.1:8000/api/user/{}".format(id))).json()
+            
+        return token

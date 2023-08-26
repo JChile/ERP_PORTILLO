@@ -1,9 +1,8 @@
 import React, { useContext, useState } from "react";
 import { AuthContext } from "../context";
 import PortilloLogo from "../../assets/portillo-logo-port.png";
-// Manejo de alertas
-import useAlertMUI from "../../hooks/useAlertMUI";
-import CustomAlert from "../../components/CustomAlert";
+import { useAlertMUI } from "../../hooks";
+import { CustomAlert } from "../../components";
 
 export const Login = () => {
   // context

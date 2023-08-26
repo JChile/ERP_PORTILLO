@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { getRoles } from "./helpers/getRoles";
 import { Link } from "react-router-dom";
 import { RiUserAddLine } from "react-icons/ri";
 import Table from "@mui/material/Table";
@@ -10,9 +9,11 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import { RowItemRol } from "./components/RowItemRol";
+import { getRoles } from "./helpers";
 
 export const ListRol = () => {
   const [listRoles, setListRoles] = useState([]);
+
   const obtenerRoles = async () => {
     const result = await getRoles();
     setListRoles(result);
@@ -20,8 +21,7 @@ export const ListRol = () => {
 
   useEffect(() => {
     obtenerRoles();
-    return () => {};
-  }, [openForm]);
+  }, []);
 
   return (
     <>

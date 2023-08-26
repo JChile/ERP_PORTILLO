@@ -13,7 +13,7 @@ export const RowItemRol = ({ item }) => {
   };
 
   const onEditItemSelected = () => {
-    navigate(`/rrhh/roles/update/${item.id}`);
+    navigate(`/group/update/${item.id}`);
   };
 
   return (
@@ -31,7 +31,7 @@ export const RowItemRol = ({ item }) => {
       <TableCell>
         <Link
           className="text-blue-500"
-          to={`/rrhh/roles/detail/${item.id}`}
+          to={`/group/detail/${item.id}`}
         >{`${item.name}`}</Link>
       </TableCell>
     </TableRow>

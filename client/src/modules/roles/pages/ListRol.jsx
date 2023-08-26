@@ -27,7 +27,7 @@ export const ListRol = () => {
     <>
       <div className="flex items-center justify-end bg-gray-100 p-4">
         <Link
-          to={"/rrhh/roles/create"}
+          to={"/group/create"}
           className="bg-transparent hover:bg-blue-500 text-blue-500 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded flex items-center"
         >
           <RiUserAddLine className="mr-2" /> Añadir Rol

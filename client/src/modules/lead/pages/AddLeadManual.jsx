@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Checkbox } from "@mui/material";
+import { Checkbox, Select, MenuItem} from "@mui/material";
 import { FilterCampania } from "../../../components";
 
 export const AddLeadManual = () => {
@@ -134,15 +134,21 @@ export const AddLeadManual = () => {
 
           <label className="block flex flex-col gap-y-1">
             <span className="block text-sm font-medium">Estado</span>
-            <select
+            <Select
               name="estado"
               className="mt-1 px-3 py-2 bg-white border shadow-sm border-slate-300 focus:outline-none focus:border-sky-500 focus:ring-sky-500 block w-full rounded-md sm:text-sm focus:ring-1"
               value={estado}
               onChange={handledForm}
+              style={{
+                height: "2.64rem", // Ajusta el valor según tus necesidades
+                paddingTop: "1rem", // Ajusta el valor según tus necesidades
+                paddingBottom: "1rem",
+              }}
             >
-              <option value="">Selecciona una estado</option>
-              {/* Agrega opciones de campaña aquí */}
-            </select>
+              <MenuItem value="A">No responde</MenuItem>
+              <MenuItem value="I">En proceso</MenuItem>
+              <MenuItem value="E">Eliminado</MenuItem>
+            </Select>
           </label>
 
           <label className="block flex flex-col gap-y-1">

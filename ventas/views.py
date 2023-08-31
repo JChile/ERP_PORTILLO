@@ -34,5 +34,23 @@ class LlamadaDetail(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = LlamadaSerializer
     queryset = Llamada.objects.all()
 
+class EstadoList(generics.ListCreateAPIView):
+    serializer_class = EstadoSerializer
+    queryset = Estado.objects.all()
+
+class EstadoDetail(generics.RetrieveUpdateDestroyAPIView):
+    serializer_class = EstadoSerializer
+    queryset = Estado.objects.all()
+
+class ObjecionList(generics.ListCreateAPIView):
+    serializer_class = ObjecionSerializer
+    queryset = Objecion.objects.all()
+
+class ObjecionDetail(generics.RetrieveUpdateDestroyAPIView):
+    serializer_class = ObjecionSerializer
+    queryset = Objecion.objects.all()
+
+
+
 
 

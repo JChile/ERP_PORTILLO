@@ -10,6 +10,7 @@ import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import { getRolById, updateRol } from "../helpers";
 import { RowItemPermission } from "../components";
+import { CustomCircularProgress } from "../../../components";
 
 // definimos el estilo del head
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
@@ -32,6 +33,9 @@ export const UpdateRol = () => {
   });
 
   const { name, modulos } = rolData;
+
+  // estado de progress
+  const [visibleProgress, setVisibleProgress] = useState(false);
 
   // ESTADOS PARA LA NAVEGACION
   const navigate = useNavigate();
@@ -82,12 +86,14 @@ export const UpdateRol = () => {
   const traerDataDetalleRol = async () => {
     // verificamos si el id pasado por parametro es numerico
     if (!isNaN(numericId) && Number.isInteger(numericId)) {
+      setVisibleProgress(true);
       try {
         const resultDetalleRol = await getRolById(idRol);
         setRolData(resultDetalleRol);
       } catch (error) {
         console.error("Ocurrio un error:", error.message);
       }
+      setVisibleProgress(false);
     } else {
       console.log("INVALIDO ID ROL");
     }
@@ -116,9 +122,11 @@ export const UpdateRol = () => {
       };
 
       try {
+        setVisibleProgress(true);
         // realizamos la llamada API
         const result = await updateRol(idRol, newRole);
         console.log("rol actualizado exitosamente", result);
+        setVisibleProgress(false);
         // navegamos a la anterior vista
         onNavigateBack();
       } catch (error) {
@@ -202,6 +210,8 @@ export const UpdateRol = () => {
           </Table>
         </TableContainer>
       </div>
+      {/* CIRCULAR PROGRESS */}
+      {visibleProgress && <CustomCircularProgress />}
     </>
   );
 };

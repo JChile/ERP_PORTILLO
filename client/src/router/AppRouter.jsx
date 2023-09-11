@@ -35,7 +35,6 @@ export const AppRouter = () => {
           <Route
             path="/*"
             element={
-              <PrivateModuleRouter>
                 <SideBarApp>
                   <Routes>
                     <Route path="user/*" element={<UsuarioRoutes />}></Route>
@@ -48,7 +47,6 @@ export const AppRouter = () => {
                     <Route path="asesor/*" element={<AsesorRoutes />} />
                   </Routes>
                 </SideBarApp>
-              </PrivateModuleRouter>
             }
           />
         </Routes>

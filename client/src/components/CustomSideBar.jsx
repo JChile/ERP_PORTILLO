@@ -11,7 +11,7 @@ export const CustomSideBar = ({ children, menus }) => {
     <div className="flex">
       <div
         className={` ${
-          open ? "w-72" : "w-20 "
+          open ? "min-w-150 max-w-150" : "max-w-20  min-w-20"
         } bg-dark-purple h-screen p-5  pt-8 relative duration-300`}
       >
         <img
@@ -37,7 +37,9 @@ export const CustomSideBar = ({ children, menus }) => {
           <CustomLiLogout open={open} />
         </ul>
       </div>
-      <div className="relative h-screen flex-1 p-7">{children}</div>
+      <div className="relative h-screen flex-1 p-7 overflow-y-auto">
+        {children}
+      </div>
     </div>
   );
 };

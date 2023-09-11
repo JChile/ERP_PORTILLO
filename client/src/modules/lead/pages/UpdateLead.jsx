@@ -1,14 +1,27 @@
-import React, { useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import jwtDecode from "jwt-decode";
+import { getLead, updateLead } from "../helpers";
 import { Checkbox } from "@mui/material";
-import { useNavigate } from "react-router-dom";
-import { createLead } from "../helpers/createLead";
-import { CustomAlert, FilterCampania, CustomCircularProgress } from "../../../components";
+import { useAlertMUI } from "../../../hooks";
+import {
+  CustomAlert,
+  CustomCircularProgress,
+  FilterCampania,
+} from "../../../components";
 import { FilterEstadoLead } from "../../../components/filters/estado/FilterEstadoLead";
 import { FilterObjecion } from "../../../components/filters/objecion/FilterObjecion";
 import { FilterAsesor } from "../../../components/filters/asesor/FilterAsesor";
-import { useAlertMUI } from "../../../hooks";
+import { AuthContext } from "../../../auth";
 
-export const AddLeadManual = () => {
+export const UpdateLead = () => {
+  const { idLead } = useParams();
+  const { authTokens } = useContext(AuthContext);
+  /* obtenemos los datos de la sesión para enviarlo. */
+  const [currentUser, setCurrentUser] = useState(() =>
+    jwtDecode(authTokens.refresh)
+  );
+
   const [lead, setLead] = useState({
     nombre: "",
     apellido: "",
@@ -47,15 +60,17 @@ export const AddLeadManual = () => {
 
   const [visibleProgress, setVisibleProgress] = useState(false);
 
-  const navigate = useNavigate();
-  const onNavigateBack = () => {
-    navigate(-1);
+  const obtenerLead = async (idLead) => {
+    const result = await getLead(idLead);
+    delete result?.categoria;
+    setLead({
+      ...result,
+      user: currentUser.user_id,
+      proyecto: result.proyecto.id,
+      subCategoria: result.subCategoria.id,
+    });
   };
 
-  const handledForm = ({target}) =>{
-    const {name, value} = target
-    setLead ({...lead, [name]:value})
-  }
   const onAddCheckInput = (event) => {
     setLead({ ...lead, llamar: !llamar });
   };
@@ -111,38 +126,58 @@ export const AddLeadManual = () => {
     return errors.join("\n");
   };
 
-  const crearLead = async () => {
+  const navigate = useNavigate();
+  const onNavigateBack = () => {
+    navigate(-1);
+  };
+
+  const actualizarLead = async () => {
     const validationMessage = validateLead(
-      nombre,
-      apellido,
-      celular,
-      comentario,
-      horaEntrega,
-      mensajeMarketing,
-      llamar,
-      asesor,
-      campania,
-      estado,
-      objeciones,
+        nombre,
+        apellido,
+        celular,
+        comentario,
+        horaEntrega,
+        mensajeMarketing,
+        llamar,
+        asesor,
+        campania,
+        estado,
+        objeciones,
     );
 
     if (validationMessage) {
+      // Si hay campos faltantes, mostrar una alerta con los mensajes de error concatenados
       setFeedbackMessages({
         style_message: "warning",
         feedback_description_error: validationMessage,
       });
       handleClickFeedback();
     } else {
-      //setVisibleProgress(true);
-      console.log(lead);
-      const result = await createLead(lead);
-      //setVisibleProgress(false);
+      setVisibleProgress(true);
+      const result = await updateLead(idLead, lead);
+      setVisibleProgress(false);
       onNavigateBack();
     }
   };
+
+  const handledForm = (event) => {
+    const { name, value } = event.target;
+    setLead({
+      ...lead,
+      [name]: value,
+    });
+  };
+
+  useEffect(() => {
+    const controller = new AbortController();
+    obtenerLead(idLead);
+    return () => controller.abort();
+  }, []);
+
   return (
     <>
-    <div className="relative border-2 rounded-md border-inherit p-5">
+      <div className="relative border-2 rounded-md border-inherit p-5">
       <h1 className="text-lg font-bold">Añadir lead manualmente</h1>
       <hr className="my-4"></hr>
       <form method="post" className="min-w-[242px] flex gap-x-8">
@@ -266,28 +301,28 @@ export const AddLeadManual = () => {
         </div>
       </form>
     </div>
-    <div className="flex justify-center mt-4">
-    <button
-      className="bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded mr-2"
-      onClick={crearLead}
-    >
-      Guardar
-    </button>
-    <button
-      className="bg-gray-300 hover:bg-gray-400 text-gray-700 py-2 px-4 rounded"
-      onClick={onNavigateBack}
-    >
-      Cancelar
-    </button>
-  </div>
-  {/* COMPONENTE ALERTA */}
-  <CustomAlert
+    <div className="flex justify-center mt-4 mb-4">
+        <button
+          className="bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded mr-2"
+          onClick={actualizarLead}
+        >
+          Guardar
+        </button>
+        <button
+          className="bg-gray-500 hover:bg-gray-600 text-white py-2 px-4 rounded"
+          onClick={onNavigateBack}
+        >
+          Cancelar
+        </button>
+      </div>
+      {/* COMPONENTE ALERTA */}
+      <CustomAlert
         feedbackCreate={feedbackCreate}
         feedbackMessages={feedbackMessages}
         handleCloseFeedback={handleCloseFeedback}
       />
-  {/* CIRCULAR PROGRESS */}
-  {visibleProgress && <CustomCircularProgress />}
-  </>
+      {/* CIRCULAR PROGRESS */}
+      {visibleProgress && <CustomCircularProgress />}
+    </>
   );
 };

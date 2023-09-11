@@ -22,7 +22,7 @@ export const RowItemCampania = ({ item, onShowDeleteDialog }) => {
   };
 
   const onEditItemSelected = () => {
-    navigate(`/marketing/campaña/update/${id}`);
+    navigate(`/campania/update/${id}`);
   };
 
   return (
@@ -35,7 +35,7 @@ export const RowItemCampania = ({ item, onShowDeleteDialog }) => {
       </TableCell>
       <TableCell>
         <Link
-          to={`/marketing/campaña/detail/${id}`}
+          to={`/campania/detail/${id}`}
           style={{
             textDecoration: "none",
             color: "black",

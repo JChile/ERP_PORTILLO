@@ -4,6 +4,9 @@ import { AuthContext } from "./AuthContext";
 import { useNavigate } from "react-router-dom";
 
 export const AuthProvider = ({ children }) => {
+  // hook navegacion
+  const navigate = useNavigate();
+
   // estado del token
   const [authTokens, setauthTokens] = useState(() =>
     localStorage.getItem("authTokens")
@@ -18,10 +21,12 @@ export const AuthProvider = ({ children }) => {
       : null
   );
 
-  const [permissions, setPermissions] = useState([]);
-
-  // hook navegacion
-  const navigate = useNavigate();
+  // estado de la informacion de los permisos
+  const [permissions, setPermissions] = useState(() =>
+    localStorage.getItem("permissions")
+      ? JSON.parse(localStorage.getItem("permissions"))
+      : null
+  );
 
   // funcion para logearse
   const loginUser = async (username, password) => {
@@ -63,15 +68,13 @@ export const AuthProvider = ({ children }) => {
           });
         }
       });
-
-      console.log(permissions_user);
       // seteamos los estados
       setauthTokens(data);
       setuser(payloadUser);
       setPermissions(permissions_user);
 
       localStorage.setItem("authTokens", JSON.stringify(data));
-
+      localStorage.setItem("permissions", JSON.stringify(permissions_user));
       navigate(`/${permissions_user[0]["url"]}`);
     }
     if (response.status == 401) {
@@ -84,6 +87,7 @@ export const AuthProvider = ({ children }) => {
     setuser(null);
     setPermissions(null);
     localStorage.removeItem("authTokens");
+    localStorage.removeItem("permissions");
     navigate("/login");
   };
 

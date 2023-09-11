@@ -10,6 +10,7 @@ import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import { RowItemDetailPermission } from "../components";
 import { getRolById } from "../helpers";
+import { CustomCircularProgress } from "../../../components";
 
 // definimos el estilo del head
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
@@ -29,6 +30,8 @@ export const DetailRol = () => {
     name: "",
     modulos: [],
   });
+  // estado de progress
+  const [visibleProgress, setVisibleProgress] = useState(false);
 
   const { name, modulos } = rolData;
 
@@ -41,12 +44,14 @@ export const DetailRol = () => {
   const traerDataDetalleRol = async () => {
     // verificamos si el id pasado por parametro es numerico
     if (!isNaN(numericId) && Number.isInteger(numericId)) {
+      setVisibleProgress(true);
       try {
         const resultDetalleRol = await getRolById(idRol);
         setRolData(resultDetalleRol);
       } catch (error) {
         console.error("Ocurrio un error:", error.message);
       }
+      setVisibleProgress(false);
     } else {
       console.log("INVALIDO ID ROL");
     }
@@ -116,6 +121,8 @@ export const DetailRol = () => {
           </Table>
         </TableContainer>
       </div>
+      {/* CIRCULAR PROGRESS */}
+      {visibleProgress && <CustomCircularProgress />}
     </>
   );
 };

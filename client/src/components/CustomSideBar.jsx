@@ -37,7 +37,8 @@ export const CustomSideBar = ({ children, menus }) => {
           <CustomLiLogout open={open} />
         </ul>
       </div>
-      <div className="relative h-screen flex-1 p-7 overflow-y-auto">
+      {/**  Lado derecho del a interfaz, permite cargar el contenido */}
+      <div className="relative h-screen flex-1 overflow-y-auto">
         {children}
       </div>
     </div>

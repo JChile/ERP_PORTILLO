@@ -49,8 +49,6 @@ export const RowItemLead = ({ item }) => {
               <br />
               {apellido}
             </span>
-            <hr />
-            <span className="italic">Asesor: {asesor}</span>
           </div>
         </Link>
       </TableCell>
@@ -81,9 +79,9 @@ export const RowItemLead = ({ item }) => {
           {celular}
         </div>
       </TableCell>
-      <TableCell>{estado}</TableCell>
-      <TableCell>{objeciones}</TableCell>
-      <TableCell>{campania}</TableCell>
+      <TableCell>{estado.nombre}</TableCell>
+      <TableCell>{objeciones.nombre}</TableCell>
+      <TableCell>{campania.nombre}</TableCell>
       <TableCell>{comentario}</TableCell>
       <TableCell>{horaEntrega}</TableCell>
     </TableRow>

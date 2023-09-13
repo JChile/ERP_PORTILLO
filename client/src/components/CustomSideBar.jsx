@@ -16,7 +16,7 @@ export const CustomSideBar = ({ children, menus }) => {
       >
         <img
           src={ArrowLeft}
-          className={`absolute cursor-pointer -right-3 top-9 w-7 border-dark-purple
+          className={`absolute cursor-pointer right-1 top-9 w-7 border-dark-purple
            border-2 rounded-full  ${!open && "rotate-180"}`}
           onClick={() => setOpen(!open)}
         />

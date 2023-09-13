@@ -1,36 +1,76 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { RiAddBoxFill } from "react-icons/ri";
-import {
-  Paper,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Table,
-  TableCell,
-  TableBody,
-} from "@mui/material";
 import { getLeads } from "../helpers";
-import { RowItemLead } from "../components";
 import {
   CustomCircularProgress,
   CustomTablePagination,
 } from "../../../components";
 import { CustomTopBar } from "../../../components/CustomTopBar";
 import { FilterEstadoLead } from "../../../components/filters/estado/FilterEstadoLead";
+import { CustomTable } from "../../../components/CustomTable";
+import { Input } from "@mui/material";
+import { CustomInputBase } from "../../../components/CustomInputBase";
+import { CustomSelectedTable } from "../components/CustomSelectedTable";
+
+const headers = [
+  "Acciones",
+  "Nombre",
+  "Celular",
+  "Estado",
+  "Objeciones",
+  "Campaña",
+  "Comentario",
+  "Hora",
+];
+
+const filters = ["Nombre", "Estado", "Campaña"];
 
 export const ListLeads = () => {
+  const [filterLeads, setFilterLeads] = useState([]);
   const [leads, setLeads] = useState([]);
   const [visibleProgress, setVisibleProgress] = useState(true);
-  const [filters, setFilters] = useState({
-    nombre: null,
-    campania: null,
-    estado: null,
-  });
+  const [unassigendLeadsTable, setUnassignedLeadsTable] = useState(false);
 
   const loadLeads = async () => {
     const data = await getLeads();
     setLeads(data);
+    setFilterLeads(data);
+  };
+
+  const handleSearchButton = (filter, pattern) => {
+    const filterValue = filters.find((element) => element === filter);
+    console.log(filterValue);
+
+    switch (filterValue) {
+      case "Nombre": {
+        const filteredData = leads.filter((item) => {
+          const { nombre, apellido } = item;
+          const joinName = `${nombre}${apellido}`;
+          return joinName.toLowerCase().includes(pattern.toLowerCase());
+        });
+        setFilterLeads(filteredData);
+        break;
+      }
+      case "Estado": {
+        const filteredData = leads.filter((item) => {
+          const { estado } = item;
+          const { nombre } = estado;
+          return nombre.toLowerCase().includes(pattern.toLowerCase());
+        });
+        setFilterLeads(filteredData);
+        break;
+      }
+      case "Campaña": {
+        const filteredData = leads.filter((item) => {
+          const { campania } = item;
+          const { nombre } = campania;
+          return nombre.toLowerCase().includes(pattern.toLowerCase());
+        });
+        setFilterLeads(filteredData);
+        break;
+      }
+    }
   };
 
   useEffect(() => {
@@ -41,8 +81,6 @@ export const ListLeads = () => {
     return () => controller.abort();
   }, []);
 
-  const onAddEstadoLead = (item) => {};
-
   return (
     <>
       <CustomTopBar
@@ -51,126 +89,58 @@ export const ListLeads = () => {
         viewName={"Control de leads"}
       />
 
-      <div className="px-7 mt-6 flex justify-between">
-        <div className="flex flex-row gap-x-2">
-
-          <label className="block flex flex-col gap-y-1 w-36">
-            <span className="block text-sm">Nombre</span>
-            <FilterEstadoLead onNewInput={onAddEstadoLead} defaultValue={5} />
-          </label>
-
-          <label className="block flex flex-col gap-y-1 w-36">
-            <span className="block text-sm">Estado</span>
-            <FilterEstadoLead onNewInput={onAddEstadoLead} defaultValue={5} />
-          </label>
-
-          <label className="block flex flex-col gap-y-1 w-36 h-7">
-            <span className="block text-sm">Campaña</span>
-            <FilterEstadoLead onNewInput={onAddEstadoLead} defaultValue={5} />
-          </label>
-
+      <div className="px-7 mt-8 mb-8 flex justify-between items-center">
+        <div className="flex flex-col gap-y-1">
+          <span className="block text-sm">Buscar lead</span>
+          <CustomInputBase
+            filters={filters}
+            defaultFilter={filters[0]}
+            onSearch={handleSearchButton}
+            placeholder="Buscar lead..."
+          />
         </div>
 
-        <div className="flex flex-col gap-y-1">
-          <span className="block text-sm">Añadir Lead</span>
-
-          <div className="flex gap-x-2">
+        <div className="flex flex-row gap-x-4">
+          <div className="flex flex-col gap-y-1">
+            <span className="block text-sm">Filtrar leads</span>
             <Link
-              to={"/lead/create"}
-              className="bg-transparent hover:bg-blue-500 text-blue-500 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded flex items-center"
+              style={{
+                width: "6.2rem"
+              }}
+              className="bg-transparent hover:bg-blue-500 text-blue-500 hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded"
+              onClick={() => setUnassignedLeadsTable((prev) => !prev)}
             >
-              <RiAddBoxFill/>
-              Manual
+              {unassigendLeadsTable ? "Activos" : "Inactivos"}
             </Link>
+          </div>
 
-            <Link
-              to={"/lead/create/sheet"}
-              className="bg-transparent hover:bg-blue-500 text-blue-500 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded flex items-center"
-            >
-              <RiAddBoxFill/>
-              Automatico
-            </Link>
+          <div className="flex flex-col gap-y-1">
+            <span className="block text-sm">Añadir Lead</span>
+            <div className="flex gap-x-2">
+              <Link
+                to={"/lead/create"}
+                className="bg-transparent hover:bg-blue-500 text-blue-500 hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded"
+              >
+                Manual
+              </Link>
+
+              <Link
+                to={"/lead/create/sheet"}
+                className="bg-transparent hover:bg-blue-500 text-blue-500  hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded"
+              >
+                Automatico
+              </Link>
+            </div>
           </div>
         </div>
       </div>
 
       <div className="px-7">
-        <Paper>
-          {/*
-        <div className="flex justify-center mt-4 mb-4">
-          <button
-            onClick={() => {
-              handleButtonState(true);
-              filtrar("filter_active_campaign");
-            }}
-            className={`px-4 py-2 mr-2 rounded ${
-              activeButton ? "bg-blue-500 text-white" : "bg-gray-300"
-            }`}
-          >
-            Campañas activas
-          </button>
-          <button
-            onClick={() => {
-              handleButtonState(false);
-              filtrar("filter_inactive_campaign");
-            }}
-            className={`px-4 py-2 mr-2 rounded ${
-              !activeButton ? "bg-blue-500 text-white" : "bg-gray-300"
-            }`}
-          >
-            Campañas inactivas
-          </button>
-        </div>
-              */}
-          <TableContainer
-            sx={{ minWidth: 700 }}
-            arial-aria-labelledby="customized table"
-          >
-            <Table>
-              <TableHead>
-                <TableRow
-                  sx={{
-                    "& th": {
-                      color: "rgba(96,96,96)",
-                      backgroundColor: "#f5f5f5",
-                    },
-                  }}
-                >
-                  <TableCell align="left" width={30}>
-                    <b>Acciones</b>
-                  </TableCell>
-                  <TableCell align="left" width={220}>
-                    <b>Nombre</b>
-                  </TableCell>
-                  <TableCell align="left" width={50}>
-                    <b>Celular</b>
-                  </TableCell>
-                  <TableCell align="left" width={140}>
-                    <b>Estado</b>
-                  </TableCell>
-                  <TableCell align="left" width={160}>
-                    <b>Objeciones</b>
-                  </TableCell>
-                  <TableCell align="left" width={160}>
-                    <b>Campaña</b>
-                  </TableCell>
-                  <TableCell align="left" width={140}>
-                    <b>Comentario</b>
-                  </TableCell>
-                  <TableCell align="left" width={160}>
-                    <b>Hora de entrega</b>
-                  </TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {leads.map((item) => {
-                  return <RowItemLead key={item.id} item={item} />;
-                })}
-              </TableBody>
-            </Table>
-          </TableContainer>
-          <CustomTablePagination count={leads.length} />
-        </Paper>
+        {!unassigendLeadsTable ? (
+          <CustomTable headerData={headers} rowData={filterLeads} />
+        ) : (
+          <CustomSelectedTable />
+        )}
       </div>
 
       {visibleProgress && <CustomCircularProgress />}

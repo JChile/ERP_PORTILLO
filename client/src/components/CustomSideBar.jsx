@@ -38,9 +38,7 @@ export const CustomSideBar = ({ children, menus }) => {
         </ul>
       </div>
       {/**  Lado derecho del a interfaz, permite cargar el contenido */}
-      <div className="relative h-screen flex-1 overflow-y-auto">
-        {children}
-      </div>
+      <div className="relative h-screen flex-1 overflow-y-auto">{children}</div>
     </div>
   );
 };

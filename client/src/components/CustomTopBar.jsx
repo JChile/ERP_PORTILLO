@@ -1,6 +1,14 @@
 import { Paper } from "@mui/material";
 import React from "react";
 
+
+/**
+ * 
+ * @param {moduleName} moduleName Nombre del modulo
+ * @param {userName} userName Informacion del usuario
+ * @param {viewName} viewName Titulo de la vista
+ * @returns 
+ */
 export const CustomTopBar = ({ moduleName, userName, viewName }) => {
   return (
     <Paper elevation={3} square>

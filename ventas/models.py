@@ -13,6 +13,9 @@ class Asesor(models.Model):
     fechaActualizado = models.DateTimeField(null=True)
     proyectos = models.ManyToManyField(Proyecto, through='AsesorProyecto', blank=True)
 
+    def __str__(self):
+        return self.user.username
+
 class AsesorProyecto(models.Model):
     asesor = models.ForeignKey(Asesor, on_delete=models.CASCADE)
     proyecto = models.ForeignKey(Proyecto, on_delete=models.CASCADE)

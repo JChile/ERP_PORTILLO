@@ -16,6 +16,8 @@ import {
   CustomCircularProgress,
   CustomTablePagination,
 } from "../../../components";
+import { CustomTopBar } from "../../../components/CustomTopBar";
+import { CustomInputBase } from "../../../components/CustomInputBase";
 
 export const ListCampanias = () => {
   // Informaciion de las campanias.
@@ -101,22 +103,39 @@ export const ListCampanias = () => {
     return () => controller.abort();
   }, []);
 
+  const filters = ["Nombre", "Campaña"];
+
   return (
     <>
-      <div className="p-3 flex flex-col gap-x-5 mb">
-        <h1 className="text-lg font-bold">Campañas de marketing</h1>
+      <div className="flex flex-col gap-x-5 mb-9">
+        <CustomTopBar
+          moduleName="Marketing"
+          userName="Andrew Jacabo"
+          viewName="Campañas de marketing"
+        />
       </div>
-      <div className="flex items-center justify-center">
-        <Link
-          to={"/campania/create/"}
-          className="bg-transparent hover:bg-blue-500 text-blue-500 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded flex items-center"
-        >
-          <RiAddBoxFill className="mr-2" />
-          Crear campaña
-        </Link>
-      </div>
-      <Paper>
-        <div className="flex justify-center mt-4 mb-4">
+
+      <div className="flex items-center justify-center gap-x-4">
+        <div className="flex flex-col gap-y-1 align-middle">
+          <span className="block text-sm">Buscar Campanias</span>
+          <CustomInputBase
+            filters={filters}
+            defaultFilter={filters[0]}
+            onSearch={() => {}}
+            placeholder="Buscar lead..."
+          />
+        </div>
+
+        <div className="flex flex-col gap-y-1 align-middle">
+          <span className="block text-sm">Gestion de campanias</span>
+          <Link
+            to={"/campania/create/"}
+            className="bg-transparent hover:bg-blue-500 text-blue-500 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded flex items-center"
+          >
+            Crear
+          </Link>
+
+          <div className="flex justify-center mt-4 mb-4">
           <button
             onClick={() => {
               handleButtonState(true);
@@ -126,7 +145,7 @@ export const ListCampanias = () => {
               activeButton ? "bg-blue-500 text-white" : "bg-gray-300"
             }`}
           >
-            Campañas activas
+            Activas
           </button>
           <button
             onClick={() => {
@@ -137,9 +156,13 @@ export const ListCampanias = () => {
               !activeButton ? "bg-blue-500 text-white" : "bg-gray-300"
             }`}
           >
-            Campañas inactivas
+            Inactivas
           </button>
         </div>
+
+        </div>
+      </div>
+      <Paper>
         <TableContainer
           sx={{ minWidth: 700 }}
           arial-aria-labelledby="customized table"

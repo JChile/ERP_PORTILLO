@@ -31,7 +31,7 @@ export const RowItemLead = ({ item }) => {
       </TableCell>
       <TableCell>
         <Link
-          to={`#`}
+          to={`/lead/detail/${id}`}
           style={{
             textDecoration: "none",
             color: "black",
@@ -50,8 +50,11 @@ export const RowItemLead = ({ item }) => {
               <br />
               {apellido}
             </span>
+<<<<<<< HEAD
             <hr />
             <span className="italic">Asesor: {asesor.user.username}</span>
+=======
+>>>>>>> 2ef913311a6bc489294276a9c76249322c532edb
           </div>
         </Link>
       </TableCell>
@@ -82,9 +85,9 @@ export const RowItemLead = ({ item }) => {
           {celular}
         </div>
       </TableCell>
-      <TableCell>{estado}</TableCell>
-      <TableCell>{objeciones}</TableCell>
-      <TableCell>{campania}</TableCell>
+      <TableCell>{estado.nombre}</TableCell>
+      <TableCell>{objeciones.nombre}</TableCell>
+      <TableCell>{campania.nombre}</TableCell>
       <TableCell>{comentario}</TableCell>
       <TableCell>{horaEntrega}</TableCell>
     </TableRow>

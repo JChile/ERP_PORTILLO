@@ -30,7 +30,7 @@ export const RowItemLead = ({ item }) => {
       </TableCell>
       <TableCell>
         <Link
-          to={`#`}
+          to={`/lead/detail/${id}`}
           style={{
             textDecoration: "none",
             color: "black",

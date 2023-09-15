@@ -6,6 +6,7 @@ import { HiPhoneMissedCall } from "react-icons/hi";
 import { CustomMoreVerticalActions } from "../../../components";
 
 export const RowItemLead = ({ item }) => {
+  console.log(item)
   const {
     id,
     nombre,
@@ -50,7 +51,7 @@ export const RowItemLead = ({ item }) => {
               {apellido}
             </span>
             <hr />
-            <span className="italic">Asesor: {asesor}</span>
+            <span className="italic">Asesor: {asesor.user.username}</span>
           </div>
         </Link>
       </TableCell>

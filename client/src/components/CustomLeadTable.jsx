@@ -10,6 +10,13 @@ import {
 import { RowItemLead } from "../modules/lead/components";
 import { CustomTablePagination } from "./CustomTablePagination";
 
+
+/**
+ * 
+ * @param {list} headerData 
+ * @param {list} rowData  
+ * @returns 
+ */
 export const CustomTable = ({ headerData, rowData }) => {
   const headers = headerData.map((header, index) => (
     <TableCell key={index} align="left" width={60}>

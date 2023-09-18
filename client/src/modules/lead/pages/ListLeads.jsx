@@ -8,7 +8,7 @@ import {
 } from "../../../components";
 import { CustomTopBar } from "../../../components/CustomTopBar";
 import { FilterEstadoLead } from "../../../components/filters/estado/FilterEstadoLead";
-import { CustomTable } from "../../../components/CustomTable";
+import { CustomTable } from "../../../components/CustomLeadTable";
 import { Input } from "@mui/material";
 import { CustomInputBase } from "../../../components/CustomInputBase";
 import { CustomSelectedTable } from "../components/CustomSelectedTable";
@@ -26,6 +26,8 @@ const headers = [
 
 const filters = ["Nombre", "Estado", "Campaña"];
 
+const headersLead = ["Acciones", "Nombre", "Celular", "Campaña", "Comentario"];
+
 export const ListLeads = () => {
   const [filterLeads, setFilterLeads] = useState([]);
   const [leads, setLeads] = useState([]);
@@ -40,7 +42,8 @@ export const ListLeads = () => {
 
   const handleSearchButton = (filter, pattern) => {
     const filterValue = filters.find((element) => element === filter);
-    console.log(filterValue);
+
+    if (!filterValue) return;
 
     switch (filterValue) {
       case "Nombre": {
@@ -71,6 +74,18 @@ export const ListLeads = () => {
         break;
       }
     }
+  };
+
+  const handleInactiveLeads = () => {
+    let unactiveLeads = []
+    if (unassigendLeadsTable) {
+      unactiveLeads = leads.filter((item) => !item.activo);
+    }
+    else {
+      unactiveLeads = leads.filter((item) => item.activo);
+    }
+    setFilterLeads(unactiveLeads)
+    setUnassignedLeadsTable((prev) => !prev);
   };
 
   useEffect(() => {
@@ -105,10 +120,10 @@ export const ListLeads = () => {
             <span className="block text-sm">Filtrar leads</span>
             <Link
               style={{
-                width: "6.2rem"
+                width: "6.2rem",
               }}
               className="bg-transparent hover:bg-blue-500 text-blue-500 hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded"
-              onClick={() => setUnassignedLeadsTable((prev) => !prev)}
+              onClick={handleInactiveLeads}
             >
               {unassigendLeadsTable ? "Activos" : "Inactivos"}
             </Link>
@@ -139,7 +154,7 @@ export const ListLeads = () => {
         {!unassigendLeadsTable ? (
           <CustomTable headerData={headers} rowData={filterLeads} />
         ) : (
-          <CustomSelectedTable />
+          <CustomSelectedTable headerData={headersLead} rowData={filterLeads} />
         )}
       </div>
 

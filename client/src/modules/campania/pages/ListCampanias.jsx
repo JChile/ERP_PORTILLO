@@ -2,15 +2,6 @@ import React, { useEffect, useState } from "react";
 import { getCampanias, deleteCampania } from "../helpers";
 import { Link } from "react-router-dom";
 import { RiAddBoxFill } from "react-icons/ri";
-import {
-  Paper,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Table,
-  TableCell,
-  TableBody,
-} from "@mui/material";
 import { DialogDeleteCampania, RowItemCampania } from "../components";
 import {
   CustomCircularProgress,
@@ -18,6 +9,7 @@ import {
 } from "../../../components";
 import { CustomTopBar } from "../../../components/CustomTopBar";
 import { CustomInputBase } from "../../../components/CustomInputBase";
+import { CustomTableCampanias } from "../../../components/CustomTableCampanias";
 
 export const ListCampanias = () => {
   // Informaciion de las campanias.
@@ -93,6 +85,31 @@ export const ListCampanias = () => {
     onCloseDeleteDialog();
   };
 
+  const handleSearchButton = (filter, pattern) => {
+    const filteredValue = filters.find((element) => element === filter);
+    if (!filteredValue) return;
+
+    switch (filteredValue) {
+      case "Nombre": {
+        const filteredData = campanias.filter((item) => {
+          const { nombre } = item;
+          return nombre.toLowerCase().includes(pattern.toLowerCase());
+        });
+        setCampaniasTemporal(filteredData);
+        break;
+      }
+      case "Proyecto": {
+        const filteredData = campanias.filter((item) => {
+          const { proyecto } = item;
+          const { nombre } = proyecto;
+          return nombre.toLowerCase().includes(pattern.toLowerCase());
+        });
+        setCampaniasTemporal(filteredData);
+        break;
+      }
+    }
+  };
+
   useEffect(() => {
     // Necesitamos controllar el retorno, cancelar la solicitud
     // cuando se quita el componente.
@@ -103,7 +120,7 @@ export const ListCampanias = () => {
     return () => controller.abort();
   }, []);
 
-  const filters = ["Nombre", "Campaña"];
+  const filters = ["Nombre", "Proyecto"];
 
   return (
     <>
@@ -115,107 +132,69 @@ export const ListCampanias = () => {
         />
       </div>
 
-      <div className="flex items-center justify-center gap-x-4">
+      <div className="flex items-center justify-between gap-x-4 px-7 mb-9">
         <div className="flex flex-col gap-y-1 align-middle">
           <span className="block text-sm">Buscar Campanias</span>
           <CustomInputBase
             filters={filters}
             defaultFilter={filters[0]}
-            onSearch={() => {}}
+            onSearch={handleSearchButton}
             placeholder="Buscar lead..."
           />
         </div>
 
         <div className="flex flex-col gap-y-1 align-middle">
           <span className="block text-sm">Gestion de campanias</span>
-          <Link
-            to={"/campania/create/"}
-            className="bg-transparent hover:bg-blue-500 text-blue-500 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded flex items-center"
-          >
-            Crear
-          </Link>
-
-          <div className="flex justify-center mt-4 mb-4">
-          <button
-            onClick={() => {
-              handleButtonState(true);
-              filtrar("filter_active_campaign");
-            }}
-            className={`px-4 py-2 mr-2 rounded ${
-              activeButton ? "bg-blue-500 text-white" : "bg-gray-300"
-            }`}
-          >
-            Activas
-          </button>
-          <button
-            onClick={() => {
-              handleButtonState(false);
-              filtrar("filter_inactive_campaign");
-            }}
-            className={`px-4 py-2 mr-2 rounded ${
-              !activeButton ? "bg-blue-500 text-white" : "bg-gray-300"
-            }`}
-          >
-            Inactivas
-          </button>
-        </div>
-
+          <div className="flex justify-center gap-x-3">
+            <button
+              onClick={() => {
+                handleButtonState(true);
+                filtrar("filter_active_campaign");
+              }}
+              className={`px-4 py-2 rounded ${
+                activeButton ? "bg-blue-500 text-white" : "bg-gray-300"
+              }`}
+            >
+              Activas
+            </button>
+            <button
+              onClick={() => {
+                handleButtonState(false);
+                filtrar("filter_inactive_campaign");
+              }}
+              className={`px-4 py-2 rounded ${
+                !activeButton ? "bg-blue-500 text-white" : "bg-gray-300"
+              }`}
+            >
+              Inactivas
+            </button>
+            <Link
+              to={"/campania/create/"}
+              className="bg-transparent hover:bg-blue-500 text-blue-500 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded flex items-center"
+            >
+              Crear
+            </Link>
+          </div>
         </div>
       </div>
-      <Paper>
-        <TableContainer
-          sx={{ minWidth: 700 }}
-          arial-aria-labelledby="customized table"
-        >
-          <Table>
-            <TableHead>
-              <TableRow
-                sx={{
-                  "& th": {
-                    color: "rgba(96,96,96)",
-                    backgroundColor: "#f5f5f5",
-                  },
-                }}
-              >
-                <TableCell align="left" width={30}>
-                  <b>Acciones</b>
-                </TableCell>
-                <TableCell align="left" width={220}>
-                  <b>Nombre</b>
-                </TableCell>
-                <TableCell align="left" width={140}>
-                  <b>Fecha estimada</b>
-                </TableCell>
-                <TableCell align="left" width={140}>
-                  <b>Fecha cierre</b>
-                </TableCell>
-                <TableCell align="left" width={160}>
-                  <b>Coste estimado</b>
-                </TableCell>
-                <TableCell align="left" width={160}>
-                  <b>Proyecto</b>
-                </TableCell>
-                <TableCell align="left" width={160}>
-                  <b>Subcategoria</b>
-                </TableCell>
-                <TableCell align="left" width={160}>
-                  <b>Categoria</b>
-                </TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {campaniasTemporal.map((item) => (
-                <RowItemCampania
-                  key={item.id}
-                  item={item}
-                  onShowDeleteDialog={onShowDeleteDialog}
-                />
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
-        <CustomTablePagination count={campaniasTemporal.length} />
-      </Paper>
+
+      <div className="px-7">
+        <CustomTableCampanias
+          headerData={[
+            "Acciones",
+            "Nombre",
+            "Fecha Estimada",
+            "Fecha Cierre",
+            "Coste Estimado",
+            "Proyecto",
+            "Categoria",
+            "Subcategoria",
+          ]}
+          rowData={campaniasTemporal}
+          onShowDeleteDialog={onShowDeleteDialog}
+        />
+      </div>
+
       {showDialog && (
         <DialogDeleteCampania
           item={itemSeleccionado}

@@ -33,10 +33,6 @@ export const AppRouter = () => {
           <Route
             path="/*"
             element={
-<<<<<<< HEAD
-  
-=======
->>>>>>> 2ef913311a6bc489294276a9c76249322c532edb
                 <SideBarApp>
                   <Routes>
                     <Route path="user/*" element={<UsuarioRoutes />}></Route>

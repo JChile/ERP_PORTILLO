@@ -23,11 +23,9 @@ export const AppRouter = () => {
           <Route
             path="login/*"
             element={
-              <PublicRoutes>
                 <Routes>
                   <Route path="/*" element={<Login />} />
                 </Routes>
-              </PublicRoutes>
             }
           />
           <Route path="no-access-page" element={<NotFoundPage />} />

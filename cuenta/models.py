@@ -9,8 +9,6 @@ from django.utils.translation import gettext_lazy as _
 from django.contrib.contenttypes.models import ContentType
 
 
-
-
 class Profile(models.Model):
     
     FONDO_PENSIONES = (

@@ -1,6 +1,6 @@
 import React, { useContext } from "react";
-import DynamicIcon from "./DynamicIcon";
 import { AuthContext } from "../auth/context";
+import { DynamicIcon } from "./DynamicIcon";
 
 export const CustomLiLogout = ({ open }) => {
   const { logoutUser } = useContext(AuthContext);

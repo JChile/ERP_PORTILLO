@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { getObjecion} from "./getObjecion";
+import { getObjecion } from "./getObjecion";
 import { Autocomplete, TextField } from "@mui/material";
-
 
 const defaultOption = {
   value: 0,
@@ -9,11 +8,11 @@ const defaultOption = {
   id: 0,
 };
 
-export const FilterObjecion= ({ defaultValue = null, onNewInput }) => {
+export const FilterObjecion = ({ defaultValue = null, onNewInput }) => {
   const [options, setOptions] = useState([defaultOption]);
   const [value, setValue] = useState(defaultOption);
 
-  const obtenerObjecion= async () => {
+  const obtenerObjecion = async () => {
     const result = await getObjecion();
     const formatSelect = [
       defaultOption,
@@ -54,7 +53,7 @@ export const FilterObjecion= ({ defaultValue = null, onNewInput }) => {
       getOptionLabel={(option) => option.label}
       onChange={handleChange}
       isOptionEqualToValue={(option, value) => option.id == value.id}
-      renderInput={(params) => <TextField {...params} size="smalll" />}
+      renderInput={(params) => <TextField {...params} size="small" />}
     />
   );
 };

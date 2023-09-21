@@ -23,11 +23,11 @@ export const AppRouter = () => {
           <Route
             path="login/*"
             element={
-              <PublicRoutes>
-                <Routes>
-                  <Route path="/*" element={<Login />} />
-                </Routes>
-              </PublicRoutes>
+              // <PublicRoutes>
+              <Routes>
+                <Route path="/*" element={<Login />} />
+              </Routes>
+              // </PublicRoutes>
             }
           />
           <Route path="no-access-page" element={<NotFoundPage />} />
@@ -35,20 +35,17 @@ export const AppRouter = () => {
           <Route
             path="/*"
             element={
-              <PrivateModuleRouter>
-                <SideBarApp>
-                  <Routes>
-                    <Route path="user/*" element={<UsuarioRoutes />}></Route>
-                    <Route path="group/*" element={<RolRoutes />}></Route>
-                    <Route
-                      path="campania/*"
-                      element={<CampaniaRoutes />}
-                    ></Route>
-                    <Route path="lead/*" element={<LeadRoutes />}></Route>
-                    <Route path="asesor/*" element={<AsesorRoutes />} />
-                  </Routes>
-                </SideBarApp>
-              </PrivateModuleRouter>
+              // <PrivateModuleRouter>
+              <SideBarApp>
+                <Routes>
+                  <Route path="user/*" element={<UsuarioRoutes />}></Route>
+                  <Route path="group/*" element={<RolRoutes />}></Route>
+                  <Route path="campania/*" element={<CampaniaRoutes />}></Route>
+                  <Route path="lead/*" element={<LeadRoutes />}></Route>
+                  <Route path="asesor/*" element={<AsesorRoutes />} />
+                </Routes>
+              </SideBarApp>
+              // </PrivateModuleRouter>
             }
           />
         </Routes>

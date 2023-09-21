@@ -1,25 +1,25 @@
 import React, { useEffect, useState } from "react";
-import { getSubcategorias } from "./getSubcategorias";
 import { Autocomplete, TextField } from "@mui/material";
+import { getEstadoAsesor } from "./getEstadoAsesor";
 
 const defaultOption = {
   value: 0,
-  label: "Seleccione una opción",
+  label: "Seleccione un estado",
   id: 0,
 };
 
-export const FilterSubcategoria = ({ onNewInput, defaultValue = null }) => {
+export const FilterEstadoAsesor = ({ onNewInput, defaultValue = null }) => {
   const [options, setOptions] = useState([defaultOption]);
   const [value, setValue] = useState(defaultOption);
 
-  const obtenerSubcategorias = async () => {
-    const result = await getSubcategorias();
+  const obtenerEstadoAsesor = async () => {
+    const result = await getEstadoAsesor();
     const formatSelect = [
       defaultOption,
       ...result.map((element) => {
         return {
           value: element.id,
-          label: element.nombre,
+          label: element.username,
           id: element.id,
         };
       }),
@@ -41,7 +41,7 @@ export const FilterSubcategoria = ({ onNewInput, defaultValue = null }) => {
 
   useEffect(() => {
     const controller = new AbortController();
-    obtenerSubcategorias();
+    obtenerEstadoAsesor();
     return () => controller.abort();
   }, [defaultValue]);
 

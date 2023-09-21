@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { getAsesor} from "./getAsesor";
+import { getAsesor } from "./getAsesor";
 import { Autocomplete, TextField } from "@mui/material";
-
 
 const defaultOption = {
   value: 0,
@@ -9,11 +8,11 @@ const defaultOption = {
   id: 0,
 };
 
-export const FilterAsesor= ({ defaultValue = null, onNewInput }) => {
+export const FilterAsesor = ({ defaultValue = null, onNewInput }) => {
   const [options, setOptions] = useState([defaultOption]);
   const [value, setValue] = useState(defaultOption);
 
-  const obtenerAsesor= async () => {
+  const obtenerAsesor = async () => {
     const result = await getAsesor();
     console.log(result);
     const formatSelect = [
@@ -55,7 +54,7 @@ export const FilterAsesor= ({ defaultValue = null, onNewInput }) => {
       getOptionLabel={(option) => option.label}
       onChange={handleChange}
       isOptionEqualToValue={(option, value) => option.id == value.id}
-      renderInput={(params) => <TextField {...params} size="smalll" />}
+      renderInput={(params) => <TextField {...params} size="small" />}
     />
   );
 };

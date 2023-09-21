@@ -53,7 +53,7 @@ export const FilterSubcategoria = ({ onNewInput, defaultValue = null }) => {
       getOptionLabel={(option) => option.label}
       onChange={handleChange}
       isOptionEqualToValue={(option, value) => option.id == value.id}
-      renderInput={(params) => <TextField {...params} size="smalll" />}
+      renderInput={(params) => <TextField {...params} size="small" />}
     />
   );
 };

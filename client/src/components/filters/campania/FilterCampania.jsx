@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import { getCampania } from "./getCampania";
 import { Autocomplete, TextField } from "@mui/material";
 
-
 const defaultOption = {
   value: 0,
   label: "Seleccione una campaña",
@@ -13,7 +12,7 @@ export const FilterCampania = ({ defaultValue = null, onNewInput }) => {
   const [options, setOptions] = useState([defaultOption]);
   const [value, setValue] = useState(defaultOption);
 
-  const obtenerCampanias= async () => {
+  const obtenerCampanias = async () => {
     const result = await getCampania();
     const formatSelect = [
       defaultOption,
@@ -54,7 +53,7 @@ export const FilterCampania = ({ defaultValue = null, onNewInput }) => {
       getOptionLabel={(option) => option.label}
       onChange={handleChange}
       isOptionEqualToValue={(option, value) => option.id == value.id}
-      renderInput={(params) => <TextField {...params} size="smalll" />}
+      renderInput={(params) => <TextField {...params} size="small" />}
     />
   );
 };

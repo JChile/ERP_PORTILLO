@@ -88,9 +88,9 @@ class UserDetail(generics.RetrieveUpdateDestroyAPIView):
     
         dataJson["user_permissions"] = permissionSerializer.data
         
+        print(type(userSerializer.data))
 
-
-        if len(userSerializer.data) > 0 :
+        if len(userSerializer.data) > 0 and len(userSerializer.data.get("groups")) > 0:
             queryset = Group.objects.all()
             group = get_object_or_404(queryset, pk=userSerializer.data["groups"][0])
             groupSerializer = GruopSerializer(group) 

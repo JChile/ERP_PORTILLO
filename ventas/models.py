@@ -63,3 +63,6 @@ class Llamada(models.Model):
     detalle = models.TextField(max_length=200, null=True, blank=True)
 
    
+
+
+   

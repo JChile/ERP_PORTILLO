@@ -152,7 +152,7 @@ class ObjecionDetail(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = ObjecionSerializer
     queryset = Objecion.objects.all()
 
-class AsesorActivoList(generics.ListCreateAPIView):
+class AsesorActivoList(generics.ListAPIView):
     serializer_class = AsesorActivoSerializer
     
     def get_queryset(self):

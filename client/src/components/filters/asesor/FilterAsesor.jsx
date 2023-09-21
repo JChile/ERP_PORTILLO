@@ -20,7 +20,7 @@ export const FilterAsesor = ({ defaultValue = null, onNewInput }) => {
       ...result.map((element) => {
         return {
           value: element.id,
-          label: element.user.toString(),
+          label: element.user.username,
           id: element.id,
         };
       }),

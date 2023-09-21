@@ -1,18 +1,12 @@
 import React from "react";
 import { AuthProvider, Login, SideBarApp } from "../auth";
 import { Route, Routes } from "react-router-dom";
-// import { RRHHRoutes } from "../modules/rrhh";
-// import { MarketingRoutes } from "../modules/marketing";
-// import { PrivateRouterRRHH } from "./PrivateRouterRRHH";
-// import { PrivateRouterMarketing } from "./PrivateRouterMarketing";
 import { RolRoutes } from "../modules/roles";
 import { UsuarioRoutes } from "../modules/usuario";
 import { CampaniaRoutes } from "../modules/campania";
 import { LeadRoutes } from "../modules/lead";
 import { AsesorRoutes } from "../modules/asesor";
 import { NotFoundPage } from "../components";
-import { PrivateModuleRouter } from "./PrivateModuleRouter";
-import { PublicRoutes } from "./PublicRoutes";
 import { NotPublicPage } from "../components/NotPublicPage";
 
 export const AppRouter = () => {
@@ -23,11 +17,9 @@ export const AppRouter = () => {
           <Route
             path="login/*"
             element={
-              // <PublicRoutes>
               <Routes>
                 <Route path="/*" element={<Login />} />
               </Routes>
-              // </PublicRoutes>
             }
           />
           <Route path="no-access-page" element={<NotFoundPage />} />
@@ -35,7 +27,6 @@ export const AppRouter = () => {
           <Route
             path="/*"
             element={
-              // <PrivateModuleRouter>
               <SideBarApp>
                 <Routes>
                   <Route path="user/*" element={<UsuarioRoutes />}></Route>
@@ -45,7 +36,6 @@ export const AppRouter = () => {
                   <Route path="asesor/*" element={<AsesorRoutes />} />
                 </Routes>
               </SideBarApp>
-              // </PrivateModuleRouter>
             }
           />
         </Routes>

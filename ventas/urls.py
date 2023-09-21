@@ -16,4 +16,5 @@ urlpatterns = [
     re_path(r'^estado/(?P<pk>[0-9]+)$', views.EstadoDetail.as_view()),
     re_path(r'^objecion/$', views.ObjecionList.as_view()),
     re_path(r'^objecion/(?P<pk>[0-9]+)$', views.ObjecionDetail.as_view()),
+    re_path(r'^asesorActivo/$', views.AsesorActivoList.as_view()),
 ]

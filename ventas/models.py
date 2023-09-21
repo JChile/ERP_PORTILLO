@@ -55,11 +55,11 @@ class Lead(models.Model):
         return self.nombre
 
 class WhatsApp(models.Model):
-    lead = models.OneToOneField(Lead, on_delete=models.CASCADE)
+    lead = models.ForeignKey(Lead, on_delete=models.CASCADE)
     detalle = models.TextField(max_length=200, null=True, blank=True)
 
 class Llamada(models.Model):
-    lead = models.OneToOneField(Lead, on_delete=models.CASCADE)
+    lead = models.ForeignKey(Lead, on_delete=models.CASCADE)
     detalle = models.TextField(max_length=200, null=True, blank=True)
 
    

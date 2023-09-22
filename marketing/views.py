@@ -79,3 +79,17 @@ class CampaniaDetail(generics.RetrieveUpdateDestroyAPIView):
         dataJson["categoria"] = categoriaSerializer.data
 
         return Response(dataJson)
+
+
+class CampaniaActivoList(generics.ListAPIView):
+    serializer_class = CampaniaSerializer
+    def get_queryset(self):     
+        campaniaData = Campania.objects.filter(estado='A')
+        return campaniaData
+
+
+class CampaniaInactivoList(generics.ListAPIView):
+    serializer_class = CampaniaSerializer
+    def get_queryset(self):     
+        campaniaData = Campania.objects.filter(estado='I')
+        return campaniaData

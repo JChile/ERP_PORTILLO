@@ -37,7 +37,7 @@ export const ListLeads = () => {
   const loadLeads = async () => {
     const data = await getLeads();
     setLeads(data);
-    setFilterLeads(data);
+     setFilterLeads(data);
   };
 
   const handleSearchButton = (filter, pattern) => {
@@ -76,15 +76,17 @@ export const ListLeads = () => {
     }
   };
 
-  const handleInactiveLeads = () => {
-    let unactiveLeads = []
-    if (unassigendLeadsTable) {
-      unactiveLeads = leads.filter((item) => !item.activo);
+  const toogleStateLeads = () => {
+    let toggleStateLeads = []
+    /** mostrar lista de leads sin asignar */
+    if (!unassigendLeadsTable) {
+      toggleStateLeads = leads.filter((item) => item.activo);
     }
+    /** mostrar lista de leads los cuales son  */
     else {
-      unactiveLeads = leads.filter((item) => item.activo);
+      toggleStateLeads = leads.filter((item) => !item.activo);
     }
-    setFilterLeads(unactiveLeads)
+    setFilterLeads(toggleStateLeads)
     setUnassignedLeadsTable((prev) => !prev);
   };
 
@@ -123,7 +125,7 @@ export const ListLeads = () => {
                 width: "6.2rem",
               }}
               className="bg-transparent hover:bg-blue-500 text-blue-500 hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded"
-              onClick={handleInactiveLeads}
+              onClick={toogleStateLeads}
             >
               {unassigendLeadsTable ? "Activos" : "Inactivos"}
             </Link>

@@ -39,5 +39,3 @@ class Campania(models.Model):
     subCategoria = models.ForeignKey(SubCategoria, on_delete=models.CASCADE)
     def __str__(self):
         return self.nombre
-    
-

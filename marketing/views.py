@@ -93,3 +93,5 @@ class CampaniaInactivoList(generics.ListAPIView):
     def get_queryset(self):     
         campaniaData = Campania.objects.filter(estado='I')
         return campaniaData
+    
+

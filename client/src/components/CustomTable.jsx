@@ -1,3 +1,4 @@
+import React, { useEffect, useState } from "react";
 import {
   Paper,
   TableContainer,
@@ -10,7 +11,24 @@ import {
 import { RowItemLead } from "../modules/lead/components";
 import { CustomTablePagination } from "./CustomTablePagination";
 
+
 export const CustomTable = ({ headerData, rowData }) => {
+  const [showDialog, setShowDialog] = useState(false);
+  const [itemSeleccionado, setItemSeleccionado] = useState(null);
+  
+  // PARA ELIMINAR UN ITEM SELECCIONADO
+  const onCloseDeleteDialog = () => {
+    // ocultamos el modal
+    setShowDialog(false);
+    // dejamos el null la data del detalle
+    setItemSeleccionado(null);
+  };
+  
+  // MOSTRAR Y OCULTAR DETALLE DE USUARIO
+  const onShowDeleteDialog = async (item) => {
+    setItemSeleccionado(item);
+    setShowDialog(true);
+  };
   const headers = headerData.map((header, index) => (
     <TableCell key={index} align="left" width={60}>
       <b>{header}</b>
@@ -18,7 +36,11 @@ export const CustomTable = ({ headerData, rowData }) => {
   ));
 
   const data = rowData.map((item) => {
-    return <RowItemLead key={item.id} item={item} />;
+    return <RowItemLead
+      key={item.id}
+      item={item}
+      onShowDeleteDialog={onShowDeleteDialog}
+    />;
   });
 
   return (

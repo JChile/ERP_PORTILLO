@@ -9,6 +9,13 @@ from django.utils.translation import gettext_lazy as _
 from django.contrib.contenttypes.models import ContentType
 
 
+
+class EstadoRegistro(models.Model):
+    estado = models.CharField(max_length=1, primary_key=True)
+    nombre = models.CharField(max_length=50, null=True, default=None)
+    def __str__(self):
+        return self.estado
+
 class Profile(models.Model):
     
     FONDO_PENSIONES = (
@@ -276,7 +283,7 @@ class Profile(models.Model):
     #recibo_agua = models.CharField(choices=TRUE_FALSE_CHOICES,max_length=200,blank=True, null=True)
     #recibo_luz = models.CharField(choices=TRUE_FALSE_CHOICES,max_length=200,blank=True, null=True)
     documentos = models.FileField(upload_to='documentos/', blank=True, null=True)
-
+    estado_registro = models.ForeignKey(EstadoRegistro,on_delete=models.CASCADE, default='A')
     ##def __str__(self):
     ##    return self.dni
     
@@ -293,6 +300,7 @@ class User(AbstractUser):
 class Modulo(models.Model):
     nombre = models.CharField(max_length=100, null=True, default=None)
     contentType = models.OneToOneField(ContentType,on_delete=models.CASCADE, blank= True, null=True)
+    estado = models.ForeignKey(EstadoRegistro,on_delete=models.SET_NULL, default='A',null=True)
     def __str__(self):
         return self.nombre
 

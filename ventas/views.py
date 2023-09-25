@@ -21,7 +21,6 @@ class LeadList(generics.ListCreateAPIView):
         users = User.objects.all()
         asesores = Asesor.objects.all()
         campanias = Campania.objects.all()
-        estados = Estado.objects.all()
         objeciones = Objecion.objects.all()
         
         dataJson = groupserializer.data
@@ -30,20 +29,17 @@ class LeadList(generics.ListCreateAPIView):
         for i in dataJson:
             asesor_data = asesores.get(id=i["asesor"])
             campania_data = campanias.get(id=i["campania"])                                   
-            estado_data = estados.get(id=i["estado"])                                   
             objecion_data = objeciones.get(id=i["objeciones"])   
             user_data = users.get(id=asesor_data.user.id)
                           
             asesorSerializer = AsesorSerializer(asesor_data)
             campaniaSerializer = CampaniaSerializer(campania_data)
-            estadoSerializer = EstadoSerializer(estado_data)
             objecionSerializer = ObjecionSerializer(objecion_data)
             userSerializer = UserSerializer(user_data)
             user_data_serialized = userSerializer.data
 
             i["asesor"] = asesorSerializer.data
             i["campania"] = campaniaSerializer.data
-            i["estado"] = estadoSerializer.data
             i["objeciones"] = objecionSerializer.data
             i["asesor"]["user"] = {field: user_data_serialized[field] for field in user_fields}
             
@@ -62,20 +58,17 @@ class LeadDetail(generics.RetrieveUpdateDestroyAPIView):
 
         asesor = Asesor.objects.all().get(id=dataJson["asesor"])
         campania = Campania.objects.all().get(id=dataJson["campania"])
-        estado = Estado.objects.all().get(id=dataJson["estado"])
         objecion = Objecion.objects.all().get(id=dataJson["objeciones"])
         user = User.objects.all().get(id=asesor.user.id)
 
         asesorSerializer = AsesorSerializer(asesor)
         campaniaSerializer = CampaniaSerializer(campania)
-        estadoSerializer = EstadoSerializer(estado)
         objecionSerializer = ObjecionSerializer(objecion)
         userSerializer = UserSerializer(user)
         user_data_serialized = userSerializer.data
 
         dataJson["asesor"] = asesorSerializer.data
         dataJson["campania"] = campaniaSerializer.data
-        dataJson["estado"] = estadoSerializer.data
         dataJson["objeciones"] = objecionSerializer.data
         dataJson["asesor"]["user"] = {field: user_data_serialized[field] for field in user_fields}
 
@@ -136,13 +129,6 @@ class LlamadaDetail(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = LlamadaSerializer
     queryset = Llamada.objects.all()
 
-class EstadoList(generics.ListCreateAPIView):
-    serializer_class = EstadoSerializer
-    queryset = Estado.objects.all()
-
-class EstadoDetail(generics.RetrieveUpdateDestroyAPIView):
-    serializer_class = EstadoSerializer
-    queryset = Estado.objects.all()
 
 class ObjecionList(generics.ListCreateAPIView):
     serializer_class = ObjecionSerializer

@@ -31,11 +31,6 @@ class LlamadaSerializer(serializers.ModelSerializer):
         model = Llamada
         fields = '__all__'
 
-class EstadoSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Estado
-        fields = '__all__'
-
 class ObjecionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Objecion

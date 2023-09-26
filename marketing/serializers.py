@@ -13,10 +13,6 @@ class CategoriaSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-class SubCategoriaSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = SubCategoria
-        fields = '__all__'
 
 class CampaniaSerializer(serializers.ModelSerializer):
     class Meta:
@@ -26,6 +22,5 @@ class CampaniaSerializer(serializers.ModelSerializer):
         super().__init__(*args, **kwargs)
 
         if self.instance:
-            self.fields['user'].required = False
             self.fields['proyecto'].required = False
-            self.fields['subCategoria'].required = False
+            self.fields['categoria'].required = False

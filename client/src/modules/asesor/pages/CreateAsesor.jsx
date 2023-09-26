@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { FilterEstadoAsesor, FilterUsuario } from "../../../components";
+import { FilterEstadoRegistro, FilterUsuario } from "../../../components";
 import { useNavigate } from "react-router-dom";
 import { useAlertMUI } from "../../../hooks";
 
@@ -88,7 +88,7 @@ export const CreateAsesor = () => {
                 <span className="after:content-['*'] after:ml-0.5 after:text-yellow-500 block text-sm font-medium">
                   Estado asesor
                 </span>
-                <FilterEstadoAsesor defaultValue={null} />
+                <FilterEstadoRegistro defaultValue={null} />
               </label>
             </div>
           </div>

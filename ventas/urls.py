@@ -12,8 +12,7 @@ urlpatterns = [
     re_path(r'^whatsapp/(?P<pk>[0-9]+)$', views.WhatsAppDetail.as_view()),
     re_path(r'^llamada/$', views.LlamadaList.as_view()),
     re_path(r'^llamada/(?P<pk>[0-9]+)$', views.LlamadaDetail.as_view()),
-    re_path(r'^estado/$', views.EstadoList.as_view()),
-    re_path(r'^estado/(?P<pk>[0-9]+)$', views.EstadoDetail.as_view()),
     re_path(r'^objecion/$', views.ObjecionList.as_view()),
     re_path(r'^objecion/(?P<pk>[0-9]+)$', views.ObjecionDetail.as_view()),
+    re_path(r'^asesorActivo/$', views.AsesorActivoList.as_view()),
 ]

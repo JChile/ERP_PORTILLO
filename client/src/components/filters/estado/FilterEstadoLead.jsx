@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { getEstadoLead } from "./getEstadoLead";
-import { Autocomplete, TextField } from "@mui/material";
 import { Autocomplete, Stack, TextField } from "@mui/material";
 
 const defaultOption = {

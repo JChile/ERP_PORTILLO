@@ -23,7 +23,7 @@ class AsesorActivoSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Asesor
-        fields = ['user_id', 'first_name', 'last_name', 'activo']
+        fields = ['user_id', 'first_name', 'last_name', 'estado']
 
 
 class WhatsAppSerializer(serializers.ModelSerializer):
@@ -41,4 +41,10 @@ class LlamadaSerializer(serializers.ModelSerializer):
 class ObjecionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Objecion
+        fields = '__all__'
+
+
+class EstadoLeadSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = EstadoLead
         fields = '__all__'

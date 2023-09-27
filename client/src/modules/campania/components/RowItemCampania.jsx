@@ -11,7 +11,6 @@ export const RowItemCampania = ({ item, onShowDeleteDialog }) => {
     fecha_cierre,
     coste_estimado,
     proyecto,
-    subCategoria,
     categoria,
   } = item;
 
@@ -55,7 +54,6 @@ export const RowItemCampania = ({ item, onShowDeleteDialog }) => {
       <TableCell>{fecha_cierre}</TableCell>
       <TableCell>s/. {coste_estimado}</TableCell>
       <TableCell>{proyecto.nombre}</TableCell>
-      <TableCell>{subCategoria.nombre}</TableCell>
       <TableCell>{categoria.nombre}</TableCell>
     </TableRow>
   );

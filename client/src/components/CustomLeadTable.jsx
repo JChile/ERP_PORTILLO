@@ -12,6 +12,15 @@ import { RowItemLead } from "../modules/lead/components";
 import { CustomTablePagination } from "./CustomTablePagination";
 
 
+<<<<<<< HEAD:client/src/components/CustomTable.jsx
+=======
+/**
+ * 
+ * @param {list} headerData 
+ * @param {list} rowData  
+ * @returns 
+ */
+>>>>>>> 2ddbbecf17eea765e6ed83f96ac1ec516b7c2748:client/src/components/CustomLeadTable.jsx
 export const CustomTable = ({ headerData, rowData }) => {
   const [showDialog, setShowDialog] = useState(false);
   const [itemSeleccionado, setItemSeleccionado] = useState(null);

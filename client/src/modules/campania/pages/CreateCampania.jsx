@@ -10,15 +10,9 @@ import {
   FilterSubcategoria,
   CustomCircularProgress,
 } from "../../../components";
-import { AuthContext } from "../../../auth";
 
 export const CreateCampania = () => {
-  const { authTokens } = useContext(AuthContext);
-  /* obtenemos los datos de la sesión para enviarlo. */
-  const [currentUser, setCurrentUser] = useState(() =>
-    jwtDecode(authTokens.refresh)
-  );
-
+ 
   const [campaign, setCampaign] = useState({
     nombre: "",
     fecha_estimada: "",
@@ -27,9 +21,8 @@ export const CreateCampania = () => {
     coste_real: "",
     descripcion: "",
     estado: "A",
-    user: currentUser.user_id,
     proyecto: 0,
-    subCategoria: 0,
+    categoria: 0,
   });
 
   const {
@@ -40,9 +33,8 @@ export const CreateCampania = () => {
     coste_real,
     descripcion,
     estado,
-    user,
     proyecto,
-    subCategoria,
+    categoria,
   } = campaign;
 
   const {
@@ -71,7 +63,7 @@ export const CreateCampania = () => {
   const onAddCategory = (category) => {
     setCampaign({
       ...campaign,
-      subCategoria: category.id,
+      categoria: category.id,
     });
   };
 
@@ -90,9 +82,8 @@ export const CreateCampania = () => {
     coste_real,
     descripcion,
     estado,
-    user,
     proyecto,
-    subCategoria
+    categoria
   ) => {
     const errors = [];
 
@@ -117,14 +108,11 @@ export const CreateCampania = () => {
     if (!estado) {
       errors.push("- El estado es obligatorio.");
     }
-    if (!user) {
-      errors.push("- El usuario es obligatorio.");
-    }
     if (!proyecto) {
       errors.push("- El proyecto es obligatorio.");
     }
-    if (!subCategoria) {
-      errors.push("- La subcategoría es obligatoria.");
+    if (!categoria) {
+      errors.push("- La categoría es obligatoria.");
     }
 
     return errors.join("\n");
@@ -138,11 +126,13 @@ export const CreateCampania = () => {
       coste_estimado,
       coste_real,
       descripcion,
-      estado,
-      user,
       proyecto,
-      subCategoria
+      categoria,
+      estado,
     );
+
+
+    console.log(campaign)
 
     if (validationMessage) {
       // Si hay campos faltantes, mostrar una alerta con los mensajes de error concatenados
@@ -244,7 +234,6 @@ export const CreateCampania = () => {
                 >
                   <MenuItem value="A">Activo</MenuItem>
                   <MenuItem value="I">Inactivo</MenuItem>
-                  <MenuItem value="E">Eliminado</MenuItem>
                 </Select>
               </label>
 
@@ -278,7 +267,7 @@ export const CreateCampania = () => {
 
               <label className="block flex flex-col gap-y-1">
                 <span className="after:content-['*'] after:ml-0.5 after:text-yellow-500 block text-sm font-medium">
-                  Subcategoria
+                  categoria
                 </span>
                 <FilterSubcategoria
                   defaultValue={null}

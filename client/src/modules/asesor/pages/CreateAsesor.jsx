@@ -9,7 +9,6 @@ export const CreateAsesor = () => {
     numeroLeads: 0,
     estado: 0,
     codigoAsesor: "",
-    proyectos: [],
   });
 
   const { usuario, numeroLeads, estado, codigoAsesor, proyectos } = asesor;

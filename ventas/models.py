@@ -5,11 +5,10 @@ from marketing.models import Campania
 
 class Asesor(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    activo = models.BooleanField(default=False)
-    numeroLeads = models.IntegerField(null=True, blank=True)
-    numeroProyectos = models.IntegerField(null=True, blank=True)
-    fechaCreado = models.DateTimeField(null=True)
-    fechaActualizado = models.DateTimeField(null=True)
+    codigo = models.CharField(unique=True, blank=False, null=False)
+    numeroLeads = models.IntegerField(null=True, blank=True, default=0)
+    fechaCreado = models.DateTimeField(auto_now=True)
+    fechaActualizado = models.DateTimeField(auto_now=True)
     estado = models.ForeignKey(
         EstadoRegistro, on_delete=models.SET_NULL, default='A', null=True)
 

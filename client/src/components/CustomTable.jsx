@@ -16,14 +16,6 @@ export const CustomTable = ({ headerData, rowData }) => {
   const [showDialog, setShowDialog] = useState(false);
   const [itemSeleccionado, setItemSeleccionado] = useState(null);
   
-  // PARA ELIMINAR UN ITEM SELECCIONADO
-  const onCloseDeleteDialog = () => {
-    // ocultamos el modal
-    setShowDialog(false);
-    // dejamos el null la data del detalle
-    setItemSeleccionado(null);
-  };
-  
   // MOSTRAR Y OCULTAR DETALLE DE USUARIO
   const onShowDeleteDialog = async (item) => {
     setItemSeleccionado(item);

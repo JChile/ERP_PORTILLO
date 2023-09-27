@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { TableCell, TableRow } from "@mui/material";
 import { HiPhoneIncoming } from "react-icons/hi";
@@ -7,7 +7,7 @@ import { CustomMoreVerticalActions } from "../../../components";
 import { deleteLead } from "../helpers";
 
 export const RowItemLead = ({ item, onShowDeleteDialog }) => {
-  console.log(item)
+  console.log(item.id+"-------")
   const {
     id,
     nombre,
@@ -22,6 +22,8 @@ export const RowItemLead = ({ item, onShowDeleteDialog }) => {
     asesor,
     campania,
   } = item;
+  const [showDialog, setShowDialog] = useState(false);
+  const [itemSeleccionado, setItemSeleccionado] = useState(null);
 
   const navigate = useNavigate();
 
@@ -32,13 +34,14 @@ export const RowItemLead = ({ item, onShowDeleteDialog }) => {
     setItemSeleccionado(null);
   };
 
-  const onDeleteItemSelected = async (idItem) => {
+  const onDeleteItemSelected = async () => {
+    console.log("------------"+id)
     const body = {
-      activo: false,
+      estado: "I",
     };
-    const result = await deleteLead(idItem, body);
+    const result = await deleteLead(id, body);
     onCloseDeleteDialog();
-    onShowDeleteDialog(item);
+    onShowDeleteDialog();
   };
 
   const onEditItemSelected = () => {

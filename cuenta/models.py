@@ -289,7 +289,6 @@ class Profile(models.Model):
     
 
 class User(AbstractUser): 
-    pass
     perfil = models.OneToOneField(Profile, on_delete=models.CASCADE,blank=True,null=True)
     def __str__(self):
         return self.username

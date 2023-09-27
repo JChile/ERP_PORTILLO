@@ -7,5 +7,4 @@ admin.site.register(Asesor)
 admin.site.register(WhatsApp)
 admin.site.register(Llamada)
 admin.site.register(Objecion)
-admin.site.register(AsesorProyecto)
 

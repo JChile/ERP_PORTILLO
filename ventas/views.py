@@ -21,28 +21,30 @@ class LeadList(generics.ListCreateAPIView):
         users = User.objects.all()
         asesores = Asesor.objects.all()
         campanias = Campania.objects.all()
-        objeciones = Objecion.objects.all()
+        objeciones = Objecion.objects.all() 
         
         dataJson = groupserializer.data
         user_fields = ["id", "username", "first_name", "last_name"]
         
         for i in dataJson:
-            asesor_data = asesores.get(id=i["asesor"])
-            campania_data = campanias.get(id=i["campania"])                                   
-            objecion_data = objeciones.get(id=i["objeciones"])   
-            user_data = users.get(id=asesor_data.user.id)
-                          
-            asesorSerializer = AsesorSerializer(asesor_data)
-            campaniaSerializer = CampaniaSerializer(campania_data)
-            objecionSerializer = ObjecionSerializer(objecion_data)
-            userSerializer = UserSerializer(user_data)
-            user_data_serialized = userSerializer.data
+            asesor_data = asesores.filter(id=i["asesor"]).first()
+            campania_data = campanias.filter(id=i["campania"]).first()
+            objecion_data = objeciones.filter(id=i["objecion"]).first()
+    
+            asesorSerializer = AsesorSerializer(asesor_data) if asesor_data else None
+            campaniaSerializer = CampaniaSerializer(campania_data) if campania_data else None
+            objecionSerializer = ObjecionSerializer(objecion_data) if objecion_data else None    
 
-            i["asesor"] = asesorSerializer.data
-            i["campania"] = campaniaSerializer.data
-            i["objeciones"] = objecionSerializer.data
-            i["asesor"]["user"] = {field: user_data_serialized[field] for field in user_fields}
-            
+            i["asesor"] = asesorSerializer.data if asesorSerializer else {}
+            i["campania"] = campaniaSerializer.data if campaniaSerializer else {}
+            i["objecion"] = objecionSerializer.data if objecionSerializer else {}
+
+            if asesor_data:
+                user_data = users.filter(id=asesor_data.user.id).first()    
+                userSerializer = UserSerializer(user_data)
+                user_data_serialized = userSerializer.data 
+                i["asesor"]["user"] = {field: user_data_serialized[field] for field in user_fields}
+        
         return Response(dataJson)
 
 class LeadDetail(generics.RetrieveUpdateDestroyAPIView):
@@ -54,23 +56,26 @@ class LeadDetail(generics.RetrieveUpdateDestroyAPIView):
         lead = get_object_or_404(lead_queryset, pk=pk)
         leadSerializer = LeadSerializer(lead)
         dataJson = leadSerializer.data
+        
         user_fields = ["id", "username", "first_name", "last_name"]
 
-        asesor = Asesor.objects.all().get(id=dataJson["asesor"])
-        campania = Campania.objects.all().get(id=dataJson["campania"])
-        objecion = Objecion.objects.all().get(id=dataJson["objeciones"])
-        user = User.objects.all().get(id=asesor.user.id)
+        asesor = Asesor.objects.all().filter(id=dataJson["asesor"]).first()
+        campania = Campania.objects.all().filter(id=dataJson["campania"]).first()
+        objecion = Objecion.objects.all().filter(id=dataJson["objecion"]).first()
 
-        asesorSerializer = AsesorSerializer(asesor)
-        campaniaSerializer = CampaniaSerializer(campania)
-        objecionSerializer = ObjecionSerializer(objecion)
-        userSerializer = UserSerializer(user)
-        user_data_serialized = userSerializer.data
+        asesorSerializer = AsesorSerializer(asesor) if asesor else None
+        campaniaSerializer = CampaniaSerializer(campania) if campania else None
+        objecionSerializer = ObjecionSerializer(objecion) if objecion else None
+        
+        dataJson["asesor"] = asesorSerializer.data if asesorSerializer else {}
+        dataJson["campania"] = campaniaSerializer.data if campaniaSerializer else {}
+        dataJson["objecion"] = objecionSerializer.data if objecionSerializer else {}
 
-        dataJson["asesor"] = asesorSerializer.data
-        dataJson["campania"] = campaniaSerializer.data
-        dataJson["objeciones"] = objecionSerializer.data
-        dataJson["asesor"]["user"] = {field: user_data_serialized[field] for field in user_fields}
+        if asesor:
+            user = User.objects.all().filter(id=asesor.user.id).first()
+            userSerializer = UserSerializer(user)
+            user_data_serialized = userSerializer.data
+            dataJson["asesor"]["user"] = {field: user_data_serialized[field] for field in user_fields}
 
         return Response(dataJson)
 
@@ -94,7 +99,6 @@ class AsesorList(generics.ListCreateAPIView):
         return Response(dataJson)
 
 
-
 class AsesorDetail(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = AsesorSerializer
     queryset = Asesor.objects.all()
@@ -112,6 +116,13 @@ class AsesorDetail(generics.RetrieveUpdateDestroyAPIView):
         dataJson["user"] = {field: user_data_serialized[field] for field in user_fields}
 
         return Response(dataJson)
+
+class AsesorActivoList(generics.ListAPIView):
+    serializer_class = AsesorActivoSerializer
+    
+    def get_queryset(self):
+        return Asesor.objects.filter(estado='A')
+
 
 class WhatsAppList(generics.ListCreateAPIView):
     serializer_class = WhatsAppSerializer
@@ -138,11 +149,7 @@ class ObjecionDetail(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = ObjecionSerializer
     queryset = Objecion.objects.all()
 
-class AsesorActivoList(generics.ListAPIView):
-    serializer_class = AsesorActivoSerializer
-    
-    def get_queryset(self):
-        return Asesor.objects.filter(activo=True)
+
 
 
 

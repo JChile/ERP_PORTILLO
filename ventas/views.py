@@ -149,6 +149,9 @@ class ObjecionDetail(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = ObjecionSerializer
     queryset = Objecion.objects.all()
 
+class EstadoLeadList(generics.ListCreateAPIView):
+    serializer_class = EstadoLeadSerializer
+    queryset = EstadoLead.objects.all()
 
 
 

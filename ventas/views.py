@@ -7,7 +7,8 @@ from rest_framework import generics
 from rest_framework.response import Response
 from django.shortcuts import get_object_or_404
 from cuenta.models import User
-
+from rest_framework import status
+from datetime import datetime, timedelta
 
 
 class LeadList(generics.ListCreateAPIView):
@@ -80,6 +81,120 @@ class LeadDetail(generics.RetrieveUpdateDestroyAPIView):
         return Response(dataJson)
 
 
+class LeadMultiple(generics.ListCreateAPIView):
+    queryset = Lead.objects.all()
+    serializer_class = LeadListSerializer
+    last_asesor = 0
+
+    def post(self, request):
+        data = request.data
+        asesores = Asesor.objects.all()
+    
+        if not asesores.exists():
+            return Response({'message': 'No hay asesores disponibles'}, status=status.HTTP_400_BAD_REQUEST)
+
+        assigned_leads = []
+        unassigned_leads = []
+        duplicate_leads = []
+
+        thirty_days_ago = datetime.now() - timedelta(days=31)
+        unique_mobiles = Lead.objects.filter(horaEntrega__gte=thirty_days_ago).values_list('celular', flat=True).distinct()
+
+
+        for lead_data in data:
+            asesor = self.get_next_asesor(asesores)
+
+            if lead_data['celular'] in unique_mobiles:
+                duplicate_leads.append(lead_data)
+                continue
+
+            if asesor is not None:
+                lead_data['asesor'] = asesor.pk
+                asesor.numeroLeads += 1
+                asesor.save()
+
+                lead_data['asignado'] = True
+                assigned_leads.append(lead_data)
+
+            else:
+                lead_data['asignado'] = False
+                unassigned_leads.append(lead_data)
+
+    
+        serializer = LeadListSerializer(data=assigned_leads + unassigned_leads, many=True)
+        
+        if serializer.is_valid():
+            serializer.save()
+            return Response({
+                'message': 'Todos los Leads se han registrado',
+                'assigned_leads': assigned_leads,
+                'unassigned_leads': unassigned_leads,
+                'duplicate_leads': duplicate_leads
+            }, status=status.HTTP_201_CREATED)
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def get(self, request):
+        leads = Lead.objects.all()
+        serializer = LeadListSerializer(leads, many=True)
+        return Response(serializer.data)
+
+    def get_next_asesor(self, asesores):
+        num_asesores = len(asesores)
+        if num_asesores == 0:
+            return None
+
+        for _ in range(num_asesores):
+            next_asesor = asesores[self.last_asesor]
+
+            if next_asesor.maximoLeads == -1 or next_asesor.numeroLeads < next_asesor.maximoLeads:
+                self.last_asesor = (self.last_asesor + 1) % num_asesores
+                return next_asesor
+
+            self.last_asesor = (self.last_asesor + 1) % num_asesores
+
+        return None
+
+
+class LeadAssignMultiple(generics.UpdateAPIView):
+    queryset = Lead.objects.all()
+    serializer_class = LeadListSerializer
+
+    def update(self, request):
+        data = request.data
+        for assignment in data:
+            
+            lead_id = assignment.get('id')
+            asesor_id = assignment.get('asesor')
+            print(lead_id)
+
+            if lead_id is not None and asesor_id is not None:
+                try:
+                    lead = Lead.objects.get(pk=lead_id)
+                    asesor = Asesor.objects.get(pk=asesor_id)
+
+                    
+                    if lead.asesor != asesor:
+                        if lead.asesor is not None:
+                            old_asesor = lead.asesor
+                            old_asesor.numeroLeads -= 1
+                            old_asesor.save()
+                            
+                        
+                        lead.asesor = asesor
+                        lead.save()
+
+                        asesor.numeroLeads += 1
+                        asesor.save()
+
+                except Asesor.DoesNotExist:
+                    return Response({'message': f'El Asesor con ID {asesor_id} no existe'}, status=status.HTTP_400_BAD_REQUEST)
+                except Lead.DoesNotExist:
+                    return Response({'message': f'El Lead con ID {lead_id} no existe'}, status=status.HTTP_400_BAD_REQUEST)
+
+        return Response({'message': 'Las asignaciones se han realizado correctamente'}, status=status.HTTP_200_OK)
+
+
 class AsesorList(generics.ListCreateAPIView):
     serializer_class = AsesorSerializer
     queryset = Asesor.objects.all()
@@ -116,6 +231,19 @@ class AsesorDetail(generics.RetrieveUpdateDestroyAPIView):
         dataJson["user"] = {field: user_data_serialized[field] for field in user_fields}
 
         return Response(dataJson)
+    
+    def update(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serializer = self.get_serializer(instance, data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+
+        leads_asignados = Lead.objects.filter(asesor=instance)
+        for lead in leads_asignados:
+            lead.update_estado()
+
+        return Response(serializer.data)
+
 
 class AsesorActivoList(generics.ListAPIView):
     serializer_class = AsesorActivoSerializer

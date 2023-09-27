@@ -36,6 +36,11 @@ class ObjecionSerializer(serializers.ModelSerializer):
         model = Objecion
         fields = '__all__'
 
+class EstadoLeadSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = EstadoLead
+        fields = '__all__'
+
 class AsesorProyectoSerializer(serializers.ModelSerializer):
     class Meta:
         model = AsesorProyecto

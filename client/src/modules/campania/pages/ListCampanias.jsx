@@ -1,5 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { getCampanias, deleteCampania } from "../helpers";
+import {
+  getCampaniasActivas,
+  deleteCampania,
+  getCampaniasInactivas,
+} from "../helpers";
 import { Link } from "react-router-dom";
 import { RiAddBoxFill } from "react-icons/ri";
 import { DialogDeleteCampania, RowItemCampania } from "../components";
@@ -44,41 +48,21 @@ export const ListCampanias = () => {
     setActiveButton(buttonState);
   };
 
-  const filtrar = (nameFilter, value) => {
-    let resultFilter = [];
-    switch (nameFilter) {
-      case "filter_active_campaign": {
-        resultFilter = campanias.filter((element) => {
-          return element.estado === "A";
-        });
-        setCampaniasTemporal(resultFilter);
-        break;
-      }
-      case "filter_inactive_campaign": {
-        resultFilter = campanias.filter((element) => {
-          return element.estado === "I";
-        });
-        setCampaniasTemporal(resultFilter);
-        break;
-      }
-      default:
-        break;
-    }
-  };
-
   // OBTENEMOS LAS CAMPAÑAS
   const obtenerCampanias = async () => {
-    const result = await getCampanias();
+    let result = [];
+    if (activeButton) {
+      result = await getCampaniasActivas();
+    } else {
+      result = await getCampaniasInactivas();
+    }
     setCampanias(result);
-    /*Mostramos las campañas, que se encuentran activas*/
-    setCampaniasTemporal(
-      result.filter((item) => (item.estado === "A" ? true : false))
-    );
+    setCampaniasTemporal(result);
   };
 
   const onDeleteItemSelected = async (idItem) => {
     const body = {
-      estado: "E",
+      estado: "I",
     };
     const result = await deleteCampania(idItem, body);
     obtenerCampanias();
@@ -118,7 +102,7 @@ export const ListCampanias = () => {
     obtenerCampanias();
     setVisibleProgress(false);
     return () => controller.abort();
-  }, []);
+  }, [activeButton]);
 
   const filters = ["Nombre", "Proyecto"];
 
@@ -147,10 +131,7 @@ export const ListCampanias = () => {
           <span className="block text-sm">Gestion de campanias</span>
           <div className="flex justify-center gap-x-3">
             <button
-              onClick={() => {
-                handleButtonState(true);
-                filtrar("filter_active_campaign");
-              }}
+              onClick={() => handleButtonState(true)}
               className={`px-4 py-2 rounded ${
                 activeButton ? "bg-blue-500 text-white" : "bg-gray-300"
               }`}
@@ -158,10 +139,7 @@ export const ListCampanias = () => {
               Activas
             </button>
             <button
-              onClick={() => {
-                handleButtonState(false);
-                filtrar("filter_inactive_campaign");
-              }}
+              onClick={() => handleButtonState(false)}
               className={`px-4 py-2 rounded ${
                 !activeButton ? "bg-blue-500 text-white" : "bg-gray-300"
               }`}
@@ -188,7 +166,6 @@ export const ListCampanias = () => {
             "Coste Estimado",
             "Proyecto",
             "Categoria",
-            "Subcategoria",
           ]}
           rowData={campaniasTemporal}
           onShowDeleteDialog={onShowDeleteDialog}

@@ -12,13 +12,7 @@ export const DetailCampania = () => {
     coste_real: 0,
     descripcion: "",
     estado: "",
-    user: {
-      first_name: "",
-    },
     proyecto: {
-      nombre: "",
-    },
-    subCategoria: {
       nombre: "",
     },
     categoria: {
@@ -34,9 +28,7 @@ export const DetailCampania = () => {
     coste_real,
     descripcion,
     estado,
-    user,
     proyecto,
-    subCategoria,
     categoria,
   } = campania;
 
@@ -93,13 +85,6 @@ export const DetailCampania = () => {
                 </span>
                 <span className="block text-sm">{categoria.nombre}</span>
               </label>
-
-              <label className="block flex gap-y-1 ">
-                <span className="block text-sm font-medium min-w-[10rem] text-zinc-500">
-                  Creador:
-                </span>
-                <span className="block text-sm">{user.first_name}</span>
-              </label>
             </div>
 
             <div className="w-full flex flex-col gap-y-3">
@@ -122,13 +107,6 @@ export const DetailCampania = () => {
                   Coste real:
                 </span>
                 <span className="block text-sm">s./ {coste_real}</span>
-              </label>
-
-              <label className="block flex gap-y-1 ">
-                <span className="block text-sm font-medium min-w-[10rem] text-zinc-500">
-                  Subcategoria:
-                </span>
-                <span className="block text-sm">{subCategoria.nombre}</span>
               </label>
 
               <label className="block flex gap-y-1 ">

@@ -1,15 +1,17 @@
 import { Paper } from "@mui/material";
-import React from "react";
+import React, { useContext } from "react";
+import { AuthContext } from "../auth";
 
 
 /**
  * 
- * @param {moduleName} moduleName Nombre del modulo
- * @param {userName} userName Informacion del usuario
- * @param {viewName} viewName Titulo de la vista
+ * @param {string} moduleName Nombre del modulo
+ * @param {string} userName Informacion del usuario
+ * @param {string} viewName Titulo de la vista
  * @returns 
  */
 export const CustomTopBar = ({ moduleName, userName, viewName }) => {
+
   return (
     <Paper elevation={1} square>
       <div className="py-6 px-8 flex flex-row items-center justify-between">

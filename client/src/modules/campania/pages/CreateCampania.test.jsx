@@ -20,3 +20,15 @@ describe("CreateCampaniaTest", () => {
     expect(nameInput.value).toBe("Test campaign")
   })
 });
+
+
+/**
+ * type of tests
+ * 
+ * Unit tests
+ * 
+ * Integration test
+ * 
+ * End to End test
+ * 
+ */

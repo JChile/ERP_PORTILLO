@@ -40,8 +40,3 @@ class EstadoLeadSerializer(serializers.ModelSerializer):
     class Meta:
         model = EstadoLead
         fields = '__all__'
-
-class AsesorProyectoSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = AsesorProyecto
-        fields = '__all__'

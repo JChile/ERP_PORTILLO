@@ -1,0 +1,107 @@
+// Modulos
+[
+    {
+        "id": 1,
+        "nombre": "Gestion de leads",
+        "contentType": {
+            "id": 14,
+            "app_label": "ventas",
+            "model": "lead"
+        },
+        "estado": "A"
+    },
+    {
+        "id": 2,
+        "nombre": "Gestion de campañas",
+        "contentType": {
+            "id": 12,
+            "app_label": "marketing",
+            "model": "campania"
+        },
+        "estado": "A"
+    },
+    {
+        "id": 3,
+        "nombre": "Gestion de roles",
+        "contentType": {
+            "id": 3,
+            "app_label": "auth",
+            "model": "group"
+        },
+        "estado": "A"
+    },
+    {
+        "id": 4,
+        "nombre": "Gestión de asesores",
+        "contentType": {
+            "id": 13,
+            "app_label": "ventas",
+            "model": "asesor"
+        },
+        "estado": "A"
+    },
+    {
+        "id": 5,
+        "nombre": "Gestion de usuarios",
+        "contentType": {
+            "id": 8,
+            "app_label": "cuenta",
+            "model": "user"
+        },
+        "estado": "A"
+    }
+]
+
+[
+    {
+        "estado": "A",
+        "nombre": "Activo"
+    },
+    {
+        "estado": "I",
+        "nombre": "Inactivo"
+    }
+]
+
+
+
+[
+    {
+        "id": 1,
+        "name": "Jefe de Marketing",
+        "permissions": [
+            45,
+            46,
+            47,
+            48,
+            53,
+            54,
+            55,
+            56
+        ]
+    },
+    {
+        "id": 2,
+        "name": "Jefe de Recursos Humanos",
+        "permissions": [
+            9,
+            10,
+            11,
+            12,
+            29,
+            30,
+            31,
+            32
+        ]
+    },
+    {
+        "id": 3,
+        "name": "Jefe de Ventas",
+        "permissions": [
+            49,
+            50,
+            51,
+            52
+        ]
+    }
+]

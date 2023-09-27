@@ -270,3 +270,54 @@ def getRoutes(request):
         '/api/token/refresh',
     ]
     return Response(routes)
+
+
+
+class UserActivoList(generics.ListAPIView):
+    queryset = User.objects.all()
+
+
+    serializer_class = UserSerializer
+    def list(self, request):   
+        users = User.objects.filter(is_active=True)
+
+        dataJson = UserSerializer(users,many = True).data
+
+
+        for i in dataJson :
+            del i["password"]
+            del i["is_superuser"]
+            del i["email"]
+            del i["is_staff"]
+            del i["date_joined"]
+            del i["perfil"]
+            del i["groups"]
+            del i["user_permissions"]
+            del i["last_login"]
+            del i["is_active"]
+            del i["username"]
+
+        return Response(dataJson)
+
+
+class UserInactivoList(generics.ListAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+    def list(self, request):   
+        users = User.objects.filter(is_active=False)
+        dataJson = UserSerializer(users,many = True).data
+        for i in dataJson :
+            del i["password"]
+            del i["is_superuser"]
+            del i["email"]
+            del i["is_staff"]
+            del i["date_joined"]
+            del i["perfil"]
+            del i["groups"]
+            del i["user_permissions"]
+            del i["last_login"]
+            del i["is_active"]
+            del i["username"]
+            
+
+        return Response(dataJson)

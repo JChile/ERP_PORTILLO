@@ -7,6 +7,20 @@ class LeadSerializer(serializers.ModelSerializer):
     class Meta:
         model = Lead
         fields = '__all__'
+        
+class MultipleLeadSerializer(serializers.ListSerializer):
+    def create(self, validated_data):
+        return [Lead.objects.create(**item) for item in validated_data]
+        
+    def update(self, instance, validated_data):
+        pass
+
+class LeadListSerializer(LeadSerializer):
+    class Meta:
+        model = Lead
+        fields = '__all__'
+        list_serializer_class = MultipleLeadSerializer
+
 
 class AsesorSerializer(serializers.ModelSerializer):
     class Meta:
@@ -39,9 +53,4 @@ class ObjecionSerializer(serializers.ModelSerializer):
 class EstadoLeadSerializer(serializers.ModelSerializer):
     class Meta:
         model = EstadoLead
-        fields = '__all__'
-
-class AsesorProyectoSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = AsesorProyecto
         fields = '__all__'

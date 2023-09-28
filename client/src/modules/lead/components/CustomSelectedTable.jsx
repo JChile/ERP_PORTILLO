@@ -10,7 +10,9 @@ import {
 } from "@mui/material";
 import React from "react";
 
-export const CustomSelectedTable = () => {
+export const CustomSelectedTable = ({ headerData, rowData }) => {
+
+
   return (
     <Paper>
       <TableContainer>
@@ -21,7 +23,7 @@ export const CustomSelectedTable = () => {
         >
           <TableHead>
             <TableRow>
-                <TableCell>Titulo</TableCell>
+              <TableCell>Titulo</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>

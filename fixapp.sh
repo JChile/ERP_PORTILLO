@@ -1,5 +1,10 @@
 #!/bin/bash
 
+# Capitulo 3:
+# generalidades
+# esquema de la propuesta
+# componentes de la propuesta
+
 if [ $# -eq 0 ]; then
   echo "Por favor, proporciona al menos un parámetro."
   exit 1

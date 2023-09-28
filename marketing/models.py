@@ -32,6 +32,7 @@ class Campania(models.Model):
 
     #user = models.ForeignKey(User, on_delete=models.CASCADE)
     nombre = models.CharField(max_length=100,null=True)
+    fecha_creacion = models.DateTimeField(auto_now=True)
     fecha_estimada = models.DateField(null=True,blank=True)
     fecha_cierre = models.DateField(null=True,blank=True)
     coste_estimado = models.FloatField(default=0)
@@ -42,5 +43,3 @@ class Campania(models.Model):
     estado = models.ForeignKey(EstadoRegistro,on_delete=models.SET_NULL, default='A',null=True)
     def __str__(self):
         return self.nombre
-    
-

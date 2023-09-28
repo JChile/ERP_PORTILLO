@@ -25,6 +25,8 @@ class Asesor(models.Model):
 
 class Objecion(models.Model):
     nombre = models.CharField(max_length=100,null=True)
+    codigo = models.CharField(max_length=3,null=True)
+
     estado = models.ForeignKey(EstadoRegistro,on_delete=models.SET_NULL, default='A',null=True)
 
     def __str__(self):

@@ -36,7 +36,7 @@ class Lead(models.Model):
     asignado = models.BooleanField(default=False)
     celular = models.CharField(max_length=100, null=True)
     celular2 = models.CharField(max_length=100, null=True, blank=True)
-    telefono = models.CharField(max_length=100, null=True)
+    telefono = models.CharField(max_length=100, null=True, blank=True)
     comentario = models.TextField(max_length=200, null=True, blank=True)
     horaEntrega = models.DateTimeField(auto_now=True)
     llamar = models.BooleanField(default=False)

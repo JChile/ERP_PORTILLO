@@ -224,7 +224,7 @@ COPY public.cuenta_profile (id, dni, fecha, nacionalidad, "estadoCivil", "correo
 
 COPY public.cuenta_user (id, password, last_login, is_superuser, username, first_name, last_name, email, is_staff, is_active, date_joined, perfil_id) FROM stdin;
 1	pbkdf2_sha256$600000$XeMWVNeYvgoN3QLYxfsCkW$gJyjaRFRAGC8je7My6z54vkKE5OOmL4G8xDcaKRpCNo=	\N	t	andrew	Andrew	Pold		t	t	2023-09-27 22:08:24.125613-05	1
-2	pbkdf2_sha256$600000$tNoWOXjTwQYnhtklT6Kp1X$GxR65ifvHynoX5dl6Nv/6m0fsRkiLOlaHwniLuiVloU=	2023-09-27 22:40:56.19877-05	t	qwerty				t	t	2023-09-27 22:08:50.584673-05	2
+2	pbkdf2_sha256$600000$tNoWOXjTwQYnhtklT6Kp1X$GxR65ifvHynoX5dl6Nv/6m0fsRkiLOlaHwniLuiVloU=	2023-09-27 23:03:27.190177-05	t	qwerty				t	t	2023-09-27 22:08:50.584673-05	2
 \.
 
 
@@ -250,6 +250,7 @@ COPY public.cuenta_user_user_permissions (id, user_id, permission_id) FROM stdin
 --
 
 COPY public.django_admin_log (id, action_time, object_id, object_repr, action_flag, change_message, content_type_id, user_id) FROM stdin;
+1	2023-09-27 23:03:43.456975-05	10	Playa/Campo / Casa	2	[{"changed": {"fields": ["Nombre"]}}]	17	2
 \.
 
 
@@ -258,39 +259,39 @@ COPY public.django_admin_log (id, action_time, object_id, object_repr, action_fl
 --
 
 COPY public.django_migrations (id, app, name, applied) FROM stdin;
-1	contenttypes	0001_initial	2023-09-27 22:16:32.889033-05
-2	contenttypes	0002_remove_content_type_name	2023-09-27 22:16:32.899016-05
-3	auth	0001_initial	2023-09-27 22:16:32.943542-05
-4	auth	0002_alter_permission_name_max_length	2023-09-27 22:16:32.949641-05
-5	auth	0003_alter_user_email_max_length	2023-09-27 22:16:32.956317-05
-6	auth	0004_alter_user_username_opts	2023-09-27 22:16:32.963022-05
-7	auth	0005_alter_user_last_login_null	2023-09-27 22:16:32.970618-05
-8	auth	0006_require_contenttypes_0002	2023-09-27 22:16:32.973095-05
-9	auth	0007_alter_validators_add_error_messages	2023-09-27 22:16:32.981656-05
-10	auth	0008_alter_user_username_max_length	2023-09-27 22:16:32.990896-05
-11	auth	0009_alter_user_last_name_max_length	2023-09-27 22:16:33.003012-05
-12	auth	0010_alter_group_name_max_length	2023-09-27 22:16:33.014251-05
-13	auth	0011_update_proxy_permissions	2023-09-27 22:16:33.021726-05
-14	auth	0012_alter_user_first_name_max_length	2023-09-27 22:16:33.030265-05
-15	cuenta	0001_initial	2023-09-27 22:16:33.131683-05
-16	admin	0001_initial	2023-09-27 22:16:33.16767-05
-17	admin	0002_logentry_remove_auto_add	2023-09-27 22:16:33.18635-05
-18	admin	0003_logentry_add_action_flag_choices	2023-09-27 22:16:33.207658-05
-19	marketing	0001_initial	2023-09-27 22:16:33.306838-05
-20	sessions	0001_initial	2023-09-27 22:16:33.322699-05
-21	token_blacklist	0001_initial	2023-09-27 22:16:33.399244-05
-22	token_blacklist	0002_outstandingtoken_jti_hex	2023-09-27 22:16:33.422609-05
-23	token_blacklist	0003_auto_20171017_2007	2023-09-27 22:16:33.45824-05
-24	token_blacklist	0004_auto_20171017_2013	2023-09-27 22:16:33.485484-05
-25	token_blacklist	0005_remove_outstandingtoken_jti	2023-09-27 22:16:33.506996-05
-26	token_blacklist	0006_auto_20171017_2113	2023-09-27 22:16:33.526039-05
-27	token_blacklist	0007_auto_20171017_2214	2023-09-27 22:16:33.579917-05
-28	token_blacklist	0008_migrate_to_bigautofield	2023-09-27 22:16:33.665923-05
-29	token_blacklist	0010_fix_migrate_to_bigautofield	2023-09-27 22:16:33.701261-05
-30	token_blacklist	0011_linearizes_history	2023-09-27 22:16:33.707801-05
-31	token_blacklist	0012_alter_outstandingtoken_user	2023-09-27 22:16:33.735793-05
-32	ventas	0001_initial	2023-09-27 22:16:34.0603-05
-33	ventas	0002_objecion_codigo	2023-09-27 22:46:56.47468-05
+1	contenttypes	0001_initial	2023-09-27 23:03:03.913557-05
+2	contenttypes	0002_remove_content_type_name	2023-09-27 23:03:03.924897-05
+3	auth	0001_initial	2023-09-27 23:03:03.968679-05
+4	auth	0002_alter_permission_name_max_length	2023-09-27 23:03:03.975492-05
+5	auth	0003_alter_user_email_max_length	2023-09-27 23:03:03.984656-05
+6	auth	0004_alter_user_username_opts	2023-09-27 23:03:03.993568-05
+7	auth	0005_alter_user_last_login_null	2023-09-27 23:03:04.002467-05
+8	auth	0006_require_contenttypes_0002	2023-09-27 23:03:04.005789-05
+9	auth	0007_alter_validators_add_error_messages	2023-09-27 23:03:04.015942-05
+10	auth	0008_alter_user_username_max_length	2023-09-27 23:03:04.029612-05
+11	auth	0009_alter_user_last_name_max_length	2023-09-27 23:03:04.048368-05
+12	auth	0010_alter_group_name_max_length	2023-09-27 23:03:04.06441-05
+13	auth	0011_update_proxy_permissions	2023-09-27 23:03:04.073895-05
+14	auth	0012_alter_user_first_name_max_length	2023-09-27 23:03:04.08281-05
+15	cuenta	0001_initial	2023-09-27 23:03:04.192333-05
+16	admin	0001_initial	2023-09-27 23:03:04.228293-05
+17	admin	0002_logentry_remove_auto_add	2023-09-27 23:03:04.243552-05
+18	admin	0003_logentry_add_action_flag_choices	2023-09-27 23:03:04.264979-05
+19	marketing	0001_initial	2023-09-27 23:03:04.360905-05
+20	sessions	0001_initial	2023-09-27 23:03:04.376043-05
+21	token_blacklist	0001_initial	2023-09-27 23:03:04.452241-05
+22	token_blacklist	0002_outstandingtoken_jti_hex	2023-09-27 23:03:04.470823-05
+23	token_blacklist	0003_auto_20171017_2007	2023-09-27 23:03:04.5068-05
+24	token_blacklist	0004_auto_20171017_2013	2023-09-27 23:03:04.538825-05
+25	token_blacklist	0005_remove_outstandingtoken_jti	2023-09-27 23:03:04.565621-05
+26	token_blacklist	0006_auto_20171017_2113	2023-09-27 23:03:04.590471-05
+27	token_blacklist	0007_auto_20171017_2214	2023-09-27 23:03:04.640866-05
+28	token_blacklist	0008_migrate_to_bigautofield	2023-09-27 23:03:04.734847-05
+29	token_blacklist	0010_fix_migrate_to_bigautofield	2023-09-27 23:03:04.770992-05
+30	token_blacklist	0011_linearizes_history	2023-09-27 23:03:04.779273-05
+31	token_blacklist	0012_alter_outstandingtoken_user	2023-09-27 23:03:04.809133-05
+32	ventas	0001_initial	2023-09-27 23:03:05.151863-05
+34	ventas	0002_remove_objecion_codigo_alter_lead_celular2_and_more	2023-09-28 17:57:50.887799-05
 \.
 
 
@@ -299,7 +300,7 @@ COPY public.django_migrations (id, app, name, applied) FROM stdin;
 --
 
 COPY public.django_session (session_key, session_data, expire_date) FROM stdin;
-ktytajfja05rd2dq7abdkws658oqjek8	.eJxVjDsOwjAQBe_iGlleY_yhpOcM1q53jQMokeKkQtwdIqWA9s3Me6mM69Ly2mXOA6uzsurwuxGWh4wb4DuOt0mXaVzmgfSm6J12fZ1Ynpfd_Tto2Nu3TtWSWHRQg6scT0dOMRAUiB4gUXVgYiFfgbmIFxfQSiWTPGAKJop6fwDv9zhA:1qlhtY:9vbYNskxWyUpSUR0KEAmaOLWxzUc6Dgw8O8QDyckd2A	2023-10-11 22:40:56.20189-05
+iw3o7a3a20chnn5recx241af4slqmztb	.eJxVjDsOwjAQBe_iGlleY_yhpOcM1q53jQMokeKkQtwdIqWA9s3Me6mM69Ly2mXOA6uzsurwuxGWh4wb4DuOt0mXaVzmgfSm6J12fZ1Ynpfd_Tto2Nu3TtWSWHRQg6scT0dOMRAUiB4gUXVgYiFfgbmIFxfQSiWTPGAKJop6fwDv9zhA:1qliFL:OKbHP2VIWcMGCEe-UgR1YrI-HstinO_J_4DNuBkc-qY	2023-10-11 23:03:27.192767-05
 \.
 
 
@@ -370,17 +371,17 @@ CI	Cierre	A
 -- Data for Name: ventas_objecion; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public.ventas_objecion (id, nombre, estado_id, codigo) FROM stdin;
-1	Ninguna	A	NN
-2	Precio	A	PR
-3	No indica / No Interesado	A	NI
-4	Ocupado / Trabajando	A	OT
-6	Solo mensajes / Wsp	A	SM
-7	Inmediatez	A	IM
-8	No contesta / Apagado	A	NC
-9	Equivocado / No existe	A	EN
-10	'Playa/Campo / Casa	A	PC
-5	Ubicación	A	UB
+COPY public.ventas_objecion (id, nombre, estado_id) FROM stdin;
+1	Ninguna	A
+2	Precio	A
+3	No indica / No Interesado	A
+4	Ocupado / Trabajando	A
+6	Solo mensajes / Wsp	A
+7	Inmediatez	A
+8	No contesta / Apagado	A
+9	Equivocado / No existe	A
+5	Ubicación	A
+10	Playa/Campo / Casa	A
 \.
 
 
@@ -468,7 +469,7 @@ SELECT pg_catalog.setval('public.cuenta_user_user_permissions_id_seq', 1, false)
 -- Name: django_admin_log_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.django_admin_log_id_seq', 1, false);
+SELECT pg_catalog.setval('public.django_admin_log_id_seq', 1, true);
 
 
 --
@@ -482,7 +483,7 @@ SELECT pg_catalog.setval('public.django_content_type_id_seq', 20, true);
 -- Name: django_migrations_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.django_migrations_id_seq', 33, true);
+SELECT pg_catalog.setval('public.django_migrations_id_seq', 34, true);
 
 
 --

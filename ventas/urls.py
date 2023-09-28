@@ -5,7 +5,7 @@ from . import views
 
 urlpatterns = [
     re_path(r'^lead/$', views.LeadList.as_view()),
-    re_path(r'lead/(?P<pk>[0-9]+)$', views.LeadDetail.as_view()),
+    re_path(r'^lead/(?P<pk>[0-9]+)$', views.LeadDetail.as_view()),
     re_path(r'^asesor/$', views.AsesorList.as_view()),
     re_path(r'^asesor/(?P<pk>[0-9]+)$', views.AsesorDetail.as_view()),
     re_path(r'^whatsapp/$', views.WhatsAppList.as_view()),
@@ -16,4 +16,7 @@ urlpatterns = [
     re_path(r'^objecion/(?P<pk>[0-9]+)$', views.ObjecionDetail.as_view()),
     re_path(r'^asesorActivo/$', views.AsesorActivoList.as_view()),
     re_path(r'^estadoLead/$', views.EstadoLeadList.as_view()),
+    re_path(r'^multipleLead/$', views.LeadMultiple.as_view()),
+    re_path(r'^assignLead/$', views.LeadAssignMultiple.as_view()),
+
 ]

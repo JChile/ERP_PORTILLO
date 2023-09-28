@@ -4,19 +4,37 @@ from django.urls import include, re_path
 from . import views
 
 urlpatterns = [
-    re_path(r'^lead/$', views.LeadList.as_view()),
+    re_path(r'^lead/$', views.LeadListSinFiltros.as_view()),
     re_path(r'^lead/(?P<pk>[0-9]+)$', views.LeadDetail.as_view()),
-    re_path(r'^asesor/$', views.AsesorList.as_view()),
+    re_path(r'^leadActivo/$', views.LeadListActivos.as_view()),
+    re_path(r'^leadInactivo/$', views.LeadListInactivos.as_view()),
+    re_path(r'^leadAsignado/$', views.LeadListAsignados.as_view()),
+    re_path(r'^leadNoAsignado/$', views.LeadListNoAsignados.as_view()),
+    re_path(r'^leadMultipleCreation/$', views.LeadMultipleCreation.as_view()),
+    re_path(r'^leadMultipleAssign/$', views.LeadMultipleAssign.as_view()),
+    
+    re_path(r'^asesor/$', views.AsesorListSinFiltros.as_view()),
     re_path(r'^asesor/(?P<pk>[0-9]+)$', views.AsesorDetail.as_view()),
+    re_path(r'^asesorActivo/$', views.AsesorListActivos.as_view()),
+    re_path(r'^asesorInactivo/$', views.AsesorListInactivos.as_view()),
+
     re_path(r'^whatsapp/$', views.WhatsAppList.as_view()),
     re_path(r'^whatsapp/(?P<pk>[0-9]+)$', views.WhatsAppDetail.as_view()),
+    re_path(r'^whatsappActivo/$', views.whatsappActivos.as_view()),
+    re_path(r'^whatsappInactivo/$', views.whatsappInactivos.as_view()),
+
     re_path(r'^llamada/$', views.LlamadaList.as_view()),
     re_path(r'^llamada/(?P<pk>[0-9]+)$', views.LlamadaDetail.as_view()),
+    re_path(r'^llamadaActivo/$', views.LlamadaActivos.as_view()),
+    re_path(r'^llamadaInactivo/$', views.LlamadaInactivos.as_view()),
+
     re_path(r'^objecion/$', views.ObjecionList.as_view()),
     re_path(r'^objecion/(?P<pk>[0-9]+)$', views.ObjecionDetail.as_view()),
-    re_path(r'^asesorActivo/$', views.AsesorActivoList.as_view()),
-    re_path(r'^estadoLead/$', views.EstadoLeadList.as_view()),
-    re_path(r'^multipleLead/$', views.LeadMultiple.as_view()),
-    re_path(r'^assignLead/$', views.LeadAssignMultiple.as_view()),
+    re_path(r'^objecionActivo/$', views.ObjecionActivos.as_view()),
+    re_path(r'^objecionInactivo/$', views.ObjecionInactivos.as_view()),
 
+    re_path(r'^estadoLead/$', views.EstadoLeadList.as_view()),
+    re_path(r'^estadoLead/(?P<nombre>[\w-]+)$', views.EstadoLeadDetail.as_view()),
+    re_path(r'^estadoLeadActivo/$', views.EstadoLeadActivos.as_view()),
+    re_path(r'^estadoLeadInactivo/$', views.EstadoLeadInactivos.as_view()),
 ]

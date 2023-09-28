@@ -34,7 +34,7 @@ class EstadoLead(models.Model):
     descripcion = models.CharField(max_length=50, null=True, default=None)
     estado = models.ForeignKey(EstadoRegistro, on_delete=models.SET_NULL, null=True, blank=True)
     def __str__(self):
-        return self.estado
+        return self.descripcion
 
 class Lead(models.Model):
     nombre = models.CharField(max_length=100,null=True)

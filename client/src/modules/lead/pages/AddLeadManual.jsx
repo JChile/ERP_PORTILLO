@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Checkbox } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import { createLead } from "../helpers/createLead";
+import { createLead } from "../helpers";
 import { CustomAlert, FilterCampania, CustomCircularProgress } from "../../../components";
 import { FilterEstadoLead } from "../../../components/filters/estado/FilterEstadoLead";
 import { FilterObjecion } from "../../../components/filters/objecion/FilterObjecion";
@@ -12,28 +12,30 @@ export const AddLeadManual = () => {
   const [lead, setLead] = useState({
     nombre: "",
     apellido: "",
+    asignado: false,
     celular: "",
+    telefono: "",
     comentario: "",
-    horaEntrega: "",
-    mensajeMarketing: "",
     llamar: true,
-    estado: 5,
-    objeciones: 1,
     asesor: 0,
+    estado: "A",
+    estadoLead: "EP",
+    objecion: 1,
     campania: 0,
   });
 
   const {
     nombre,
     apellido,
+    asignado,
     celular,
+    telefono,
     comentario,
-    horaEntrega,
-    mensajeMarketing,
     llamar,
-    estado,
-    objeciones,
     asesor,
+    estado,
+    estadoLead,
+    objecion,
     campania,
   } = lead;
 
@@ -56,54 +58,41 @@ export const AddLeadManual = () => {
     const {name, value} = target
     setLead ({...lead, [name]:value})
   }
-  const onAddCheckInput = (event) => {
+  const onAddCheckInputLlamar = (event) => {
     setLead({ ...lead, llamar: !llamar });
+  };
+  const onAddCheckInputAsignado = (event) => {
+    setLead({ ...lead, asignado: !asignado });
   };
   const onAddCampania = (item) =>{
     setLead({...lead, campania: item.id})
   }
   const onAddEstadoLead = (item) =>{
-    setLead({...lead, estado: item.id})
+    setLead({...lead, estadoLead: item.id})
   }
   const onAddAsesor = (item) =>{
     setLead({...lead, asesor: item.id})
   }
   const onAddObjecion = (item) =>{
-    setLead({...lead, objeciones: item.id})
+    setLead({...lead, objecion: item.id})
   }
 
   const validateLead = (
-    nombre,
-    apellido,
     celular,
-    horaEntrega,
     estado,
-    objeciones,
-    asesor,
+    objecion,
     campania,
   ) => {
     const errors = [];
 
-    if (!nombre) {
-      errors.push("- El nombre es obligatorio.");
-    }
-    if (!apellido) {
-      errors.push("- El apellido es obligatorio.");
-    }
     if (!celular) {
       errors.push("- El celular es obligatorio.");
-    }
-    if (!horaEntrega) {
-      errors.push("- LA hora de entrega es obligatoria.");
     }
     if (!estado) {
       errors.push("- El estado es obligatorio.");
     }
-    if (!objeciones) {
+    if (!objecion) {
       errors.push("- La objecion es obligatoria.");
-    }
-    if (!asesor) {
-      errors.push("- El asesor es obligatorio.");
     }
     if (!campania) {
       errors.push("- La campaña es obligatoria.");
@@ -113,19 +102,13 @@ export const AddLeadManual = () => {
 
   const crearLead = async () => {
     const validationMessage = validateLead(
-      nombre,
-      apellido,
       celular,
-      comentario,
-      horaEntrega,
-      mensajeMarketing,
-      llamar,
-      asesor,
-      campania,
       estado,
-      objeciones,
+      objecion,
+      campania,
     );
 
+    console.log(lead)
     if (validationMessage) {
       setFeedbackMessages({
         style_message: "warning",
@@ -184,14 +167,14 @@ export const AddLeadManual = () => {
           </label>
 
           <label className="block flex flex-col gap-y-1">
-            <span className="block text-sm font-medium">Hora de Entrega</span>
+            <span className="block text-sm font-medium">Celular 2</span>
             <input
-              type="date"
-              name="horaEntrega"
-              id="hora_entrega"
-              value={horaEntrega}
-              onChange={handledForm}
+              type="text"
+              name="celular"
               className="mt-1 px-3 py-2 bg-white border shadow-sm border-slate-300 placeholder-slate-400 focus:outline-none focus:border-sky-500 focus:ring-sky-500 block w-full rounded-md sm:text-sm focus:ring-1"
+              placeholder="Celular 2"
+              value={telefono}
+              onChange={handledForm}
             />
           </label>
 
@@ -214,7 +197,7 @@ export const AddLeadManual = () => {
               <Checkbox
                 name="llamar"
                 checked={llamar}
-                onChange={onAddCheckInput}
+                onChange={onAddCheckInputLlamar}
                 inputProps={{ "aria-label": "controlled" }}
               />
           </label>
@@ -223,10 +206,10 @@ export const AddLeadManual = () => {
         <div className="flex-1 flex flex-col gap-y-6">
 
           <label className="block flex flex-col gap-y-1">
-            <span className="block text-sm font-medium">Estado</span>
+            <span className="block text-sm font-medium">Estado Lead</span>
             <FilterEstadoLead
               onNewInput={onAddEstadoLead}
-              defaultValue={5}
+              defaultValue={"EP"}
             />
           </label>
 
@@ -251,17 +234,16 @@ export const AddLeadManual = () => {
               onNewInput={onAddCampania}
             />
           </label>
-          
-          <label className="block flex flex-col gap-y-1">
-            <span className="block text-sm font-medium">Mensaje de Marketing</span>
-            <textarea
-              name="mensajeMarketing"
-              rows="3"
-              className="mt-1 px-3 py-2 bg-white border shadow-sm border-slate-300 placeholder-slate-400 focus:outline-none focus:border-sky-500 focus:ring-sky-500 block w-full rounded-md sm:text-sm focus:ring-1"
-              placeholder="Mensaje de Marketing"
-              value={mensajeMarketing}
-              onChange={handledForm}
-            ></textarea>
+          <label className="block flex flex-row gap-y-1">
+              <span className="after:content-['*'] after:ml-0.5 after:text-yellow-500 block text-sm font-medium flex items-center me-2">
+                Asignado
+              </span>
+              <Checkbox
+                name="asignado"
+                checked={asignado}
+                onChange={onAddCheckInputAsignado}
+                inputProps={{ "aria-label": "controlled" }}
+              />
           </label>
         </div>
       </form>

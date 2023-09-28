@@ -18,9 +18,9 @@ export const FilterEstadoLead = ({ defaultValue = null, onNewInput }) => {
       defaultOption,
       ...result.map((element) => {
         return {
-          value: element.id,
-          label: element.nombre,
-          id: element.id,
+          value: element.nombre,
+          label: element.descripcion,
+          id: element.nombre,
         };
       }),
     ];

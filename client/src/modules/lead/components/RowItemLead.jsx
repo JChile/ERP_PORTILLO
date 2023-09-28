@@ -17,7 +17,7 @@ export const RowItemLead = ({ item, onShowDeleteDialog }) => {
     horaEntrega,
     mensajeMarketing,
     llamar,
-    estado,
+    estadoLead,
     objeciones,
     asesor,
     campania,
@@ -107,8 +107,8 @@ export const RowItemLead = ({ item, onShowDeleteDialog }) => {
           <a href={"https://wa.me/" + celular}>{celular}</a>
         </div>
       </TableCell>
-      <TableCell>{estado.nombre}</TableCell>
-      <TableCell>{objeciones.nombre}</TableCell>
+      <TableCell>{estadoLead}</TableCell>
+      <TableCell>{objeciones}</TableCell>
       <TableCell>{campania.nombre}</TableCell>
       <TableCell>{comentario}</TableCell>
       <TableCell>{horaEntrega}</TableCell>

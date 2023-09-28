@@ -1,32 +1,38 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Autocomplete, TextField } from "@mui/material";
 
 const defaultOptions = [
   {
-    value: 0,
-    label: "Seleccione un estado",
-    id: 0,
-  },
-  {
     value: 1,
     label: "Activo",
-    id: 1,
+    id: "A",
   },
   {
     value: 2,
     label: "Inactivo",
-    id: 2,
+    id: "I",
   },
 ];
 
-export const FilterEstadoRegistro = ({ onNewInput, defaultValue = null }) => {
+export const FilterEstadoRegistro = ({
+  onNewInput = () => {},
+  defaultValue = "A",
+}) => {
   const [options, setOptions] = useState(defaultOptions);
   const [value, setValue] = useState(defaultOptions[0]);
+
+  const asignarValorDefecto = () => {
+    setValue(defaultValue === "A" ? defaultOptions[0] : defaultOptions[1]);
+  };
 
   const handleChange = (event, value) => {
     onNewInput(value);
     setValue(value);
   };
+
+  useEffect(() => {
+    asignarValorDefecto();
+  }, [defaultValue]);
 
   return (
     <Autocomplete

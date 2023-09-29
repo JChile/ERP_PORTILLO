@@ -8,6 +8,7 @@ from rest_framework.decorators import api_view
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework.permissions import IsAuthenticated
 from django.shortcuts import get_object_or_404
+from rest_framework.views import APIView
 
 
 def index(request):
@@ -307,49 +308,17 @@ def getRoutes(request):
     return Response(routes)
 
 
-class UserActivoList(generics.ListAPIView):
-    queryset = User.objects.all()
-
-    serializer_class = UserSerializer
-
-    def list(self, request):
+class UserActivoList(APIView):
+    def get(self, request):
         users = User.objects.filter(is_active=True)
-
-        dataJson = UserSerializer(users, many=True).data
-
-        for i in dataJson:
-            del i["password"]
-            del i["is_superuser"]
-            del i["email"]
-            del i["is_staff"]
-            del i["date_joined"]
-            del i["perfil"]
-            del i["groups"]
-            del i["user_permissions"]
-            del i["last_login"]
-            del i["is_active"]
-
+        dataJson = UserSerializer(users, many=True, fields=(
+            'id', 'first_name', 'last_name')).data
         return Response(dataJson)
 
 
-class UserInactivoList(generics.ListAPIView):
-    queryset = User.objects.all()
-    serializer_class = UserSerializer
-
-    def list(self, request):
+class UserInactivoList(APIView):
+    def get(self, request):
         users = User.objects.filter(is_active=False)
-        dataJson = UserSerializer(users, many=True).data
-        for i in dataJson:
-            del i["password"]
-            del i["is_superuser"]
-            del i["email"]
-            del i["is_staff"]
-            del i["date_joined"]
-            del i["perfil"]
-            del i["groups"]
-            del i["user_permissions"]
-            del i["last_login"]
-            del i["is_active"]
-            del i["username"]
-
+        dataJson = UserSerializer(users, many=True, fields=(
+            'id', 'first_name', 'last_name')).data
         return Response(dataJson)

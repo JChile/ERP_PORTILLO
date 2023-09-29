@@ -1,6 +1,7 @@
 from django.db import models
 from cuenta.models import User, EstadoRegistro
 from marketing.models import Campania
+from marketing.models import Proyecto
 
 
 class Asesor(models.Model):
@@ -41,8 +42,8 @@ class Lead(models.Model):
     apellido = models.CharField(max_length=100, null=True)
     asignado = models.BooleanField(default=False)
     celular = models.CharField(max_length=100, null=True)
-    celular2 = models.CharField(max_length=100, null=True)
-    telefono = models.CharField(max_length=100, null=True)
+    celular2 = models.CharField(max_length=100, null=True, blank=True)
+    telefono = models.CharField(max_length=100, null=True, blank=True)
     comentario = models.TextField(max_length=200, null=True, blank=True)
     horaEntrega = models.DateTimeField(auto_now=True)
     llamar = models.BooleanField(default=False)
@@ -62,8 +63,11 @@ class Lead(models.Model):
 
     def update_estado(self):
         if self.asesor.estado.estado == 'I':
-            self.asignado = False
             self.asesor = None
+
+            if self.estadoLead.nombre == 'EP':
+                self.asignado = False
+
             self.save()
 
 

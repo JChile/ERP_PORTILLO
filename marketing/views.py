@@ -7,12 +7,13 @@ from rest_framework.decorators import api_view
 from rest_framework.permissions import IsAuthenticated
 from django.shortcuts import get_object_or_404
 from rest_framework.views import APIView
-
+from django_filters.rest_framework import DjangoFilterBackend
 
 class ProyectoList(generics.ListCreateAPIView):
     serializer_class = ProyectoSerializer
     queryset = Proyecto.objects.all()
-
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = ['estado']
 class ProyectoDetail(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = ProyectoSerializer
     queryset = Proyecto.objects.all()
@@ -20,7 +21,9 @@ class ProyectoDetail(generics.RetrieveUpdateDestroyAPIView):
 class CategoriaList(generics.ListCreateAPIView):
     serializer_class = CategoriaSerializer
     queryset = Categoria.objects.all()
-
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = ['estado']
+    
 class CategoriaDetail(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = CategoriaSerializer
     queryset = Categoria.objects.all()
@@ -29,8 +32,7 @@ class CategoriaDetail(generics.RetrieveUpdateDestroyAPIView):
 class CampaniaList(generics.ListCreateAPIView):
     serializer_class = CampaniaSerializer
     queryset = Campania.objects.all()
-    def list(self, request):
-        
+    def get(self, request):   
         estado = request.query_params.get('estado')
         print(estado)
         if estado : 
@@ -61,7 +63,7 @@ class CampaniaDetail(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = CampaniaSerializer
     queryset = Campania.objects.all()
 
-    def retrieve(self, request, pk=None):
+    def get(self, request, pk=None):
         campania_queryset = Campania.objects.all()
         campania = get_object_or_404(campania_queryset, pk=pk)
         campaniaSerializer = CampaniaSerializer(campania)
@@ -134,8 +136,6 @@ class ProyectoCampaniaList(APIView):
 
         campanias = Campania.objects.filter(estado = "A")
         proyectos = Proyecto.objects.filter(estado = "A") 
-
-    
         # Realiza una operación personalizada aquí, por ejemplo, obtener un objeto por su clave primaria (pk)
         # Serializa el objeto
         

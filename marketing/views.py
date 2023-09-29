@@ -131,15 +131,11 @@ class CampaniaInactivoList(APIView):
 class ProyectoCampaniaList(APIView):
     
     def get(self, request):
-        _estado = request.query_params.get('estado')
-        print(_estado)
-        if _estado : 
-            campanias = Campania.objects.filter(estado = _estado)
-            proyectos = Proyecto.objects.filter(estado = _estado) 
 
-        else : 
-            proyectos = Proyecto.objects.all()
-            campanias = Campania.objects.all()
+        campanias = Campania.objects.filter(estado = "A")
+        proyectos = Proyecto.objects.filter(estado = "A") 
+
+    
         # Realiza una operación personalizada aquí, por ejemplo, obtener un objeto por su clave primaria (pk)
         # Serializa el objeto
         

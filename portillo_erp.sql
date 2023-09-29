@@ -372,8 +372,9 @@ COPY public.marketing_proyecto (id, nombre, ubicacion, descripcion, estado_id) F
 COPY public.marketing_campania (id, nombre, fecha_creacion, fecha_estimada, fecha_cierre, coste_estimado, coste_real, descripcion, categoria_id, estado_id, proyecto_id) FROM stdin;
 1	Navidad	2023-09-28 22:23:11.66886-05	2023-09-28	2023-09-30	5	4		1	A	1
 2	Verano	2023-09-28 22:23:31.350359-05	2023-09-28	2023-09-28	4	4		2	A	2
-3	Otoño	2023-09-28 22:23:46.634747-05	2023-09-28	2023-09-28	3	3		4	A	3
 4	Primavera	2023-09-28 22:24:07.851979-05	2023-09-28	2023-09-28	0	0		3	A	3
+5	Invierno	2023-09-28 23:05:35.695474-05	2023-09-15	2023-09-28	2626	566		1	A	1
+3	Otoño	2023-09-28 23:32:13.930433-05	2023-09-28	2023-09-28	3	3		4	I	3
 \.
 
 
@@ -540,7 +541,7 @@ SELECT pg_catalog.setval('public.django_migrations_id_seq', 34, true);
 -- Name: marketing_campania_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.marketing_campania_id_seq', 4, true);
+SELECT pg_catalog.setval('public.marketing_campania_id_seq', 5, true);
 
 
 --

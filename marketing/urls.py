@@ -13,5 +13,5 @@ urlpatterns = [
     re_path(r'^campania/(?P<pk>[0-9]+)$', views.CampaniaDetail.as_view()),
     re_path(r'^campania_activa/$', views.CampaniaActivoList.as_view()),
     re_path(r'^campania_inactiva/$', views.CampaniaInactivoList.as_view()),
-
+    re_path(r'^proyecto_campania/$', views.ProyectoCampaniaList.as_view()),
 ]

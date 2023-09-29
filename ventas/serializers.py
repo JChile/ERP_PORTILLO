@@ -3,6 +3,7 @@ from .models import *
 from cuenta.models import *
 
 
+
 class LeadSerializer(serializers.ModelSerializer):
     class Meta:
         model = Lead

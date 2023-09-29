@@ -33,10 +33,6 @@ class ContentTypeSerializer(serializers.ModelSerializer):
         fields = '__all__'    
 
 
-
-
-
-
 class ProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = Profile
@@ -48,13 +44,23 @@ class UserSerializer(serializers.ModelSerializer):
         model = User
         fields = '__all__'
     
+    def __init__(self, *args, **kwargs):
+        # Recibe el parámetro 'fields' que contiene los campos deseados
+        fields = kwargs.pop('fields', None)
+        super(UserSerializer, self).__init__(*args, **kwargs)
+        if fields is not None:
+            # Filtra los campos según los especificados en 'fields'
+            allowed = set(fields)
+            existing = set(self.fields)
+            for field_name in existing - allowed:
+                self.fields.pop(field_name)
     
     def create(self, validated_data):
         user = super(UserSerializer, self).create(validated_data)
         user.set_password(validated_data['password'])
         user.save()
         return user
-
+         
 
 class UserProfileSerializer(serializers.ModelSerializer):
     perfil = ProfileSerializer()
@@ -147,7 +153,16 @@ class ModuloSerializer(serializers.ModelSerializer):
     class Meta:
         model = Modulo
         fields = '__all__'
-
+    def __init__(self, *args, **kwargs):
+        # Recibe el parámetro 'fields' que contiene los campos deseados
+        fields = kwargs.pop('fields', None)
+        super(ModuloSerializer, self).__init__(*args, **kwargs)
+        if fields is not None:
+            # Filtra los campos según los especificados en 'fields'
+            allowed = set(fields)
+            existing = set(self.fields)
+            for field_name in existing - allowed:
+                self.fields.pop(field_name)
 
 
 

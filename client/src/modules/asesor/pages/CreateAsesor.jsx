@@ -106,7 +106,7 @@ export const CreateAsesor = () => {
             <div className="w-6/12 flex flex-col gap-y-5">
               <label className="block flex flex-col gap-y-1 ">
                 <span className="after:content-['*'] after:ml-0.5 after:text-yellow-500 block text-sm font-medium">
-                  user
+                  Usuario
                 </span>
                 <FilterUsuario defaultValue={null} onNewInput={onAdduser} />
               </label>

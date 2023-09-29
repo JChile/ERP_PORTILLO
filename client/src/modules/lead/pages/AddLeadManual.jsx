@@ -2,11 +2,16 @@ import React, { useState } from "react";
 import { Checkbox } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { createLead } from "../helpers/createLead";
-import { CustomAlert, FilterCampania, CustomCircularProgress } from "../../../components";
+import {
+  CustomAlert,
+  FilterCampania,
+  CustomCircularProgress,
+} from "../../../components";
 import { FilterEstadoLead } from "../../../components/filters/estado/FilterEstadoLead";
 import { FilterObjecion } from "../../../components/filters/objecion/FilterObjecion";
 import { FilterAsesor } from "../../../components/filters/asesor/FilterAsesor";
 import { useAlertMUI } from "../../../hooks";
+import { MuiTelInput } from "mui-tel-input";
 
 export const AddLeadManual = () => {
   const [lead, setLead] = useState({
@@ -52,25 +57,25 @@ export const AddLeadManual = () => {
     navigate(-1);
   };
 
-  const handledForm = ({target}) =>{
-    const {name, value} = target
-    setLead ({...lead, [name]:value})
-  }
+  const handledForm = ({ target }) => {
+    const { name, value } = target;
+    setLead({ ...lead, [name]: value });
+  };
   const onAddCheckInput = (event) => {
     setLead({ ...lead, llamar: !llamar });
   };
-  const onAddCampania = (item) =>{
-    setLead({...lead, campania: item.id})
-  }
-  const onAddEstadoLead = (item) =>{
-    setLead({...lead, estado: item.id})
-  }
-  const onAddAsesor = (item) =>{
-    setLead({...lead, asesor: item.id})
-  }
-  const onAddObjecion = (item) =>{
-    setLead({...lead, objeciones: item.id})
-  }
+  const onAddCampania = (item) => {
+    setLead({ ...lead, campania: item.id });
+  };
+  const onAddEstadoLead = (item) => {
+    setLead({ ...lead, estado: item.id });
+  };
+  const onAddAsesor = (item) => {
+    setLead({ ...lead, asesor: item.id });
+  };
+  const onAddObjecion = (item) => {
+    setLead({ ...lead, objeciones: item.id });
+  };
 
   const validateLead = (
     nombre,
@@ -80,7 +85,7 @@ export const AddLeadManual = () => {
     estado,
     objeciones,
     asesor,
-    campania,
+    campania
   ) => {
     const errors = [];
 
@@ -123,7 +128,7 @@ export const AddLeadManual = () => {
       asesor,
       campania,
       estado,
-      objeciones,
+      objeciones
     );
 
     if (validationMessage) {
@@ -142,72 +147,84 @@ export const AddLeadManual = () => {
   };
   return (
     <>
-    <div className="relative border-2 rounded-md border-inherit p-5">
-      <h1 className="text-lg font-bold">Añadir lead manualmente</h1>
-      <hr className="my-4"></hr>
-      <form method="post" className="min-w-[242px] flex gap-x-8">
-        <div className="flex-1 flex flex-col gap-y-6">
-          <label className="block flex flex-col gap-y-1">
-            <span className="block text-sm font-medium">Nombre</span>
-            <input
-              type="text"
-              name="nombre"
-              className="mt-1 px-3 py-2 bg-white border shadow-sm border-slate-300 placeholder-slate-400 focus:outline-none focus:border-sky-500 focus:ring-sky-500 block w-full rounded-md sm:text-sm focus:ring-1"
-              placeholder="Nombre"
-              value={nombre}
-              onChange={handledForm}
-            />
-          </label>
+      <div className="relative border-2 rounded-md border-inherit p-5">
+        <h1 className="text-lg font-bold">Añadir lead manualmente</h1>
+        <hr className="my-4"></hr>
+        <form method="post" className="min-w-[242px] flex gap-x-8">
+          <div className="flex-1 flex flex-col gap-y-6">
+            <label className="block flex flex-col gap-y-1">
+              <span className="block text-sm font-medium">Nombre</span>
+              <input
+                type="text"
+                name="nombre"
+                className="mt-1 px-3 py-2 bg-white border shadow-sm border-slate-300 placeholder-slate-400 focus:outline-none focus:border-sky-500 focus:ring-sky-500 block w-full rounded-md sm:text-sm focus:ring-1"
+                placeholder="Nombre"
+                value={nombre}
+                onChange={handledForm}
+              />
+            </label>
 
-          <label className="block flex flex-col gap-y-1">
-            <span className="block text-sm font-medium">Apellido</span>
-            <input
-              type="text"
-              name="apellido"
-              className="mt-1 px-3 py-2 bg-white border shadow-sm border-slate-300 placeholder-slate-400 focus:outline-none focus:border-sky-500 focus:ring-sky-500 block w-full rounded-md sm:text-sm focus:ring-1"
-              placeholder="Apellido"
-              value={apellido}
-              onChange={handledForm}
-            />
-          </label>
+            <label className="block flex flex-col gap-y-1">
+              <span className="block text-sm font-medium">Apellido</span>
+              <input
+                type="text"
+                name="apellido"
+                className="mt-1 px-3 py-2 bg-white border shadow-sm border-slate-300 placeholder-slate-400 focus:outline-none focus:border-sky-500 focus:ring-sky-500 block w-full rounded-md sm:text-sm focus:ring-1"
+                placeholder="Apellido"
+                value={apellido}
+                onChange={handledForm}
+              />
+            </label>
 
-          <label className="block flex flex-col gap-y-1">
-            <span className="block text-sm font-medium">Celular</span>
-            <input
+            <label className="block flex flex-col gap-y-1">
+              <span className="block text-sm font-medium">Celular</span>
+              {/* <input
               type="text"
               name="celular"
               className="mt-1 px-3 py-2 bg-white border shadow-sm border-slate-300 placeholder-slate-400 focus:outline-none focus:border-sky-500 focus:ring-sky-500 block w-full rounded-md sm:text-sm focus:ring-1"
               placeholder="Celular"
               value={celular}
               onChange={handledForm}
-            />
-          </label>
+            /> */}
+              <MuiTelInput
+                defaultCountry="PE"
+                value={celular}
+                onChange={(value) => {
+                  handledForm({
+                    target: {
+                      name: "celular",
+                      value: value,
+                    },
+                  });
+                }}
+              />
+            </label>
 
-          <label className="block flex flex-col gap-y-1">
-            <span className="block text-sm font-medium">Hora de Entrega</span>
-            <input
-              type="date"
-              name="horaEntrega"
-              id="hora_entrega"
-              value={horaEntrega}
-              onChange={handledForm}
-              className="mt-1 px-3 py-2 bg-white border shadow-sm border-slate-300 placeholder-slate-400 focus:outline-none focus:border-sky-500 focus:ring-sky-500 block w-full rounded-md sm:text-sm focus:ring-1"
-            />
-          </label>
+            <label className="block flex flex-col gap-y-1">
+              <span className="block text-sm font-medium">Hora de Entrega</span>
+              <input
+                type="date"
+                name="horaEntrega"
+                id="hora_entrega"
+                value={horaEntrega}
+                onChange={handledForm}
+                className="mt-1 px-3 py-2 bg-white border shadow-sm border-slate-300 placeholder-slate-400 focus:outline-none focus:border-sky-500 focus:ring-sky-500 block w-full rounded-md sm:text-sm focus:ring-1"
+              />
+            </label>
 
-          <label className="block flex flex-col gap-y-1">
-            <span className="block text-sm font-medium">Comentario</span>
-            <textarea
-              name="comentario"
-              rows="3"
-              className="mt-1 px-3 py-2 bg-white border shadow-sm border-slate-300 placeholder-slate-400 focus:outline-none focus:border-sky-500 focus:ring-sky-500 block w-full rounded-md sm:text-sm focus:ring-1"
-              placeholder="Comentario"
-              value={comentario}
-              onChange={handledForm}
-            ></textarea>
-          </label>
+            <label className="block flex flex-col gap-y-1">
+              <span className="block text-sm font-medium">Comentario</span>
+              <textarea
+                name="comentario"
+                rows="3"
+                className="mt-1 px-3 py-2 bg-white border shadow-sm border-slate-300 placeholder-slate-400 focus:outline-none focus:border-sky-500 focus:ring-sky-500 block w-full rounded-md sm:text-sm focus:ring-1"
+                placeholder="Comentario"
+                value={comentario}
+                onChange={handledForm}
+              ></textarea>
+            </label>
 
-          <label className="block flex flex-row gap-y-1">
+            <label className="block flex flex-row gap-y-1">
               <span className="after:content-['*'] after:ml-0.5 after:text-yellow-500 block text-sm font-medium flex items-center me-2">
                 Llamar?
               </span>
@@ -217,77 +234,68 @@ export const AddLeadManual = () => {
                 onChange={onAddCheckInput}
                 inputProps={{ "aria-label": "controlled" }}
               />
-          </label>
-        </div>
+            </label>
+          </div>
 
-        <div className="flex-1 flex flex-col gap-y-6">
+          <div className="flex-1 flex flex-col gap-y-6">
+            <label className="block flex flex-col gap-y-1">
+              <span className="block text-sm font-medium">Estado</span>
+              <FilterEstadoLead onNewInput={onAddEstadoLead} defaultValue={5} />
+            </label>
 
-          <label className="block flex flex-col gap-y-1">
-            <span className="block text-sm font-medium">Estado</span>
-            <FilterEstadoLead
-              onNewInput={onAddEstadoLead}
-              defaultValue={5}
-            />
-          </label>
+            <label className="block flex flex-col gap-y-1">
+              <span className="block text-sm font-medium">Objeciones</span>
+              <FilterObjecion onNewInput={onAddObjecion} defaultValue={1} />
+            </label>
 
-          <label className="block flex flex-col gap-y-1">
-            <span className="block text-sm font-medium">Objeciones</span>
-            <FilterObjecion
-              onNewInput={onAddObjecion}
-              defaultValue={1}
-            />
-          </label>
+            <label className="block flex flex-col gap-y-1">
+              <span className="block text-sm font-medium">Asesor Asignado</span>
+              <FilterAsesor onNewInput={onAddAsesor} />
+            </label>
 
-          <label className="block flex flex-col gap-y-1">
-            <span className="block text-sm font-medium">Asesor Asignado</span>
-            <FilterAsesor
-              onNewInput={onAddAsesor}
-            />
-          </label>
+            <label className="block flex flex-col gap-y-1">
+              <span className="block text-sm font-medium">Campaña</span>
+              <FilterCampania onNewInput={onAddCampania} />
+            </label>
 
-          <label className="block flex flex-col gap-y-1">
-            <span className="block text-sm font-medium">Campaña</span>
-            <FilterCampania
-              onNewInput={onAddCampania}
-            />
-          </label>
-          
-          <label className="block flex flex-col gap-y-1">
-            <span className="block text-sm font-medium">Mensaje de Marketing</span>
-            <textarea
-              name="mensajeMarketing"
-              rows="3"
-              className="mt-1 px-3 py-2 bg-white border shadow-sm border-slate-300 placeholder-slate-400 focus:outline-none focus:border-sky-500 focus:ring-sky-500 block w-full rounded-md sm:text-sm focus:ring-1"
-              placeholder="Mensaje de Marketing"
-              value={mensajeMarketing}
-              onChange={handledForm}
-            ></textarea>
-          </label>
-        </div>
-      </form>
-    </div>
-    <div className="flex justify-center mt-4">
-    <button
-      className="bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded mr-2"
-      onClick={crearLead}
-    >
-      Guardar
-    </button>
-    <button
-      className="bg-gray-300 hover:bg-gray-400 text-gray-700 py-2 px-4 rounded"
-      onClick={onNavigateBack}
-    >
-      Cancelar
-    </button>
-  </div>
-  {/* COMPONENTE ALERTA */}
-  <CustomAlert
+            <label className="block flex flex-col gap-y-1">
+              <span className="block text-sm font-medium">
+                Mensaje de Marketing
+              </span>
+              <textarea
+                name="mensajeMarketing"
+                rows="3"
+                className="mt-1 px-3 py-2 bg-white border shadow-sm border-slate-300 placeholder-slate-400 focus:outline-none focus:border-sky-500 focus:ring-sky-500 block w-full rounded-md sm:text-sm focus:ring-1"
+                placeholder="Mensaje de Marketing"
+                value={mensajeMarketing}
+                onChange={handledForm}
+              ></textarea>
+            </label>
+          </div>
+        </form>
+      </div>
+      <div className="flex justify-center mt-4">
+        <button
+          className="bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded mr-2"
+          onClick={crearLead}
+        >
+          Guardar
+        </button>
+        <button
+          className="bg-gray-300 hover:bg-gray-400 text-gray-700 py-2 px-4 rounded"
+          onClick={onNavigateBack}
+        >
+          Cancelar
+        </button>
+      </div>
+      {/* COMPONENTE ALERTA */}
+      <CustomAlert
         feedbackCreate={feedbackCreate}
         feedbackMessages={feedbackMessages}
         handleCloseFeedback={handleCloseFeedback}
       />
-  {/* CIRCULAR PROGRESS */}
-  {visibleProgress && <CustomCircularProgress />}
-  </>
+      {/* CIRCULAR PROGRESS */}
+      {visibleProgress && <CustomCircularProgress />}
+    </>
   );
 };

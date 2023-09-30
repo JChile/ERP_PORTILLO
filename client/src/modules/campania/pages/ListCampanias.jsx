@@ -56,8 +56,8 @@ export const ListCampanias = () => {
   };
 
   const onDeleteItemSelected = async (idItem) => {
-    const body = {estado: "I"};
-    console.log(idItem)
+    const body = { estado: "I" };
+    console.log(idItem);
     const result = await deleteCampania(idItem, body);
     obtenerCampanias();
     onCloseDeleteDialog();

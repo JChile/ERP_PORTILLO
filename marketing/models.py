@@ -31,7 +31,7 @@ class Campania(models.Model):
     fecha_cierre = models.DateField(null=True, blank=True)
     coste_estimado = models.FloatField(default=0)
     coste_real = models.FloatField(default=0)
-    descripcion = models.TextField(null=True, blank=True)
+    descripcion = models.TextField(null=False, blank=True)
     proyecto = models.ForeignKey(Proyecto, on_delete=models.CASCADE)
     categoria = models.ForeignKey(Categoria, on_delete=models.CASCADE)
     estado = models.ForeignKey(

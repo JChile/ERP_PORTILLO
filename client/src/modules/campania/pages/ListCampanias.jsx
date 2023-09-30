@@ -118,17 +118,15 @@ export const ListCampanias = () => {
           <div className="flex justify-center gap-x-3">
             <button
               onClick={() => handleButtonState(true)}
-              className={`px-4 py-2 rounded ${
-                activeButton ? "bg-blue-500 text-white" : "bg-gray-300"
-              }`}
+              className={`px-4 py-2 rounded ${activeButton ? "bg-blue-500 text-white" : "bg-gray-300"
+                }`}
             >
               Activas
             </button>
             <button
               onClick={() => handleButtonState(false)}
-              className={`px-4 py-2 rounded ${
-                !activeButton ? "bg-blue-500 text-white" : "bg-gray-300"
-              }`}
+              className={`px-4 py-2 rounded ${!activeButton ? "bg-blue-500 text-white" : "bg-gray-300"
+                }`}
             >
               Inactivas
             </button>

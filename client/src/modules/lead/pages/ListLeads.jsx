@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { RiAddBoxFill } from "react-icons/ri";
-import { getLeads } from "../helpers";
+import { deleteLead, getLeadsActivos } from "../helpers";
 import {
   CustomCircularProgress,
   CustomTablePagination,
@@ -12,6 +12,7 @@ import { CustomTable } from "../../../components/CustomLeadTable";
 import { Input } from "@mui/material";
 import { CustomInputBase } from "../../../components/CustomInputBase";
 import { CustomSelectedTable } from "../components/CustomSelectedTable";
+import { DialogDeleteLead } from "../components/DialogDeleteLead";
 
 const headers = [
   { name: "Acciones", width: 20 },
@@ -32,8 +33,35 @@ export const ListLeads = () => {
   const [visibleProgress, setVisibleProgress] = useState(true);
   const [unassigendLeadsTable, setUnassignedLeadsTable] = useState(false);
 
+  const [showDialog, setShowDialog] = useState(false);
+  const [itemSeleccionado, setItemSeleccionado] = useState(null);
+
+  const onCloseDeleteDialog = () => {
+    // ocultamos el modal
+    setShowDialog(false);
+    // dejamos el null la data del detalle
+    setItemSeleccionado(null);
+  };
+  const onShowDeleteDialog = (item) => {
+    setItemSeleccionado(item);
+    setShowDialog(true);
+  };
+
+  const onDeleteItemSelected = async (idItem) => {
+    const body = {
+      estado: "I"
+    };
+    console.log(idItem);
+    console.log(body);
+    const result = await deleteLead(idItem, body);
+    console.log(result)
+    loadLeads();
+    onCloseDeleteDialog();
+  };
+
+
   const loadLeads = async () => {
-    const data = await getLeads();
+    const data = await getLeadsActivos();
     setLeads(data);
     setFilterLeads(data);
   };
@@ -145,11 +173,24 @@ export const ListLeads = () => {
 
       <div className="px-7">
         {!unassigendLeadsTable ? (
-          <CustomTable headerData={headers} rowData={filterLeads} />
+          <CustomTable
+            headerData={headers}
+            rowData={filterLeads}
+            onShowDeleteDialog={onShowDeleteDialog}
+          />
         ) : (
           <CustomSelectedTable headerData={headersLead} rowData={filterLeads} />
         )}
       </div>
+
+      {showDialog && (
+        <DialogDeleteLead
+          item={itemSeleccionado}
+          showDialog={showDialog}
+          onDeleteItemSelected={onDeleteItemSelected}
+          onCloseDeleteDialog={onCloseDeleteDialog}
+        />
+      )}
 
       {visibleProgress && <CustomCircularProgress />}
     </>

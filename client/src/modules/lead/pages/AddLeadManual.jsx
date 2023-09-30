@@ -19,10 +19,7 @@ export const AddLeadManual = () => {
     apellido: "",
     celular: "",
     celular2: "",
-<<<<<<< HEAD
-=======
     telefono: "",
->>>>>>> 240e058356e503fabd307d9c2ac78d118721b51e
     comentario: "",
     llamar: true,
     asesor: null,

@@ -14,7 +14,7 @@ export const AddLeadManual = () => {
     nombre: "",
     apellido: "",
     celular: "",
-    telefono: "",
+    celular2: "",
     comentario: "",
     llamar: true,
     asesor: null,
@@ -28,7 +28,7 @@ export const AddLeadManual = () => {
     nombre,
     apellido,
     celular,
-    telefono,
+    celular2,
     comentario,
     llamar,
     asesor,
@@ -157,11 +157,11 @@ export const AddLeadManual = () => {
               <span className="block text-sm font-medium">Celular 2</span>
               <MuiTelInput
                 defaultCountry="PE"
-                value={telefono}
+                value={celular2}
                 onChange={(value) => {
                   handledForm({
                     target: {
-                      name: "telefono",
+                      name: "celular2",
                       value: value,
                     },
                   });

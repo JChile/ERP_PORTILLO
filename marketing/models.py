@@ -24,9 +24,8 @@ class Categoria(models.Model):
 
 
 class Campania(models.Model):
-
-    # user = models.ForeignKey(User, on_delete=models.CASCADE)
     nombre = models.CharField(max_length=100, null=True)
+    codigo = models.CharField(unique=True, blank=False, null=False)
     fecha_creacion = models.DateTimeField(auto_now=True)
     fecha_estimada = models.DateField(null=True, blank=True)
     fecha_cierre = models.DateField(null=True, blank=True)

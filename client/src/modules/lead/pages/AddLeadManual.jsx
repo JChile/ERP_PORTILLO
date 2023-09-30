@@ -77,59 +77,16 @@ export const AddLeadManual = () => {
     setLead({ ...lead, objeciones: item.id });
   };
 
-  const validateLead = (
-    nombre,
-    apellido,
-    celular,
-    horaEntrega,
-    estado,
-    objeciones,
-    asesor,
-    campania
-  ) => {
+  const validateLead = (celular) => {
     const errors = [];
-
-    if (!nombre) {
-      errors.push("- El nombre es obligatorio.");
-    }
-    if (!apellido) {
-      errors.push("- El apellido es obligatorio.");
-    }
-    if (!celular) {
+    if (celular.length === 0) {
       errors.push("- El celular es obligatorio.");
-    }
-    if (!horaEntrega) {
-      errors.push("- LA hora de entrega es obligatoria.");
-    }
-    if (!estado) {
-      errors.push("- El estado es obligatorio.");
-    }
-    if (!objeciones) {
-      errors.push("- La objecion es obligatoria.");
-    }
-    if (!asesor) {
-      errors.push("- El asesor es obligatorio.");
-    }
-    if (!campania) {
-      errors.push("- La campaña es obligatoria.");
     }
     return errors.join("\n");
   };
 
   const crearLead = async () => {
-    const validationMessage = validateLead(
-      nombre,
-      apellido,
-      celular,
-      comentario,
-      horaEntrega,
-      mensajeMarketing,
-      llamar,
-      asesor,
-      campania,
-      estado,
-      objeciones
-    );
+    const validationMessage = validateLead(celular);
 
     if (validationMessage) {
       setFeedbackMessages({

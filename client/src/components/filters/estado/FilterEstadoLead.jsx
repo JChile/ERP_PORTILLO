@@ -55,7 +55,7 @@ export const FilterEstadoLead = ({ defaultValue = null, onNewInput }) => {
         getOptionLabel={(option) => option.label}
         onChange={handleChange}
         isOptionEqualToValue={(option, value) => option.id == value.id}
-        renderInput={(params) => <TextField {...params} />}
+        renderInput={(params) => <TextField {...params} size="small" />}
       />
     </Stack>
   );

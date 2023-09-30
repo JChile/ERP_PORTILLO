@@ -5,7 +5,7 @@ import { Autocomplete, TextField } from "@mui/material";
 const defaultOption = {
   value: 0,
   label: "Selecciona una objecion",
-  id: 0,
+  id: null,
 };
 
 export const FilterObjecion = ({ defaultValue = null, onNewInput }) => {

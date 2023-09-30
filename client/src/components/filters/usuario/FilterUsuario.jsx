@@ -19,7 +19,7 @@ export const FilterUsuario = ({ onNewInput, defaultValue = null }) => {
       ...result.map((element) => {
         return {
           value: element.id,
-          label: element.username,
+          label: `${element.username} - ${element.first_name} ${element.last_name}`,
           id: element.id,
         };
       }),

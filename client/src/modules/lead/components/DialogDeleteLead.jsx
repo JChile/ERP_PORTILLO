@@ -43,7 +43,7 @@ export const DialogDeleteLead = ({
                     variant="contained"
                     color="error"
                     onClick={() => {
-                        onDeleteItemSelected(item.id);
+                        onDeleteItemSelected(item);
                     }}
                     autoFocus
                 >

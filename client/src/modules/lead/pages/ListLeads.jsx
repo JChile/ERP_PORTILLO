@@ -47,13 +47,14 @@ export const ListLeads = () => {
     setShowDialog(true);
   };
 
-  const onDeleteItemSelected = async (idItem) => {
+  const onDeleteItemSelected = async (item) => {
+    const { id, celular } = item;
     const body = {
-      estado: "I"
+      estado: "I",
+      celular: celular
     };
-    console.log(idItem);
     console.log(body);
-    const result = await deleteLead(idItem, body);
+    const result = await deleteLead(id, body);
     console.log(result)
     loadLeads();
     onCloseDeleteDialog();
@@ -137,7 +138,7 @@ export const ListLeads = () => {
         </div>
 
         <div className="flex flex-row gap-x-4">
-          <div className="flex flex-col gap-y-1">
+          {/* <div className="flex flex-col gap-y-1">
             <span className="block text-sm">Filtrar leads</span>
             <Link
               style={{
@@ -148,7 +149,7 @@ export const ListLeads = () => {
             >
               {unassigendLeadsTable ? "Activos" : "Inactivos"}
             </Link>
-          </div>
+          </div> */}
 
           <div className="flex flex-col gap-y-1">
             <span className="block text-sm">Añadir Lead</span>

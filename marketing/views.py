@@ -59,6 +59,18 @@ class CampaniaList(generics.ListCreateAPIView):
             #i["subCategoria"][0]["categoria"]= categoriaSerializer.data
             
         return Response(dataJson)
+    
+    def post(self, request):
+        
+        print(request.data)
+        data = CampaniaSerializer(data = request.data)
+        
+        if data.is_valid():
+            data.save()
+        campania = Campania.objects.get(pk = data.data["id"])
+        campania.codigo = campania.nombre + campania.categoria.nombre + str(campania.fecha_creacion.month) + str(campania.pk)
+        campania.save()
+        return Response(CampaniaSerializer(campania).data)
 
 class CampaniaDetail(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = CampaniaSerializer
@@ -79,6 +91,8 @@ class CampaniaDetail(generics.RetrieveUpdateDestroyAPIView):
         #dataJson["user"] = userSerializer.data
         dataJson["categoria"] = categoriaSerializer.data
         return Response(dataJson)
+    
+
 
 
 class CampaniaActivoList(APIView):

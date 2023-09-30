@@ -1,11 +1,11 @@
 import axios from "axios";
 
-export const updateLead = async (idLead, updatedLead) => {
+export const updateAsesor = async (idAsesor, body) => {
   const DOMAIN = import.meta.env.VITE_BACKEND_URL;
-  const URL = `${DOMAIN}/api/lead/${idLead}`;
+  const URL = `${DOMAIN}/api/asesor/${idAsesor}`;
 
   const { data } = await axios.put(URL, {
-    ...updatedLead,
+    ...body,
   });
   return data;
 };

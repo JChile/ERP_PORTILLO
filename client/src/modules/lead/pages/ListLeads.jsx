@@ -18,15 +18,13 @@ const headers = [
   "Nombre",
   "Celular",
   "Estado",
-  "Objeciones",
   "Campaña",
-  "Comentario",
   "Hora",
 ];
 
 const filters = ["Nombre", "Estado", "Campaña"];
 
-const headersLead = ["Acciones", "Nombre", "Celular", "Campaña", "Comentario"];
+const headersLead = ["Acciones", "Nombre", "Celular", "Campaña"];
 
 export const ListLeads = () => {
   const [filterLeads, setFilterLeads] = useState([]);
@@ -37,7 +35,7 @@ export const ListLeads = () => {
   const loadLeads = async () => {
     const data = await getLeads();
     setLeads(data);
-     setFilterLeads(data);
+    setFilterLeads(data);
   };
 
   const handleSearchButton = (filter, pattern) => {
@@ -77,16 +75,15 @@ export const ListLeads = () => {
   };
 
   const toogleStateLeads = () => {
-    let toggleStateLeads = []
+    let toggleStateLeads = [];
     /** mostrar lista de leads sin asignar */
     if (!unassigendLeadsTable) {
       toggleStateLeads = leads.filter((item) => item.activo);
-    }
+    } else {
     /** mostrar lista de leads los cuales son  */
-    else {
       toggleStateLeads = leads.filter((item) => !item.activo);
     }
-    setFilterLeads(toggleStateLeads)
+    setFilterLeads(toggleStateLeads);
     setUnassignedLeadsTable((prev) => !prev);
   };
 
@@ -100,12 +97,6 @@ export const ListLeads = () => {
 
   return (
     <>
-      <CustomTopBar
-        moduleName={"Marketing"}
-        userName={"Andrew Jacabo"}
-        viewName={"Control de leads"}
-      />
-
       <div className="px-7 mt-8 mb-8 flex justify-between items-center">
         <div className="flex flex-col gap-y-1">
           <span className="block text-sm">Buscar lead</span>

@@ -1,7 +1,8 @@
 import axios from "axios";
-export const getCampania = async (id) => {
+
+export const getAsesorById = async (id) => {
   const DOMAIN = import.meta.env.VITE_BACKEND_URL;
-  const URL = `${DOMAIN}/api/campania/${id}`;
+  const URL = `${DOMAIN}/api/asesor/${id}`;
 
   const { data } = await axios.get(URL);
   return data;

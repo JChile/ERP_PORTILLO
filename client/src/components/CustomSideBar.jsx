@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { CustomNavLinkSideBar } from "./CustomNavLinkSideBar";
-import { CustomLiLogout } from "./CustomLiLogout";
 import ArrowLeft from "../assets/control.png";
 import LogoPortillo from "../assets/portillo-logo-port.png";
 
@@ -8,15 +7,15 @@ export const CustomSideBar = ({ children, menus }) => {
   const [open, setOpen] = useState(true);
 
   return (
-    <div className="flex">
+    <div className="flex grow">
       <div
-        className={` ${
-          open ? "min-w-150 max-w-150" : "max-w-20  min-w-20"
-        } bg-dark-purple h-screen p-5  pt-8 relative duration-300`}
+        className={`${
+          open ? "w-[14rem] min-w-[14rem] max-w-[14rem]" : "w-[8rem] min-w-[8rem] max-w-[8rem]"
+        } bg-dark-purple p-5  pt-8 relative duration-300`}
       >
         <img
           src={ArrowLeft}
-          className={`absolute cursor-pointer right-1 top-9 w-7 border-dark-purple
+          className={`absolute cursor-pointer -right-3 top-9 w-7 border-dark-purple
            border-2 rounded-full  ${!open && "rotate-180"}`}
           onClick={() => setOpen(!open)}
         />
@@ -33,12 +32,10 @@ export const CustomSideBar = ({ children, menus }) => {
           {menus.map((item, index) => (
             <CustomNavLinkSideBar key={index} item={item} open={open} />
           ))}
-          {/* LOGOUT OPTION */}
-          <CustomLiLogout open={open} />
         </ul>
       </div>
       {/**  Lado derecho del a interfaz, permite cargar el contenido */}
-      <div className="relative h-screen flex-1 overflow-y-auto">{children}</div>
+      <div className="p-9 relative grow overflow-y-auto">{children}</div>
     </div>
   );
 };

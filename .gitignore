@@ -1,4 +1,4 @@
-
+node_modules/
 
 # Django #
 *.log
@@ -7,6 +7,8 @@
 __pycache__
 db.sqlite3
 media
+
+package-lock.json
 
 # Backup files # 
 *.bak 
@@ -365,3 +367,4 @@ $RECYCLE.BIN/
 *.lnk
 
 # End of https://www.toptal.com/developers/gitignore/api/python,windows,linux
+node_modules

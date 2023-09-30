@@ -15,7 +15,7 @@ export const AuthProvider = ({ children }) => {
   );
 
   // estado de la informacion del usuario
-  const [user, setuser] = useState(() =>
+  const [currentUser, setCurrentUser] = useState(() =>
     localStorage.getItem("authTokens")
       ? jwt_decode(localStorage.getItem("authTokens"))
       : null
@@ -69,7 +69,7 @@ export const AuthProvider = ({ children }) => {
       });
       // seteamos los estados
       setauthTokens(data);
-      setuser(payloadUser);
+      setCurrentUser(payloadUser);
       setPermissions(permissions_user);
 
       localStorage.setItem("authTokens", JSON.stringify(data));
@@ -83,7 +83,7 @@ export const AuthProvider = ({ children }) => {
 
   const logoutUser = () => {
     setauthTokens(null);
-    setuser(null);
+    setCurrentUser(null);
     setPermissions(null);
     localStorage.removeItem("authTokens");
     localStorage.removeItem("permissions");
@@ -91,7 +91,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   const contextData = {
-    user,
+    currentUser,
     permissions,
     authTokens,
     loginUser,

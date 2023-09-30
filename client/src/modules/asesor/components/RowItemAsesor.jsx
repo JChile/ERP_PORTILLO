@@ -3,9 +3,14 @@ import TableRow from "@mui/material/TableRow";
 import TableCell from "@mui/material/TableCell";
 import { Link, useNavigate } from "react-router-dom";
 import { CustomMoreVerticalActions } from "../../../components";
+import { formatDate_ISO861_to_formatdate } from "../../../utils";
 
-export const RowItemAsesor = ({ item }) => {
+export const RowItemAsesor = ({ item, onShowDeleteDialog }) => {
   const navigate = useNavigate();
+
+  const onDeleteItemSelected = () => {
+    onShowDeleteDialog(item);
+  };
 
   const onEditItemSelected = () => {
     navigate(`/asesor/update/${item.id}`);
@@ -19,19 +24,35 @@ export const RowItemAsesor = ({ item }) => {
     >
       <TableCell>
         <CustomMoreVerticalActions
-          activeOnDelete={item.is_active}
+          activeOnDelete={item.estado === "A"}
           onEdit={onEditItemSelected}
+          onDelete={onDeleteItemSelected}
         />
       </TableCell>
-      <TableCell>{item.codigoAsesor}</TableCell>
+      <TableCell>{item.codigo}</TableCell>
       <TableCell>
         <Link
           className="text-blue-500"
           to={`/asesor/detail/${item.id}`}
-        >{`${item.first_name}`}</Link>
+        >{`${item.user.first_name} ${item.user.last_name}`}</Link>
       </TableCell>
-      <TableCell>{item.numeroLeads}</TableCell>
-      <TableCell>{item.fechaActualizado}</TableCell>
+      <TableCell>
+        {item.numeroLeads === -1 ? "Sin limite" : item.numeroLeads}
+      </TableCell>
+      <TableCell>
+        <span
+          className={`px-2 py-1 rounded-full ${
+            item.estado === "A"
+              ? "bg-green-500 text-white"
+              : "bg-red-500 text-white"
+          }`}
+        >
+          {item.estado === "A" ? "Activo" : "Inactivo"}
+        </span>
+      </TableCell>
+      <TableCell>
+        {formatDate_ISO861_to_formatdate(item.fechaActualizado)}
+      </TableCell>
     </TableRow>
   );
 };

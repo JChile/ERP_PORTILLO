@@ -3,6 +3,7 @@ from .models import *
 from cuenta.models import *
 
 
+
 class LeadSerializer(serializers.ModelSerializer):
     class Meta:
         model = Lead
@@ -22,33 +23,41 @@ class LeadListSerializer(LeadSerializer):
         list_serializer_class = MultipleLeadSerializer
 
 
+
 class AsesorSerializer(serializers.ModelSerializer):
     class Meta:
         model = Asesor
         fields = '__all__'
 
+
 class AsesorActivoSerializer(serializers.ModelSerializer):
-    first_name = serializers.CharField(source='user.first_name', read_only=True)
+    first_name = serializers.CharField(
+        source='user.first_name', read_only=True)
     last_name = serializers.CharField(source='user.last_name', read_only=True)
     user_id = serializers.CharField(source='user.id', read_only=True)
+
     class Meta:
         model = Asesor
-        fields = ['user_id','first_name','last_name','estado']
+        fields = ['user_id', 'first_name', 'last_name', 'estado']
+
 
 class WhatsAppSerializer(serializers.ModelSerializer):
     class Meta:
         model = WhatsApp
         fields = '__all__'
 
+
 class LlamadaSerializer(serializers.ModelSerializer):
     class Meta:
         model = Llamada
         fields = '__all__'
 
+
 class ObjecionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Objecion
         fields = '__all__'
+
 
 class EstadoLeadSerializer(serializers.ModelSerializer):
     class Meta:

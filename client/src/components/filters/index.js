@@ -4,3 +4,4 @@ export * from "./subcategorias/FilterSubcategoria";
 export * from "./campania/FilterCampania";
 export * from "./usuario/FilterUsuario";
 export * from "./estado_asesor/FilterEstadoAsesor";
+export * from "./estado_registro/FilterEstadoRegistro";

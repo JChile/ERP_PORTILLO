@@ -14,6 +14,7 @@ class ProyectoList(generics.ListCreateAPIView):
     queryset = Proyecto.objects.all()
     filter_backends = [DjangoFilterBackend]
     filterset_fields = ['estado']
+    
 class ProyectoDetail(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = ProyectoSerializer
     queryset = Proyecto.objects.all()

@@ -13,6 +13,7 @@ import { FilterEstadoLead } from "../../../components/filters/estado/FilterEstad
 import { FilterObjecion } from "../../../components/filters/objecion/FilterObjecion";
 import { FilterAsesor } from "../../../components/filters/asesor/FilterAsesor";
 import { AuthContext } from "../../../auth";
+import { MuiTelInput } from "mui-tel-input";
 
 export const UpdateLead = () => {
   const { idLead } = useParams();
@@ -30,8 +31,7 @@ export const UpdateLead = () => {
     comentario: "",
     llamar: true,
     asesor: null,
-    estado: "A",
-    estadoLead: "EP",
+    estadoLead: null,
     objecion: null,
     campania: null,
   });
@@ -44,7 +44,6 @@ export const UpdateLead = () => {
     comentario,
     llamar,
     asesor,
-    estado,
     estadoLead,
     objecion,
     campania,
@@ -62,12 +61,14 @@ export const UpdateLead = () => {
 
   const obtenerLead = async (idLead) => {
     const result = await getLead(idLead);
-    console.log(result)
     setLead({
       ...result,
-      asesor: (Object.keys(result.asesor).length !== 0 ? result.asesor.id : result.asesor),
-      campania: (Object.keys(result.campania).length !== 0 ? result.campania.id : result.campania),
-      objecion: (Object.keys(result.objecion).length !== 0 ? result.objecion.id : result.objecion)
+      asesor: Object.keys(result.asesor).length !== 0 ? result.asesor.id : null,
+      campania:
+        Object.keys(result.campania).length !== 0 ? result.campania.id : null,
+      objecion:
+        Object.keys(result.objecion).length !== 0 ? result.objecion.id : null,
+      estadoLead: result.estadoLead !== null ? result.estadoLead : null,
     });
   };
 
@@ -75,21 +76,19 @@ export const UpdateLead = () => {
     setLead({ ...lead, llamar: !llamar });
   };
   const onAddCampania = (item) => {
-    setLead({ ...lead, campania: item.id })
-  }
+    setLead({ ...lead, campania: item.id });
+  };
   const onAddEstadoLead = (item) => {
-    setLead({ ...lead, estadoLead: item.id })
-  }
+    setLead({ ...lead, estadoLead: item.id });
+  };
   const onAddAsesor = (item) => {
-    setLead({ ...lead, asesor: item.id })
-  }
+    setLead({ ...lead, asesor: item.id });
+  };
   const onAddObjecion = (item) => {
-    setLead({ ...lead, objecion: item.id })
-  }
+    setLead({ ...lead, objecion: item.id });
+  };
 
-  const validateLead = (
-    celular,
-  ) => {
+  const validateLead = (celular) => {
     const errors = [];
     if (!celular) {
       errors.push("- El celular es obligatorio.");
@@ -103,12 +102,7 @@ export const UpdateLead = () => {
   };
 
   const actualizarLead = async () => {
-    const validationMessage = validateLead(
-      celular,
-      asesor,
-      campania,
-      objecion
-    );
+    const validationMessage = validateLead(celular, asesor, campania, objecion);
 
     if (validationMessage) {
       // Si hay campos faltantes, mostrar una alerta con los mensajes de error concatenados
@@ -118,7 +112,6 @@ export const UpdateLead = () => {
       });
       handleClickFeedback();
     } else {
-      console.log(lead)
       setVisibleProgress(true);
       const result = await updateLead(idLead, lead);
       setVisibleProgress(false);
@@ -171,25 +164,33 @@ export const UpdateLead = () => {
 
             <label className="block flex flex-col gap-y-1">
               <span className="block text-sm font-medium">Celular</span>
-              <input
-                type="text"
-                name="celular"
-                className="mt-1 px-3 py-2 bg-white border shadow-sm border-slate-300 placeholder-slate-400 focus:outline-none focus:border-sky-500 focus:ring-sky-500 block w-full rounded-md sm:text-sm focus:ring-1"
-                placeholder="Celular"
+              <MuiTelInput
+                defaultCountry="PE"
                 value={celular}
-                onChange={handledForm}
+                onChange={(value) => {
+                  handledForm({
+                    target: {
+                      name: "celular",
+                      value: value,
+                    },
+                  });
+                }}
               />
             </label>
 
             <label className="block flex flex-col gap-y-1">
               <span className="block text-sm font-medium">Celular 2</span>
-              <input
-                type="text"
-                name="celular2"
-                className="mt-1 px-3 py-2 bg-white border shadow-sm border-slate-300 placeholder-slate-400 focus:outline-none focus:border-sky-500 focus:ring-sky-500 block w-full rounded-md sm:text-sm focus:ring-1"
-                placeholder="Celular2"
+              <MuiTelInput
+                defaultCountry="PE"
                 value={celular2}
-                onChange={handledForm}
+                onChange={(value) => {
+                  handledForm({
+                    target: {
+                      name: "celular2",
+                      value: value,
+                    },
+                  });
+                }}
               />
             </label>
 
@@ -207,7 +208,6 @@ export const UpdateLead = () => {
           </div>
 
           <div className="flex-1 flex flex-col gap-y-6">
-
             <label className="block flex flex-col gap-y-1">
               <span className="block text-sm font-medium">Estado Lead</span>
               <FilterEstadoLead
@@ -226,10 +226,7 @@ export const UpdateLead = () => {
 
             <label className="block flex flex-col gap-y-1">
               <span className="block text-sm font-medium">Asesor Asignado</span>
-              <FilterAsesor
-                defaultValue={asesor}
-                onNewInput={onAddAsesor}
-              />
+              <FilterAsesor defaultValue={asesor} onNewInput={onAddAsesor} />
             </label>
 
             <label className="block flex flex-col gap-y-1">
@@ -251,7 +248,6 @@ export const UpdateLead = () => {
                 onChange={handledForm}
               ></textarea>
             </label>
-
           </div>
         </form>
       </div>

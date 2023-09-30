@@ -12,6 +12,7 @@ urlpatterns = [
     re_path(r'^leadNoAsignado/$', views.LeadListNoAsignados.as_view()),
     re_path(r'^leadMultipleCreation/$', views.LeadMultipleCreation.as_view()),
     re_path(r'^leadMultipleAssign/$', views.LeadMultipleAssign.as_view()),
+    re_path(r'^leadMultipleCreationManual/$', views.LeadMultipleCreationManual.as_view()),
     
     re_path(r'^asesor/$', views.AsesorListSinFiltros.as_view()),
     re_path(r'^asesor/(?P<pk>[0-9]+)$', views.AsesorDetail.as_view()),
@@ -37,4 +38,6 @@ urlpatterns = [
     re_path(r'^estadoLead/(?P<nombre>[\w-]+)$', views.EstadoLeadDetail.as_view()),
     re_path(r'^estadoLeadActivo/$', views.EstadoLeadActivos.as_view()),
     re_path(r'^estadoLeadInactivo/$', views.EstadoLeadInactivos.as_view()),
+
+    
 ]

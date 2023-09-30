@@ -14,12 +14,12 @@ import { CustomInputBase } from "../../../components/CustomInputBase";
 import { CustomSelectedTable } from "../components/CustomSelectedTable";
 
 const headers = [
-  "Acciones",
-  "Nombre",
-  "Celular",
-  "Estado",
-  "Campaña",
-  "Hora",
+  { name: "Acciones", width: 20 },
+  { name: "Nombre", width: 120 },
+  { name: "Celular", width: 100 },
+  { name: "Estado", width: 40 },
+  { name: "Campaña", width: 120 },
+  { name: "Entrega", width: 50 },
 ];
 
 const filters = ["Nombre", "Estado", "Campaña"];
@@ -80,7 +80,7 @@ export const ListLeads = () => {
     if (!unassigendLeadsTable) {
       toggleStateLeads = leads.filter((item) => item.activo);
     } else {
-    /** mostrar lista de leads los cuales son  */
+      /** mostrar lista de leads los cuales son  */
       toggleStateLeads = leads.filter((item) => !item.activo);
     }
     setFilterLeads(toggleStateLeads);

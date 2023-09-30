@@ -1,9 +1,5 @@
 import React, { useEffect, useState } from "react";
-import {
-  getCampaniasActivas,
-  deleteCampania,
-  getCampaniasInactivas,
-} from "../helpers";
+import { getCampanias, deleteCampania } from "../helpers";
 import { Link } from "react-router-dom";
 import { DialogDeleteCampania, RowItemCampania } from "../components";
 import {
@@ -51,18 +47,17 @@ export const ListCampanias = () => {
   const obtenerCampanias = async () => {
     let result = [];
     if (activeButton) {
-      result = await getCampaniasActivas();
+      result = await getCampanias("estado=A");
     } else {
-      result = await getCampaniasInactivas();
+      result = await getCampanias("estado=I");
     }
     setCampanias(result);
     setCampaniasTemporal(result);
   };
 
   const onDeleteItemSelected = async (idItem) => {
-    const body = {
-      estado: "I",
-    };
+    const body = { estado: "I" };
+    console.log(idItem);
     const result = await deleteCampania(idItem, body);
     obtenerCampanias();
     onCloseDeleteDialog();

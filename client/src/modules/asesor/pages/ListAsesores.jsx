@@ -96,7 +96,7 @@ export const ListAsesores = () => {
                   <b>Nombre</b>
                 </TableCell>
                 <TableCell align="left" width={80}>
-                  <b>Numero leads</b>
+                  <b>Máximo leads</b>
                 </TableCell>
                 <TableCell align="left" width={100}>
                   <b>Estado</b>

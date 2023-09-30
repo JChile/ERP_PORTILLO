@@ -10,7 +10,11 @@ import {
 import React from "react";
 import { RowItemCampania } from "../modules/campania/components";
 
-export const CustomTableCampanias = ({ headerData, rowData, onShowDeleteDialog }) => {
+export const CustomTableCampanias = ({
+  headerData,
+  rowData,
+  onShowDeleteDialog,
+}) => {
   const campaniasRow = rowData.map((item) => (
     <RowItemCampania
       key={item.id}
@@ -20,8 +24,8 @@ export const CustomTableCampanias = ({ headerData, rowData, onShowDeleteDialog }
   ));
 
   const campaniasHeader = headerData.map((item, index) => (
-    <TableCell key={index + 1}>
-      <b>{item}</b>
+    <TableCell key={index + 1} width={item.width}>
+      <b>{item.name}</b>
     </TableCell>
   ));
 

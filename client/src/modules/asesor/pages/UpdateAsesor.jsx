@@ -17,11 +17,11 @@ export const UpdateAsesor = () => {
     id: 0,
     user: 0,
     codigo: "",
-    numeroLeads: 0,
+    maximoLeads: 0,
     estado: "",
   });
 
-  const { id, user, codigo, numeroLeads, estado } = asesor;
+  const { id, user, codigo, maximoLeads, estado } = asesor;
 
   const handledForm = (event) => {
     const { name, value } = event.target;
@@ -61,7 +61,7 @@ export const UpdateAsesor = () => {
     });
   };
 
-  const validarDatosAsesor = (user, numeroLeads, estado, codigo) => {
+  const validarDatosAsesor = (user, maximoLeads, estado, codigo) => {
     var messages_error = "";
     if (codigo.length === 0) {
       messages_error += "No se proporciono un codigo de asesor\n";
@@ -72,7 +72,7 @@ export const UpdateAsesor = () => {
     if (estado === 0) {
       messages_error += "No se proporciono un estado de registro\n";
     }
-    if (numeroLeads === 0) {
+    if (maximoLeads === 0) {
       messages_error +=
         "El asesor debe al menos manejar un lead o ingresa -1 para que no tenga limite\n";
     }
@@ -99,7 +99,7 @@ export const UpdateAsesor = () => {
   };
 
   const actualizarLead = async () => {
-    const validate = validarDatosAsesor(user, numeroLeads, estado, codigo);
+    const validate = validarDatosAsesor(user, maximoLeads, estado, codigo);
     if (validate.length === 0) {
       setVisibleProgress(true);
       console.log(asesor);
@@ -156,9 +156,9 @@ export const UpdateAsesor = () => {
               </span>
               <input
                 type="number"
-                name="numeroLeads"
+                name="maximoLeads"
                 className="mt-1 px-3 py-2 bg-white border shadow-sm border-slate-300 placeholder-slate-400 focus:outline-none focus:border-sky-500 focus:ring-sky-500 block w-full rounded-md sm:text-sm focus:ring-1"
-                value={numeroLeads}
+                value={maximoLeads}
                 onChange={handledForm}
               />
             </label>

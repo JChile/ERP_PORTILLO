@@ -2,17 +2,10 @@ import { TableCell, TableRow } from "@mui/material";
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { CustomMoreVerticalActions } from "../../../components";
+import { formatDate_ISO861_to_formatdate } from "../../../utils/formatDate";
 
 export const RowItemCampania = ({ item, onShowDeleteDialog }) => {
-  const {
-    id,
-    nombre,
-    fecha_estimada,
-    fecha_cierre,
-    coste_estimado,
-    proyecto,
-    categoria,
-  } = item;
+  const { id, nombre, codigo, fecha_creacion, proyecto, categoria } = item;
 
   const navigate = useNavigate();
 
@@ -46,9 +39,8 @@ export const RowItemCampania = ({ item, onShowDeleteDialog }) => {
           {nombre}
         </Link>
       </TableCell>
-      <TableCell>{fecha_estimada}</TableCell>
-      <TableCell>{fecha_cierre}</TableCell>
-      <TableCell>s/. {coste_estimado}</TableCell>
+      <TableCell>{codigo}</TableCell>
+      <TableCell>{formatDate_ISO861_to_formatdate(fecha_creacion)}</TableCell>
       <TableCell>{proyecto.nombre}</TableCell>
       <TableCell>{categoria.nombre}</TableCell>
     </TableRow>

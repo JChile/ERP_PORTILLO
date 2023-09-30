@@ -144,13 +144,12 @@ export const ListCampanias = () => {
 
       <CustomTableCampanias
         headerData={[
-          "Acciones",
-          "Nombre",
-          "Fecha Estimada",
-          "Fecha Cierre",
-          "Coste Estimado",
-          "Proyecto",
-          "Categoria",
+          { name: "Acciones", width: 20 },
+          { name: "Nombre", width: 140 },
+          { name: "Codigo", width: 70 },
+          { name: "Fecha inicio", width: 80 },
+          { name: "Proyecto", width: 100 },
+          { name: "Categoria", width: 70 },
         ]}
         rowData={campaniasTemporal}
         onShowDeleteDialog={onShowDeleteDialog}

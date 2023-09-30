@@ -12,12 +12,12 @@ import { createAsesor } from "../helpers";
 export const CreateAsesor = () => {
   const [asesor, setAsesor] = useState({
     user: 0,
-    numeroLeads: 0,
+    maximoLeads: 0,
     estado: "A",
     codigo: "",
   });
 
-  const { user, numeroLeads, estado, codigo } = asesor;
+  const { user, maximoLeads, estado, codigo } = asesor;
 
   const handledForm = (event) => {
     const { name, value } = event.target;
@@ -56,7 +56,17 @@ export const CreateAsesor = () => {
     });
   };
 
-  const validarDatosAsesor = (user, numeroLeads, estado, codigo) => {
+  function transformarCadena(texto) {
+    // Paso 1: Eliminar espacios en blanco a la izquierda y derecha
+    const paso1 = texto.trim();
+    // Paso 2: Transformar la cadena a minúsculas
+    const paso2 = paso1.toUpperCase();
+    // Paso 3: Reemplazar los espacios en blanco con guiones bajos
+    const paso3 = paso2.replace(/\s+/g, "_");
+    return paso3;
+  }
+
+  const validarDatosAsesor = (user, maximoLeads, estado, codigo) => {
     var messages_error = "";
     if (codigo.length === 0) {
       messages_error += "No se proporciono un codigo de asesor\n";
@@ -67,7 +77,7 @@ export const CreateAsesor = () => {
     if (estado === 0) {
       messages_error += "No se proporciono un estado de registro\n";
     }
-    if (numeroLeads === 0) {
+    if (maximoLeads === 0) {
       messages_error +=
         "El asesor debe al menos manejar un lead o ingresa -1 para que no tenga limite\n";
     }
@@ -75,11 +85,14 @@ export const CreateAsesor = () => {
   };
 
   const crearAsesor = async () => {
-    const validate = validarDatosAsesor(user, numeroLeads, estado, codigo);
+    const validate = validarDatosAsesor(user, maximoLeads, estado, codigo);
     if (validate.length === 0) {
       setVisibleProgress(true);
-      console.log(asesor);
-      const result = await createAsesor(asesor);
+      const formatData = {
+        ...asesor,
+        codigo: transformarCadena(asesor.codigo),
+      };
+      const result = await createAsesor(formatData);
       setVisibleProgress(false);
       // navegamos atras
       onNavigateBack();
@@ -116,9 +129,9 @@ export const CreateAsesor = () => {
                 </span>
                 <input
                   type="number"
-                  name="numeroLeads"
+                  name="maximoLeads"
                   className="mt-1 px-3 py-2 bg-white border shadow-sm border-slate-300 placeholder-slate-400 focus:outline-none focus:border-sky-500 focus:ring-sky-500 block w-full rounded-md sm:text-sm focus:ring-1"
-                  value={numeroLeads}
+                  value={maximoLeads}
                   onChange={handledForm}
                 />
               </label>
@@ -141,7 +154,7 @@ export const CreateAsesor = () => {
                   Estado asesor
                 </span>
                 <FilterEstadoRegistro
-                  defaultValue={null}
+                  defaultValue={estado}
                   onNewInput={onAddEstado}
                 />
               </label>

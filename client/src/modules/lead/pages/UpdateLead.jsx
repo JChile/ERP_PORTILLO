@@ -26,31 +26,35 @@ export const UpdateLead = () => {
     nombre: "",
     apellido: "",
     celular: "",
+    telefono: "",
     comentario: "",
-    horaEntrega: "",
-    mensajeMarketing: "",
     llamar: true,
-    estado: 5,
-    objeciones: 1,
     asesor: {
-      user:{
-        username:"",
+      user: {
+        username: ""
       }
     },
-    campania: 0,
+    estado: "A",
+    estadoLead: "EP",
+    objecion: {
+      nombre: ""
+    },
+    campania: {
+      nombre: ""
+    },
   });
 
   const {
     nombre,
     apellido,
     celular,
+    telefono,
     comentario,
-    horaEntrega,
-    mensajeMarketing,
     llamar,
-    estado,
-    objeciones,
     asesor,
+    estado,
+    estadoLead,
+    objecion,
     campania,
   } = lead;
 
@@ -70,57 +74,41 @@ export const UpdateLead = () => {
     setLead(result);
   };
 
-  const onAddCheckInput = (event) => {
+  const onAddCheckInputLlamar = (event) => {
     setLead({ ...lead, llamar: !llamar });
   };
   const onAddCampania = (item) => {
     setLead({ ...lead, campania: item.id })
   }
   const onAddEstadoLead = (item) => {
-    setLead({ ...lead, estado: item.id })
+    setLead({ ...lead, estadoLead: item.id })
   }
   const onAddAsesor = (item) => {
     setLead({ ...lead, asesor: item.id })
   }
   const onAddObjecion = (item) => {
-    setLead({ ...lead, objeciones: item.id })
+    setLead({ ...lead, objecion: item.id })
   }
 
   const validateLead = (
-    nombre,
-    apellido,
     celular,
-    horaEntrega,
-    estado,
-    objeciones,
     asesor,
     campania,
+    objecion
   ) => {
     const errors = [];
-
-    if (!nombre) {
-      errors.push("- El nombre es obligatorio.");
-    }
-    if (!apellido) {
-      errors.push("- El apellido es obligatorio.");
-    }
     if (!celular) {
       errors.push("- El celular es obligatorio.");
     }
-    if (!horaEntrega) {
-      errors.push("- LA hora de entrega es obligatoria.");
-    }
-    if (!estado) {
-      errors.push("- El estado es obligatorio.");
-    }
-    if (!objeciones) {
-      errors.push("- La objecion es obligatoria.");
-    }
     if (!asesor) {
-      errors.push("- El asesor es obligatorio.");
+      asesor = null;
     }
     if (!campania) {
-      errors.push("- La campaña es obligatoria.");
+      campania = null;
+      ;
+    }
+    if (!objecion) {
+      objecion = null;
     }
     return errors.join("\n");
   };
@@ -132,17 +120,10 @@ export const UpdateLead = () => {
 
   const actualizarLead = async () => {
     const validationMessage = validateLead(
-      nombre,
-      apellido,
       celular,
-      comentario,
-      horaEntrega,
-      mensajeMarketing,
-      llamar,
       asesor,
       campania,
-      estado,
-      objeciones,
+      objecion
     );
 
     if (validationMessage) {
@@ -153,6 +134,7 @@ export const UpdateLead = () => {
       });
       handleClickFeedback();
     } else {
+      console.log(lead)
       setVisibleProgress(true);
       const result = await updateLead(idLead, lead);
       setVisibleProgress(false);
@@ -218,27 +200,15 @@ export const UpdateLead = () => {
             </label>
 
             <label className="block flex flex-col gap-y-1">
-              <span className="block text-sm font-medium">Hora de Entrega</span>
+              <span className="block text-sm font-medium">Celular 2</span>
               <input
-                type="date"
-                name="horaEntrega"
-                id="hora_entrega"
-                value={horaEntrega}
-                onChange={handledForm}
+                type="text"
+                name="telefono"
                 className="mt-1 px-3 py-2 bg-white border shadow-sm border-slate-300 placeholder-slate-400 focus:outline-none focus:border-sky-500 focus:ring-sky-500 block w-full rounded-md sm:text-sm focus:ring-1"
+                placeholder="Celular"
+                value={telefono}
+                onChange={handledForm}
               />
-            </label>
-
-            <label className="block flex flex-col gap-y-1">
-              <span className="block text-sm font-medium">Comentario</span>
-              <textarea
-                name="comentario"
-                rows="3"
-                className="mt-1 px-3 py-2 bg-white border shadow-sm border-slate-300 placeholder-slate-400 focus:outline-none focus:border-sky-500 focus:ring-sky-500 block w-full rounded-md sm:text-sm focus:ring-1"
-                placeholder="Comentario"
-                value={comentario}
-                onChange={handledForm}
-              ></textarea>
             </label>
 
             <label className="block flex flex-row gap-y-1">
@@ -248,7 +218,7 @@ export const UpdateLead = () => {
               <Checkbox
                 name="llamar"
                 checked={llamar}
-                onChange={onAddCheckInput}
+                onChange={onAddCheckInputLlamar}
                 inputProps={{ "aria-label": "controlled" }}
               />
             </label>
@@ -267,7 +237,7 @@ export const UpdateLead = () => {
             <label className="block flex flex-col gap-y-1">
               <span className="block text-sm font-medium">Objeciones</span>
               <FilterObjecion
-                defaultValue={objeciones.id}
+                defaultValue={objecion.id}
                 onNewInput={onAddObjecion}
               />
             </label>
@@ -289,16 +259,17 @@ export const UpdateLead = () => {
             </label>
 
             <label className="block flex flex-col gap-y-1">
-              <span className="block text-sm font-medium">Mensaje de Marketing</span>
+              <span className="block text-sm font-medium">Comentario</span>
               <textarea
-                name="mensajeMarketing"
+                name="comentario"
                 rows="3"
                 className="mt-1 px-3 py-2 bg-white border shadow-sm border-slate-300 placeholder-slate-400 focus:outline-none focus:border-sky-500 focus:ring-sky-500 block w-full rounded-md sm:text-sm focus:ring-1"
-                placeholder="Mensaje de Marketing"
-                value={mensajeMarketing}
+                placeholder="Comentario"
+                value={comentario}
                 onChange={handledForm}
               ></textarea>
             </label>
+
           </div>
         </form>
       </div>

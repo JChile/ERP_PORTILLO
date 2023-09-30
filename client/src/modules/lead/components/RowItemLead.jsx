@@ -7,7 +7,6 @@ import { CustomMoreVerticalActions } from "../../../components";
 import { deleteLead } from "../helpers";
 
 export const RowItemLead = ({ item, onShowDeleteDialog }) => {
-  console.log(item.id+"-------")
   const {
     id,
     nombre,
@@ -15,7 +14,6 @@ export const RowItemLead = ({ item, onShowDeleteDialog }) => {
     celular,
     comentario,
     horaEntrega,
-    mensajeMarketing,
     llamar,
     estadoLead,
     objeciones,
@@ -35,7 +33,7 @@ export const RowItemLead = ({ item, onShowDeleteDialog }) => {
   };
 
   const onDeleteItemSelected = async () => {
-    console.log("------------"+id)
+    console.log("------------" + id)
     const body = {
       estado: "I",
     };
@@ -108,9 +106,7 @@ export const RowItemLead = ({ item, onShowDeleteDialog }) => {
         </div>
       </TableCell>
       <TableCell>{estadoLead}</TableCell>
-      <TableCell>{objeciones}</TableCell>
       <TableCell>{campania.nombre}</TableCell>
-      <TableCell>{comentario}</TableCell>
       <TableCell>{horaEntrega}</TableCell>
     </TableRow>
   );

@@ -6,7 +6,6 @@ import { HiPhoneMissedCall } from "react-icons/hi";
 import { CustomMoreVerticalActions } from "../../../components";
 
 export const RowItemLead = ({ item }) => {
-  console.log(item)
   const {
     id,
     nombre,
@@ -77,7 +76,7 @@ export const RowItemLead = ({ item }) => {
               }}
             />
           )}
-          <a href={"https://wa.me/" + celular}>{celular}</a>       
+          <a href={"https://wa.me/" + celular}>{celular}</a>
         </div>
       </TableCell>
       <TableCell>{estado.nombre}</TableCell>

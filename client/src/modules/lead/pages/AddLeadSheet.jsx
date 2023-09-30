@@ -3,6 +3,8 @@ import { HotTable } from "@handsontable/react";
 import { registerAllModules } from "handsontable/registry";
 import "handsontable/dist/handsontable.full.min.css";
 import { FilterProyectos } from "../../../components";
+import { FilterProyectoCampania } from "../../../components/multiple-filters";
+import { ImportFileLeads } from "../components";
 
 // register Handsontable's modules
 registerAllModules();
@@ -22,37 +24,32 @@ export const AddLeadSheet = () => {
         <h1 className="text-lg font-bold">Manejador automatico</h1>
         <hr className="my-4"></hr>
 
-        <form className="min-w-[242px] flex flex-col gap-y-6 gap-x-8">
-          <div className="flex flex-row gap-y-6 gap-x-8">
-            <div className="w-6/12 flex flex-col gap-y-5">
-              <label className="block flex flex-col gap-y-1 ">
-                <span className="after:content-['*'] after:ml-0.5 after:text-yellow-500 block text-sm font-medium">
-                  Proyecto
-                </span>
-                <FilterProyectos
-                  defaultValue={null}
-                  onNewInput={onAddProyecto}
-                />
-              </label>
-            </div>
+        {/* Primera sección: Importa un archivo */}
+        <div className="mb-4">
+          <h2 className="text-md font-semibold mb-2">Seleccione una campaña</h2>
+          {/* Tu contenido para importar un archivo aquí */}
+          <FilterProyectoCampania />
+        </div>
+        <hr className="my-4"></hr>
+
+        {/* Primera sección: Importa un archivo */}
+        <ImportFileLeads />
+        <hr className="my-4"></hr>
+        {/* Segunda sección: Copie la información en la hoja de cálculo */}
+        <div>
+          <h2 className="text-md font-semibold mb-2">
+            Copie la información en la hoja de cálculo
+          </h2>
+          <div className="h-full w-full overflow-auto">
+            <HotTable
+              data={data}
+              rowHeaders={true}
+              colHeaders={true}
+              stretchH="all"
+              height="auto"
+              licenseKey="non-commercial-and-evaluation"
+            />
           </div>
-        </form>
-        <div className="h-full w-full overflow-auto">
-          <button
-            onClick={() => {
-              console.log(data);
-            }}
-          >
-            Mostrar data
-          </button>
-          <HotTable
-            data={data}
-            rowHeaders={true}
-            colHeaders={true}
-            stretchH="all"
-            height="auto"
-            licenseKey="non-commercial-and-evaluation"
-          />
         </div>
       </div>
     </>

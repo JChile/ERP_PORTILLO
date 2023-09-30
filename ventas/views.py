@@ -229,47 +229,51 @@ class LeadMultipleAssign(generics.UpdateAPIView):
 
 class LeadMultipleCreationManual(APIView):
     def post(self, request): 
-
         response = {}
-        object_saved = []  
         object_no_saved = []
-
-        thirty_days_ago = datetime.now() - timedelta(days=31)
-        unique_mobiles = list(Lead.objects.filter(horaEntrega__gte=thirty_days_ago).values_list('celular', flat=True).distinct())
-        print(unique_mobiles)
-
+        
         for i in request.data :
-
+            flag_asignado= True
+            flag_campania= True
             error_message = []
-
             try:
                 i["asesor"] = Asesor.objects.get(codigo = i["asesor"]).id
             except:
+                flag_asignado = False
+                error_message.append("Campo de asesor no enviado o asesor no existe en la bd")
                 print("Campo de asesor no enviado o asesor no existe en : ", i)
 
             try:
-                i["campania"] = Campania.objects.get(nombre = i["campania"]).id
+                i["campania"] = Campania.objects.get(codigo = i["campania"]).id
             except:
+                flag_campania= False
+                error_message.append("Campo de campania no enviado o campania no existe en la bd")
                 print("Campo de campania no enviado o no existe en : ", i)
             
+            thirty_days_ago = datetime.now() - timedelta(days=31)
+            unique_mobiles = list(Lead.objects.filter(horaEntrega__gte=thirty_days_ago).values_list('celular', flat=True).distinct())
+            print(unique_mobiles)
 
             data = LeadSerializer(data = i)
-            if data.is_valid():
-                if unique_mobiles.index(i['celular']) != -1:
+            if data.is_valid() and flag_campania :
+                if i['celular'] in unique_mobiles:
                     object_no_saved.append(data.data)
-                    error_message.append("Se repite el numero telefonico")
+                    error_message.append("Se repite el numero telefonico con registro de hace 30 dias")
                     object_no_saved.append(error_message)
                 else :
-                    data.save()     
+                    data.save()
+                    lead = Lead.objects.get(id  = data.data["id"]) 
+                    if flag_asignado : 
+                        lead.asignado = True
+                    else :
+                        lead.asignado = False
+                    lead.save()
                     print("Guardado : ", data.data)
-                    object_saved.append(data.data)
             else :
                 print("No Guardado : ", data.data) 
                 object_no_saved.append(data.data)
                 error_message.append("Formato no valido")
                 object_no_saved.append(error_message)
-        
-        response["guardados"] = object_saved
         response["no_guardado"] = object_no_saved
 
         return Response(response)

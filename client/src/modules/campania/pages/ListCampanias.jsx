@@ -6,7 +6,6 @@ import {
   CustomCircularProgress,
   CustomTablePagination,
 } from "../../../components";
-import { CustomTopBar } from "../../../components/CustomTopBar";
 import { CustomInputBase } from "../../../components/CustomInputBase";
 import { CustomTableCampanias } from "../../../components/CustomTableCampanias";
 
@@ -55,12 +54,21 @@ export const ListCampanias = () => {
     setCampaniasTemporal(result);
   };
 
-  const onDeleteItemSelected = async (idItem) => {
-    const body = {estado: "I"};
-    console.log(idItem)
-    const result = await deleteCampania(idItem, body);
-    obtenerCampanias();
-    onCloseDeleteDialog();
+  const onDeleteItemSelected = async (item) => {
+    const { id, proyecto, categoria } = item;
+    const body = {
+      estado: "I",
+      proyecto: proyecto.id,
+      categoria: categoria.id,
+    };
+    try {
+      const result = await deleteCampania(id, body);
+      obtenerCampanias();
+      onCloseDeleteDialog();
+    }
+    catch (error) {
+      // handled error.
+    }
   };
 
   const handleSearchButton = (filter, pattern) => {

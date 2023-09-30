@@ -38,14 +38,13 @@ class EstadoLead(models.Model):
 
 
 class Lead(models.Model):
-    nombre = models.CharField(max_length=100, null=True, blank=True)
-    apellido = models.CharField(max_length=100, null=True, blank=True)
+    nombre = models.CharField(max_length=100, null=False, blank=True)
+    apellido = models.CharField(max_length=100, null=False, blank=True)
     asignado = models.BooleanField(default=False)
-    celular = models.CharField(max_length=100, null=True, blank=False)
-    celular2 = models.CharField(max_length=100, null=True, blank=True)
-    telefono = models.CharField(max_length=100, null=True, blank=True)
-    comentario = models.TextField(max_length=200, null=True, blank=True)
-    horaEntrega = models.DateTimeField(auto_now=True)
+    celular = models.CharField(max_length=100, null=False, blank=False)
+    celular2 = models.CharField(max_length=100, null=False, blank=True)
+    comentario = models.TextField(max_length=200, null=False, blank=True)
+    horaEntrega = models.DateTimeField(auto_now_add=True)
     llamar = models.BooleanField(default=False)
     asesor = models.ForeignKey(
         Asesor, on_delete=models.CASCADE, null=True, blank=True)

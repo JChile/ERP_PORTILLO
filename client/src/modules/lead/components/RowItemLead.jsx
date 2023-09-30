@@ -5,6 +5,7 @@ import { HiPhoneIncoming } from "react-icons/hi";
 import { HiPhoneMissedCall } from "react-icons/hi";
 import { CustomMoreVerticalActions } from "../../../components";
 import { deleteLead } from "../helpers";
+import { formatDate_ISO861_to_formatdate } from "../../../utils/formatDate";
 
 export const RowItemLead = ({ item, onShowDeleteDialog }) => {
   const {
@@ -33,7 +34,7 @@ export const RowItemLead = ({ item, onShowDeleteDialog }) => {
   };
 
   const onDeleteItemSelected = async () => {
-    console.log("------------" + id)
+    console.log("------------" + id);
     const body = {
       estado: "I",
     };
@@ -107,7 +108,7 @@ export const RowItemLead = ({ item, onShowDeleteDialog }) => {
       </TableCell>
       <TableCell>{estadoLead}</TableCell>
       <TableCell>{campania.nombre}</TableCell>
-      <TableCell>{horaEntrega}</TableCell>
+      <TableCell>{formatDate_ISO861_to_formatdate(horaEntrega)}</TableCell>
     </TableRow>
   );
 };

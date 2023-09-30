@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { getEstadoLead } from "./getEstadoLead";
-import { Autocomplete, Stack, TextField } from "@mui/material";
+import { Autocomplete, TextField } from "@mui/material";
 
 const defaultOption = {
   value: 0,
@@ -47,16 +47,14 @@ export const FilterEstadoLead = ({ defaultValue = null, onNewInput }) => {
   }, [defaultValue]);
 
   return (
-    <Stack width={"154px"}>
-      <Autocomplete
-        options={options}
-        value={value}
-        disableClearable
-        getOptionLabel={(option) => option.label}
-        onChange={handleChange}
-        isOptionEqualToValue={(option, value) => option.id == value.id}
-        renderInput={(params) => <TextField {...params} size="small" />}
-      />
-    </Stack>
+    <Autocomplete
+      options={options}
+      value={value}
+      disableClearable
+      getOptionLabel={(option) => option.label}
+      onChange={handleChange}
+      isOptionEqualToValue={(option, value) => option.id == value.id}
+      renderInput={(params) => <TextField {...params} size="small" />}
+    />
   );
 };

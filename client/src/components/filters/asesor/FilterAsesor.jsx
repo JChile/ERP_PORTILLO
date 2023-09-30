@@ -14,7 +14,6 @@ export const FilterAsesor = ({ defaultValue = null, onNewInput }) => {
 
   const obtenerAsesor = async () => {
     const result = await getAsesor();
-    console.log(result);
     const formatSelect = [
       defaultOption,
       ...result.map((element) => {

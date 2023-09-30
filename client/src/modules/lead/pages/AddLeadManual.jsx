@@ -34,7 +34,6 @@ export const AddLeadManual = () => {
     apellido,
     celular,
     celular2,
-    telefono,
     comentario,
     llamar,
     asesor,

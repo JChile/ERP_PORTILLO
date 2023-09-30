@@ -26,27 +26,27 @@ export const UpdateLead = () => {
     nombre: "",
     apellido: "",
     celular: "",
+    celular2: "",
     comentario: "",
-    horaEntrega: "",
-    mensajeMarketing: "",
     llamar: true,
-    estado: 5,
-    objeciones: 1,
-    asesor: 0,
-    campania: 0,
+    asesor: null,
+    estado: "A",
+    estadoLead: "EP",
+    objecion: null,
+    campania: null,
   });
 
   const {
     nombre,
     apellido,
     celular,
+    celular2,
     comentario,
-    horaEntrega,
-    mensajeMarketing,
     llamar,
-    estado,
-    objeciones,
     asesor,
+    estado,
+    estadoLead,
+    objecion,
     campania,
   } = lead;
 
@@ -62,34 +62,43 @@ export const UpdateLead = () => {
 
   const obtenerLead = async (idLead) => {
     const result = await getLead(idLead);
-    delete result?.categoria;
+    console.log(result);
     setLead({
       ...result,
-      user: currentUser.user_id,
-      proyecto: result.proyecto.id,
-      subCategoria: result.subCategoria.id,
+      asesor:
+        Object.keys(result.asesor).length !== 0
+          ? result.asesor.id
+          : result.asesor,
+      campania:
+        Object.keys(result.campania).length !== 0
+          ? result.campania.id
+          : result.campania,
+      objecion:
+        Object.keys(result.objecion).length !== 0
+          ? result.objecion.id
+          : result.objecion,
     });
   };
 
-  const onAddCheckInput = (event) => {
+  const onAddCheckInputLlamar = (event) => {
     setLead({ ...lead, llamar: !llamar });
   };
   const onAddCampania = (item) => {
     setLead({ ...lead, campania: item.id });
   };
   const onAddEstadoLead = (item) => {
-    setLead({ ...lead, estado: item.id });
+    setLead({ ...lead, estadoLead: item.id });
   };
   const onAddAsesor = (item) => {
     setLead({ ...lead, asesor: item.id });
   };
   const onAddObjecion = (item) => {
-    setLead({ ...lead, objeciones: item.id });
+    setLead({ ...lead, objecion: item.id });
   };
 
   const validateLead = (celular) => {
     const errors = [];
-    if (celular.length === 0) {
+    if (!celular) {
       errors.push("- El celular es obligatorio.");
     }
     return errors.join("\n");
@@ -101,7 +110,7 @@ export const UpdateLead = () => {
   };
 
   const actualizarLead = async () => {
-    const validationMessage = validateLead(celular);
+    const validationMessage = validateLead(celular, asesor, campania, objecion);
 
     if (validationMessage) {
       // Si hay campos faltantes, mostrar una alerta con los mensajes de error concatenados
@@ -111,6 +120,7 @@ export const UpdateLead = () => {
       });
       handleClickFeedback();
     } else {
+      console.log(lead);
       setVisibleProgress(true);
       const result = await updateLead(idLead, lead);
       setVisibleProgress(false);
@@ -127,15 +137,13 @@ export const UpdateLead = () => {
   };
 
   useEffect(() => {
-    const controller = new AbortController();
     obtenerLead(idLead);
-    return () => controller.abort();
   }, []);
 
   return (
     <>
       <div className="relative border-2 rounded-md border-inherit p-5">
-        <h1 className="text-lg font-bold">Añadir lead manualmente</h1>
+        <h1 className="text-lg font-bold">Actualizar Lead</h1>
         <hr className="my-4"></hr>
         <form method="post" className="min-w-[242px] flex gap-x-8">
           <div className="flex-1 flex flex-col gap-y-6">
@@ -176,14 +184,57 @@ export const UpdateLead = () => {
             </label>
 
             <label className="block flex flex-col gap-y-1">
-              <span className="block text-sm font-medium">Hora de Entrega</span>
+              <span className="block text-sm font-medium">Celular 2</span>
               <input
-                type="date"
-                name="horaEntrega"
-                id="hora_entrega"
-                value={horaEntrega}
-                onChange={handledForm}
+                type="text"
+                name="celular2"
                 className="mt-1 px-3 py-2 bg-white border shadow-sm border-slate-300 placeholder-slate-400 focus:outline-none focus:border-sky-500 focus:ring-sky-500 block w-full rounded-md sm:text-sm focus:ring-1"
+                placeholder="Celular2"
+                value={celular2}
+                onChange={handledForm}
+              />
+            </label>
+
+            <label className="block flex flex-row gap-y-1">
+              <span className="block text-sm font-medium flex items-center me-2">
+                Llamar?
+              </span>
+              <Checkbox
+                name="llamar"
+                checked={llamar}
+                onChange={onAddCheckInputLlamar}
+                inputProps={{ "aria-label": "controlled" }}
+              />
+            </label>
+          </div>
+
+          <div className="flex-1 flex flex-col gap-y-6">
+            <label className="block flex flex-col gap-y-1">
+              <span className="block text-sm font-medium">Estado Lead</span>
+              <FilterEstadoLead
+                defaultValue={estadoLead}
+                onNewInput={onAddEstadoLead}
+              />
+            </label>
+
+            <label className="block flex flex-col gap-y-1">
+              <span className="block text-sm font-medium">Objeciones</span>
+              <FilterObjecion
+                defaultValue={objecion}
+                onNewInput={onAddObjecion}
+              />
+            </label>
+
+            <label className="block flex flex-col gap-y-1">
+              <span className="block text-sm font-medium">Asesor Asignado</span>
+              <FilterAsesor defaultValue={asesor} onNewInput={onAddAsesor} />
+            </label>
+
+            <label className="block flex flex-col gap-y-1">
+              <span className="block text-sm font-medium">Campaña</span>
+              <FilterCampania
+                defaultValue={campania}
+                onNewInput={onAddCampania}
               />
             </label>
 
@@ -195,54 +246,6 @@ export const UpdateLead = () => {
                 className="mt-1 px-3 py-2 bg-white border shadow-sm border-slate-300 placeholder-slate-400 focus:outline-none focus:border-sky-500 focus:ring-sky-500 block w-full rounded-md sm:text-sm focus:ring-1"
                 placeholder="Comentario"
                 value={comentario}
-                onChange={handledForm}
-              ></textarea>
-            </label>
-
-            <label className="block flex flex-row gap-y-1">
-              <span className="after:content-['*'] after:ml-0.5 after:text-yellow-500 block text-sm font-medium flex items-center me-2">
-                Llamar?
-              </span>
-              <Checkbox
-                name="llamar"
-                checked={llamar}
-                onChange={onAddCheckInput}
-                inputProps={{ "aria-label": "controlled" }}
-              />
-            </label>
-          </div>
-
-          <div className="flex-1 flex flex-col gap-y-6">
-            <label className="block flex flex-col gap-y-1">
-              <span className="block text-sm font-medium">Estado</span>
-              <FilterEstadoLead onNewInput={onAddEstadoLead} defaultValue={5} />
-            </label>
-
-            <label className="block flex flex-col gap-y-1">
-              <span className="block text-sm font-medium">Objeciones</span>
-              <FilterObjecion onNewInput={onAddObjecion} defaultValue={1} />
-            </label>
-
-            <label className="block flex flex-col gap-y-1">
-              <span className="block text-sm font-medium">Asesor Asignado</span>
-              <FilterAsesor onNewInput={onAddAsesor} />
-            </label>
-
-            <label className="block flex flex-col gap-y-1">
-              <span className="block text-sm font-medium">Campaña</span>
-              <FilterCampania onNewInput={onAddCampania} />
-            </label>
-
-            <label className="block flex flex-col gap-y-1">
-              <span className="block text-sm font-medium">
-                Mensaje de Marketing
-              </span>
-              <textarea
-                name="mensajeMarketing"
-                rows="3"
-                className="mt-1 px-3 py-2 bg-white border shadow-sm border-slate-300 placeholder-slate-400 focus:outline-none focus:border-sky-500 focus:ring-sky-500 block w-full rounded-md sm:text-sm focus:ring-1"
-                placeholder="Mensaje de Marketing"
-                value={mensajeMarketing}
                 onChange={handledForm}
               ></textarea>
             </label>

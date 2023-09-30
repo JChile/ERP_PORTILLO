@@ -31,17 +31,17 @@ class EstadoLead(models.Model):
     nombre = models.CharField(max_length=2, primary_key=True)
     descripcion = models.CharField(max_length=50, null=True, default=None)
     estado = models.ForeignKey(
-        EstadoRegistro, on_delete=models.SET_NULL, null=True, blank=True)
+        EstadoRegistro, on_delete=models.SET_NULL, default='A', null=True)
 
     def __str__(self):
         return self.descripcion
 
 
 class Lead(models.Model):
-    nombre = models.CharField(max_length=100, null=True)
-    apellido = models.CharField(max_length=100, null=True)
+    nombre = models.CharField(max_length=100, null=True, blank=True)
+    apellido = models.CharField(max_length=100, null=True, blank=True)
     asignado = models.BooleanField(default=False)
-    celular = models.CharField(max_length=100, null=True)
+    celular = models.CharField(max_length=100, null=True, blank=False)
     celular2 = models.CharField(max_length=100, null=True, blank=True)
     telefono = models.CharField(max_length=100, null=True, blank=True)
     comentario = models.TextField(max_length=200, null=True, blank=True)

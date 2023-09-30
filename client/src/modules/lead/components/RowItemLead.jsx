@@ -1,11 +1,12 @@
-import React from "react";
+import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { TableCell, TableRow } from "@mui/material";
 import { HiPhoneIncoming } from "react-icons/hi";
 import { HiPhoneMissedCall } from "react-icons/hi";
 import { CustomMoreVerticalActions } from "../../../components";
+import { deleteLead } from "../helpers";
 
-export const RowItemLead = ({ item }) => {
+export const RowItemLead = ({ item, onShowDeleteDialog }) => {
   const {
     id,
     nombre,
@@ -13,20 +14,45 @@ export const RowItemLead = ({ item }) => {
     celular,
     comentario,
     horaEntrega,
-    mensajeMarketing,
     llamar,
-    estado,
+    estadoLead,
     objeciones,
     asesor,
     campania,
   } = item;
+  const [showDialog, setShowDialog] = useState(false);
+  const [itemSeleccionado, setItemSeleccionado] = useState(null);
 
   const navigate = useNavigate();
+
+  const onCloseDeleteDialog = () => {
+    // ocultamos el modal
+    setShowDialog(false);
+    // dejamos el null la data del detalle
+    setItemSeleccionado(null);
+  };
+
+  const onDeleteItemSelected = async () => {
+    console.log("------------" + id)
+    const body = {
+      estado: "I",
+    };
+    const result = await deleteLead(id, body);
+    onCloseDeleteDialog();
+    onShowDeleteDialog();
+  };
+
+  const onEditItemSelected = () => {
+    navigate(`/lead/update/${id}`);
+  };
 
   return (
     <TableRow sx={{ "&:last-child td, &:last-child th": { border: 0 } }}>
       <TableCell>
-        <CustomMoreVerticalActions />
+        <CustomMoreVerticalActions
+          onDelete={onDeleteItemSelected}
+          onEdit={onEditItemSelected}
+        />
       </TableCell>
       <TableCell>
         <Link
@@ -79,10 +105,8 @@ export const RowItemLead = ({ item }) => {
           <a href={"https://wa.me/" + celular}>{celular}</a>
         </div>
       </TableCell>
-      <TableCell>{estado.nombre}</TableCell>
-      <TableCell>{objeciones.nombre}</TableCell>
+      <TableCell>{estadoLead}</TableCell>
       <TableCell>{campania.nombre}</TableCell>
-      <TableCell>{comentario}</TableCell>
       <TableCell>{horaEntrega}</TableCell>
     </TableRow>
   );

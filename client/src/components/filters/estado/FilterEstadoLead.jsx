@@ -5,7 +5,7 @@ import { Autocomplete, Stack, TextField } from "@mui/material";
 const defaultOption = {
   value: 0,
   label: "Selecione un estado",
-  id: 0,
+  id: null,
 };
 
 export const FilterEstadoLead = ({ defaultValue = null, onNewInput }) => {
@@ -18,9 +18,9 @@ export const FilterEstadoLead = ({ defaultValue = null, onNewInput }) => {
       defaultOption,
       ...result.map((element) => {
         return {
-          value: element.id,
-          label: element.nombre,
-          id: element.id,
+          value: element.nombre,
+          label: element.descripcion,
+          id: element.nombre,
         };
       }),
     ];

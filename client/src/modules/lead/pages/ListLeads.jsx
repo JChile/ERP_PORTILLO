@@ -18,15 +18,13 @@ const headers = [
   "Nombre",
   "Celular",
   "Estado",
-  "Objeciones",
   "Campaña",
-  "Comentario",
   "Hora",
 ];
 
 const filters = ["Nombre", "Estado", "Campaña"];
 
-const headersLead = ["Acciones", "Nombre", "Celular", "Campaña", "Comentario"];
+const headersLead = ["Acciones", "Nombre", "Celular", "Campaña"];
 
 export const ListLeads = () => {
   const [filterLeads, setFilterLeads] = useState([]);

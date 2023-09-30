@@ -5,7 +5,7 @@ import { Autocomplete, TextField } from "@mui/material";
 const defaultOption = {
   value: 0,
   label: "Seleccione un asesor",
-  id: 0,
+  id: null,
 };
 
 export const FilterAsesor = ({ defaultValue = null, onNewInput }) => {

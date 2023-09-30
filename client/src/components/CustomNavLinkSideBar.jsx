@@ -1,6 +1,7 @@
 import React from "react";
 import { NavLink } from "react-router-dom";
 import { DynamicIcon } from "./DynamicIcon";
+import { FiSettings } from "react-icons/fi";
 
 export const CustomNavLinkSideBar = ({ item, open }) => {
   const { url, title, gap = false } = item;
@@ -15,7 +16,7 @@ export const CustomNavLinkSideBar = ({ item, open }) => {
           ${gap ? "mt-9" : "mt-2"}`
       }
     >
-      {/* <DynamicIcon name={src} /> */}
+      <div className={`${!open && "mx-auto"} `} ><FiSettings /></div>
       <span className={`${!open && "hidden"} origin-left duration-200`}>
         {title}
       </span>

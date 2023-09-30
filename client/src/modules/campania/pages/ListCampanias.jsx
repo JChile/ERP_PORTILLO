@@ -5,7 +5,6 @@ import {
   getCampaniasInactivas,
 } from "../helpers";
 import { Link } from "react-router-dom";
-import { RiAddBoxFill } from "react-icons/ri";
 import { DialogDeleteCampania, RowItemCampania } from "../components";
 import {
   CustomCircularProgress,
@@ -108,15 +107,7 @@ export const ListCampanias = () => {
 
   return (
     <>
-      <div className="flex flex-col gap-x-5 mb-9">
-        <CustomTopBar
-          moduleName="Marketing"
-          userName="Andrew Jacabo"
-          viewName="Campañas de marketing"
-        />
-      </div>
-
-      <div className="flex items-center justify-between gap-x-4 px-7 mb-9">
+      <div className="flex items-center justify-between gap-x-4 mb-9">
         <div className="flex flex-col gap-y-1 align-middle">
           <span className="block text-sm">Buscar Campanias</span>
           <CustomInputBase
@@ -156,21 +147,19 @@ export const ListCampanias = () => {
         </div>
       </div>
 
-      <div className="px-7">
-        <CustomTableCampanias
-          headerData={[
-            "Acciones",
-            "Nombre",
-            "Fecha Estimada",
-            "Fecha Cierre",
-            "Coste Estimado",
-            "Proyecto",
-            "Categoria",
-          ]}
-          rowData={campaniasTemporal}
-          onShowDeleteDialog={onShowDeleteDialog}
-        />
-      </div>
+      <CustomTableCampanias
+        headerData={[
+          "Acciones",
+          "Nombre",
+          "Fecha Estimada",
+          "Fecha Cierre",
+          "Coste Estimado",
+          "Proyecto",
+          "Categoria",
+        ]}
+        rowData={campaniasTemporal}
+        onShowDeleteDialog={onShowDeleteDialog}
+      />
 
       {showDialog && (
         <DialogDeleteCampania

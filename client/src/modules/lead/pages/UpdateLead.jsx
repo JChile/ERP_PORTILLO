@@ -26,29 +26,21 @@ export const UpdateLead = () => {
     nombre: "",
     apellido: "",
     celular: "",
-    telefono: "",
+    celular2: "",
     comentario: "",
     llamar: true,
-    asesor: {
-      user: {
-        username: ""
-      }
-    },
+    asesor: null,
     estado: "A",
     estadoLead: "EP",
-    objecion: {
-      nombre: ""
-    },
-    campania: {
-      nombre: ""
-    },
+    objecion: null,
+    campania: null,
   });
 
   const {
     nombre,
     apellido,
     celular,
-    telefono,
+    celular2,
     comentario,
     llamar,
     asesor,
@@ -70,8 +62,13 @@ export const UpdateLead = () => {
 
   const obtenerLead = async (idLead) => {
     const result = await getLead(idLead);
-
-    setLead(result);
+    console.log(result)
+    setLead({
+      ...result,
+      asesor: (Object.keys(result.asesor).length !== 0 ? result.asesor.id : result.asesor),
+      campania: (Object.keys(result.campania).length !== 0 ? result.campania.id : result.campania),
+      objecion: (Object.keys(result.objecion).length !== 0 ? result.objecion.id : result.objecion)
+    });
   };
 
   const onAddCheckInputLlamar = (event) => {
@@ -92,23 +89,10 @@ export const UpdateLead = () => {
 
   const validateLead = (
     celular,
-    asesor,
-    campania,
-    objecion
   ) => {
     const errors = [];
     if (!celular) {
       errors.push("- El celular es obligatorio.");
-    }
-    if (!asesor) {
-      asesor = null;
-    }
-    if (!campania) {
-      campania = null;
-      ;
-    }
-    if (!objecion) {
-      objecion = null;
     }
     return errors.join("\n");
   };
@@ -151,9 +135,7 @@ export const UpdateLead = () => {
   };
 
   useEffect(() => {
-    const controller = new AbortController();
     obtenerLead(idLead);
-    return () => controller.abort();
   }, []);
 
   return (
@@ -203,16 +185,16 @@ export const UpdateLead = () => {
               <span className="block text-sm font-medium">Celular 2</span>
               <input
                 type="text"
-                name="telefono"
+                name="celular2"
                 className="mt-1 px-3 py-2 bg-white border shadow-sm border-slate-300 placeholder-slate-400 focus:outline-none focus:border-sky-500 focus:ring-sky-500 block w-full rounded-md sm:text-sm focus:ring-1"
-                placeholder="Celular"
-                value={telefono}
+                placeholder="Celular2"
+                value={celular2}
                 onChange={handledForm}
               />
             </label>
 
             <label className="block flex flex-row gap-y-1">
-              <span className="after:content-['*'] after:ml-0.5 after:text-yellow-500 block text-sm font-medium flex items-center me-2">
+              <span className="block text-sm font-medium flex items-center me-2">
                 Llamar?
               </span>
               <Checkbox
@@ -227,9 +209,9 @@ export const UpdateLead = () => {
           <div className="flex-1 flex flex-col gap-y-6">
 
             <label className="block flex flex-col gap-y-1">
-              <span className="block text-sm font-medium">Estado</span>
+              <span className="block text-sm font-medium">Estado Lead</span>
               <FilterEstadoLead
-                defaultValue={estado.id}
+                defaultValue={estadoLead}
                 onNewInput={onAddEstadoLead}
               />
             </label>
@@ -237,7 +219,7 @@ export const UpdateLead = () => {
             <label className="block flex flex-col gap-y-1">
               <span className="block text-sm font-medium">Objeciones</span>
               <FilterObjecion
-                defaultValue={objecion.id}
+                defaultValue={objecion}
                 onNewInput={onAddObjecion}
               />
             </label>
@@ -245,7 +227,7 @@ export const UpdateLead = () => {
             <label className="block flex flex-col gap-y-1">
               <span className="block text-sm font-medium">Asesor Asignado</span>
               <FilterAsesor
-                defaultValue={asesor.id}
+                defaultValue={asesor}
                 onNewInput={onAddAsesor}
               />
             </label>
@@ -253,7 +235,7 @@ export const UpdateLead = () => {
             <label className="block flex flex-col gap-y-1">
               <span className="block text-sm font-medium">Campaña</span>
               <FilterCampania
-                defaultValue={campania.id}
+                defaultValue={campania}
                 onNewInput={onAddCampania}
               />
             </label>

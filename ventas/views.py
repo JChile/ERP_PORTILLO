@@ -10,7 +10,7 @@ from cuenta.models import User
 from rest_framework import status
 from datetime import datetime, timedelta
 from django.http import Http404
-
+from rest_framework.views import APIView
 
 class LeadList(generics.ListCreateAPIView):
     serializer_class = LeadSerializer
@@ -227,6 +227,52 @@ class LeadMultipleAssign(generics.UpdateAPIView):
 
         return Response({'message': 'Las asignaciones se han realizado correctamente'}, status=status.HTTP_200_OK)
 
+class LeadMultipleCreationManual(APIView):
+    def post(self, request): 
+
+        response = {}
+        object_saved = []  
+        object_no_saved = []
+
+        thirty_days_ago = datetime.now() - timedelta(days=31)
+        unique_mobiles = list(Lead.objects.filter(horaEntrega__gte=thirty_days_ago).values_list('celular', flat=True).distinct())
+        print(unique_mobiles)
+
+        for i in request.data :
+
+            error_message = []
+
+            try:
+                i["asesor"] = Asesor.objects.get(codigo = i["asesor"]).id
+            except:
+                print("Campo de asesor no enviado o asesor no existe en : ", i)
+
+            try:
+                i["campania"] = Campania.objects.get(nombre = i["campania"]).id
+            except:
+                print("Campo de campania no enviado o no existe en : ", i)
+            
+
+            data = LeadSerializer(data = i)
+            if data.is_valid():
+                if unique_mobiles.index(i['celular']) != -1:
+                    object_no_saved.append(data.data)
+                    error_message.append("Se repite el numero telefonico")
+                    object_no_saved.append(error_message)
+                else :
+                    data.save()     
+                    print("Guardado : ", data.data)
+                    object_saved.append(data.data)
+            else :
+                print("No Guardado : ", data.data) 
+                object_no_saved.append(data.data)
+                error_message.append("Formato no valido")
+                object_no_saved.append(error_message)
+        
+        response["guardados"] = object_saved
+        response["no_guardado"] = object_no_saved
+
+        return Response(response)
 
 class AsesorList(generics.ListCreateAPIView):
     serializer_class = AsesorSerializer

@@ -16,10 +16,6 @@ export const RowItemCampania = ({ item, onShowDeleteDialog }) => {
 
   const navigate = useNavigate();
 
-  const onDeleteItemSelected = () => {
-    onShowDeleteDialog(item);
-  };
-
   const onEditItemSelected = () => {
     navigate(`/campania/update/${id}`);
   };
@@ -28,7 +24,7 @@ export const RowItemCampania = ({ item, onShowDeleteDialog }) => {
     <TableRow sx={{ "&:last-child td, &:last-child th": { border: 0 } }}>
       <TableCell>
         <CustomMoreVerticalActions
-          onDelete={onDeleteItemSelected}
+          onDelete={() => onShowDeleteDialog(item)}
           onEdit={onEditItemSelected}
         />
       </TableCell>

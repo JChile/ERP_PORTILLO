@@ -60,15 +60,13 @@ class CampaniaList(generics.ListCreateAPIView):
             
         return Response(dataJson)
     
-    def post(self, request):
-        
+    def create(self, request):
         print(request.data)
-        data = CampaniaSerializer(data = request.data)
-        
+        data = CampaniaSerializer(data = request.data)   
         if data.is_valid():
             data.save()
         campania = Campania.objects.get(pk = data.data["id"])
-        campania.codigo = campania.nombre + campania.categoria.nombre + str(campania.fecha_creacion.month) + str(campania.pk)
+        campania.codigo = (campania.nombre +"_"+ campania.categoria.nombre  +"_"+  str(campania.fecha_creacion.month)  +"_"+  str(campania.pk)).lower()
         campania.save()
         return Response(CampaniaSerializer(campania).data)
 

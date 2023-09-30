@@ -2,18 +2,23 @@ import React, { useState } from "react";
 import { Checkbox } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { createLead } from "../helpers";
-import { CustomAlert, FilterCampania, CustomCircularProgress } from "../../../components";
+import {
+  CustomAlert,
+  FilterCampania,
+  CustomCircularProgress,
+} from "../../../components";
 import { FilterEstadoLead } from "../../../components/filters/estado/FilterEstadoLead";
 import { FilterObjecion } from "../../../components/filters/objecion/FilterObjecion";
 import { FilterAsesor } from "../../../components/filters/asesor/FilterAsesor";
 import { useAlertMUI } from "../../../hooks";
-import { MuiTelInput } from 'mui-tel-input'
+import { MuiTelInput } from "mui-tel-input";
 
 export const AddLeadManual = () => {
   const [lead, setLead] = useState({
     nombre: "",
     apellido: "",
     celular: "",
+    celular2: "",
     telefono: "",
     comentario: "",
     llamar: true,
@@ -28,7 +33,7 @@ export const AddLeadManual = () => {
     nombre,
     apellido,
     celular,
-    telefono,
+    celular2,
     comentario,
     llamar,
     asesor,
@@ -54,43 +59,35 @@ export const AddLeadManual = () => {
   };
 
   const handledForm = ({ target }) => {
-    const { name, value } = target
-    setLead({ ...lead, [name]: value })
-  }
+    const { name, value } = target;
+    setLead({ ...lead, [name]: value });
+  };
   const onAddCheckInputLlamar = (event) => {
     setLead({ ...lead, llamar: !llamar });
   };
   const onAddCampania = (item) => {
-    setLead({ ...lead, campania: item.id })
-  }
+    setLead({ ...lead, campania: item.id });
+  };
   const onAddEstadoLead = (item) => {
-    setLead({ ...lead, estadoLead: item.id })
-  }
+    setLead({ ...lead, estadoLead: item.id });
+  };
   const onAddAsesor = (item) => {
-    setLead({ ...lead, asesor: item.id })
-  }
+    setLead({ ...lead, asesor: item.id });
+  };
   const onAddObjecion = (item) => {
-    setLead({ ...lead, objecion: item.id })
-  }
+    setLead({ ...lead, objecion: item.id });
+  };
 
-  const validateLead = (
-    celular,
-  ) => {
+  const validateLead = (celular) => {
     const errors = [];
-
     if (celular.length === 0) {
-      errors.push("- El celular es obligatorio.");
-
+      errors.push("El celular es obligatorio.");
     }
     return errors.join("\n");
   };
 
   const crearLead = async () => {
-    const validationMessage = validateLead(
-      celular,
-    );
-
-    console.log(lead)
+    const validationMessage = validateLead(celular);
     if (validationMessage) {
       setFeedbackMessages({
         style_message: "warning",
@@ -138,7 +135,8 @@ export const AddLeadManual = () => {
 
             <label className="block flex flex-col gap-y-1">
               <span className="after:content-['*'] after:ml-0.5 after:text-yellow-500 block text-sm font-medium flex items-center me-2">
-                Celular</span>
+                Celular
+              </span>
               <MuiTelInput
                 defaultCountry="PE"
                 value={celular}
@@ -157,11 +155,11 @@ export const AddLeadManual = () => {
               <span className="block text-sm font-medium">Celular 2</span>
               <MuiTelInput
                 defaultCountry="PE"
-                value={telefono}
+                value={celular2}
                 onChange={(value) => {
                   handledForm({
                     target: {
-                      name: "telefono",
+                      name: "celular2",
                       value: value,
                     },
                   });
@@ -180,39 +178,33 @@ export const AddLeadManual = () => {
                 inputProps={{ "aria-label": "controlled" }}
               />
             </label>
-
           </div>
 
           <div className="flex-1 flex flex-col gap-y-6">
-
             <label className="block flex flex-col gap-y-1">
               <span className="block text-sm font-medium">Estado Lead</span>
               <FilterEstadoLead
                 onNewInput={onAddEstadoLead}
-                defaultValue={"EP"}
+                defaultValue={estadoLead}
               />
             </label>
 
             <label className="block flex flex-col gap-y-1">
-              <span className="block text-sm font-medium">Objeciones</span>
+              <span className="block text-sm font-medium">Objecion</span>
               <FilterObjecion
                 onNewInput={onAddObjecion}
-                defaultValue={1}
+                defaultValue={objecion}
               />
             </label>
 
             <label className="block flex flex-col gap-y-1">
               <span className="block text-sm font-medium">Asesor Asignado</span>
-              <FilterAsesor
-                onNewInput={onAddAsesor}
-              />
+              <FilterAsesor onNewInput={onAddAsesor} />
             </label>
 
             <label className="block flex flex-col gap-y-1">
               <span className="block text-sm font-medium">Campaña</span>
-              <FilterCampania
-                onNewInput={onAddCampania}
-              />
+              <FilterCampania onNewInput={onAddCampania} />
             </label>
 
             <label className="block flex flex-col gap-y-1">
@@ -226,9 +218,7 @@ export const AddLeadManual = () => {
                 onChange={handledForm}
               ></textarea>
             </label>
-
           </div>
-
         </form>
       </div>
       <div className="flex justify-center mt-4">

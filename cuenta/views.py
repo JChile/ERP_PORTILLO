@@ -312,7 +312,7 @@ class UserActivoList(APIView):
     def get(self, request):
         users = User.objects.filter(is_active=True)
         dataJson = UserSerializer(users, many=True, fields=(
-            'id', 'first_name', 'last_name')).data
+            'id', 'first_name', 'last_name', 'username')).data
         return Response(dataJson)
 
 
@@ -320,5 +320,5 @@ class UserInactivoList(APIView):
     def get(self, request):
         users = User.objects.filter(is_active=False)
         dataJson = UserSerializer(users, many=True, fields=(
-            'id', 'first_name', 'last_name')).data
+            'id', 'first_name', 'last_name', 'username')).data
         return Response(dataJson)

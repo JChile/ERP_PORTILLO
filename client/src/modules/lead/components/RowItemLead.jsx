@@ -13,35 +13,13 @@ export const RowItemLead = ({ item, onShowDeleteDialog }) => {
     nombre,
     apellido,
     celular,
-    comentario,
     horaEntrega,
     llamar,
     estadoLead,
-    objeciones,
-    asesor,
     campania,
   } = item;
-  const [showDialog, setShowDialog] = useState(false);
-  const [itemSeleccionado, setItemSeleccionado] = useState(null);
 
   const navigate = useNavigate();
-
-  const onCloseDeleteDialog = () => {
-    // ocultamos el modal
-    setShowDialog(false);
-    // dejamos el null la data del detalle
-    setItemSeleccionado(null);
-  };
-
-  const onDeleteItemSelected = async () => {
-    console.log("------------" + id);
-    const body = {
-      estado: "I",
-    };
-    const result = await deleteLead(id, body);
-    onCloseDeleteDialog();
-    onShowDeleteDialog();
-  };
 
   const onEditItemSelected = () => {
     navigate(`/lead/update/${id}`);
@@ -51,7 +29,7 @@ export const RowItemLead = ({ item, onShowDeleteDialog }) => {
     <TableRow sx={{ "&:last-child td, &:last-child th": { border: 0 } }}>
       <TableCell>
         <CustomMoreVerticalActions
-          onDelete={onDeleteItemSelected}
+          onDelete={() => onShowDeleteDialog(item)}
           onEdit={onEditItemSelected}
         />
       </TableCell>

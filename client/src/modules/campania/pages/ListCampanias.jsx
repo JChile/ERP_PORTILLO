@@ -6,7 +6,6 @@ import {
   CustomCircularProgress,
   CustomTablePagination,
 } from "../../../components";
-import { CustomTopBar } from "../../../components/CustomTopBar";
 import { CustomInputBase } from "../../../components/CustomInputBase";
 import { CustomTableCampanias } from "../../../components/CustomTableCampanias";
 
@@ -55,12 +54,21 @@ export const ListCampanias = () => {
     setCampaniasTemporal(result);
   };
 
-  const onDeleteItemSelected = async (idItem) => {
-    const body = { estado: "I" };
-    console.log(idItem);
-    const result = await deleteCampania(idItem, body);
-    obtenerCampanias();
-    onCloseDeleteDialog();
+  const onDeleteItemSelected = async (item) => {
+    const { id, proyecto, categoria } = item;
+    const body = {
+      estado: "I",
+      proyecto: proyecto.id,
+      categoria: categoria.id,
+    };
+    try {
+      const result = await deleteCampania(id, body);
+      obtenerCampanias();
+      onCloseDeleteDialog();
+    }
+    catch (error) {
+      // handled error.
+    }
   };
 
   const handleSearchButton = (filter, pattern) => {
@@ -118,17 +126,15 @@ export const ListCampanias = () => {
           <div className="flex justify-center gap-x-3">
             <button
               onClick={() => handleButtonState(true)}
-              className={`px-4 py-2 rounded ${
-                activeButton ? "bg-blue-500 text-white" : "bg-gray-300"
-              }`}
+              className={`px-4 py-2 rounded ${activeButton ? "bg-blue-500 text-white" : "bg-gray-300"
+                }`}
             >
               Activas
             </button>
             <button
               onClick={() => handleButtonState(false)}
-              className={`px-4 py-2 rounded ${
-                !activeButton ? "bg-blue-500 text-white" : "bg-gray-300"
-              }`}
+              className={`px-4 py-2 rounded ${!activeButton ? "bg-blue-500 text-white" : "bg-gray-300"
+                }`}
             >
               Inactivas
             </button>

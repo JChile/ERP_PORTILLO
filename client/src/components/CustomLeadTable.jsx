@@ -17,15 +17,8 @@ import { CustomTablePagination } from "./CustomTablePagination";
  * @param {list} rowData
  * @returns
  */
-export const CustomTable = ({ headerData, rowData }) => {
-  const [showDialog, setShowDialog] = useState(false);
-  const [itemSeleccionado, setItemSeleccionado] = useState(null);
+export const CustomTable = ({ headerData, rowData, onShowDeleteDialog }) => {
 
-  // MOSTRAR Y OCULTAR DETALLE DE USUARIO
-  const onShowDeleteDialog = async (item) => {
-    setItemSeleccionado(item);
-    setShowDialog(true);
-  };
   const headers = headerData.map((header, index) => (
     <TableCell key={index} align="left" width={header.width}>
       <b>{header.name}</b>

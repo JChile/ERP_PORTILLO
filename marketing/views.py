@@ -71,8 +71,8 @@ class CampaniaList(generics.ListCreateAPIView):
         if data.is_valid():
             data.save()
         campania = Campania.objects.get(pk=data.data["id"])
-        campania.codigo = (campania.proyecto.nombre + "_" + campania.categoria.nombre +
-                           "_" + str(campania.fecha_creacion.month) + "_" + str(campania.pk)).lower()
+        campania.codigo = (str(campania.nombre).replace(" ", "") + "_" + str(campania.categoria.nombre).replace(
+            " ", "") + "_" + str(campania.fecha_creacion.month) + "_" + str(campania.pk)).lower()
         campania.save()
         return Response(CampaniaSerializer(campania).data)
 

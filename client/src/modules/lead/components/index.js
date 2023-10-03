@@ -1,2 +1,2 @@
 export * from "./RowItemLead";
-export * from "./ImportFileLeads";
+export * from "./BoxOptionsImportLeads";

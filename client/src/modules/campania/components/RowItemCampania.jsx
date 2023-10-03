@@ -5,7 +5,8 @@ import { CustomMoreVerticalActions } from "../../../components";
 import { formatDate_ISO861_to_formatdate } from "../../../utils/formatDate";
 
 export const RowItemCampania = ({ item, onShowDeleteDialog }) => {
-  const { id, nombre, codigo, fecha_creacion, proyecto, categoria } = item;
+  const { id, nombre, codigo, fecha_creacion, proyecto, categoria, estado } =
+    item;
 
   const navigate = useNavigate();
 
@@ -19,6 +20,7 @@ export const RowItemCampania = ({ item, onShowDeleteDialog }) => {
         <CustomMoreVerticalActions
           onDelete={() => onShowDeleteDialog(item)}
           onEdit={onEditItemSelected}
+          activeOnDelete={estado === "A" ? true : false}
         />
       </TableCell>
       <TableCell>

@@ -271,7 +271,7 @@ class LeadMultipleCreationManual(APIView):
                     print("Guardado : ", data.data)
             else :
                 print("No Guardado : ", data.data) 
-                object_no_saved.append(data.data)
+                object_no_saved.append(i)
                 error_message.append("Formato no valido")
                 object_no_saved.append(error_message)
         response["no_guardado"] = object_no_saved

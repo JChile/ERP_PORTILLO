@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { getEstadoLead } from "./getEstadoLead";
-import { Autocomplete, Stack, TextField } from "@mui/material";
+import { Autocomplete, TextField } from "@mui/material";
 
 const defaultOption = {
   value: 0,
   label: "Selecione un estado",
-  id: 0,
+  id: null,
 };
 
 export const FilterEstadoLead = ({ defaultValue = null, onNewInput }) => {
@@ -18,9 +18,9 @@ export const FilterEstadoLead = ({ defaultValue = null, onNewInput }) => {
       defaultOption,
       ...result.map((element) => {
         return {
-          value: element.id,
-          label: element.nombre,
-          id: element.id,
+          value: element.nombre,
+          label: element.descripcion,
+          id: element.nombre,
         };
       }),
     ];
@@ -47,16 +47,14 @@ export const FilterEstadoLead = ({ defaultValue = null, onNewInput }) => {
   }, [defaultValue]);
 
   return (
-    <Stack width={"154px"}>
-      <Autocomplete
-        options={options}
-        value={value}
-        disableClearable
-        getOptionLabel={(option) => option.label}
-        onChange={handleChange}
-        isOptionEqualToValue={(option, value) => option.id == value.id}
-        renderInput={(params) => <TextField {...params} />}
-      />
-    </Stack>
+    <Autocomplete
+      options={options}
+      value={value}
+      disableClearable
+      getOptionLabel={(option) => option.label}
+      onChange={handleChange}
+      isOptionEqualToValue={(option, value) => option.id == value.id}
+      renderInput={(params) => <TextField {...params} size="small" />}
+    />
   );
 };

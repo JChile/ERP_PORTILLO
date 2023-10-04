@@ -30,6 +30,17 @@ class AsesorSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
+class AsesorActivoSerializer(serializers.ModelSerializer):
+    first_name = serializers.CharField(
+        source='user.first_name', read_only=True)
+    last_name = serializers.CharField(source='user.last_name', read_only=True)
+    user_id = serializers.CharField(source='user.id', read_only=True)
+
+    class Meta:
+        model = Asesor
+        fields = ['user_id', 'first_name', 'last_name', 'estado']
+
+
 class WhatsAppSerializer(serializers.ModelSerializer):
     class Meta:
         model = WhatsApp

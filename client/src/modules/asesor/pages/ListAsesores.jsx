@@ -7,19 +7,50 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
-import { getAsesores } from "../helpers";
+import { deleteAsesor, getAsesores } from "../helpers";
 import { RiUserAddLine } from "react-icons/ri";
 import {
   CustomCircularProgress,
   CustomTablePagination,
 } from "../../../components";
-import { RowItemAsesor } from "../components";
+import { DialogDeleteAsesor, RowItemAsesor } from "../components";
+import { DialogDeleteUsuario } from "../../usuario/components";
 
 export const ListAsesores = () => {
   const [asesores, setAsesores] = useState([]);
 
   // estado de progress
   const [visibleProgress, setVisibleProgress] = useState(false);
+
+  // ESTADOS PARA EL DIALOG DELETE
+  const [mostrarDialog, setMostrarDialog] = useState(false);
+  const [itemSeleccionado, setItemSeleccionado] = useState(null);
+
+  // PARA ELIMINAR UN ITEM SELECCIONADO
+  const onCloseDeleteDialog = () => {
+    // ocultamos el modal
+    setMostrarDialog(false);
+    // dejamos el null la data del detalle
+    setItemSeleccionado(null);
+  };
+
+  // MOSTRAR Y OCULTAR DETALLE DE USUARIO
+  const onShowDeleteDialog = (item) => {
+    setItemSeleccionado(item);
+    setMostrarDialog(true);
+  };
+
+  // ELIMINAR DETALLE DE FORMULA
+  const onDeleteItemSelected = async (item) => {
+    const body = {
+      codigo: item.codigo,
+      user: item.user.id,
+      estado: "I",
+    };
+    const result = await deleteAsesor(item.id, body);
+    obtenerAsesores();
+    onCloseDeleteDialog();
+  };
 
   const obtenerAsesores = async () => {
     const result = await getAsesores();
@@ -64,8 +95,11 @@ export const ListAsesores = () => {
                 <TableCell align="left" width={200}>
                   <b>Nombre</b>
                 </TableCell>
-                <TableCell align="left" width={120}>
-                  <b>Numero leads</b>
+                <TableCell align="left" width={80}>
+                  <b>Máximo leads</b>
+                </TableCell>
+                <TableCell align="left" width={100}>
+                  <b>Estado</b>
                 </TableCell>
                 <TableCell align="left" width={100}>
                   <b>Fecha actualizado</b>
@@ -74,7 +108,11 @@ export const ListAsesores = () => {
             </TableHead>
             <TableBody>
               {asesores.map((item) => (
-                <RowItemAsesor key={item.id} item={item} />
+                <RowItemAsesor
+                  key={item.id}
+                  item={item}
+                  onShowDeleteDialog={onShowDeleteDialog}
+                />
               ))}
             </TableBody>
           </Table>
@@ -82,6 +120,15 @@ export const ListAsesores = () => {
         {/* PAGINACION DE LA TABLA */}
         <CustomTablePagination count={asesores.length} />
       </Paper>
+
+      {mostrarDialog && (
+        <DialogDeleteAsesor
+          item={itemSeleccionado}
+          showDialog={mostrarDialog}
+          onDeleteItemSelected={onDeleteItemSelected}
+          onCloseDeleteDialog={onCloseDeleteDialog}
+        />
+      )}
 
       {/* CIRCULAR PROGRESS */}
       {visibleProgress && <CustomCircularProgress />}

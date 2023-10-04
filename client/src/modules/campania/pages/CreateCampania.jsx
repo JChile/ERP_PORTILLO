@@ -12,7 +12,6 @@ import {
 } from "../../../components";
 
 export const CreateCampania = () => {
- 
   const [campaign, setCampaign] = useState({
     nombre: "",
     fecha_estimada: "",
@@ -20,7 +19,6 @@ export const CreateCampania = () => {
     coste_estimado: "",
     coste_real: "",
     descripcion: "",
-    estado: "A",
     proyecto: 0,
     categoria: 0,
   });
@@ -32,7 +30,6 @@ export const CreateCampania = () => {
     coste_estimado,
     coste_real,
     descripcion,
-    estado,
     proyecto,
     categoria,
   } = campaign;
@@ -80,8 +77,6 @@ export const CreateCampania = () => {
     fecha_cierre,
     coste_estimado,
     coste_real,
-    descripcion,
-    estado,
     proyecto,
     categoria
   ) => {
@@ -102,12 +97,6 @@ export const CreateCampania = () => {
     if (!coste_real) {
       errors.push("- El costo real es obligatorio.");
     }
-    if (!descripcion) {
-      errors.push("- La descripción es obligatoria.");
-    }
-    if (!estado) {
-      errors.push("- El estado es obligatorio.");
-    }
     if (!proyecto) {
       errors.push("- El proyecto es obligatorio.");
     }
@@ -125,14 +114,11 @@ export const CreateCampania = () => {
       fecha_cierre,
       coste_estimado,
       coste_real,
-      descripcion,
       proyecto,
-      categoria,
-      estado,
+      categoria
     );
 
-
-    console.log(campaign)
+    console.log(campaign);
 
     if (validationMessage) {
       // Si hay campos faltantes, mostrar una alerta con los mensajes de error concatenados
@@ -169,6 +155,7 @@ export const CreateCampania = () => {
                   name="nombre"
                   className="mt-1 px-3 py-2 bg-white border shadow-sm border-slate-300 placeholder-slate-400 focus:outline-none focus:border-sky-500 focus:ring-sky-500 block w-full rounded-md sm:text-sm focus:ring-1"
                   placeholder="Nombre de la campaña"
+                  autoComplete="off"
                   value={nombre}
                   onChange={handledForm}
                 />
@@ -193,7 +180,7 @@ export const CreateCampania = () => {
                 className="block flex flex-col gap-y-1"
               >
                 <span className="after:content-['*'] after:ml-0.5 after:text-yellow-500 block text-sm font-medium">
-                  Fecha estimado
+                  Fecha estimado inicio
                 </span>
                 <input
                   type="date"
@@ -204,7 +191,18 @@ export const CreateCampania = () => {
                   className="mt-1 px-3 py-2 bg-white border shadow-sm border-slate-300 placeholder-slate-400 focus:outline-none focus:border-sky-500 focus:ring-sky-500 block w-full rounded-md sm:text-sm focus:ring-1"
                 />
               </label>
+              <label className="block flex flex-col gap-y-1">
+                <span className="after:content-['*'] after:ml-0.5 after:text-yellow-500 block text-sm font-medium">
+                  Categoria
+                </span>
+                <FilterSubcategoria
+                  defaultValue={null}
+                  onNewInput={onAddCategory}
+                />
+              </label>
+            </div>
 
+            <div className="w-6/12 flex flex-col gap-y-5">
               <label className="block flex flex-col gap-y-1">
                 <span className="after:content-['*'] after:ml-0.5 after:text-yellow-500 block text-sm font-medium">
                   Proyecto
@@ -214,29 +212,6 @@ export const CreateCampania = () => {
                   onNewInput={onAddProject}
                 />
               </label>
-            </div>
-
-            <div className="w-6/12 flex flex-col gap-y-5">
-              <label className="block flex flex-col gap-y-1">
-                <span className="after:content-['*'] after:ml-0.5 after:text-yellow-500 block text-sm font-medium">
-                  Estado inicial
-                </span>
-                <Select
-                  name="estado"
-                  value={estado}
-                  onChange={handledForm}
-                  style={{
-                    height: "2.64rem", // Ajusta el valor según tus necesidades
-                    paddingTop: "1rem", // Ajusta el valor según tus necesidades
-                    paddingBottom: "1rem",
-                  }}
-                  className="bg-white border shadow-sm border-slate-300 placeholder-slate-400 focus:outline-none focus:border-sky-500 focus:ring-sky-500 block w-full rounded-md sm:text-sm focus:ring-1"
-                >
-                  <MenuItem value="A">Activo</MenuItem>
-                  <MenuItem value="I">Inactivo</MenuItem>
-                </Select>
-              </label>
-
               <label className="block flex flex-col gap-y-1">
                 <span className="after:content-['*'] after:ml-0.5 after:text-yellow-500 block text-sm font-medium">
                   Costo real
@@ -253,7 +228,7 @@ export const CreateCampania = () => {
 
               <label className="block flex flex-col gap-y-1">
                 <span className="after:content-['*'] after:ml-0.5 after:text-yellow-500 block text-sm font-medium">
-                  Fecha cierre
+                  Fecha estimado cierre
                 </span>
                 <input
                   type="date"
@@ -262,16 +237,6 @@ export const CreateCampania = () => {
                   value={fecha_cierre}
                   onChange={handledForm}
                   className="mt-1 px-3 py-2 bg-white border shadow-sm border-slate-300 placeholder-slate-400 focus:outline-none focus:border-sky-500 focus:ring-sky-500 block w-full rounded-md sm:text-sm focus:ring-1"
-                />
-              </label>
-
-              <label className="block flex flex-col gap-y-1">
-                <span className="after:content-['*'] after:ml-0.5 after:text-yellow-500 block text-sm font-medium">
-                  categoria
-                </span>
-                <FilterSubcategoria
-                  defaultValue={null}
-                  onNewInput={onAddCategory}
                 />
               </label>
             </div>

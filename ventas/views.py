@@ -338,12 +338,42 @@ class LeadMultipleCreationManual(APIView):
                     print("Guardado : ", data.data)
             else :
                 print("No Guardado : ", data.data) 
-                object_no_saved.append(data.data)
+                object_no_saved.append(i)
                 error_message.append("Formato no valido")
                 object_no_saved.append(error_message)
         response["no_guardado"] = object_no_saved
 
         return Response(response)
+
+class AsesorAsignacion(APIView):
+    def post(self, request):
+        serializer = {}
+
+        idAsesor = request.data["idAsesor"]
+        idLeads =  request.data["idLead"]
+        
+        try :
+            asesor = Asesor.objects.get(id = idAsesor)
+        except :
+            return Response({'message': f'El Asesor con ID {idAsesor} no existe'})
+        
+        leadsValidos = []
+        
+        for i in idLeads:
+            try:
+                lead = Lead.objects.get(id = int(i))
+                print(lead)
+                lead.asesor = asesor
+                lead.save()   
+            except:
+                leadsValidos.append(i)
+        
+        if len(leadsValidos) == 0:
+            return Response({'message': f"Asignacion exitosa"})
+        return Response({'message': f"No se reasignaron los leads : {leadsValidos} porque no existen"})
+
+
+
 
 class AsesorList(generics.ListCreateAPIView):
     serializer_class = AsesorSerializer

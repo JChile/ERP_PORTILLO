@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { RiAddBoxFill } from "react-icons/ri";
-import { getLeads } from "../helpers";
+import { deleteLead, getLeadsActivos } from "../helpers";
 import {
   CustomCircularProgress,
   CustomTablePagination,
@@ -12,21 +12,20 @@ import { CustomTable } from "../../../components/CustomLeadTable";
 import { Input } from "@mui/material";
 import { CustomInputBase } from "../../../components/CustomInputBase";
 import { CustomSelectedTable } from "../components/CustomSelectedTable";
+import { DialogDeleteLead } from "../components/DialogDeleteLead";
 
 const headers = [
-  "Acciones",
-  "Nombre",
-  "Celular",
-  "Estado",
-  "Objeciones",
-  "Campaña",
-  "Comentario",
-  "Hora",
+  { name: "Acciones", width: 20 },
+  { name: "Nombre", width: 120 },
+  { name: "Celular", width: 100 },
+  { name: "Estado", width: 40 },
+  { name: "Campaña", width: 120 },
+  { name: "Entrega", width: 50 },
 ];
 
 const filters = ["Nombre", "Estado", "Campaña"];
 
-const headersLead = ["Acciones", "Nombre", "Celular", "Campaña", "Comentario"];
+const headersLead = ["Acciones", "Nombre", "Celular", "Campaña"];
 
 export const ListLeads = () => {
   const [filterLeads, setFilterLeads] = useState([]);
@@ -34,10 +33,38 @@ export const ListLeads = () => {
   const [visibleProgress, setVisibleProgress] = useState(true);
   const [unassigendLeadsTable, setUnassignedLeadsTable] = useState(false);
 
+  const [showDialog, setShowDialog] = useState(false);
+  const [itemSeleccionado, setItemSeleccionado] = useState(null);
+
+  const onCloseDeleteDialog = () => {
+    // ocultamos el modal
+    setShowDialog(false);
+    // dejamos el null la data del detalle
+    setItemSeleccionado(null);
+  };
+  const onShowDeleteDialog = (item) => {
+    setItemSeleccionado(item);
+    setShowDialog(true);
+  };
+
+  const onDeleteItemSelected = async (item) => {
+    const { id, celular } = item;
+    const body = {
+      estado: "I",
+      celular: celular
+    };
+    console.log(body);
+    const result = await deleteLead(id, body);
+    console.log(result)
+    loadLeads();
+    onCloseDeleteDialog();
+  };
+
+
   const loadLeads = async () => {
-    const data = await getLeads();
+    const data = await getLeadsActivos();
     setLeads(data);
-     setFilterLeads(data);
+    setFilterLeads(data);
   };
 
   const handleSearchButton = (filter, pattern) => {
@@ -77,16 +104,15 @@ export const ListLeads = () => {
   };
 
   const toogleStateLeads = () => {
-    let toggleStateLeads = []
+    let toggleStateLeads = [];
     /** mostrar lista de leads sin asignar */
     if (!unassigendLeadsTable) {
       toggleStateLeads = leads.filter((item) => item.activo);
-    }
-    /** mostrar lista de leads los cuales son  */
-    else {
+    } else {
+      /** mostrar lista de leads los cuales son  */
       toggleStateLeads = leads.filter((item) => !item.activo);
     }
-    setFilterLeads(toggleStateLeads)
+    setFilterLeads(toggleStateLeads);
     setUnassignedLeadsTable((prev) => !prev);
   };
 
@@ -100,12 +126,6 @@ export const ListLeads = () => {
 
   return (
     <>
-      <CustomTopBar
-        moduleName={"Marketing"}
-        userName={"Andrew Jacabo"}
-        viewName={"Control de leads"}
-      />
-
       <div className="px-7 mt-8 mb-8 flex justify-between items-center">
         <div className="flex flex-col gap-y-1">
           <span className="block text-sm">Buscar lead</span>
@@ -118,7 +138,7 @@ export const ListLeads = () => {
         </div>
 
         <div className="flex flex-row gap-x-4">
-          <div className="flex flex-col gap-y-1">
+          {/* <div className="flex flex-col gap-y-1">
             <span className="block text-sm">Filtrar leads</span>
             <Link
               style={{
@@ -129,7 +149,7 @@ export const ListLeads = () => {
             >
               {unassigendLeadsTable ? "Activos" : "Inactivos"}
             </Link>
-          </div>
+          </div> */}
 
           <div className="flex flex-col gap-y-1">
             <span className="block text-sm">Añadir Lead</span>
@@ -154,11 +174,24 @@ export const ListLeads = () => {
 
       <div className="px-7">
         {!unassigendLeadsTable ? (
-          <CustomTable headerData={headers} rowData={filterLeads} />
+          <CustomTable
+            headerData={headers}
+            rowData={filterLeads}
+            onShowDeleteDialog={onShowDeleteDialog}
+          />
         ) : (
           <CustomSelectedTable headerData={headersLead} rowData={filterLeads} />
         )}
       </div>
+
+      {showDialog && (
+        <DialogDeleteLead
+          item={itemSeleccionado}
+          showDialog={showDialog}
+          onDeleteItemSelected={onDeleteItemSelected}
+          onCloseDeleteDialog={onCloseDeleteDialog}
+        />
+      )}
 
       {visibleProgress && <CustomCircularProgress />}
     </>

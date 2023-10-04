@@ -1,17 +1,11 @@
 import React, { useEffect, useState } from "react";
-import {
-  getCampaniasActivas,
-  deleteCampania,
-  getCampaniasInactivas,
-} from "../helpers";
+import { getCampanias, deleteCampania } from "../helpers";
 import { Link } from "react-router-dom";
-import { RiAddBoxFill } from "react-icons/ri";
 import { DialogDeleteCampania, RowItemCampania } from "../components";
 import {
   CustomCircularProgress,
   CustomTablePagination,
 } from "../../../components";
-import { CustomTopBar } from "../../../components/CustomTopBar";
 import { CustomInputBase } from "../../../components/CustomInputBase";
 import { CustomTableCampanias } from "../../../components/CustomTableCampanias";
 
@@ -52,21 +46,29 @@ export const ListCampanias = () => {
   const obtenerCampanias = async () => {
     let result = [];
     if (activeButton) {
-      result = await getCampaniasActivas();
+      result = await getCampanias("estado=A");
     } else {
-      result = await getCampaniasInactivas();
+      result = await getCampanias("estado=I");
     }
     setCampanias(result);
     setCampaniasTemporal(result);
   };
 
-  const onDeleteItemSelected = async (idItem) => {
+  const onDeleteItemSelected = async (item) => {
+    const { id, proyecto, categoria } = item;
     const body = {
       estado: "I",
+      proyecto: proyecto.id,
+      categoria: categoria.id,
     };
-    const result = await deleteCampania(idItem, body);
-    obtenerCampanias();
-    onCloseDeleteDialog();
+    try {
+      const result = await deleteCampania(id, body);
+      obtenerCampanias();
+      onCloseDeleteDialog();
+    }
+    catch (error) {
+      // handled error.
+    }
   };
 
   const handleSearchButton = (filter, pattern) => {
@@ -108,15 +110,7 @@ export const ListCampanias = () => {
 
   return (
     <>
-      <div className="flex flex-col gap-x-5 mb-9">
-        <CustomTopBar
-          moduleName="Marketing"
-          userName="Andrew Jacabo"
-          viewName="Campañas de marketing"
-        />
-      </div>
-
-      <div className="flex items-center justify-between gap-x-4 px-7 mb-9">
+      <div className="flex items-center justify-between gap-x-4 mb-9">
         <div className="flex flex-col gap-y-1 align-middle">
           <span className="block text-sm">Buscar Campanias</span>
           <CustomInputBase
@@ -132,17 +126,15 @@ export const ListCampanias = () => {
           <div className="flex justify-center gap-x-3">
             <button
               onClick={() => handleButtonState(true)}
-              className={`px-4 py-2 rounded ${
-                activeButton ? "bg-blue-500 text-white" : "bg-gray-300"
-              }`}
+              className={`px-4 py-2 rounded ${activeButton ? "bg-blue-500 text-white" : "bg-gray-300"
+                }`}
             >
               Activas
             </button>
             <button
               onClick={() => handleButtonState(false)}
-              className={`px-4 py-2 rounded ${
-                !activeButton ? "bg-blue-500 text-white" : "bg-gray-300"
-              }`}
+              className={`px-4 py-2 rounded ${!activeButton ? "bg-blue-500 text-white" : "bg-gray-300"
+                }`}
             >
               Inactivas
             </button>
@@ -156,21 +148,18 @@ export const ListCampanias = () => {
         </div>
       </div>
 
-      <div className="px-7">
-        <CustomTableCampanias
-          headerData={[
-            "Acciones",
-            "Nombre",
-            "Fecha Estimada",
-            "Fecha Cierre",
-            "Coste Estimado",
-            "Proyecto",
-            "Categoria",
-          ]}
-          rowData={campaniasTemporal}
-          onShowDeleteDialog={onShowDeleteDialog}
-        />
-      </div>
+      <CustomTableCampanias
+        headerData={[
+          { name: "Acciones", width: 20 },
+          { name: "Nombre", width: 140 },
+          { name: "Codigo", width: 70 },
+          { name: "Fecha inicio", width: 80 },
+          { name: "Proyecto", width: 100 },
+          { name: "Categoria", width: 70 },
+        ]}
+        rowData={campaniasTemporal}
+        onShowDeleteDialog={onShowDeleteDialog}
+      />
 
       {showDialog && (
         <DialogDeleteCampania

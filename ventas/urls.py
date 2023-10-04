@@ -21,6 +21,8 @@ urlpatterns = [
     re_path(r'^asesor/(?P<pk>[0-9]+)$', views.AsesorDetail.as_view()),
     re_path(r'^asesorActivo/$', views.AsesorListActivos.as_view()),
     re_path(r'^asesorInactivo/$', views.AsesorListInactivos.as_view()),
+    re_path(r'^asesorAsignacion/$', views.AsesorAsignacion.as_view()),
+
 
     re_path(r'^whatsapp/$', views.WhatsAppList.as_view()),
     re_path(r'^whatsapp/(?P<pk>[0-9]+)$', views.WhatsAppDetail.as_view()),

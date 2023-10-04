@@ -1,33 +1,37 @@
-import React from "react";
+import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { TableCell, TableRow } from "@mui/material";
 import { HiPhoneIncoming } from "react-icons/hi";
 import { HiPhoneMissedCall } from "react-icons/hi";
 import { CustomMoreVerticalActions } from "../../../components";
+import { deleteLead } from "../helpers";
+import { formatDate_ISO861_to_formatdate } from "../../../utils/formatDate";
 
-export const RowItemLead = ({ item }) => {
-  console.log(item)
+export const RowItemLead = ({ item, onShowDeleteDialog }) => {
   const {
     id,
     nombre,
     apellido,
     celular,
-    comentario,
     horaEntrega,
-    mensajeMarketing,
     llamar,
-    estado,
-    objeciones,
-    asesor,
+    estadoLead,
     campania,
   } = item;
 
   const navigate = useNavigate();
 
+  const onEditItemSelected = () => {
+    navigate(`/lead/update/${id}`);
+  };
+
   return (
     <TableRow sx={{ "&:last-child td, &:last-child th": { border: 0 } }}>
       <TableCell>
-        <CustomMoreVerticalActions />
+        <CustomMoreVerticalActions
+          onDelete={() => onShowDeleteDialog(item)}
+          onEdit={onEditItemSelected}
+        />
       </TableCell>
       <TableCell>
         <Link
@@ -77,14 +81,12 @@ export const RowItemLead = ({ item }) => {
               }}
             />
           )}
-          <a href={"https://wa.me/" + celular}>{celular}</a>       
+          <a href={"https://wa.me/" + celular}>{celular}</a>
         </div>
       </TableCell>
-      <TableCell>{estado.nombre}</TableCell>
-      <TableCell>{objeciones.nombre}</TableCell>
+      <TableCell>{estadoLead}</TableCell>
       <TableCell>{campania.nombre}</TableCell>
-      <TableCell>{comentario}</TableCell>
-      <TableCell>{horaEntrega}</TableCell>
+      <TableCell>{formatDate_ISO861_to_formatdate(horaEntrega)}</TableCell>
     </TableRow>
   );
 };

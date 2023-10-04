@@ -1,5 +1,5 @@
 import React from "react";
-import { AuthProvider, Login, SideBarApp } from "../auth";
+import { AuthProvider, Login, MainContainerApp } from "../auth";
 import { Route, Routes } from "react-router-dom";
 import { RolRoutes } from "../modules/roles";
 import { UsuarioRoutes } from "../modules/usuario";
@@ -27,7 +27,8 @@ export const AppRouter = () => {
           <Route
             path="/*"
             element={
-              <SideBarApp>
+              <MainContainerApp>
+
                 <Routes>
                   <Route path="user/*" element={<UsuarioRoutes />}></Route>
                   <Route path="group/*" element={<RolRoutes />}></Route>
@@ -35,7 +36,8 @@ export const AppRouter = () => {
                   <Route path="lead/*" element={<LeadRoutes />}></Route>
                   <Route path="asesor/*" element={<AsesorRoutes />} />
                 </Routes>
-              </SideBarApp>
+
+              </MainContainerApp>
             }
           />
         </Routes>

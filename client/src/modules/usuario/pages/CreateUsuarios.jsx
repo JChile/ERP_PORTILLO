@@ -9,6 +9,7 @@ import {
   CustomAlert,
 } from "../../../components";
 import { useAlertMUI } from "../../../hooks";
+import { combinarErrores } from "../../../utils";
 
 export const CreateUsuarios = () => {
   const [usuario, setUsuario] = useState({
@@ -127,12 +128,22 @@ export const CreateUsuarios = () => {
       setVisibleProgress(true);
       const usuarioJSON = { ...usuario };
       delete usuarioJSON.confirm_password;
-      console.log(usuarioJSON);
-      const result = await createUsuario(usuarioJSON);
-      // comprobar si se realizo con exito la creación del usuario
-      setVisibleProgress(false);
-      // navegamos atras
-      onNavigateBack();
+      try {
+        const result = await createUsuario(usuarioJSON);
+        // comprobar si se realizo con exito la creación del usuario
+        setVisibleProgress(false);
+        // navegamos atras
+        onNavigateBack();
+      } catch (error) {
+        setVisibleProgress(false);
+        const pilaError = combinarErrores(error);
+        // mostramos feedback de error
+        setFeedbackMessages({
+          style_message: "error",
+          feedback_description_error: pilaError,
+        });
+        handleClickFeedback();
+      }
     } else {
       // mostramos feedback
       setFeedbackMessages({

@@ -43,7 +43,7 @@ export const UpdateCampania = () => {
     estado,
     user,
     proyecto,
-    categoria
+    categoria,
   } = campaign;
 
   const {
@@ -86,7 +86,6 @@ export const UpdateCampania = () => {
     fecha_cierre,
     coste_estimado,
     coste_real,
-    descripcion,
     estado,
     user,
     proyecto,
@@ -108,9 +107,6 @@ export const UpdateCampania = () => {
     }
     if (!coste_real) {
       errors.push("- El costo real es obligatorio.");
-    }
-    if (!descripcion) {
-      errors.push("- La descripción es obligatoria.");
     }
     if (!estado) {
       errors.push("- El estado es obligatorio.");
@@ -140,7 +136,6 @@ export const UpdateCampania = () => {
       fecha_cierre,
       coste_estimado,
       coste_real,
-      descripcion,
       estado,
       user,
       proyecto,

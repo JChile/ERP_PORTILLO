@@ -37,7 +37,7 @@ export const RowItemAsesor = ({ item, onShowDeleteDialog }) => {
         >{`${item.user.first_name} ${item.user.last_name}`}</Link>
       </TableCell>
       <TableCell>
-        {item.numeroLeads === -1 ? "Sin limite" : item.numeroLeads}
+        {item.maximoLeads === -1 ? "Sin limite" : item.maximoLeads}
       </TableCell>
       <TableCell>
         <span

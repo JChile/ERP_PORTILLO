@@ -9,7 +9,7 @@ class Asesor(models.Model):
     codigo = models.CharField(unique=True, blank=False, null=False)
     numeroLeads = models.IntegerField(null=True, blank=True, default=0)
     maximoLeads = models.IntegerField(null=True, blank=True, default=0)
-    fechaCreado = models.DateTimeField(auto_now=True)
+    fechaCreado = models.DateTimeField(auto_now_add=True)
     fechaActualizado = models.DateTimeField(auto_now=True)
     estado = models.ForeignKey(
         EstadoRegistro, on_delete=models.SET_NULL, default='A', null=True)

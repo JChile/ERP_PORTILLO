@@ -8,3 +8,12 @@ export const getLeads = async () => {
 
   return data;
 };
+
+export const getLeadsActivos = async () => {
+  const DOMAIN = import.meta.env.VITE_BACKEND_URL;
+  const URL = `${DOMAIN}/api/leadActivo/`;
+
+  const { data } = await axios.get(URL);
+
+  return data;
+};

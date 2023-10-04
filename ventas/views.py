@@ -9,7 +9,8 @@ from django.shortcuts import get_object_or_404
 from cuenta.models import User
 from rest_framework import status
 from datetime import datetime, timedelta
-
+from django.http import Http404
+from rest_framework.views import APIView
 
 class LeadList(generics.ListCreateAPIView):
     serializer_class = LeadSerializer
@@ -22,30 +23,34 @@ class LeadList(generics.ListCreateAPIView):
         users = User.objects.all()
         asesores = Asesor.objects.all()
         campanias = Campania.objects.all()
-        objeciones = Objecion.objects.all() 
-        
+        objeciones = Objecion.objects.all()
+
         dataJson = groupserializer.data
         user_fields = ["id", "username", "first_name", "last_name"]
-        
+
         for i in dataJson:
             asesor_data = asesores.filter(id=i["asesor"]).first()
             campania_data = campanias.filter(id=i["campania"]).first()
             objecion_data = objeciones.filter(id=i["objecion"]).first()
-    
-            asesorSerializer = AsesorSerializer(asesor_data) if asesor_data else None
-            campaniaSerializer = CampaniaSerializer(campania_data) if campania_data else None
-            objecionSerializer = ObjecionSerializer(objecion_data) if objecion_data else None    
+
+            asesorSerializer = AsesorSerializer(
+                asesor_data) if asesor_data else None
+            campaniaSerializer = CampaniaSerializer(
+                campania_data) if campania_data else None
+            objecionSerializer = ObjecionSerializer(
+                objecion_data) if objecion_data else None
 
             i["asesor"] = asesorSerializer.data if asesorSerializer else {}
             i["campania"] = campaniaSerializer.data if campaniaSerializer else {}
             i["objecion"] = objecionSerializer.data if objecionSerializer else {}
 
             if asesor_data:
-                user_data = users.filter(id=asesor_data.user.id).first()    
+                user_data = users.filter(id=asesor_data.user.id).first()
                 userSerializer = UserSerializer(user_data)
-                user_data_serialized = userSerializer.data 
-                i["asesor"]["user"] = {field: user_data_serialized[field] for field in user_fields}
-        
+                user_data_serialized = userSerializer.data
+                i["asesor"]["user"] = {
+                    field: user_data_serialized[field] for field in user_fields}
+
         return Response(dataJson)
 
 
@@ -53,25 +58,29 @@ class LeadListSinFiltros(LeadList):
     def list(self, request):
         self.queryset = self.queryset.filter()
         return super().list(request)
-    
+
+
 class LeadListAsignados(LeadList):
     def list(self, request):
-        self.queryset = self.queryset.filter(estado= "A", asignado=True)
+        self.queryset = self.queryset.filter(estado="A", asignado=True)
         return super().list(request)
+
 
 class LeadListNoAsignados(LeadList):
     def list(self, request):
-        self.queryset = self.queryset.filter(estado= "A",asignado=False)
+        self.queryset = self.queryset.filter(estado="A", asignado=False)
         return super().list(request)
+
 
 class LeadListActivos(LeadList):
     def list(self, request):
-        self.queryset = self.queryset.filter(estado= "A")
+        self.queryset = self.queryset.filter(estado="A")
         return super().list(request)
+
 
 class LeadListInactivos(LeadList):
     def list(self, request):
-        self.queryset = self.queryset.filter(estado= "I")
+        self.queryset = self.queryset.filter(estado="I")
         return super().list(request)
 
 
@@ -84,17 +93,19 @@ class LeadDetail(generics.RetrieveUpdateDestroyAPIView):
         lead = get_object_or_404(lead_queryset, pk=pk)
         leadSerializer = LeadSerializer(lead)
         dataJson = leadSerializer.data
-        
+
         user_fields = ["id", "username", "first_name", "last_name"]
 
         asesor = Asesor.objects.all().filter(id=dataJson["asesor"]).first()
-        campania = Campania.objects.all().filter(id=dataJson["campania"]).first()
-        objecion = Objecion.objects.all().filter(id=dataJson["objecion"]).first()
+        campania = Campania.objects.all().filter(
+            id=dataJson["campania"]).first()
+        objecion = Objecion.objects.all().filter(
+            id=dataJson["objecion"]).first()
 
         asesorSerializer = AsesorSerializer(asesor) if asesor else None
         campaniaSerializer = CampaniaSerializer(campania) if campania else None
         objecionSerializer = ObjecionSerializer(objecion) if objecion else None
-        
+
         dataJson["asesor"] = asesorSerializer.data if asesorSerializer else {}
         dataJson["campania"] = campaniaSerializer.data if campaniaSerializer else {}
         dataJson["objecion"] = objecionSerializer.data if objecionSerializer else {}
@@ -103,9 +114,77 @@ class LeadDetail(generics.RetrieveUpdateDestroyAPIView):
             user = User.objects.all().filter(id=asesor.user.id).first()
             userSerializer = UserSerializer(user)
             user_data_serialized = userSerializer.data
-            dataJson["asesor"]["user"] = {field: user_data_serialized[field] for field in user_fields}
+            dataJson["asesor"]["user"] = {
+                field: user_data_serialized[field] for field in user_fields}
 
         return Response(dataJson)
+
+
+class LeadCreationConfirmation(generics.ListCreateAPIView):
+    queryset = Lead.objects.all()
+    serializer_class = LeadListSerializer
+    
+    def post(self, request): 
+        response = {}
+        
+        lead_adecuado = []
+        lead_inadecuado = []
+
+        thirty_days = datetime.now() -timedelta(days=31)
+        phone_numbers = set(Lead.objects.filter(horaEntrega__gte=thirty_days).values_list('celular', flat=True).distinct())
+
+        for i in request.data:
+                        
+            lead_class = leadConfirmation(i, phone_numbers)
+            lead = lead_class.serialize_lead()
+
+            if lead_class.errores:
+                lead_inadecuado.append(lead)
+            else:   
+                lead_adecuado.append(lead)
+
+        response["adecuado"] = lead_adecuado
+        response["inadecuado"] = lead_inadecuado
+
+        return Response(response)
+    
+                         
+
+class leadConfirmation:
+    def __init__(self, data, phone_numbers):
+        self.data = data
+        self.errores = []
+        self.check_numero(phone_numbers)
+        self.check_asesor()
+        self.check_campania()
+    
+    def serialize_lead(self):
+        lead = {}
+        lead["data"] = self.data
+        if self.errores:
+            lead["errores"] = self.errores
+
+        return lead
+
+    def check_numero(self, phone_numbers):
+        celular = self.data["celular"]
+        if len(celular) != 9 or not celular.startswith('9') or not celular.isdigit():
+            self.errores.append("Número de celular no cumple con los requisitos")
+        
+        elif celular in phone_numbers:
+            self.errores.append("Numero ya existe en la base de datos")
+
+    def check_asesor(self):
+        try:
+            self.data["asesor"] = Asesor.objects.get(codigo=self.data["asesor"]).id
+        except: 
+            self.errores.append("Campo de asesor no enviado o asesor no existe en la base de datos")
+    
+    def check_campania(self):
+        try:
+            self.data["campania"] = Campania.objects.get(codigo=self.data["campania"]).id
+        except: 
+            self.errores.append("Campo de campania no enviado o campania no existe en la base de datos")
 
 
 class LeadMultipleCreation(generics.ListCreateAPIView):
@@ -116,7 +195,7 @@ class LeadMultipleCreation(generics.ListCreateAPIView):
     def post(self, request):
         data = request.data
         asesores = Asesor.objects.filter(estado='A')
-    
+
         if not asesores.exists():
             return Response({'message': 'No hay asesores disponibles'}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -125,7 +204,8 @@ class LeadMultipleCreation(generics.ListCreateAPIView):
         duplicate_leads = []
 
         thirty_days_ago = datetime.now() - timedelta(days=31)
-        unique_mobiles = Lead.objects.filter(horaEntrega__gte=thirty_days_ago).values_list('celular', flat=True).distinct()
+        unique_mobiles = Lead.objects.filter(
+            horaEntrega__gte=thirty_days_ago).values_list('celular', flat=True).distinct()
         estado_lead = EstadoLead.objects.get(nombre="EP")
 
         for lead_data in data:
@@ -148,9 +228,9 @@ class LeadMultipleCreation(generics.ListCreateAPIView):
                 lead_data['asignado'] = False
                 unassigned_leads.append(lead_data)
 
-    
-        serializer = LeadListSerializer(data=assigned_leads + unassigned_leads, many=True)
-        
+        serializer = LeadListSerializer(
+            data=assigned_leads + unassigned_leads, many=True)
+
         if serializer.is_valid():
             serializer.save()
             return Response({
@@ -160,7 +240,6 @@ class LeadMultipleCreation(generics.ListCreateAPIView):
             }, status=status.HTTP_201_CREATED)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
 
     def get_next_asesor(self, asesores):
         num_asesores = len(asesores)
@@ -186,7 +265,7 @@ class LeadMultipleAssign(generics.UpdateAPIView):
     def update(self, request):
         data = request.data
         for assignment in data:
-            
+
             lead_id = assignment.get('id')
             asesor_id = assignment.get('asesor')
             print(lead_id)
@@ -196,14 +275,12 @@ class LeadMultipleAssign(generics.UpdateAPIView):
                     lead = Lead.objects.get(pk=lead_id)
                     asesor = Asesor.objects.get(pk=asesor_id)
 
-                    
                     if lead.asesor != asesor:
                         if lead.asesor is not None:
                             old_asesor = lead.asesor
                             old_asesor.numeroLeads -= 1
                             old_asesor.save()
-                            
-                        
+
                         lead.asesor = asesor
                         lead.save()
 
@@ -217,7 +294,56 @@ class LeadMultipleAssign(generics.UpdateAPIView):
 
         return Response({'message': 'Las asignaciones se han realizado correctamente'}, status=status.HTTP_200_OK)
 
+class LeadMultipleCreationManual(APIView):
+    def post(self, request): 
+        response = {}
+        object_no_saved = []
+        
+        for i in request.data :
+            flag_asignado= True
+            flag_campania= True
+            error_message = []
+            try:
+                i["asesor"] = Asesor.objects.get(codigo = i["asesor"]).id
+            except:
+                flag_asignado = False
+                error_message.append("Campo de asesor no enviado o asesor no existe en la bd")
+                print("Campo de asesor no enviado o asesor no existe en : ", i)
 
+            try:
+                i["campania"] = Campania.objects.get(codigo = i["campania"]).id
+            except:
+                flag_campania= False
+                error_message.append("Campo de campania no enviado o campania no existe en la bd")
+                print("Campo de campania no enviado o no existe en : ", i)
+            
+            thirty_days_ago = datetime.now() - timedelta(days=31)
+            unique_mobiles = list(Lead.objects.filter(horaEntrega__gte=thirty_days_ago).values_list('celular', flat=True).distinct())
+            print(unique_mobiles)
+
+            data = LeadSerializer(data = i)
+            if data.is_valid() and flag_campania :
+                if i['celular'] in unique_mobiles:
+                    object_no_saved.append(data.data)
+                    error_message.append("Se repite el numero telefonico con registro de hace 30 dias")
+                    object_no_saved.append(error_message)
+                else :
+                    data.save()
+                    lead = Lead.objects.get(id  = data.data["id"]) 
+                    if flag_asignado : 
+                        lead.asignado = True
+                    else :
+                        lead.asignado = False
+                    lead.save()
+                    print("Guardado : ", data.data)
+            else :
+                print("No Guardado : ", data.data) 
+                object_no_saved.append(data.data)
+                error_message.append("Formato no valido")
+                object_no_saved.append(error_message)
+        response["no_guardado"] = object_no_saved
+
+        return Response(response)
 
 class AsesorList(generics.ListCreateAPIView):
     serializer_class = AsesorSerializer
@@ -233,24 +359,27 @@ class AsesorList(generics.ListCreateAPIView):
             user_data = users.get(id=i["user"])
             userSerializer = UserSerializer(user_data)
             user_data_serialized = userSerializer.data
-            i["user"] = {field: user_data_serialized[field] for field in user_fields}
-        
+            i["user"] = {field: user_data_serialized[field]
+                         for field in user_fields}
+
         return Response(dataJson)
 
 
 class AsesorListSinFiltros(AsesorList):
     def list(self, request):
         self.queryset = self.queryset.filter()
-        return super().list(request)    
+        return super().list(request)
+
 
 class AsesorListActivos(AsesorList):
     def list(self, request):
-        self.queryset = self.queryset.filter(estado= "A")
+        self.queryset = self.queryset.filter(estado="A")
         return super().list(request)
+
 
 class AsesorListInactivos(AsesorList):
     def list(self, request):
-        self.queryset = self.queryset.filter(estado= "I")
+        self.queryset = self.queryset.filter(estado="I")
         return super().list(request)
 
 
@@ -264,17 +393,19 @@ class AsesorDetail(generics.RetrieveUpdateDestroyAPIView):
         asesorserializer = AsesorSerializer(asesor)
         dataJson = asesorserializer.data
         user_fields = ["id", "username", "first_name", "last_name"]
-        
+
         user = User.objects.all().get(id=dataJson["user"])
         userSerializer = UserSerializer(user)
         user_data_serialized = userSerializer.data
-        dataJson["user"] = {field: user_data_serialized[field] for field in user_fields}
+        dataJson["user"] = {field: user_data_serialized[field]
+                            for field in user_fields}
 
         return Response(dataJson)
-    
+
     def update(self, request, *args, **kwargs):
         instance = self.get_object()
-        serializer = self.get_serializer(instance, data=request.data, partial=True)
+        serializer = self.get_serializer(
+            instance, data=request.data, partial=True)
         serializer.is_valid(raise_exception=True)
         serializer.save()
 
@@ -289,15 +420,18 @@ class WhatsAppList(generics.ListCreateAPIView):
     serializer_class = WhatsAppSerializer
     queryset = WhatsApp.objects.all()
 
+
 class whatsappActivos(WhatsAppList):
     def list(self, request):
-        self.queryset = self.queryset.filter(estado= "A")
-        return super().list(request)  
+        self.queryset = self.queryset.filter(estado="A")
+        return super().list(request)
+
 
 class whatsappInactivos(WhatsAppList):
     def list(self, request):
-        self.queryset = self.queryset.filter(estado= "I")
-        return super().list(request)   
+        self.queryset = self.queryset.filter(estado="I")
+        return super().list(request)
+
 
 class WhatsAppDetail(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = WhatsAppSerializer
@@ -308,15 +442,18 @@ class LlamadaList(generics.ListCreateAPIView):
     serializer_class = LlamadaSerializer
     queryset = Llamada.objects.all()
 
+
 class LlamadaActivos(LlamadaList):
     def list(self, request):
-        self.queryset = self.queryset.filter(estado= "A")
-        return super().list(request)  
+        self.queryset = self.queryset.filter(estado="A")
+        return super().list(request)
+
 
 class LlamadaInactivos(LlamadaList):
     def list(self, request):
-        self.queryset = self.queryset.filter(estado= "I")
-        return super().list(request)   
+        self.queryset = self.queryset.filter(estado="I")
+        return super().list(request)
+
 
 class LlamadaDetail(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = LlamadaSerializer
@@ -327,23 +464,28 @@ class ObjecionList(generics.ListCreateAPIView):
     serializer_class = ObjecionSerializer
     queryset = Objecion.objects.all()
 
+
 class ObjecionActivos(ObjecionList):
     def list(self, request):
-        self.queryset = self.queryset.filter(estado= "A")
-        return super().list(request)  
+        self.queryset = self.queryset.filter(estado="A")
+        return super().list(request)
+
 
 class ObjecionInactivos(ObjecionList):
     def list(self, request):
-        self.queryset = self.queryset.filter(estado= "I")
-        return super().list(request)   
+        self.queryset = self.queryset.filter(estado="I")
+        return super().list(request)
+
 
 class ObjecionDetail(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = ObjecionSerializer
     queryset = Objecion.objects.all()
 
+
 class EstadoLeadList(generics.ListCreateAPIView):
     serializer_class = EstadoLeadSerializer
     queryset = EstadoLead.objects.all()
+
 
 class EstadoLeadDetail(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = EstadoLeadSerializer
@@ -358,18 +500,14 @@ class EstadoLeadDetail(generics.RetrieveUpdateDestroyAPIView):
 
         return estado_lead
 
+
 class EstadoLeadActivos(EstadoLeadList):
     def list(self, request):
-        self.queryset = self.queryset.filter(estado= "A")
-        return super().list(request)  
+        self.queryset = self.queryset.filter(estado="A")
+        return super().list(request)
+
 
 class EstadoLeadInactivos(EstadoLeadList):
     def list(self, request):
-        self.queryset = self.queryset.filter(estado= "I")
-        return super().list(request)   
-
-
-
-
-
-
+        self.queryset = self.queryset.filter(estado="I")
+        return super().list(request)

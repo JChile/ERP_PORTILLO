@@ -10,6 +10,9 @@ import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import { RowItemPermission } from "../components";
 import { createRoles, getModulos } from "../helpers";
+import { CustomAlert, CustomCircularProgress } from "../../../components";
+import { useAlertMUI } from "../../../hooks";
+import { combinarErrores } from "../../../utils";
 
 // definimos el estilo del head
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
@@ -30,6 +33,18 @@ export const CreateRol = () => {
   const { nameRol } = rol;
 
   const [modules, setModules] = useState([]);
+
+  // hook alert
+  const {
+    feedbackCreate,
+    feedbackMessages,
+    setFeedbackMessages,
+    handleCloseFeedback,
+    handleClickFeedback,
+  } = useAlertMUI();
+
+  // estado de progress
+  const [visibleProgress, setVisibleProgress] = useState(false);
 
   // ESTADOS PARA LA NAVEGACION
   const navigate = useNavigate();
@@ -89,24 +104,41 @@ export const CreateRol = () => {
     });
 
     if (auxPermissions.length === 0 || nameRol.trim().length === 0) {
-      console.log(
-        "no asignaste ningun permiso o el nombre no fue proporcionado"
-      );
+      if (auxPermissions.length === 0) {
+        setFeedbackMessages({
+          style_message: "warning",
+          feedback_description_error: "No asignaste ningun permiso",
+        });
+        handleClickFeedback();
+      }
+      if (name.trim().length === 0) {
+        setFeedbackMessages({
+          style_message: "warning",
+          feedback_description_error: "No asignaste un nombre de rol",
+        });
+        handleClickFeedback();
+      }
     } else {
       const newRole = {
         name: nameRol,
         permissions: auxPermissions,
       };
-      console.log(newRole);
+
+      setVisibleProgress(true);
       try {
         // realizamos la llamada API
         const result = await createRoles(newRole);
-        console.log("rol creado exitosamente", result);
+        setVisibleProgress(false);
         // navegamos a la anterior vista
         onNavigateBack();
       } catch (error) {
-        // mostramos el error por medio de un alert
-        console.error("Error al crear el rol:", error.message);
+        setVisibleProgress(false);
+        const pilaError = combinarErrores(error);
+        setFeedbackMessages({
+          style_message: "error",
+          feedback_description_error: pilaError,
+        });
+        handleClickFeedback();
       }
     }
   };
@@ -201,6 +233,14 @@ export const CreateRol = () => {
           </Table>
         </TableContainer>
       </div>
+      {/* COMPONENTE ALERTA */}
+      <CustomAlert
+        feedbackCreate={feedbackCreate}
+        feedbackMessages={feedbackMessages}
+        handleCloseFeedback={handleCloseFeedback}
+      />
+      {/* CIRCULAR PROGRESS */}
+      {visibleProgress && <CustomCircularProgress />}
     </>
   );
 };

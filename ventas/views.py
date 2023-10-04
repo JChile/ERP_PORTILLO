@@ -278,6 +278,36 @@ class LeadMultipleCreationManual(APIView):
 
         return Response(response)
 
+class AsesorAsignacion(APIView):
+    def post(self, request):
+        serializer = {}
+
+        idAsesor = request.data["idAsesor"]
+        idLeads =  request.data["idLead"]
+        
+        try :
+            asesor = Asesor.objects.get(id = idAsesor)
+        except :
+            return Response({'message': f'El Asesor con ID {idAsesor} no existe'})
+        
+        leadsValidos = []
+        
+        for i in idLeads:
+            try:
+                lead = Lead.objects.get(id = int(i))
+                print(lead)
+                lead.asesor = asesor
+                lead.save()   
+            except:
+                leadsValidos.append(i)
+        
+        if len(leadsValidos) == 0:
+            return Response({'message': f"Asignacion exitosa"})
+        return Response({'message': f"No se reasignaron los leads : {leadsValidos} porque no existen"})
+
+
+
+
 class AsesorList(generics.ListCreateAPIView):
     serializer_class = AsesorSerializer
     queryset = Asesor.objects.all()

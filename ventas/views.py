@@ -120,22 +120,26 @@ class LeadDetail(generics.RetrieveUpdateDestroyAPIView):
         return Response(dataJson)
 
 
-class LeadCreationConfirmation(generics.ListCreateAPIView):
-    queryset = Lead.objects.all()
-    serializer_class = LeadListSerializer
-    
+class LeadCreationConfirmation(APIView):    
     def post(self, request): 
-        response = {}
-        
+        response = {}   
         lead_adecuado = []
         lead_inadecuado = []
 
-        thirty_days = datetime.now() -timedelta(days=31)
-        phone_numbers = set(Lead.objects.filter(horaEntrega__gte=thirty_days).values_list('celular', flat=True).distinct())
+        proyecto_id = request.data.get("proyecto_id")
+        data = request.data.get("data", [])
 
-        for i in request.data:
+        thirty_days = datetime.now() -timedelta(days=31)
+        
+        phone_numbers = set(
+        Lead.objects.filter(horaRecepcion__gte=thirty_days, estado="A", campania__proyecto__id=proyecto_id)
+            .values_list('celular', flat=True)
+            .distinct()
+        )
+
+        for i in data:
                         
-            lead_class = leadConfirmation(i, phone_numbers)
+            lead_class = leadConfirmation(i, phone_numbers, proyecto_id)
             lead = lead_class.serialize_lead()
 
             if lead_class.errores:
@@ -151,12 +155,12 @@ class LeadCreationConfirmation(generics.ListCreateAPIView):
                          
 
 class leadConfirmation:
-    def __init__(self, data, phone_numbers):
+    def __init__(self, data, phone_numbers, proyecto_id):
         self.data = data
         self.errores = []
         self.check_numero(phone_numbers)
         self.check_asesor()
-        self.check_campania()
+        self.check_campania(proyecto_id)
     
     def serialize_lead(self):
         lead = {}
@@ -166,88 +170,112 @@ class leadConfirmation:
 
         return lead
 
-    def check_numero(self, phone_numbers):
-        celular = self.data["celular"]
-        if len(celular) != 9 or not celular.startswith('9') or not celular.isdigit():
-            self.errores.append("Número de celular no cumple con los requisitos")
-        
-        elif celular in phone_numbers:
-            self.errores.append("Numero ya existe en la base de datos")
+    def check_numero(self, phone_numbers):       
+        celular = self.data.get("celular")
+        if not celular:
+            self.errores.append("El numero de celular no se envió en los datos.")
+        else:
+            if len(celular) != 9 or not celular.startswith('9') or not celular.isdigit():
+                self.errores.append("El numero de celular no cumple con los requisitos.")
+            elif celular in phone_numbers:
+                self.errores.append("El numero de celular ya existe en la base de datos.")
 
-    def check_asesor(self):
-        try:
-            self.data["asesor"] = Asesor.objects.get(codigo=self.data["asesor"]).id
-        except: 
-            self.errores.append("Campo de asesor no enviado o asesor no existe en la base de datos")
     
-    def check_campania(self):
+    def check_asesor(self):
+        if "asesor" in self.data:
+            try:
+                self.data["asesor"] = Asesor.objects.get(codigo=self.data["asesor"], estado="A").id
+            except Asesor.DoesNotExist:
+                self.errores.append("El asesor especificado no existe en la base de datos.")
+    
+    
+    def check_campania(self, proyecto_id):
         try:
-            self.data["campania"] = Campania.objects.get(codigo=self.data["campania"]).id
-        except: 
-            self.errores.append("Campo de campania no enviado o campania no existe en la base de datos")
+            campania = Campania.objects.get(codigo=self.data["campania"], estado="A")
+            
+            if campania.proyecto.id != proyecto_id:
+                self.errores.append("La campania no corresponde al proyecto especificado.")
+            else:
+                self.data["campania"] = campania.id
+        
+        except Campania.DoesNotExist:
+            self.errores.append("La campania especificada no existe en la base de datos.")
+        
+        except KeyError:
+            self.errores.append("El campania no se envió en los datos.")
 
 
-class LeadMultipleCreation(generics.ListCreateAPIView):
-    queryset = Lead.objects.all()
-    serializer_class = LeadListSerializer
-    last_asesor = 0
-
+class leadMultipleCreationAutomatic(APIView):
     def post(self, request):
+        response = {}
         data = request.data
         asesores = Asesor.objects.filter(estado='A')
 
-        if not asesores.exists():
-            return Response({'message': 'No hay asesores disponibles'}, status=status.HTTP_400_BAD_REQUEST)
+        asignados = []
+        no_asignados = []
+        
+        nextAsesor = LeadAssigner(asesores)
 
-        assigned_leads = []
-        unassigned_leads = []
-        duplicate_leads = []
+        for i in data:
+            asesor = nextAsesor.get_asesor()
+            lead = leadCreation(i)
 
-        thirty_days_ago = datetime.now() - timedelta(days=31)
-        unique_mobiles = Lead.objects.filter(
-            horaEntrega__gte=thirty_days_ago).values_list('celular', flat=True).distinct()
-        estado_lead = EstadoLead.objects.get(nombre="EP")
-
-        for lead_data in data:
-            asesor = self.get_next_asesor(asesores)
-
-            if lead_data['celular'] in unique_mobiles:
-                duplicate_leads.append(lead_data)
-                continue
-
-            if asesor is not None:
-                lead_data['asesor'] = asesor.pk
-                asesor.numeroLeads += 1
-                asesor.save()
-
-                lead_data['asignado'] = True
-                lead_data['estadoLead'] = estado_lead.pk
-                assigned_leads.append(lead_data)
-
+            if asesor is None:
+                no_asignados.append(lead.serialize_lead())                        
+            
             else:
-                lead_data['asignado'] = False
-                unassigned_leads.append(lead_data)
+                lead.put_asesor(asesor)
+                asignados.append(lead.serialize_lead())
+                asesor.save()
+       
 
-        serializer = LeadListSerializer(
-            data=assigned_leads + unassigned_leads, many=True)
-
+        serializer = LeadListSerializer(data=asignados + no_asignados, many=True)
         if serializer.is_valid():
-            serializer.save()
-            return Response({
-                'assigned_leads': assigned_leads,
-                'unassigned_leads': unassigned_leads,
-                'duplicate_leads': duplicate_leads
-            }, status=status.HTTP_201_CREATED)
+            response["asignados"] = asignados
+            response["no_asignados"] = no_asignados
+            serializer.save()        
+            return Response(response)        
 
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        response["error"] = "No se pudo guardar los datos importados."
+        return Response(response)
+            
 
-    def get_next_asesor(self, asesores):
-        num_asesores = len(asesores)
+class leadCreation:
+    def __init__(self, data):
+        self.data = data
+        self.create_data()
+    
+    def serialize_lead(self):
+        return self.data
+
+    def create_data(self):
+        self.data["estado"] = "A"
+        self.data["estadoLead"] = "EP"
+        
+        try:
+            self.data["horaRecepcion"] = datetime.strptime(self.data["horaRecepcion"], "%d/%m/%Y")
+        except (ValueError, KeyError):
+            self.data["horaRecepcion"] = datetime.now()
+
+    def put_asesor(self, asesor):
+        self.data["asesor"] = asesor.id
+        self.data["asignado"] = True
+        asesor.numeroLeads += 1
+
+
+
+class LeadAssigner:
+    def __init__(self, asesores):
+        self.last_asesor = 0
+        self.asesores = asesores
+    
+    def get_asesor(self):
+        num_asesores = len(self.asesores)
         if num_asesores == 0:
             return None
 
         for _ in range(num_asesores):
-            next_asesor = asesores[self.last_asesor]
+            next_asesor = self.asesores[self.last_asesor]
 
             if next_asesor.maximoLeads == -1 or next_asesor.numeroLeads < next_asesor.maximoLeads:
                 self.last_asesor = (self.last_asesor + 1) % num_asesores
@@ -256,7 +284,7 @@ class LeadMultipleCreation(generics.ListCreateAPIView):
             self.last_asesor = (self.last_asesor + 1) % num_asesores
 
         return None
-
+    
 
 class LeadMultipleAssign(generics.UpdateAPIView):
     queryset = Lead.objects.all()
@@ -294,10 +322,10 @@ class LeadMultipleAssign(generics.UpdateAPIView):
 
         return Response({'message': 'Las asignaciones se han realizado correctamente'}, status=status.HTTP_200_OK)
 
+
 class LeadMultipleCreationManual(APIView):
     def post(self, request): 
         object_no_saved = []
-        
         
         for i in request.data :
             data_no_saved = {}
@@ -324,6 +352,7 @@ class LeadMultipleCreationManual(APIView):
 
             data = LeadSerializer(data = i)
             if data.is_valid() and flag_campania :
+                print("CELULAAAAAAAAAAAAAAar : ",i['celular'] )
                 if len(i['celular']) != 9 or not i['celular'] .startswith('9') or not i['celular'] .isdigit():
                     data_no_saved["data"] = i
                     error_message.append("Numero de celular no valido")

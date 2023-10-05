@@ -324,7 +324,6 @@ class LeadMultipleCreationManual(APIView):
 
             data = LeadSerializer(data = i)
             if data.is_valid() and flag_campania :
-                print("CELULAAAAAAAAAAAAAAar : ",i['celular'] )
                 if len(i['celular']) != 9 or not i['celular'] .startswith('9') or not i['celular'] .isdigit():
                     data_no_saved["data"] = i
                     error_message.append("Numero de celular no valido")

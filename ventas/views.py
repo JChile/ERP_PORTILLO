@@ -296,10 +296,11 @@ class LeadMultipleAssign(generics.UpdateAPIView):
 
 class LeadMultipleCreationManual(APIView):
     def post(self, request): 
-        response = {}
         object_no_saved = []
         
+        
         for i in request.data :
+            data_no_saved = {}
             flag_asignado= True
             flag_campania= True
             error_message = []
@@ -307,14 +308,14 @@ class LeadMultipleCreationManual(APIView):
                 i["asesor"] = Asesor.objects.get(codigo = i["asesor"]).id
             except:
                 flag_asignado = False
-                error_message.append("Campo de asesor no enviado o asesor no existe en la bd")
+                error_message.append("Asesor no existe en la bd")
                 print("Campo de asesor no enviado o asesor no existe en : ", i)
 
             try:
                 i["campania"] = Campania.objects.get(codigo = i["campania"]).id
             except:
                 flag_campania= False
-                error_message.append("Campo de campania no enviado o campania no existe en la bd")
+                error_message.append("Campaña no existe en la bd")
                 print("Campo de campania no enviado o no existe en : ", i)
             
             thirty_days_ago = datetime.now() - timedelta(days=31)
@@ -323,10 +324,13 @@ class LeadMultipleCreationManual(APIView):
 
             data = LeadSerializer(data = i)
             if data.is_valid() and flag_campania :
-                if i['celular'] in unique_mobiles:
-                    object_no_saved.append(data.data)
+                print("CELULAAAAAAAAAAAAAAar : ",i['celular'] )
+                if len(i['celular']) != 9 or not i['celular'] .startswith('9') or not i['celular'] .isdigit():
+                    data_no_saved["data"] = i
+                    error_message.append("Numero de celular no valido")
+                elif i['celular'] in unique_mobiles:
+                    data_no_saved["data"] = i
                     error_message.append("Se repite el numero telefonico con registro de hace 30 dias")
-                    object_no_saved.append(error_message)
                 else :
                     data.save()
                     lead = Lead.objects.get(id  = data.data["id"]) 
@@ -338,39 +342,43 @@ class LeadMultipleCreationManual(APIView):
                     print("Guardado : ", data.data)
             else :
                 print("No Guardado : ", data.data) 
-                object_no_saved.append(i)
+                data_no_saved["data"] = i
                 error_message.append("Formato no valido")
-                object_no_saved.append(error_message)
-        response["no_guardado"] = object_no_saved
-
-        return Response(response)
+            
+            if  len(data_no_saved) > 0 : 
+                data_no_saved["errores"] = error_message
+                object_no_saved.append(data_no_saved)
+            
+        return Response(object_no_saved)
 
 class AsesorAsignacion(APIView):
     def post(self, request):
-        serializer = {}
-
+        error_message = []
         idAsesor = request.data["idAsesor"]
-        idLeads =  request.data["idLead"]
-        
+        idLeads =  request.data["idLead"]    
         try :
             asesor = Asesor.objects.get(id = idAsesor)
         except :
-            return Response({'message': f'El Asesor con ID {idAsesor} no existe'})
-        
-        leadsValidos = []
-        
+            return Response({'message': f'El Asesor con ID {idAsesor} no existe'})    
+        leadsNoAsigandos = []    
         for i in idLeads:
             try:
                 lead = Lead.objects.get(id = int(i))
-                print(lead)
-                lead.asesor = asesor
-                lead.save()   
+                if asesor.numeroLeads < asesor.maximoLeads:
+                    if lead.asesor.pk != asesor.pk :
+                        lead.asesor = asesor
+                        asesor.numeroLeads = asesor.numeroLeads + 1
+                        lead.save()  
+                else : 
+                    error_message.append(f"Lead [{lead.pk}] no asignado porque asesor [{asesor.codigo}] alcanzo su capacidad")
+                
+                 
             except:
-                leadsValidos.append(i)
+                leadsNoAsigandos.append(i)
         
-        if len(leadsValidos) == 0:
+        if len(leadsNoAsigandos) == 0:
             return Response({'message': f"Asignacion exitosa"})
-        return Response({'message': f"No se reasignaron los leads : {leadsValidos} porque no existen"})
+        return Response({'message': f"No se reasignaron los leads : {leadsNoAsigandos} porque no existen" , 'detalle': error_message})
 
 
 

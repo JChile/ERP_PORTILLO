@@ -46,7 +46,6 @@ class Lead(models.Model):
     comentario = models.TextField(max_length=200, null=False, blank=True)
     horaEntrega = models.DateTimeField(auto_now_add=True)
     horaRecepcion = models.DateTimeField(null=True, blank=True)
-    
     llamar = models.BooleanField(default=False)
     asesor = models.ForeignKey(
         Asesor, on_delete=models.CASCADE, null=True, blank=True)

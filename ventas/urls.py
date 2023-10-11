@@ -10,7 +10,10 @@ urlpatterns = [
     re_path(r'^leadInactivo/$', views.LeadListInactivos.as_view()),
     re_path(r'^leadAsignado/$', views.LeadListAsignados.as_view()),
     re_path(r'^leadNoAsignado/$', views.LeadListNoAsignados.as_view()),
-    re_path(r'^leadMultipleCreation/$', views.LeadMultipleCreation.as_view()),
+
+    re_path(r'^leadCreationConfirmation/$', views.LeadCreationConfirmation.as_view()),
+
+    re_path(r'^leadMultipleCreationAutomatic/$', views.leadMultipleCreationAutomatic.as_view()),
     re_path(r'^leadMultipleAssign/$', views.LeadMultipleAssign.as_view()),
     re_path(r'^leadMultipleCreationManual/$', views.LeadMultipleCreationManual.as_view()),
     
@@ -18,6 +21,8 @@ urlpatterns = [
     re_path(r'^asesor/(?P<pk>[0-9]+)$', views.AsesorDetail.as_view()),
     re_path(r'^asesorActivo/$', views.AsesorListActivos.as_view()),
     re_path(r'^asesorInactivo/$', views.AsesorListInactivos.as_view()),
+    re_path(r'^asesorAsignacion/$', views.AsesorAsignacion.as_view()),
+
 
     re_path(r'^whatsapp/$', views.WhatsAppList.as_view()),
     re_path(r'^whatsapp/(?P<pk>[0-9]+)$', views.WhatsAppDetail.as_view()),

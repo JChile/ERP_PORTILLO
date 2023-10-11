@@ -236,7 +236,7 @@ COPY public.cuenta_user (id, password, last_login, is_superuser, username, first
 7	pbkdf2_sha256$600000$UDrk5T3tz7yMPksBVnOFCx$GG4iq1fGvFp80vShtHWzYOAc/+p0vWlvp4iAgx8XfIk=	\N	f	Asesor1				t	t	2023-09-28 22:34:37-05	7
 8	pbkdf2_sha256$600000$HsT8Axx7MTH5xF3epsqWEW$0FPSIgRADzbeAz7kFNpwi2ZZ/zGm0+X9uXbj9L+MM2o=	\N	f	Asesor2				t	t	2023-09-28 22:34:52-05	8
 9	pbkdf2_sha256$600000$LuqWcX9UZes3p6mij1erYD$zc7Qe29RaoxltH5zX6WINR4QSp5JiVD9SJsydMsQmQM=	\N	f	Asesor3				t	t	2023-09-28 22:35:11-05	9
-2	pbkdf2_sha256$600000$tNoWOXjTwQYnhtklT6Kp1X$GxR65ifvHynoX5dl6Nv/6m0fsRkiLOlaHwniLuiVloU=	2023-09-27 23:03:27-05	t	qwerty				t	t	2023-09-27 22:08:50-05	2
+2	pbkdf2_sha256$600000$tNoWOXjTwQYnhtklT6Kp1X$GxR65ifvHynoX5dl6Nv/6m0fsRkiLOlaHwniLuiVloU=	2023-10-05 11:29:45.841674-05	t	qwerty				t	t	2023-09-27 22:08:50-05	2
 \.
 
 
@@ -299,38 +299,38 @@ COPY public.django_admin_log (id, action_time, object_id, object_repr, action_fl
 --
 
 COPY public.django_migrations (id, app, name, applied) FROM stdin;
-1	contenttypes	0001_initial	2023-09-28 23:51:15.656492-05
-2	contenttypes	0002_remove_content_type_name	2023-09-28 23:51:15.668621-05
-3	auth	0001_initial	2023-09-28 23:51:15.731694-05
-4	auth	0002_alter_permission_name_max_length	2023-09-28 23:51:15.741021-05
-5	auth	0003_alter_user_email_max_length	2023-09-28 23:51:15.754039-05
-6	auth	0004_alter_user_username_opts	2023-09-28 23:51:15.772309-05
-7	auth	0005_alter_user_last_login_null	2023-09-28 23:51:15.786512-05
-8	auth	0006_require_contenttypes_0002	2023-09-28 23:51:15.79261-05
-9	auth	0007_alter_validators_add_error_messages	2023-09-28 23:51:15.805275-05
-10	auth	0008_alter_user_username_max_length	2023-09-28 23:51:15.821995-05
-11	auth	0009_alter_user_last_name_max_length	2023-09-28 23:51:15.842844-05
-12	auth	0010_alter_group_name_max_length	2023-09-28 23:51:15.856798-05
-13	auth	0011_update_proxy_permissions	2023-09-28 23:51:15.871202-05
-14	auth	0012_alter_user_first_name_max_length	2023-09-28 23:51:15.883849-05
-15	cuenta	0001_initial	2023-09-28 23:51:16.030412-05
-16	admin	0001_initial	2023-09-28 23:51:16.077849-05
-17	admin	0002_logentry_remove_auto_add	2023-09-28 23:51:16.106578-05
-18	admin	0003_logentry_add_action_flag_choices	2023-09-28 23:51:16.132313-05
-19	marketing	0001_initial	2023-09-28 23:51:16.250047-05
-20	sessions	0001_initial	2023-09-28 23:51:16.270248-05
-21	token_blacklist	0001_initial	2023-09-28 23:51:16.367674-05
-22	token_blacklist	0002_outstandingtoken_jti_hex	2023-09-28 23:51:16.394187-05
-23	token_blacklist	0003_auto_20171017_2007	2023-09-28 23:51:16.43542-05
-24	token_blacklist	0004_auto_20171017_2013	2023-09-28 23:51:16.467724-05
-25	token_blacklist	0005_remove_outstandingtoken_jti	2023-09-28 23:51:16.489405-05
-26	token_blacklist	0006_auto_20171017_2113	2023-09-28 23:51:16.513909-05
-27	token_blacklist	0007_auto_20171017_2214	2023-09-28 23:51:16.566912-05
-28	token_blacklist	0008_migrate_to_bigautofield	2023-09-28 23:51:16.647739-05
-29	token_blacklist	0010_fix_migrate_to_bigautofield	2023-09-28 23:51:16.685757-05
-30	token_blacklist	0011_linearizes_history	2023-09-28 23:51:16.689023-05
-31	token_blacklist	0012_alter_outstandingtoken_user	2023-09-28 23:51:16.713211-05
-32	ventas	0001_initial	2023-09-28 23:51:17.083674-05
+1	contenttypes	0001_initial	2023-10-05 11:28:14.553155-05
+2	contenttypes	0002_remove_content_type_name	2023-10-05 11:28:14.56267-05
+3	auth	0001_initial	2023-10-05 11:28:14.644565-05
+4	auth	0002_alter_permission_name_max_length	2023-10-05 11:28:14.650878-05
+5	auth	0003_alter_user_email_max_length	2023-10-05 11:28:14.656796-05
+6	auth	0004_alter_user_username_opts	2023-10-05 11:28:14.66255-05
+7	auth	0005_alter_user_last_login_null	2023-10-05 11:28:14.669215-05
+8	auth	0006_require_contenttypes_0002	2023-10-05 11:28:14.671648-05
+9	auth	0007_alter_validators_add_error_messages	2023-10-05 11:28:14.677242-05
+10	auth	0008_alter_user_username_max_length	2023-10-05 11:28:14.68305-05
+11	auth	0009_alter_user_last_name_max_length	2023-10-05 11:28:14.690075-05
+12	auth	0010_alter_group_name_max_length	2023-10-05 11:28:14.698978-05
+13	auth	0011_update_proxy_permissions	2023-10-05 11:28:14.705195-05
+14	auth	0012_alter_user_first_name_max_length	2023-10-05 11:28:14.710871-05
+15	cuenta	0001_initial	2023-10-05 11:28:14.789304-05
+16	admin	0001_initial	2023-10-05 11:28:14.815412-05
+17	admin	0002_logentry_remove_auto_add	2023-10-05 11:28:14.824891-05
+18	admin	0003_logentry_add_action_flag_choices	2023-10-05 11:28:14.834497-05
+19	marketing	0001_initial	2023-10-05 11:28:14.900514-05
+20	sessions	0001_initial	2023-10-05 11:28:14.914258-05
+21	token_blacklist	0001_initial	2023-10-05 11:28:14.959557-05
+22	token_blacklist	0002_outstandingtoken_jti_hex	2023-10-05 11:28:14.969956-05
+23	token_blacklist	0003_auto_20171017_2007	2023-10-05 11:28:14.994905-05
+24	token_blacklist	0004_auto_20171017_2013	2023-10-05 11:28:15.017952-05
+25	token_blacklist	0005_remove_outstandingtoken_jti	2023-10-05 11:28:15.038614-05
+26	token_blacklist	0006_auto_20171017_2113	2023-10-05 11:28:15.052937-05
+27	token_blacklist	0007_auto_20171017_2214	2023-10-05 11:28:15.091933-05
+28	token_blacklist	0008_migrate_to_bigautofield	2023-10-05 11:28:15.140401-05
+29	token_blacklist	0010_fix_migrate_to_bigautofield	2023-10-05 11:28:15.162281-05
+30	token_blacklist	0011_linearizes_history	2023-10-05 11:28:15.165263-05
+31	token_blacklist	0012_alter_outstandingtoken_user	2023-10-05 11:28:15.17939-05
+32	ventas	0001_initial	2023-10-05 11:28:15.400612-05
 \.
 
 
@@ -340,6 +340,7 @@ COPY public.django_migrations (id, app, name, applied) FROM stdin;
 
 COPY public.django_session (session_key, session_data, expire_date) FROM stdin;
 iw3o7a3a20chnn5recx241af4slqmztb	.eJxVjDsOwjAQBe_iGlleY_yhpOcM1q53jQMokeKkQtwdIqWA9s3Me6mM69Ly2mXOA6uzsurwuxGWh4wb4DuOt0mXaVzmgfSm6J12fZ1Ynpfd_Tto2Nu3TtWSWHRQg6scT0dOMRAUiB4gUXVgYiFfgbmIFxfQSiWTPGAKJop6fwDv9zhA:1qliFL:OKbHP2VIWcMGCEe-UgR1YrI-HstinO_J_4DNuBkc-qY	2023-10-11 23:03:27.192767-05
+37f4n6sphsec7oswti59elchrw7tgrf3	.eJxVjDsOwjAQBe_iGlleY_yhpOcM1q53jQMokeKkQtwdIqWA9s3Me6mM69Ly2mXOA6uzsurwuxGWh4wb4DuOt0mXaVzmgfSm6J12fZ1Ynpfd_Tto2Nu3TtWSWHRQg6scT0dOMRAUiB4gUXVgYiFfgbmIFxfQSiWTPGAKJop6fwDv9zhA:1qoREP:q_8oLr5QClD83MTPwh4kzLrqI6oSPrhSNc-IpYyNe7s	2023-10-19 11:29:45.844214-05
 \.
 
 
@@ -370,13 +371,13 @@ COPY public.marketing_proyecto (id, nombre, ubicacion, descripcion, estado_id) F
 -- Data for Name: marketing_campania; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public.marketing_campania (id, nombre, fecha_creacion, fecha_estimada, fecha_cierre, coste_estimado, coste_real, descripcion, categoria_id, estado_id, proyecto_id) FROM stdin;
-1	Navidad	2023-09-28 22:23:11.66886-05	2023-09-28	2023-09-30	5	4		1	A	1
-2	Verano	2023-09-28 22:23:31.350359-05	2023-09-28	2023-09-28	4	4		2	A	2
-4	Primavera	2023-09-28 22:24:07.851979-05	2023-09-28	2023-09-28	0	0		3	A	3
-5	Invierno	2023-09-28 23:05:35.695474-05	2023-09-15	2023-09-28	2626	566		1	A	1
-3	Otoño	2023-09-28 23:32:13.930433-05	2023-09-28	2023-09-28	3	3		4	I	3
-6	Escolar	2023-09-29 16:19:54.397507-05	2023-09-29	2023-09-13	0	0		1	A	1
+COPY public.marketing_campania (id, nombre, codigo, fecha_creacion, fecha_estimada, fecha_cierre, coste_estimado, coste_real, descripcion, categoria_id, estado_id, proyecto_id) FROM stdin;
+1	Navidad	\N	2023-09-28 22:23:11.66886-05	2023-09-28	2023-09-30	5	4		1	A	1
+2	Verano	\N	2023-09-28 22:23:31.350359-05	2023-09-28	2023-09-28	4	4		2	A	2
+4	Primavera	\N	2023-09-28 22:24:07.851979-05	2023-09-28	2023-09-28	0	0		3	A	3
+5	Invierno	\N	2023-09-28 23:05:35.695474-05	2023-09-15	2023-09-28	2626	566		1	A	1
+3	Otoño	\N	2023-09-28 23:32:13.930433-05	2023-09-28	2023-09-28	3	3		4	I	3
+6	Escolar	\N	2023-09-29 16:19:54.397507-05	2023-09-29	2023-09-13	0	0		1	A	1
 \.
 
 
@@ -444,8 +445,8 @@ COPY public.ventas_objecion (id, nombre, estado_id) FROM stdin;
 -- Data for Name: ventas_lead; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public.ventas_lead (id, nombre, apellido, asignado, celular, celular2, telefono, comentario, "horaEntrega", llamar, asesor_id, campania_id, estado_id, "estadoLead_id", objecion_id) FROM stdin;
-1	BRIAN	VELASCO	t	123456789		945388033		2023-09-29 22:25:58.97876-05	t	1	1	A	NR	2
+COPY public.ventas_lead (id, nombre, apellido, asignado, celular, celular2, comentario, "horaEntrega", "horaRecepcion", llamar, asesor_id, campania_id, estado_id, "estadoLead_id", objecion_id) FROM stdin;
+2	BRIAN	VELASCO	f	935488033			2023-10-05 11:36:32.430313-05	\N	f	\N	\N	\N	\N	\N
 \.
 
 
@@ -588,7 +589,7 @@ SELECT pg_catalog.setval('public.ventas_asesor_id_seq', 3, true);
 -- Name: ventas_lead_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.ventas_lead_id_seq', 1, true);
+SELECT pg_catalog.setval('public.ventas_lead_id_seq', 2, true);
 
 
 --

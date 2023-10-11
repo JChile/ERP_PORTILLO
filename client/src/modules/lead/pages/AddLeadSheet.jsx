@@ -8,6 +8,11 @@ import { CustomAlert, CustomCircularProgress } from "../../../components";
 import { useAlertMUI } from "../../../hooks";
 import { combinarErrores } from "../../../utils";
 import { MdDeleteForever } from "react-icons/md";
+import {
+  importLeadsModeAutomatic,
+  importLeadsModeManual,
+  validateImportLeads,
+} from "../helpers";
 
 export const AddLeadSheet = () => {
   // referencia al archivo
@@ -89,53 +94,76 @@ export const AddLeadSheet = () => {
     setShowOptions(false);
   };
 
-  const handleValidateImportClick = async (desde, hasta) => {
+  // funcion para encontrar numeros repetidos
+  function encontrarNumerosRepetidos(dataDeImportacion) {
+    const numerosRepetidos = {};
+
+    // Recorrer la data de importación
+    dataDeImportacion.forEach((item, index) => {
+      const celular = item.celular;
+
+      if (celular) {
+        if (numerosRepetidos[celular]) {
+          numerosRepetidos[celular].push(index);
+        } else {
+          numerosRepetidos[celular] = [index];
+        }
+      }
+    });
+
+    let mensaje = "";
+
+    // Crear mensaje con saltos de línea para números repetidos
+    for (const celular in numerosRepetidos) {
+      if (numerosRepetidos[celular].length > 1) {
+        mensaje += `El número ${celular} se repite en la data de importación.\n`;
+      }
+    }
+
+    return mensaje;
+  }
+
+  const handleValidateImportClick = async (desde, hasta, proyecto) => {
     // primero leemos el excel
     const workbook = XLSX.read(selectedFile, { type: "binary" });
     const sheetName = workbook.SheetNames[0];
     const worksheet = workbook.Sheets[sheetName];
 
     // Obtén los datos como arreglo de objetos, comenzando desde la fila 6 (skipHeaderRows: 5)
-    const jsonData = XLSX.utils.sheet_to_json(worksheet);
+    const jsonData = XLSX.utils.sheet_to_json(worksheet, {
+      raw: false,
+    });
     const jsonDataRange = jsonData.slice(
       parseInt(desde, 10) - 2,
       parseInt(hasta, 10) - 1
     );
     // guardamos la data a importar
     setDataImport(jsonDataRange);
+
+    const advertenciasRepetidos = encontrarNumerosRepetidos(jsonDataRange);
+    if (advertenciasRepetidos.length !== 0) {
+      setFeedbackMessages({
+        style_message: "warning",
+        feedback_description_error: advertenciasRepetidos,
+      });
+      handleClickFeedback();
+    } else {
+      setFeedbackMessages({
+        style_message: "success",
+        feedback_description_error: "No hay celulares repetidos",
+      });
+      handleClickFeedback();
+    }
+
+    const dataImportValidate = {
+      proyecto_id: proyecto,
+      data: jsonDataRange,
+    };
     // enviamos la data al backend para que sea validada
     try {
-      const result = [
-        {
-          numero: "970455267",
-          error:
-            "Este lead ha sido agregado con el mismo numero para el proyecto Cala",
-        },
-        {
-          numero: "502815",
-          error: "Este lead no cumple con el formato de numero telefonico",
-        },
-        {
-          numero: "970455267",
-          error:
-            "Este lead ha sido agregado con el mismo numero para el proyecto Cala",
-        },
-        {
-          numero: "502815",
-          error: "Este lead no cumple con el formato de numero telefonico",
-        },
-        {
-          numero: "970455267",
-          error:
-            "Este lead ha sido agregado con el mismo numero para el proyecto Cala",
-        },
-        {
-          numero: "502815",
-          error: "Este lead no cumple con el formato de numero telefonico",
-        },
-      ];
+      const result = await validateImportLeads(dataImportValidate);
       // guardamos los errores
-      setErrorsImport(result);
+      setErrorsImport(result.inadecuado);
     } catch (error) {
       const pilaError = combinarErrores(error);
       setFeedbackMessages({
@@ -161,31 +189,66 @@ export const AddLeadSheet = () => {
 
   // revisar importacion de archivo
   const onValidateImportFileLeads = (options) => {
-    const { rangoDesde, rangoHasta } = options;
+    console.log(options);
+    const { rangoDesde, rangoHasta, proyecto } = options;
     // cerramos dialogo de opciones
     onCloseOptions();
     // mostramos carga
     setVisibleProgress(true);
     // validamos la importación
-    handleValidateImportClick(rangoDesde, rangoHasta);
+    handleValidateImportClick(rangoDesde, rangoHasta, proyecto);
     // ocultamos carga
     setVisibleProgress(false);
     // abrimos dialogo de errores
     onShowDialogErrors();
   };
 
+  function compararCelular(item, errorItem) {
+    return item.celular === errorItem.data.celular;
+  }
+
   // importar archivo
-  const onImportFileLeads = (esAutomatico) => {
+  const onImportFileLeads = async (esAutomatico, esConErrores) => {
     // cerramos cuadro de dialogo de errores
     onCloseDialogErrors();
     // mostramos loading
     setVisibleProgress(true);
     // mandamos la información al backend
-    console.log(dataImport);
+    let dataImportAux = dataImport;
+    if (!esConErrores) {
+      dataImportAux = dataImport.filter((item) => {
+        return !errorsImport.some((errorItem) =>
+          compararCelular(item, errorItem)
+        );
+      });
+    }
+
     if (esAutomatico) {
-      console.log("dirigimos a endpoint de automatico");
+      try {
+        const result = await importLeadsModeAutomatic(dataImportAux);
+        console.log(result);
+      } catch (error) {
+        const pilaError = combinarErrores(error);
+        setFeedbackMessages({
+          style_message: "error",
+          feedback_description_error:
+            "Error en la importacion con asignacion automatica: \n" + pilaError,
+        });
+        handleClickFeedback();
+      }
     } else {
-      console.log("dirigimos a endpoint de no automatico");
+      try {
+        const result = await importLeadsModeManual(dataImportAux);
+        console.log(result);
+      } catch (error) {
+        const pilaError = combinarErrores(error);
+        setFeedbackMessages({
+          style_message: "error",
+          feedback_description_error:
+            "Error en la importacion con asignacion manual: \n" + pilaError,
+        });
+        handleClickFeedback();
+      }
     }
     // limpiamos las variables de importacion
     limpiarDataImportacion();

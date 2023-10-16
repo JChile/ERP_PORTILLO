@@ -10,13 +10,45 @@ import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import { RowItemRol } from "../components";
 import { getRoles } from "../helpers";
+import {
+  CustomAlert,
+  CustomCircularProgress,
+  CustomTablePagination,
+} from "../../../components";
+import { useAlertMUI } from "../../../hooks";
+import { combinarErrores } from "../../../utils";
 
 export const ListRol = () => {
   const [listRoles, setListRoles] = useState([]);
 
+  // hook alert
+  const {
+    feedbackCreate,
+    feedbackMessages,
+    setFeedbackMessages,
+    handleCloseFeedback,
+    handleClickFeedback,
+  } = useAlertMUI();
+
+  // estado de progress
+  const [visibleProgress, setVisibleProgress] = useState(false);
+
   const obtenerRoles = async () => {
-    const result = await getRoles();
-    setListRoles(result);
+    setVisibleProgress(true);
+    try {
+      const result = await getRoles();
+      setListRoles(result);
+      setVisibleProgress(false);
+    } catch (error) {
+      setVisibleProgress(false);
+      const pilaError = combinarErrores(error);
+      // mostramos feedback de error
+      setFeedbackMessages({
+        style_message: "error",
+        feedback_description_error: pilaError,
+      });
+      handleClickFeedback();
+    }
   };
 
   useEffect(() => {
@@ -60,7 +92,16 @@ export const ListRol = () => {
             </TableBody>
           </Table>
         </TableContainer>
+        <CustomTablePagination count={listRoles.length} />
       </Paper>
+      {/* COMPONENTE ALERTA */}
+      <CustomAlert
+        feedbackCreate={feedbackCreate}
+        feedbackMessages={feedbackMessages}
+        handleCloseFeedback={handleCloseFeedback}
+      />
+      {/* CIRCULAR PROGRESS */}
+      {visibleProgress && <CustomCircularProgress />}
     </>
   );
 };

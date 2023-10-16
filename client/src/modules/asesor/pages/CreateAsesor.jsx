@@ -8,6 +8,7 @@ import {
 import { useNavigate } from "react-router-dom";
 import { useAlertMUI } from "../../../hooks";
 import { createAsesor } from "../helpers";
+import { combinarErrores } from "../../../utils";
 
 export const CreateAsesor = () => {
   const [asesor, setAsesor] = useState({
@@ -56,7 +57,7 @@ export const CreateAsesor = () => {
     });
   };
 
-  function transformarCadena(texto) {
+  const transformarCadena = (texto) => {
     // Paso 1: Eliminar espacios en blanco a la izquierda y derecha
     const paso1 = texto.trim();
     // Paso 2: Transformar la cadena a minúsculas
@@ -64,18 +65,20 @@ export const CreateAsesor = () => {
     // Paso 3: Reemplazar los espacios en blanco con guiones bajos
     const paso3 = paso2.replace(/\s+/g, "_");
     return paso3;
-  }
+  };
 
-  const validarDatosAsesor = (user, maximoLeads, estado, codigo) => {
+  const formatText = (texto) => {
+    const lengthText = texto.trim().length;
+    return lengthText > 0 ? true : false;
+  };
+
+  const validarDatosAsesor = (user, maximoLeads, codigo) => {
     var messages_error = "";
-    if (codigo.length === 0) {
+    if (!formatText(codigo)) {
       messages_error += "No se proporciono un codigo de asesor\n";
     }
     if (user === 0) {
       messages_error += "No se proporciono un usuario\n";
-    }
-    if (estado === 0) {
-      messages_error += "No se proporciono un estado de registro\n";
     }
     if (maximoLeads === 0) {
       messages_error +=
@@ -85,17 +88,30 @@ export const CreateAsesor = () => {
   };
 
   const crearAsesor = async () => {
-    const validate = validarDatosAsesor(user, maximoLeads, estado, codigo);
+    const validate = validarDatosAsesor(user, maximoLeads, codigo);
     if (validate.length === 0) {
       setVisibleProgress(true);
       const formatData = {
         ...asesor,
         codigo: transformarCadena(asesor.codigo),
       };
-      const result = await createAsesor(formatData);
-      setVisibleProgress(false);
-      // navegamos atras
-      onNavigateBack();
+      try {
+        const result = await createAsesor(formatData);
+        // quitamos progress bar
+        setVisibleProgress(false);
+        // navegamos atras
+        onNavigateBack();
+      } catch (error) {
+        setVisibleProgress(false);
+        // manejador de errores
+        const pilaError = combinarErrores(error);
+        // mostramos feedback de error
+        setFeedbackMessages({
+          style_message: "error",
+          feedback_description_error: pilaError,
+        });
+        handleClickFeedback();
+      }
     } else {
       // mostramos feedback
       setFeedbackMessages({

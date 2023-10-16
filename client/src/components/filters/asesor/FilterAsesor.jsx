@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { getAsesor } from "./getAsesor";
+import { getAsesorActivo } from "./getAsesor";
 import { Autocomplete, TextField } from "@mui/material";
 
 const defaultOption = {
@@ -13,7 +13,7 @@ export const FilterAsesor = ({ defaultValue = null, onNewInput }) => {
   const [value, setValue] = useState(defaultOption);
 
   const obtenerAsesor = async () => {
-    const result = await getAsesor();
+    const result = await getAsesorActivo();
     const formatSelect = [
       defaultOption,
       ...result.map((element) => {

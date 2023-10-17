@@ -6,3 +6,4 @@ export * from "./createLead";
 export * from "./validateImportLeads";
 export * from "./importLeadsModeAutomatic";
 export * from "./importLeadsModeManual";
+export * from "./asignAsesor";

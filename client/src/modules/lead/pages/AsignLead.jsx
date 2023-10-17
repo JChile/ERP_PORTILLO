@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { getLeadsNoAsignados } from "../helpers";
+import { getLeadsNoAsignados, multipleAsingAsesor } from "../helpers";
 import { CustomAlert, CustomCircularProgress } from "../../../components";
 import { CustomInputBase } from "../../../components/CustomInputBase";
 import {
@@ -101,13 +101,16 @@ export const AsignLeads = () => {
         // 1 cuando no elige un asesor
         // 2 cuando no hay seleccionado ninguno: filterDataSaelected.length === 0
         if ((asesor != 0 && asesor != null) && (filterDataSelected.length != 0)) {
+            const idsArray = filterDataSelected.map((item) => item.id);
             const dataToBackend = {
                 idAsesor: asesor, // declarar variable asesor
-                data: filterDataSelected
+                idLead: idsArray,
             }
             setVisibleProgress(true);
-            console.log(filterDataSelected);
-            console.log(asesor);
+            console.log(dataToBackend);
+            const result = await multipleAsingAsesor(dataToBackend);
+            console.log("-----", idsArray);
+            console.log(result);
             setVisibleProgress(false);
             traerDataNoasginados();
 

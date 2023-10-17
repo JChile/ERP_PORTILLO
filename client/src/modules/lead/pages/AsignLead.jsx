@@ -107,10 +107,8 @@ export const AsignLeads = () => {
                 idLead: idsArray,
             }
             setVisibleProgress(true);
-            console.log(dataToBackend);
+            console.log("-data-", dataToBackend);
             const result = await multipleAsingAsesor(dataToBackend);
-            console.log("-----", idsArray);
-            console.log(result);
             setVisibleProgress(false);
             traerDataNoasginados();
 

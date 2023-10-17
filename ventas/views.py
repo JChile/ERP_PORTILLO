@@ -405,11 +405,13 @@ class AsesorAsignacion(APIView):
                 if asesor.numeroLeads < asesor.maximoLeads:
                     if lead.asesor == None:
                         lead.asesor = asesor
+                        lead.asignado = True
                         asesor.numeroLeads = asesor.numeroLeads + 1
                         lead.save() 
                         asesor.save()
                     elif lead.asesor.pk != asesor.pk:
                         lead.asesor = asesor
+                        lead.asignado = True
                         asesor.numeroLeads = asesor.numeroLeads + 1
                         lead.save() 
                         asesor.save()

@@ -402,7 +402,7 @@ class AsesorAsignacion(APIView):
         for i in idLeads:
             try:
                 lead = Lead.objects.get(id=int(i))
-                if asesor.numeroLeads < asesor.maximoLeads or asesor.numeroLeads == -1:
+                if asesor.numeroLeads < asesor.maximoLeads or asesor.maximoLeads == -1:
                     if lead.asesor == None:
                         lead.asesor = asesor
                         asesor.numeroLeads = asesor.numeroLeads + 1

@@ -403,7 +403,6 @@ class AsesorAsignacion(APIView):
             try:
                 lead = Lead.objects.get(id=int(i))
                 if asesor.numeroLeads < asesor.maximoLeads:
-<<<<<<< HEAD
                     if lead.asesor == None:
                         lead.asesor = asesor
                         asesor.numeroLeads = asesor.numeroLeads + 1
@@ -420,29 +419,14 @@ class AsesorAsignacion(APIView):
                     error_message.append(f"Lead [{lead.pk}] no asignado porque asesor [{asesor.codigo}] alcanzo su capacidad")
                 
                  
-=======
-                    if lead.asesor.pk != asesor.pk:
-                        lead.asesor = asesor
-                        asesor.numeroLeads = asesor.numeroLeads + 1
-                        lead.save()
-                else:
-                    error_message.append(
-                        f"Lead [{lead.pk}] no asignado porque asesor [{asesor.codigo}] alcanzo su capacidad")
-
->>>>>>> origin/client
             except:
                 leadsNoAsigandos.append(i)
 
         if len(leadsNoAsigandos) == 0:
-<<<<<<< HEAD
-            return Response({'message': f"Asignacion exitosa",'detalle': error_message})
+            return Response({'detalle': error_message})
         return Response({'message': f"No se reasignaron los leads : {leadsNoAsigandos} porque no existen" , 'detalle': error_message})
 
 
-=======
-            return Response({'message': f"Asignacion exitosa"})
-        return Response({'message': f"No se reasignaron los leads : {leadsNoAsigandos} porque no existen", 'detalle': error_message})
->>>>>>> origin/client
 
 
 class AsesorList(generics.ListCreateAPIView):

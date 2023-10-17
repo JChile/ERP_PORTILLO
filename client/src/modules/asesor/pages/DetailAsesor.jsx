@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { getAsesorById } from "../helpers";
 import { CustomCircularProgress } from "../../../components";
+import { validIdURL } from "../../../utils";
 
 export const DetailAsesor = () => {
   const { idAsesor } = useParams();
@@ -11,11 +12,11 @@ export const DetailAsesor = () => {
     id: 0,
     user: 0,
     codigo: "",
-    numeroLeads: 0,
+    maximoLeads: 0,
     estado: "",
   });
 
-  const { id, user, codigo, numeroLeads, estado } = asesor;
+  const { id, user, codigo, maximoLeads, estado } = asesor;
 
   // estado de progress
   const [visibleProgress, setVisibleProgress] = useState(false);
@@ -28,17 +29,18 @@ export const DetailAsesor = () => {
 
   const traerDataAsesor = async () => {
     // verificamos si el id pasado por parametro es numerico
-    if (!isNaN(numericId) && Number.isInteger(numericId)) {
+    if (validIdURL(numericId)) {
       setVisibleProgress(true);
       try {
         const resultDetalleAsesor = await getAsesorById(idAsesor);
         setAsesor(resultDetalleAsesor);
+        setVisibleProgress(false);
       } catch (error) {
-        console.error("Ocurrio un error:", error.message);
+        setVisibleProgress(false);
+        onNavigateBack();
       }
-      setVisibleProgress(false);
     } else {
-      console.log("INVALIDO ID ASESOR");
+      onNavigateBack();
     }
   };
 
@@ -89,7 +91,7 @@ export const DetailAsesor = () => {
                 type="number"
                 name="numeroLeads"
                 className="mt-1 px-3 py-2 bg-white border shadow-sm border-slate-300 placeholder-slate-400 focus:outline-none focus:border-sky-500 focus:ring-sky-500 block w-full rounded-md sm:text-sm focus:ring-1"
-                value={numeroLeads}
+                value={maximoLeads}
                 readOnly
               />
             </label>

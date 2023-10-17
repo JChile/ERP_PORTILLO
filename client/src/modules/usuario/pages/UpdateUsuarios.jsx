@@ -9,9 +9,11 @@ import {
   CustomAlert,
 } from "../../../components";
 import { useAlertMUI } from "../../../hooks";
+import { combinarErrores, validIdURL } from "../../../utils";
 
 export const UpdateUsuarios = () => {
   const { idUsuario } = useParams();
+  const numericId = parseInt(idUsuario);
   const [usuario, setUsuario] = useState({
     first_name: "",
     last_name: "",
@@ -87,13 +89,24 @@ export const UpdateUsuarios = () => {
     if (validate.length === 0) {
       const usuarioJSON = { ...usuario };
       delete usuarioJSON.id;
-      console.log(usuarioJSON);
       setVisibleProgress(true);
-      const result = await updateUsuario(idUsuario, usuarioJSON);
-      // comprobar si se realizo con exito la creación del usuario
-      setVisibleProgress(false);
-      // navegamos atras
-      onNavigateBack();
+
+      try {
+        const result = await updateUsuario(idUsuario, usuarioJSON);
+        // comprobar si se realizo con exito la creación del usuario
+        setVisibleProgress(false);
+        // navegamos atras
+        onNavigateBack();
+      } catch (error) {
+        setVisibleProgress(false);
+        const pilaError = combinarErrores(error);
+        // mostramos feedback de error
+        setFeedbackMessages({
+          style_message: "error",
+          feedback_description_error: pilaError,
+        });
+        handleClickFeedback();
+      }
     } else {
       // mostramos feedback
       setFeedbackMessages({
@@ -105,8 +118,19 @@ export const UpdateUsuarios = () => {
   };
 
   const obtenerUsuarioPerfil = async () => {
-    const result = await getUsuarioPerfil(idUsuario);
-    setUsuario(result);
+    if (validIdURL(numericId)) {
+      setVisibleProgress(true);
+      try {
+        const result = await getUsuarioPerfil(idUsuario);
+        setUsuario(result);
+        setVisibleProgress(false);
+      } catch (error) {
+        setVisibleProgress(false);
+        onNavigateBack();
+      }
+    } else {
+      onNavigateBack();
+    }
   };
 
   useEffect(() => {

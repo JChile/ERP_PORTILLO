@@ -8,6 +8,7 @@ import {
   FilterEstadoRegistro,
   FilterUsuario,
 } from "../../../components";
+import { combinarErrores, validIdURL } from "../../../utils";
 
 export const UpdateAsesor = () => {
   const { idAsesor } = useParams();
@@ -81,7 +82,7 @@ export const UpdateAsesor = () => {
 
   const traerDataAsesor = async () => {
     // verificamos si el id pasado por parametro es numerico
-    if (!isNaN(numericId) && Number.isInteger(numericId)) {
+    if (validIdURL(numericId)) {
       setVisibleProgress(true);
       try {
         const resultDetalleAsesor = await getAsesorById(idAsesor);
@@ -89,12 +90,13 @@ export const UpdateAsesor = () => {
           ...resultDetalleAsesor,
           user: resultDetalleAsesor.user.id,
         });
+        setVisibleProgress(false);
       } catch (error) {
-        console.error("Ocurrio un error:", error.message);
+        setVisibleProgress(false);
+        onNavigateBack();
       }
-      setVisibleProgress(false);
     } else {
-      console.log("INVALIDO ID ASESOR");
+      onNavigateBack();
     }
   };
 
@@ -102,11 +104,23 @@ export const UpdateAsesor = () => {
     const validate = validarDatosAsesor(user, maximoLeads, estado, codigo);
     if (validate.length === 0) {
       setVisibleProgress(true);
-      console.log(asesor);
-      const result = await updateAsesor(idAsesor, asesor);
-      setVisibleProgress(false);
-      // navegamos atras
-      onNavigateBack();
+      try {
+        const result = await updateAsesor(idAsesor, asesor);
+        // ocultamos progress
+        setVisibleProgress(false);
+        // navegamos atras
+        onNavigateBack();
+      } catch (error) {
+        setVisibleProgress(false);
+        // manejador de errores
+        const pilaError = combinarErrores(error);
+        // mostramos feedback de error
+        setFeedbackMessages({
+          style_message: "error",
+          feedback_description_error: pilaError,
+        });
+        handleClickFeedback();
+      }
     } else {
       // mostramos feedback
       setFeedbackMessages({

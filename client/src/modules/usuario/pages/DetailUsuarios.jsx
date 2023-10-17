@@ -1,18 +1,26 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { getUsuarioPerfil } from "../helpers";
+import { validIdURL } from "../../../utils";
+import { CustomCircularProgress } from "../../../components";
+import { AuthContext } from "../../../auth";
 
 export const DetailUsuarios = () => {
+  const { currentUser } = useContext(AuthContext);
   const { idUsuario } = useParams();
+  const numericId = parseInt(idUsuario);
   const [usuario, setUsuario] = useState({
     username: "",
     first_name: "",
     last_name: "",
     email: "",
-    groups: [],
+    groups: "",
   });
 
   const { username, first_name, last_name, email, groups } = usuario;
+
+  // estado de progress
+  const [visibleProgress, setVisibleProgress] = useState(false);
 
   // ESTADOS PARA LA NAVEGACION
   const navigate = useNavigate();
@@ -21,8 +29,19 @@ export const DetailUsuarios = () => {
   };
 
   const obtenerUsuarioPerfil = async () => {
-    const result = await getUsuarioPerfil(idUsuario);
-    setUsuario(result);
+    if (validIdURL(numericId)) {
+      setVisibleProgress(true);
+      try {
+        const result = await getUsuarioPerfil(idUsuario);
+        setUsuario({ ...result, groups: currentUser["groups"] });
+        setVisibleProgress(false);
+      } catch (error) {
+        setVisibleProgress(false);
+        onNavigateBack();
+      }
+    } else {
+      onNavigateBack();
+    }
   };
 
   useEffect(() => {
@@ -93,7 +112,7 @@ export const DetailUsuarios = () => {
                 <span className="block text-sm font-medium min-w-[10rem] text-zinc-500">
                   Rol
                 </span>
-                <span className="block text-sm">{groups[0]}</span>
+                <span className="block text-sm">{groups}</span>
               </label>
             </div>
           </div>
@@ -107,6 +126,8 @@ export const DetailUsuarios = () => {
           Volver
         </button>
       </div>
+      {/* CIRCULAR PROGRESS */}
+      {visibleProgress && <CustomCircularProgress />}
     </>
   );
 };

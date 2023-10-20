@@ -392,44 +392,31 @@ class LeadMultipleCreationManual(APIView):
 class AsesorAsignacion(APIView):
     def post(self, request):
         error_message = []
+        leadsNoAsigandos = []
         idAsesor = request.data["idAsesor"]
         idLeads = request.data["idLead"]
         try:
             asesor = Asesor.objects.get(id=idAsesor)
         except:
             return Response({'message': f'El Asesor con ID {idAsesor} no existe'})
-        leadsNoAsigandos = []
         for i in idLeads:
             try:
                 lead = Lead.objects.get(id=int(i))
                 if asesor.numeroLeads < asesor.maximoLeads or asesor.maximoLeads == -1:
-                    if lead.asesor == None:
+                    if lead.asesor == None or lead.asesor.pk != asesor.pk:
                         lead.asesor = asesor
                         lead.asignado = True
                         asesor.numeroLeads = asesor.numeroLeads + 1
                         lead.save() 
-                        asesor.save()
-                    elif lead.asesor.pk != asesor.pk:
-                        lead.asesor = asesor
-                        lead.asignado = True
-                        asesor.numeroLeads = asesor.numeroLeads + 1
-                        lead.save() 
-                        asesor.save()
-
-                    
+                        asesor.save()                    
                 else : 
-                    error_message.append(f"Lead [{lead.pk}] no asignado porque asesor [{asesor.codigo}] alcanzo su capacidad")
-                
-                 
+                    error_message.append(f"Lead [{lead.pk}] no asignado porque asesor [{asesor.codigo}] alcanzo su capacidad") 
             except:
                 leadsNoAsigandos.append(i)
 
         if len(leadsNoAsigandos) == 0:
             return Response({'detalle': error_message})
         return Response({'message': f"No se reasignaron los leads : {leadsNoAsigandos} porque no existen" , 'detalle': error_message})
-
-
-
 
 class AsesorList(generics.ListCreateAPIView):
     serializer_class = AsesorSerializer

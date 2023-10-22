@@ -296,7 +296,6 @@ class LeadAssigner:
 class LeadMultipleAssign(generics.UpdateAPIView):
     queryset = Lead.objects.all()
     serializer_class = LeadListSerializer
-
     def update(self, request):
         data = request.data
         for assignment in data:
@@ -339,6 +338,13 @@ class LeadMultipleCreationManual(APIView):
             flag_asignado = True
             flag_campania = True
             error_message = []
+
+            try:
+                i["horaRecepcion"] = datetime.strptime(
+                i["horaRecepcion"], "%d/%m/%Y")
+            except (ValueError, KeyError):
+                i["horaRecepcion"] = datetime.now()
+                
             try:
                 i["asesor"] = Asesor.objects.get(codigo=i["asesor"]).id
             except:

@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 
 export const BoxValidateImportLeads = ({ onClose, onImportLeads, errors }) => {
+  console.log(errors);
   const [esAutomatico, setEstAutomatico] = useState(false);
   const [esConErrores, setEsConErrores] = useState(true);
 
@@ -50,20 +51,26 @@ export const BoxValidateImportLeads = ({ onClose, onImportLeads, errors }) => {
         </div>
         <div className="h-3/5 overflow-y-auto bg-gray-100 px-4">
           <ul className="space-y-4">
-            {errors.map((item, index) => (
-              <li key={index}>
-                <div className="bg-red-200 text-red-800 px-2 py-1 rounded">
-                  <p className="font-bold">{`Celular: ${item.data.celular}`}</p>
-                  <ul className="list-disc pl-6">
-                    {item.errores.map((error, indexError) => (
-                      <li key={`${index} - ${indexError}`}>
-                        <p>{error}</p>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              </li>
-            ))}
+            {errors.length === 0 ? (
+              <h1 className="text-center text-lime-800 font-bold">
+                No hay errores
+              </h1>
+            ) : (
+              errors.map((item, index) => (
+                <li key={index}>
+                  <div className="bg-red-200 text-red-800 px-2 py-1 rounded">
+                    <p className="font-bold">{`Celular: ${item.data.celular}`}</p>
+                    <ul className="list-disc pl-6">
+                      {item.errores.map((error, indexError) => (
+                        <li key={`${index} - ${indexError}`}>
+                          <p>{error}</p>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </li>
+              ))
+            )}
           </ul>
         </div>
         <div className="mt-4 flex justify-center">

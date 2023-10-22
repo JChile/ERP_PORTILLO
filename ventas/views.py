@@ -344,7 +344,7 @@ class LeadMultipleCreationManual(APIView):
                 i["horaRecepcion"], "%d/%m/%Y")
             except (ValueError, KeyError):
                 i["horaRecepcion"] = datetime.now()
-                
+
             try:
                 i["asesor"] = Asesor.objects.get(codigo=i["asesor"]).id
             except:
@@ -374,15 +374,15 @@ class LeadMultipleCreationManual(APIView):
                     data_no_saved["data"] = i
                     error_message.append(
                         "Se repite el numero telefonico con registro de hace 30 dias")
+                
+                data.save()
+                lead = Lead.objects.get(id=data.data["id"])
+                if flag_asignado:
+                    lead.asignado = True
                 else:
-                    data.save()
-                    lead = Lead.objects.get(id=data.data["id"])
-                    if flag_asignado:
-                        lead.asignado = True
-                    else:
-                        lead.asignado = False
-                    lead.save()
-                    print("Guardado : ", data.data)
+                    lead.asignado = False
+                lead.save()
+                print("Guardado : ", data.data)
             else:
                 print("No Guardado : ", data.data)
                 data_no_saved["data"] = i

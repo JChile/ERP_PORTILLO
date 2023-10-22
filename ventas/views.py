@@ -247,29 +247,32 @@ class leadMultipleCreationAutomatic(APIView):
         return Response(response)
 
 
+
 class leadCreation:
     def __init__(self, data):
         self.data = data
         self.create_data()
-
+    
     def serialize_lead(self):
         return self.data
 
-    def create_data(self):
-        self.data["estado"] = "A"
-        self.data["estadoLead"] = "EP"
-
+    def create_data(self): 
         try:
-            self.data["horaRecepcion"] = datetime.strptime(
-                self.data["horaRecepcion"], "%d/%m/%Y")
+            self.data["horaRecepcion"] = datetime.strptime(self.data["horaRecepcion"], "%d/%m/%Y")
         except (ValueError, KeyError):
             self.data["horaRecepcion"] = datetime.now()
+
+        try:
+            self.data["campania"] = Campania.objects.get(codigo = self.data["campania"]).id
+        except:
+            self.data["campania"] = None
+            
+
 
     def put_asesor(self, asesor):
         self.data["asesor"] = asesor.id
         self.data["asignado"] = True
         asesor.numeroLeads += 1
-
 
 class LeadAssigner:
     def __init__(self, asesores):

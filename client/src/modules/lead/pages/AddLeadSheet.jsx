@@ -223,6 +223,8 @@ export const AddLeadSheet = () => {
       });
     }
 
+    console.log(dataImportAux);
+
     if (esAutomatico) {
       try {
         const result = await importLeadsModeAutomatic(dataImportAux);

@@ -333,6 +333,7 @@ class LeadMultipleAssign(generics.UpdateAPIView):
 class LeadMultipleCreationManual(APIView):
     def post(self, request):
         object_no_saved = []
+        print(request.data)
 
         for i in request.data:
             data_no_saved = {}

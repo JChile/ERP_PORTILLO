@@ -171,18 +171,15 @@ class leadConfirmation:
 
         return lead
 
-    def check_numero(self, phone_numbers):
+    def check_numero(self, phone_numbers):       
         celular = self.data.get("celular")
         if not celular:
-            self.errores.append(
-                "El numero de celular no se envió en los datos.")
+            self.errores.append("El numero de celular no se envió en los datos.")
         else:
             if len(celular) != 9 or not celular.startswith('9') or not celular.isdigit():
-                self.errores.append(
-                    "El numero de celular no cumple con los requisitos.")
+                self.errores.append("El numero de celular no cumple con los requisitos.")
             elif celular in phone_numbers:
-                self.errores.append(
-                    "El numero de celular ya existe en la base de datos.")
+                self.errores.append("El numero de celular ya existe en el proyecto en un plazo de 30 dias.")
 
     def check_asesor(self):
         if "asesor" in self.data:

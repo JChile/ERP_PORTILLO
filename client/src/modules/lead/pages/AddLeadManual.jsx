@@ -27,7 +27,7 @@ export const AddLeadManual = () => {
     estadoLead: "EP",
     objecion: 1,
     campania: null,
-    horaEntrega: "",
+    horaRecepcion: "",
   });
 
   const {
@@ -41,7 +41,7 @@ export const AddLeadManual = () => {
     estado,
     estadoLead,
     objecion,
-    horaEntrega,
+    horaRecepcion,
     campania,
   } = lead;
 
@@ -99,10 +99,11 @@ export const AddLeadManual = () => {
       handleClickFeedback();
     } else {
       setVisibleProgress(true);
-      const formatLead = {
-        ...lead,
-        horaEntrega: lead.horaEntrega.length === 0 ? null : lead.horaEntrega,
-      };
+      const formatLead = { ...lead };
+
+      if (lead.horaRecepcion.length === 0) {
+        delete formatLead.horaRecepcion;
+      }
       console.log(formatLead);
       const result = await createLead(formatLead);
       setVisibleProgress(false);
@@ -175,7 +176,7 @@ export const AddLeadManual = () => {
             </label>
 
             <label
-              htmlFor="horaEntrega"
+              htmlFor="horaRecepcion"
               className="block flex flex-col gap-y-1"
             >
               <span className="after:content-['*'] after:ml-0.5 after:text-yellow-500 block text-sm font-medium">
@@ -183,8 +184,8 @@ export const AddLeadManual = () => {
               </span>
               <input
                 type="date"
-                name="horaEntrega"
-                value={horaEntrega}
+                name="horaRecepcion"
+                value={horaRecepcion}
                 onChange={handledForm}
                 className="mt-1 px-3 py-2 bg-white border shadow-sm border-slate-300 placeholder-slate-400 focus:outline-none focus:border-sky-500 focus:ring-sky-500 block w-full rounded-md sm:text-sm focus:ring-1"
               />

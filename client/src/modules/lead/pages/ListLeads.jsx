@@ -2,14 +2,8 @@ import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { RiFileExcel2Fill } from "react-icons/ri";
 import { deleteLead, getLeadsActivos } from "../helpers";
-import {
-  CustomCircularProgress,
-  CustomTablePagination,
-} from "../../../components";
-import { CustomTopBar } from "../../../components/CustomTopBar";
-import { FilterEstadoLead } from "../../../components/filters/estado/FilterEstadoLead";
+import { CustomCircularProgress } from "../../../components";
 import { CustomTable } from "../../../components/CustomLeadTable";
-import { Input } from "@mui/material";
 import { CustomInputBase } from "../../../components/CustomInputBase";
 import { CustomSelectedTable } from "../components/CustomSelectedTable";
 import { DialogDeleteLead } from "../components/DialogDeleteLead";
@@ -163,7 +157,7 @@ export const ListLeads = () => {
               to={"/lead/asign"}
               className="bg-transparent hover:bg-blue-500 text-blue-500 hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded"
             >
-              Asignar Asesor
+              Asignación masiva
             </Link>
           </div>
         </div>

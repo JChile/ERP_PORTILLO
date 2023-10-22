@@ -126,7 +126,28 @@ export const ListLeads = () => {
 
   return (
     <>
+      <div className="flex flex-col gap-y-1 items-end">
+        <span className="block text-sm">Añadir Lead</span>
+        <div className="flex gap-x-2">
+          <Link
+            to={"/lead/create"}
+            className="bg-transparent hover:bg-blue-500 text-blue-500 hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded"
+          >
+            Manual
+          </Link>
+
+          <Link
+            to={"/lead/create/sheet"}
+            className="bg-transparent hover:bg-blue-500 text-blue-500  hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded"
+          >
+            Automatico
+          </Link>
+        </div>
+      </div>
+
       <div className="px-7 mt-8 mb-8 flex justify-between items-center">
+
+
         <div className="flex flex-col gap-y-1">
           <span className="block text-sm">Buscar lead</span>
           <CustomInputBase
@@ -138,6 +159,14 @@ export const ListLeads = () => {
         </div>
 
         <div className="flex flex-row gap-x-4">
+          <div className="flex flex-col gap-y-1">
+            <Link
+              to={"/lead/asign"}
+              className="bg-transparent hover:bg-blue-500 text-blue-500 hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded"
+            >
+              Asignar Acesor
+            </Link>
+          </div>
           {/* <div className="flex flex-col gap-y-1">
             <span className="block text-sm">Filtrar leads</span>
             <Link
@@ -151,24 +180,7 @@ export const ListLeads = () => {
             </Link>
           </div> */}
 
-          <div className="flex flex-col gap-y-1">
-            <span className="block text-sm">Añadir Lead</span>
-            <div className="flex gap-x-2">
-              <Link
-                to={"/lead/create"}
-                className="bg-transparent hover:bg-blue-500 text-blue-500 hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded"
-              >
-                Manual
-              </Link>
 
-              <Link
-                to={"/lead/create/sheet"}
-                className="bg-transparent hover:bg-blue-500 text-blue-500  hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded"
-              >
-                Automatico
-              </Link>
-            </div>
-          </div>
         </div>
       </div>
 

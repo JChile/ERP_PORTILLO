@@ -296,7 +296,6 @@ class LeadAssigner:
 class LeadMultipleAssign(generics.UpdateAPIView):
     queryset = Lead.objects.all()
     serializer_class = LeadListSerializer
-
     def update(self, request):
         data = request.data
         for assignment in data:
@@ -340,6 +339,13 @@ class LeadMultipleCreationManual(APIView):
             flag_asignado = True
             flag_campania = True
             error_message = []
+
+            try:
+                i["horaRecepcion"] = datetime.strptime(
+                i["horaRecepcion"], "%d/%m/%Y")
+            except (ValueError, KeyError):
+                i["horaRecepcion"] = datetime.now()
+                
             try:
                 i["asesor"] = Asesor.objects.get(codigo=i["asesor"]).id
             except:
@@ -393,32 +399,31 @@ class LeadMultipleCreationManual(APIView):
 class AsesorAsignacion(APIView):
     def post(self, request):
         error_message = []
+        leadsNoAsigandos = []
         idAsesor = request.data["idAsesor"]
         idLeads = request.data["idLead"]
         try:
             asesor = Asesor.objects.get(id=idAsesor)
         except:
             return Response({'message': f'El Asesor con ID {idAsesor} no existe'})
-        leadsNoAsigandos = []
         for i in idLeads:
             try:
                 lead = Lead.objects.get(id=int(i))
-                if asesor.numeroLeads < asesor.maximoLeads:
-                    if lead.asesor.pk != asesor.pk:
+                if asesor.numeroLeads < asesor.maximoLeads or asesor.maximoLeads == -1:
+                    if lead.asesor == None or lead.asesor.pk != asesor.pk:
                         lead.asesor = asesor
+                        lead.asignado = True
                         asesor.numeroLeads = asesor.numeroLeads + 1
-                        lead.save()
-                else:
-                    error_message.append(
-                        f"Lead [{lead.pk}] no asignado porque asesor [{asesor.codigo}] alcanzo su capacidad")
-
+                        lead.save() 
+                        asesor.save()                    
+                else : 
+                    error_message.append(f"Lead [{lead.pk}] no asignado porque asesor [{asesor.codigo}] alcanzo su capacidad") 
             except:
                 leadsNoAsigandos.append(i)
 
         if len(leadsNoAsigandos) == 0:
-            return Response({'message': f"Asignacion exitosa"})
-        return Response({'message': f"No se reasignaron los leads : {leadsNoAsigandos} porque no existen", 'detalle': error_message})
-
+            return Response({'detalle': error_message})
+        return Response({'message': f"No se reasignaron los leads : {leadsNoAsigandos} porque no existen" , 'detalle': error_message})
 
 class AsesorList(generics.ListCreateAPIView):
     serializer_class = AsesorSerializer

@@ -1,12 +1,13 @@
 import React from "react";
 import { Route, Routes } from "react-router-dom";
-import { 
-  AddLeadManual, 
-  AddLeadSheet, 
+import {
+  AddLeadManual,
+  AddLeadSheet,
   ListLeads,
   DetailLead,
   UpdateLead,
- } from "../pages";
+  AsignLeads,
+} from "../pages";
 
 export const LeadRoutes = () => {
   return (
@@ -16,6 +17,7 @@ export const LeadRoutes = () => {
       <Route path="create" element={<AddLeadManual />}></Route>
       <Route path="detail/:idLead" element={<DetailLead />} />
       <Route path="update/:idLead" element={<UpdateLead />} />
+      <Route path="asign" element={<AsignLeads />} />
     </Routes>
   );
 };

@@ -8,8 +8,13 @@ import { Box, Button } from "@mui/material";
 import { AiOutlineDown } from "react-icons/ai";
 
 export const CalendarHeader = () => {
-  const { monthIndex, setMonthIndex } = useContext(CalendarContext);
-  const [showFloatMenu, setShowFloatMenu] = useState()
+  const {
+    monthIndex,
+    setMonthIndex,
+    calendarState,
+    setCalendarState,
+    calendarStates,
+  } = useContext(CalendarContext);
 
   const handlePreviusMonth = () => {
     setMonthIndex(monthIndex - 1);
@@ -27,7 +32,9 @@ export const CalendarHeader = () => {
     );
   };
 
-  const handleShowFlotMenu = () => {};
+  const handleChangeView = (newState) => {
+    setCalendarState(newState);
+  };
 
   return (
     <div className="px-4 py-2 flex items-center">
@@ -59,9 +66,12 @@ export const CalendarHeader = () => {
       </h2>
 
       <div className="ml-auto">
-        <CalendarMenu />
+        <CalendarMenu
+          setView={handleChangeView}
+          text={calendarState}
+          calendarStates={calendarStates}
+        />
       </div>
-
     </div>
   );
 };

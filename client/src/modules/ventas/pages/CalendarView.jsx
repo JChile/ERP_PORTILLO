@@ -5,17 +5,18 @@ import {
   Month,
   CalendarSideBar,
   EventModal,
+  Week,
 } from "../components";
 import CalendarContext from "../context/CalendarContext";
 
 export const CalendarView = () => {
   const [currentMonth, setCurrentMonth] = useState(getMonth());
-  const { monthIndex, showEventModal } = useContext(CalendarContext);
+  const { monthIndex, showEventModal, calendarState, calendarStates } =
+    useContext(CalendarContext);
 
   useEffect(() => {
     setCurrentMonth(getMonth(monthIndex));
   }, [monthIndex]);
-
 
   return (
     <React.Fragment>
@@ -24,7 +25,10 @@ export const CalendarView = () => {
         <CalendarHeader />
         <div className="flex flex-1">
           <CalendarSideBar />
-          <Month month={currentMonth} />
+          {calendarState === calendarStates.month && (
+            <Month month={currentMonth} />
+          )}
+          {calendarState === calendarStates.week && <Week />}
         </div>
       </div>
     </React.Fragment>

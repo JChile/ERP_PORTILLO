@@ -21,7 +21,10 @@ const initEvents = () => {
   return parsedEvents;
 };
 
-const calendarStates = ["Mes", "Semana"]
+const calendarStates = {
+  month: "Mes",
+  week: "Semana",
+};
 
 export const CalendarContextWrapper = (props) => {
   const [monthIndex, setMonthIndex] = useState(dayjs().month());
@@ -29,9 +32,13 @@ export const CalendarContextWrapper = (props) => {
   const [daySelected, setDaySelected] = useState(dayjs());
   const [showEventModal, setShowEventModal] = useState(false);
   const [labels, setLabels] = useState([]);
-  const [savedEvents, dispatchCallEvent] = useReducer(savedEventsReducer,[],initEvents);
+  const [savedEvents, dispatchCallEvent] = useReducer(
+    savedEventsReducer,
+    [],
+    initEvents
+  );
   const [selectedEvent, setSelectedEvent] = useState(null);
-  const [calendarState, setCalendarState] = useState(calendarStates[0])
+  const [calendarState, setCalendarState] = useState(calendarStates.month);
 
   const filteredEvents = useMemo(() => {
     return savedEvents.filter((evt) =>
@@ -64,7 +71,7 @@ export const CalendarContextWrapper = (props) => {
     if (!showEventModal) {
       setSelectedEvent(null);
     }
-  }, [showEventModal])
+  }, [showEventModal]);
 
   useEffect(() => {
     localStorage.setItem("savedEvents", JSON.stringify(savedEvents));
@@ -92,7 +99,10 @@ export const CalendarContextWrapper = (props) => {
         setLabels,
         labels,
         updateLabel,
-        filteredEvents
+        filteredEvents,
+        calendarStates,
+        setCalendarState,
+        calendarState,
       }}
     >
       {props.children}

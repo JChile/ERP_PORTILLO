@@ -17,6 +17,9 @@ const CalendarContext = React.createContext({
   labels: [],
   updateLabel: () => {},
   filteredEvents: [],
+  calendarStates: {},
+  setCalendarState: () =>{},
+  calendarState: null
 });
 
 export default CalendarContext;

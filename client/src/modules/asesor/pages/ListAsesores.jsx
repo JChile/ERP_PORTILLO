@@ -10,11 +10,13 @@ import Paper from "@mui/material/Paper";
 import { deleteAsesor, getAsesores } from "../helpers";
 import { RiUserAddLine } from "react-icons/ri";
 import {
+  CustomAlert,
   CustomCircularProgress,
   CustomTablePagination,
 } from "../../../components";
 import { DialogDeleteAsesor, RowItemAsesor } from "../components";
-import { DialogDeleteUsuario } from "../../usuario/components";
+import { combinarErrores } from "../../../utils";
+import { useAlertMUI } from "../../../hooks";
 
 export const ListAsesores = () => {
   const [asesores, setAsesores] = useState([]);
@@ -25,6 +27,14 @@ export const ListAsesores = () => {
   // ESTADOS PARA EL DIALOG DELETE
   const [mostrarDialog, setMostrarDialog] = useState(false);
   const [itemSeleccionado, setItemSeleccionado] = useState(null);
+
+  const {
+    feedbackCreate,
+    feedbackMessages,
+    setFeedbackMessages,
+    handleCloseFeedback,
+    handleClickFeedback,
+  } = useAlertMUI();
 
   // PARA ELIMINAR UN ITEM SELECCIONADO
   const onCloseDeleteDialog = () => {
@@ -42,25 +52,34 @@ export const ListAsesores = () => {
 
   // ELIMINAR DETALLE DE FORMULA
   const onDeleteItemSelected = async (item) => {
-    const body = {
-      codigo: item.codigo,
-      user: item.user.id,
-      estado: "I",
-    };
-    const result = await deleteAsesor(item.id, body);
-    obtenerAsesores();
+    try {
+      const body = {
+        codigo: item.codigo,
+        user: item.user.id,
+        estado: "I",
+      };
+      const result = await deleteAsesor(item.id, body);
+      obtenerAsesores();
+    } catch (error) {
+      const pilaError = combinarErrores(error);
+      setFeedbackMessages({
+        style_message: "error",
+        feedback_description_error: pilaError,
+      });
+      handleClickFeedback();
+    }
     onCloseDeleteDialog();
   };
 
   const obtenerAsesores = async () => {
+    setVisibleProgress(true);
     const result = await getAsesores();
     setAsesores(result);
+    setVisibleProgress(false);
   };
 
   useEffect(() => {
-    setVisibleProgress(true);
     obtenerAsesores();
-    setVisibleProgress(false);
   }, []);
 
   return (
@@ -129,6 +148,13 @@ export const ListAsesores = () => {
           onCloseDeleteDialog={onCloseDeleteDialog}
         />
       )}
+
+      {/* CUSTOM ALERT */}
+      <CustomAlert
+        feedbackCreate={feedbackCreate}
+        feedbackMessages={feedbackMessages}
+        handleCloseFeedback={handleCloseFeedback}
+      />
 
       {/* CIRCULAR PROGRESS */}
       {visibleProgress && <CustomCircularProgress />}

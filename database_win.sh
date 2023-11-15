@@ -11,7 +11,10 @@ psql -h localhost -p 5432 -U postgres --list
 ./fixapp.sh ventas
 ./fixapp.sh marketing
 
-python manage.py makemigrations 
+python manage.py makemigrations cuenta
+python manage.py makemigrations marketing
+python manage.py makemigrations ventas
+
 python manage.py migrate
 
 

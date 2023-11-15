@@ -1,16 +1,17 @@
 import React, { useState } from "react";
 import { FilterProyectos } from "../../../components";
 
-export const BoxOptionsImportLeads = ({ onClose, onImportFileLeads }) => {
+export const BoxOptionsImportLeads = ({
+  onClose,
+  onValidateImportFileLeads,
+}) => {
   const [valuesOptions, setValuesOptions] = useState({
     proyecto: null,
     rangoDesde: 2,
     rangoHasta: 3,
-    asignacion_automatica: false,
   });
 
-  const { proyecto, rangoDesde, rangoHasta, asignacion_automatica } =
-    valuesOptions;
+  const { proyecto, rangoDesde, rangoHasta } = valuesOptions;
 
   const onAddProyecto = ({ id }) => {
     setValuesOptions({
@@ -27,14 +28,7 @@ export const BoxOptionsImportLeads = ({ onClose, onImportFileLeads }) => {
     });
   };
 
-  const handleCheckboxChange = (event) => {
-    setValuesOptions({
-      ...valuesOptions,
-      asignacion_automatica: event.target.checked,
-    });
-  };
-
-  const importarDatos = () => {
+  const validarDatosImportacion = () => {
     if (
       rangoDesde < rangoHasta &&
       rangoDesde > 1 &&
@@ -42,7 +36,7 @@ export const BoxOptionsImportLeads = ({ onClose, onImportFileLeads }) => {
       rangoDesde !== rangoHasta
     ) {
       if (proyecto !== null) {
-        onImportFileLeads(valuesOptions);
+        onValidateImportFileLeads(valuesOptions);
       } else {
         console.log("Proporcione un proyecto");
       }
@@ -99,24 +93,12 @@ export const BoxOptionsImportLeads = ({ onClose, onImportFileLeads }) => {
               </div>
             </div>
           </div>
-          <div className="mb-4 flex items-center">
-            <label htmlFor="automatico" className="block font-semibold mb-1">
-              ¿Asignación automática?
-            </label>
-            <input
-              type="checkbox"
-              id="automatico"
-              value={asignacion_automatica}
-              onChange={handleCheckboxChange}
-              className="ml-2"
-            />
-          </div>
           <div className="mb-4 flex justify-center">
             <button
               className="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded"
-              onClick={importarDatos}
+              onClick={validarDatosImportacion}
             >
-              Importar
+              Validar
             </button>
           </div>
         </div>

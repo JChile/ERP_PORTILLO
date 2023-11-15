@@ -13,7 +13,7 @@ urlpatterns = [
 
     re_path(r'^leadCreationConfirmation/$', views.LeadCreationConfirmation.as_view()),
 
-    re_path(r'^leadMultipleCreation/$', views.LeadMultipleCreation.as_view()),
+    re_path(r'^leadMultipleCreationAutomatic/$', views.leadMultipleCreationAutomatic.as_view()),
     re_path(r'^leadMultipleAssign/$', views.LeadMultipleAssign.as_view()),
     re_path(r'^leadMultipleCreationManual/$', views.LeadMultipleCreationManual.as_view()),
     

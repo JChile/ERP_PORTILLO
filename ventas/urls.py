@@ -19,6 +19,8 @@ urlpatterns = [
     
     re_path(r'^asesor/$', views.AsesorListSinFiltros.as_view()),
     re_path(r'^asesor/(?P<pk>[0-9]+)$', views.AsesorDetail.as_view()),
+    re_path(r'^asesorLead/$', views.AsesorLeadList.as_view()),
+    re_path(r'^asesorLead/(?P<pk>[0-9]+)$', views.AsesorLeadDetail.as_view()),
     re_path(r'^asesorActivo/$', views.AsesorListActivos.as_view()),
     re_path(r'^asesorInactivo/$', views.AsesorListInactivos.as_view()),
     re_path(r'^asesorAsignacion/$', views.AsesorAsignacion.as_view()),

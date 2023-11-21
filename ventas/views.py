@@ -449,17 +449,9 @@ class AsesorLeadList(APIView):
 
     def get(self, request):
         asesor_queryset = Asesor.objects.all()
-        users = User.objects.all()
-        groupserializer = AsesorSerializer(asesor_queryset, many=True)
-        dataJson = groupserializer.data
-        user_fields = ["id", "username", "first_name", "last_name"]
-        leads = Lead.objects.all()
+        asesorSerializer = AsesorSerializer(asesor_queryset, many=True)
+        dataJson = asesorSerializer.data
         for i in dataJson:
-            user_data = users.get(id=i["user"])
-            userSerializer = UserSerializer(user_data)
-            user_data_serialized = userSerializer.data
-            i["user"] = {field: user_data_serialized[field]
-                         for field in user_fields}
             i["leads"] = LeadSerializer(Lead.objects.filter(asesor = i["id"]),many = True).data
 
         return Response(dataJson)

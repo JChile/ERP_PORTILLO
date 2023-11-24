@@ -46,5 +46,11 @@ urlpatterns = [
     re_path(r'^estadoLeadActivo/$', views.EstadoLeadActivos.as_view()),
     re_path(r'^estadoLeadInactivo/$', views.EstadoLeadInactivos.as_view()),
 
+
+    re_path(r'^evento/$', views.EventoList.as_view()),
+    re_path(r'^evento/(?P<nombre>[\w-]+)$', views.EventoDetail.as_view()),
+
+    re_path(r'^tipoEvento/$', views.TipoEventoList.as_view()),
+    re_path(r'^tipoEvento/(?P<nombre>[\w-]+)$', views.TipoEventoDetail.as_view()),
     
 ]

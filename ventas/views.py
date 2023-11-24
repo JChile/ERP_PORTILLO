@@ -616,3 +616,22 @@ class EstadoLeadInactivos(EstadoLeadList):
     def list(self, request):
         self.queryset = self.queryset.filter(estado="I")
         return super().list(request)
+
+
+
+class EventoList(generics.ListCreateAPIView):
+    serializer_class = EventoSerializer
+    queryset = Evento.objects.all()
+
+
+class EventoDetail(generics.RetrieveUpdateDestroyAPIView):
+    serializer_class = EventoSerializer
+    queryset = Evento.objects.all()
+
+class TipoEventoList(generics.ListCreateAPIView):
+    serializer_class = TipoEventoSerializer
+    queryset = TipoEvento.objects.all()
+
+class TipoEventoDetail(generics.RetrieveUpdateDestroyAPIView):
+    serializer_class = TipoEventoSerializer
+    queryset = TipoEvento.objects.all()

@@ -402,7 +402,7 @@ class AsesorAsignacion(APIView):
         for i in idLeads:
             try:
                 lead = Lead.objects.get(id=int(i))
-                if asesor.numeroLeads < asesor.maximoLeads or asesor.maximoLeads == -1:
+                """ if asesor.numeroLeads < asesor.maximoLeads or asesor.maximoLeads == -1:
                     if lead.asesor == None:
                         lead.asesor = asesor
                         lead.asignado = True
@@ -418,7 +418,19 @@ class AsesorAsignacion(APIView):
 
                     
                 else : 
-                    error_message.append(f"Lead [{lead.pk}] no asignado porque asesor [{asesor.codigo}] alcanzo su capacidad")
+                    error_message.append(f"Lead [{lead.pk}] no asignado porque asesor [{asesor.codigo}] alcanzo su capacidad") """
+                if lead.asesor == None:
+                        lead.asesor = asesor
+                        lead.asignado = True
+                        asesor.numeroLeads = asesor.numeroLeads + 1
+                        lead.save() 
+                        asesor.save()
+                elif lead.asesor.pk != asesor.pk:
+                        lead.asesor = asesor
+                        lead.asignado = True
+                        asesor.numeroLeads = asesor.numeroLeads + 1
+                        lead.save() 
+                        asesor.save()
                 
                  
             except:

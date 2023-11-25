@@ -171,18 +171,15 @@ class leadConfirmation:
 
         return lead
 
-    def check_numero(self, phone_numbers):
+    def check_numero(self, phone_numbers):       
         celular = self.data.get("celular")
         if not celular:
-            self.errores.append(
-                "El numero de celular no se envió en los datos.")
+            self.errores.append("El numero de celular no se envió en los datos.")
         else:
             if len(celular) != 9 or not celular.startswith('9') or not celular.isdigit():
-                self.errores.append(
-                    "El numero de celular no cumple con los requisitos.")
+                self.errores.append("El numero de celular no cumple con los requisitos.")
             elif celular in phone_numbers:
-                self.errores.append(
-                    "El numero de celular ya existe en la base de datos.")
+                self.errores.append("El numero de celular ya existe en el proyecto en un plazo de 30 dias.")
 
     def check_asesor(self):
         if "asesor" in self.data:
@@ -247,29 +244,32 @@ class leadMultipleCreationAutomatic(APIView):
         return Response(response)
 
 
+
 class leadCreation:
     def __init__(self, data):
         self.data = data
         self.create_data()
-
+    
     def serialize_lead(self):
         return self.data
 
-    def create_data(self):
-        self.data["estado"] = "A"
-        self.data["estadoLead"] = "EP"
-
+    def create_data(self): 
         try:
-            self.data["horaRecepcion"] = datetime.strptime(
-                self.data["horaRecepcion"], "%d/%m/%Y")
+            self.data["horaRecepcion"] = datetime.strptime(self.data["horaRecepcion"], "%d/%m/%Y")
         except (ValueError, KeyError):
             self.data["horaRecepcion"] = datetime.now()
+
+        try:
+            self.data["campania"] = Campania.objects.get(codigo = self.data["campania"]).id
+        except:
+            self.data["campania"] = None
+            
+
 
     def put_asesor(self, asesor):
         self.data["asesor"] = asesor.id
         self.data["asignado"] = True
         asesor.numeroLeads += 1
-
 
 class LeadAssigner:
     def __init__(self, asesores):
@@ -296,7 +296,6 @@ class LeadAssigner:
 class LeadMultipleAssign(generics.UpdateAPIView):
     queryset = Lead.objects.all()
     serializer_class = LeadListSerializer
-
     def update(self, request):
         data = request.data
         for assignment in data:
@@ -339,6 +338,13 @@ class LeadMultipleCreationManual(APIView):
             flag_asignado = True
             flag_campania = True
             error_message = []
+
+            try:
+                i["horaRecepcion"] = datetime.strptime(
+                i["horaRecepcion"], "%d/%m/%Y")
+            except (ValueError, KeyError):
+                i["horaRecepcion"] = datetime.now()
+
             try:
                 i["asesor"] = Asesor.objects.get(codigo=i["asesor"]).id
             except:
@@ -368,15 +374,15 @@ class LeadMultipleCreationManual(APIView):
                     data_no_saved["data"] = i
                     error_message.append(
                         "Se repite el numero telefonico con registro de hace 30 dias")
+                
+                data.save()
+                lead = Lead.objects.get(id=data.data["id"])
+                if flag_asignado:
+                    lead.asignado = True
                 else:
-                    data.save()
-                    lead = Lead.objects.get(id=data.data["id"])
-                    if flag_asignado:
-                        lead.asignado = True
-                    else:
-                        lead.asignado = False
-                    lead.save()
-                    print("Guardado : ", data.data)
+                    lead.asignado = False
+                lead.save()
+                print("Guardado : ", data.data)
             else:
                 print("No Guardado : ", data.data)
                 data_no_saved["data"] = i
@@ -392,56 +398,31 @@ class LeadMultipleCreationManual(APIView):
 class AsesorAsignacion(APIView):
     def post(self, request):
         error_message = []
+        leadsNoAsigandos = []
         idAsesor = request.data["idAsesor"]
         idLeads = request.data["idLead"]
         try:
             asesor = Asesor.objects.get(id=idAsesor)
         except:
             return Response({'message': f'El Asesor con ID {idAsesor} no existe'})
-        leadsNoAsigandos = []
         for i in idLeads:
             try:
                 lead = Lead.objects.get(id=int(i))
-                """ if asesor.numeroLeads < asesor.maximoLeads or asesor.maximoLeads == -1:
-                    if lead.asesor == None:
+                if asesor.numeroLeads < asesor.maximoLeads or asesor.maximoLeads == -1:
+                    if lead.asesor == None or lead.asesor.pk != asesor.pk:
                         lead.asesor = asesor
                         lead.asignado = True
                         asesor.numeroLeads = asesor.numeroLeads + 1
                         lead.save() 
-                        asesor.save()
-                    elif lead.asesor.pk != asesor.pk:
-                        lead.asesor = asesor
-                        lead.asignado = True
-                        asesor.numeroLeads = asesor.numeroLeads + 1
-                        lead.save() 
-                        asesor.save()
-
-                    
+                        asesor.save()                    
                 else : 
-                    error_message.append(f"Lead [{lead.pk}] no asignado porque asesor [{asesor.codigo}] alcanzo su capacidad") """
-                if lead.asesor == None:
-                        lead.asesor = asesor
-                        lead.asignado = True
-                        asesor.numeroLeads = asesor.numeroLeads + 1
-                        lead.save() 
-                        asesor.save()
-                elif lead.asesor.pk != asesor.pk:
-                        lead.asesor = asesor
-                        lead.asignado = True
-                        asesor.numeroLeads = asesor.numeroLeads + 1
-                        lead.save() 
-                        asesor.save()
-                
-                 
+                    error_message.append(f"Lead [{lead.pk}] no asignado porque asesor [{asesor.codigo}] alcanzo su capacidad") 
             except:
                 leadsNoAsigandos.append(i)
 
         if len(leadsNoAsigandos) == 0:
             return Response({'detalle': error_message})
         return Response({'message': f"No se reasignaron los leads : {leadsNoAsigandos} porque no existen" , 'detalle': error_message})
-
-
-
 
 class AsesorList(generics.ListCreateAPIView):
     serializer_class = AsesorSerializer
@@ -461,6 +442,32 @@ class AsesorList(generics.ListCreateAPIView):
                          for field in user_fields}
 
         return Response(dataJson)
+
+
+
+class AsesorLeadList(APIView):
+
+    def get(self, request):
+        asesor_queryset = Asesor.objects.all()
+        asesorSerializer = AsesorSerializer(asesor_queryset, many=True)
+        dataJson = asesorSerializer.data
+        for i in dataJson:
+            i["leads"] = LeadSerializer(Lead.objects.filter(asesor = i["id"]),many = True).data
+
+        return Response(dataJson)
+
+
+
+class AsesorLeadDetail(APIView):
+
+    def get(self, request, pk=None):
+        asesor_queryset = Asesor.objects.get(id = pk)
+        asesorSerializer = AsesorSerializer(asesor_queryset)
+        dataJson = asesorSerializer.data
+        dataJson["leads"] = LeadSerializer(Lead.objects.filter(asesor = asesor_queryset.pk),many = True).data
+
+        return Response(dataJson)
+
 
 
 class AsesorListSinFiltros(AsesorList):
@@ -609,3 +616,22 @@ class EstadoLeadInactivos(EstadoLeadList):
     def list(self, request):
         self.queryset = self.queryset.filter(estado="I")
         return super().list(request)
+
+
+
+class EventoList(generics.ListCreateAPIView):
+    serializer_class = EventoSerializer
+    queryset = Evento.objects.all()
+
+
+class EventoDetail(generics.RetrieveUpdateDestroyAPIView):
+    serializer_class = EventoSerializer
+    queryset = Evento.objects.all()
+
+class TipoEventoList(generics.ListCreateAPIView):
+    serializer_class = TipoEventoSerializer
+    queryset = TipoEvento.objects.all()
+
+class TipoEventoDetail(generics.RetrieveUpdateDestroyAPIView):
+    serializer_class = TipoEventoSerializer
+    queryset = TipoEvento.objects.all()

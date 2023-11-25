@@ -35,7 +35,7 @@ export const CustomSideBar = ({ children, menus }) => {
         </ul>
       </div>
       {/**  Lado derecho del a interfaz, permite cargar el contenido */}
-      <div className="p-9 relative grow overflow-y-auto">{children}</div>
+      <div className="p-9 grow overflow-y-auto">{children}</div>
     </div>
   );
 };

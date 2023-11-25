@@ -71,14 +71,7 @@ export const CreateCampania = () => {
     });
   };
 
-  const validateCampaign = (
-    nombre,
-    fecha_estimada,
-    fecha_cierre,
-    coste_estimado,
-    coste_real,
-    proyecto,
-    categoria
+  const validateCampaign = (nombre,fecha_estimada,fecha_cierre,coste_estimado,coste_real,proyecto,categoria
   ) => {
     const errors = [];
 
@@ -103,7 +96,6 @@ export const CreateCampania = () => {
     if (!categoria) {
       errors.push("- La categoría es obligatoria.");
     }
-
     return errors.join("\n");
   };
 
@@ -118,8 +110,6 @@ export const CreateCampania = () => {
       categoria
     );
 
-    console.log(campaign);
-
     if (validationMessage) {
       // Si hay campos faltantes, mostrar una alerta con los mensajes de error concatenados
       setFeedbackMessages({
@@ -130,6 +120,7 @@ export const CreateCampania = () => {
     } else {
       setVisibleProgress(true);
       const result = await createCampania(campaign);
+      console.log(result)
       setVisibleProgress(false);
       onNavigateBack();
     }

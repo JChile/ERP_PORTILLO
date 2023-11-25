@@ -1,9 +1,7 @@
 import React from "react";
 
 export const CustomEventWrapper = (props) => {
-  // Aquí puedes personalizar la envoltura de eventos según tus necesidades
   const { event, children, onSelectEvent } = props;
-
 
   const eventStyle = {
     backgroundColor: event.category.color,

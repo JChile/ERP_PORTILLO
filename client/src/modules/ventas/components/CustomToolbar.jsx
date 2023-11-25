@@ -4,7 +4,7 @@ import { HiThumbDown } from "react-icons/hi";
 
 export const CustomToolbar = (toolbar) => {
   return (
-    <div className="flex items-center justify-between mb-1">
+    <div className="flex items-center justify-between mb-3">
       <div className="flex gap-x-7 items-center">
         <button
           onClick={() => toolbar.onNavigate("TODAY")}

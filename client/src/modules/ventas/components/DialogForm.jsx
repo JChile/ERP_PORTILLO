@@ -1,132 +1,111 @@
-import React, { useState, useEffect } from "react";
-import {
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
-  Button,
-  FormControl,
-  TextField,
-  Select,
-  MenuItem,
-  TextareaAutosize,
-} from "@mui/material";
+import { Dialog, DialogContent, DialogTitle } from "@mui/material";
+import { useForm } from "../hooks";
 
-export const DialogForm = ({ isOpen, categories, onSave, onClose }) => {
-  const initialFormValues = {
+export const DialogForm = ({ isOpen, categories, onClose, onSave }) => {
+  const { form, handleChangeForm, handleSubmit } = useForm({
     title: "",
     category: categories[0].id,
     description: "",
     date: "",
     startTime: "",
-    endTime: "",
-  };
+    duration: 0,
+  });
 
-  const [formValues, setFormValues] = useState({ ...initialFormValues });
+  const { title, category, description, date, startTime, duration } = form;
 
-  useEffect(() => {
-    if (isOpen) {
-      setFormValues({ ...initialFormValues });
-    }
-  }, [isOpen]);
-
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormValues((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
-
-  const handleSave = () => {
-    onSave(formValues);
+  const handleSave = (event) => {
+    handleSubmit(event)
     onClose();
+    onSave(form)
   };
 
   return (
     <Dialog open={isOpen} onClose={onClose}>
-      <DialogTitle className="text-black font-bold">
+      <DialogTitle className="text-black font-bold text-center">
         Registrar Evento
       </DialogTitle>
-      <DialogContent sx={{ maxWidth: "500px" }}>
-        <FormControl
-          className="flex flex-col gap-y-4"
-          sx={{ marginTop: "10px" }}
-        >
-          <TextField
+      <DialogContent className="flex flex-col gap-y-2 w-[320px]">
+        <form className="flex flex-col gap-y-4 mt-1">
+          <input
+            className="border-none bg-gray-200"
             type="text"
             name="title"
             label="Título"
-            value={formValues.title}
-            onChange={handleInputChange}
-            variant="filled"
+            placeholder="Titulo del evento"
+            value={title}
+            onChange={handleChangeForm}
           />
-          <Select
+          <select
+            className="border-none bg-gray-200"
             name="category"
             label="Categoría"
-            value={formValues.category}
-            onChange={handleInputChange}
+            value={category}
+            onChange={handleChangeForm}
             variant="filled"
           >
             {categories.map((item) => (
-              <MenuItem value={item.id} key={item.id}>
+              <option
+                className="my-2 bg-white rounded-none"
+                value={item.id}
+                key={item.id}
+              >
                 {item.text}
-              </MenuItem>
+              </option>
             ))}
-          </Select>
-          <TextField
+          </select>
+          <textarea
+            className="border-none bg-gray-200"
             name="description"
             label="Descripción"
             placeholder="Descripción"
-            multiline
-            rows={2}
-            variant="filled"
-            value={formValues.description}
-            onChange={handleInputChange}
-            sx={{ border: "1px solid #ccc", borderRadius: "4px" }}
+            rows="2"
+            value={description}
+            onChange={handleChangeForm}
           />
-          <TextField
+          <input
+            className="border-none bg-gray-200"
             name="date"
             type="date"
             label="Fecha"
-            value={formValues.date}
-            onChange={handleInputChange}
-            variant="filled"
-            placeholder=""
+            value={date}
+            onChange={handleChangeForm}
           />
-          <TextField
-            name="startTime"
-            type="time"
-            label="Hora de inicio"
-            value={formValues.startTime}
-            onChange={handleInputChange}
-            variant="filled"
-            placeholder=""
-            
-          />
-          <TextField
-            name="endTime"
-            type="time"
-            label="Hora de fin"
-            value={formValues.endTime}
-            onChange={handleInputChange}
-            variant="filled"
-            placeholder=""
-          />
-        </FormControl>
+          <div className="flex gap-x-4">
+            <input
+              className="border-none bg-gray-200"
+              name="startTime"
+              type="time"
+              label="Hora de inicio"
+              value={startTime}
+              onChange={handleChangeForm}
+            />
+            <input
+              className="border-none bg-gray-200 w-28"
+              name="duration"
+              type="number"
+              label="Hora de inicio"
+              placeholder="Duración"
+              value={duration}
+              onChange={handleChangeForm}
+            />
+          </div>
+        </form>
+
+        <div className="flex flex-row gap-x-2 my-1 justify-end">
+          <button
+            className="px-2 py-1 bg-red-800 text-white rounded w-20 hover:bg-red-600"
+            onClick={onClose}
+          >
+            Cerrar
+          </button>
+          <button
+            className="px-2 py-1 bg-green-800 text-white rounded w-20 hover:bg-green-600"
+            onClick={handleSave}
+          >
+            Guardar
+          </button>
+        </div>
       </DialogContent>
-      <DialogActions>
-        <Button
-          variant="contained"
-          sx={{ backgroundColor: "blue", color: "white" }}
-          onClick={onClose}
-        >
-          Cerrar
-        </Button>
-        <Button variant="contained" onClick={handleSave}>
-          Guardar
-        </Button>
-      </DialogActions>
     </Dialog>
   );
 };

@@ -444,6 +444,32 @@ class AsesorList(generics.ListCreateAPIView):
         return Response(dataJson)
 
 
+
+class AsesorLeadList(APIView):
+
+    def get(self, request):
+        asesor_queryset = Asesor.objects.all()
+        asesorSerializer = AsesorSerializer(asesor_queryset, many=True)
+        dataJson = asesorSerializer.data
+        for i in dataJson:
+            i["leads"] = LeadSerializer(Lead.objects.filter(asesor = i["id"]),many = True).data
+
+        return Response(dataJson)
+
+
+
+class AsesorLeadDetail(APIView):
+
+    def get(self, request, pk=None):
+        asesor_queryset = Asesor.objects.get(id = pk)
+        asesorSerializer = AsesorSerializer(asesor_queryset)
+        dataJson = asesorSerializer.data
+        dataJson["leads"] = LeadSerializer(Lead.objects.filter(asesor = asesor_queryset.pk),many = True).data
+
+        return Response(dataJson)
+
+
+
 class AsesorListSinFiltros(AsesorList):
     def list(self, request):
         self.queryset = self.queryset.filter()
@@ -590,3 +616,22 @@ class EstadoLeadInactivos(EstadoLeadList):
     def list(self, request):
         self.queryset = self.queryset.filter(estado="I")
         return super().list(request)
+
+
+
+class EventoList(generics.ListCreateAPIView):
+    serializer_class = EventoSerializer
+    queryset = Evento.objects.all()
+
+
+class EventoDetail(generics.RetrieveUpdateDestroyAPIView):
+    serializer_class = EventoSerializer
+    queryset = Evento.objects.all()
+
+class TipoEventoList(generics.ListCreateAPIView):
+    serializer_class = TipoEventoSerializer
+    queryset = TipoEvento.objects.all()
+
+class TipoEventoDetail(generics.RetrieveUpdateDestroyAPIView):
+    serializer_class = TipoEventoSerializer
+    queryset = TipoEvento.objects.all()

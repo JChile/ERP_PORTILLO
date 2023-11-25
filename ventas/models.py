@@ -29,7 +29,7 @@ class TipoEvento(models.Model):
 class Evento(models.Model):
     asesor = models.ForeignKey(Asesor,  on_delete=models.CASCADE )
     titulo = models.CharField(max_length=100, null=True)
-    fecha_creacion = models.DateTimeField(auto_now_add=True)
+    duracion = models.IntegerField()
     fecha_visita = models.DateTimeField()
     tipo = models.ForeignKey(TipoEvento,  on_delete=models.CASCADE )
     ubicacion = models.CharField(max_length=100, null=True)

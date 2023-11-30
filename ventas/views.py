@@ -633,9 +633,9 @@ class EventoList(generics.ListCreateAPIView):
         dataJson = EventoSerializer(evento_queryset, many = True).data
 
         for i in dataJson:
-            i["asesor"] = AsesorSerializer(asesor_queryset.get(id = i["id"])).data
-            i["tipo"] = TipoEventoSerializer(tipo_queryset.get(id = i["id"])).data
-            i["proyecto"] = ProyectoSerializer(proyecto_queryset.get(id = i["id"])).data
+            i["asesor"] = AsesorSerializer(asesor_queryset.get(id = i["asesor"])).data
+            i["tipo"] = TipoEventoSerializer(tipo_queryset.get(id = i["tipo"])).data
+            i["proyecto"] = ProyectoSerializer(proyecto_queryset.get(id = i["proyecto"])).data
 
 
 
@@ -653,9 +653,9 @@ class EventoDetail(generics.RetrieveUpdateDestroyAPIView):
         proyecto_queryset = Proyecto.objects.all()
 
         dataJson = EventoSerializer(evento).data
-        dataJson["asesor"] = AsesorSerializer(asesor_queryset.get(id = evento.pk)).data
-        dataJson["tipo"] = TipoEventoSerializer(tipo_queryset.get(id =  evento.pk)).data
-        dataJson["proyecto"] = ProyectoSerializer(proyecto_queryset.get(id =  evento.pk)).data
+        dataJson["asesor"] = AsesorSerializer(asesor_queryset.get(id = evento.asesor.pk)).data
+        dataJson["tipo"] = TipoEventoSerializer(tipo_queryset.get(id =  evento.tipo.pk)).data
+        dataJson["proyecto"] = ProyectoSerializer(proyecto_queryset.get(id =  evento.proyecto.pk)).data
         return Response(dataJson)
 
 class TipoEventoList(generics.ListCreateAPIView):

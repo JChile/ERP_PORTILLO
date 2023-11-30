@@ -1,31 +1,35 @@
-import React, { useState, useEffect } from "react";
-import { getProyectos } from "./getProyectos";
+import { useEffect, useState } from "react";
+import { getLeads } from "../../../modules/lead/helpers/getLeads";
 import { Autocomplete, TextField } from "@mui/material";
 
 const defaultOption = {
   value: 0,
-  label: "Seleccione un proyecto",
+  label: "Seleccione lead",
   id: 0,
 };
 
-export const FilterProyectos = ({ defaultValue = null, onNewInput }) => {
+export const FilterLeads = ({
+  defaultValue = null,
+  onNewInput,
+  name,
+  style,
+}) => {
   const [options, setOptions] = useState([defaultOption]);
   const [value, setValue] = useState(defaultOption);
 
-  const obtenerProyectos = async () => {
-    const result = await getProyectos();
+  const obtenerLeads = async () => {
+    const result = await getLeads();
     const formatSelect = [
       defaultOption,
-      ...result.map((element) => {
+      ...result.map((item) => {
         return {
-          value: element.id,
-          label: element.nombre,
-          id: element.id,
+          value: item.id,
+          label: item.nombre,
+          id: item.id,
         };
       }),
     ];
     setOptions(formatSelect);
-    // verficar si defualtvalue coincide
     const defaultValueOption = formatSelect.find(
       (option) => option.id === defaultValue
     );
@@ -35,25 +39,28 @@ export const FilterProyectos = ({ defaultValue = null, onNewInput }) => {
   };
 
   const handleChange = (event, value) => {
-    onNewInput(value);
+    onNewInput({ target: { name: name, value: value.id } });
     setValue(value);
   };
 
   useEffect(() => {
     const controller = new AbortController();
-    obtenerProyectos();
+    obtenerLeads();
     return () => controller.abort();
   }, [defaultValue]);
 
   return (
     <Autocomplete
       options={options}
+      style={style}
       value={value}
       disableClearable
       getOptionLabel={(option) => option.label}
       onChange={handleChange}
       isOptionEqualToValue={(option, value) => option.id == value.id}
-      renderInput={(params) => <TextField label="Proyecto" {...params} size="small"/>}
+      renderInput={(params) => (
+        <TextField {...params} variant="filled" style={{ width: "100%" }} />
+      )}
     />
   );
 };

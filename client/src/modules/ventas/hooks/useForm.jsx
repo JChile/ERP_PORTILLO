@@ -8,14 +8,13 @@ export const useForm = (initialState) => {
     setForm({ ...form, [name]: value });
   };
 
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    console.log(form);
+  const handleSubmit = (callback) => {
+    callback();
   };
 
   return {
     form,
     handleChangeForm,
-    handleSubmit
+    handleSubmit,
   };
 };

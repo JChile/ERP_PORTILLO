@@ -1,19 +1,19 @@
 import React, { useState, useEffect } from "react";
-import { getProyectos } from "./getProyectos";
+import { getTipoEventos } from "../../../modules/ventas/helpers/typeEventCases";
 import { Autocomplete, TextField } from "@mui/material";
 
 const defaultOption = {
   value: 0,
-  label: "Seleccione un proyecto",
-  id: 0,
+  label: "Seleccione un tipo evento",
+  id: null,
 };
 
-export const FilterProyectos = ({ defaultValue = null, onNewInput }) => {
+export const FilterTipoEvento = ({ defaultValue = null, onNewInput }) => {
   const [options, setOptions] = useState([defaultOption]);
   const [value, setValue] = useState(defaultOption);
 
-  const obtenerProyectos = async () => {
-    const result = await getProyectos();
+  const obtenerTipoEventos = async () => {
+    const result = await getTipoEventos();
     const formatSelect = [
       defaultOption,
       ...result.map((element) => {
@@ -41,7 +41,7 @@ export const FilterProyectos = ({ defaultValue = null, onNewInput }) => {
 
   useEffect(() => {
     const controller = new AbortController();
-    obtenerProyectos();
+    obtenerTipoEventos();
     return () => controller.abort();
   }, [defaultValue]);
 
@@ -53,7 +53,9 @@ export const FilterProyectos = ({ defaultValue = null, onNewInput }) => {
       getOptionLabel={(option) => option.label}
       onChange={handleChange}
       isOptionEqualToValue={(option, value) => option.id == value.id}
-      renderInput={(params) => <TextField label="Proyecto" {...params} size="small"/>}
+      renderInput={(params) => (
+        <TextField label="Tipo Evento" {...params} size="small" />
+      )}
     />
   );
 };

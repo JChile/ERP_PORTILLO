@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useReducer, useState } from "react";
 import { Calendar, momentLocalizer } from "react-big-calendar";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import "./../components/calendar.css";
@@ -6,36 +6,11 @@ import moment from "moment";
 import { CustomToolbar, CustomEvent, CustomEventWrapper } from "../components";
 import { DialogForm } from "../components/DialogForm";
 import { DialogDetail } from "../components/DialogDetail";
+import { createEvent, getEvents } from "../helpers/eventCases";
+import { getTipoEventos } from "../helpers/typeEventCases";
+import { CustomCircularProgress } from "../../../components";
 
 const localizer = momentLocalizer(moment);
-
-const events = [
-  {
-    id: 1,
-    title: "Evento 1",
-    start: new Date(2023, 9, 27, 10, 0), // Año, mes, día, hora, minuto
-    end: new Date(2023, 9, 27, 12, 0),
-    category: { id: "visita", text: "visita", color: "red" },
-    description: "Descripción 00",
-  },
-  {
-    id: 2,
-    title: "Evento 2",
-    start: new Date(2023, 9, 28, 13, 0), // Año, mes, día, hora, minuto
-    end: new Date(2023, 9, 28, 14, 0),
-    category: { id: "llamada", text: "llamada", color: "green" },
-    description: "Descripción 11",
-  },
-  {
-    id: 3,
-    title: "Evento 3",
-    start: new Date(2023, 9, 29, 14, 0), // Año, mes, día, hora, minuto
-    end: new Date(2023, 9, 29, 15, 0),
-    category: { id: "firma", text: "firma", color: "blue" },
-    description: "Descripción 22",
-  },
-  // Agrega más eventos aquí
-];
 
 const taskCategories = [
   { id: "visita", text: "visita", color: "red" },
@@ -43,13 +18,71 @@ const taskCategories = [
   { id: "firma", text: "firma", color: "blue" },
 ];
 
+function reducer(state, action) {
+  switch (action.type) {
+    case "create_state": {
+      return {
+        createState: true,
+        selectState: false,
+        loadState: false,
+      };
+    }
+    case "update_state": {
+      return {
+        createState: false,
+        selectState: true,
+        loadState: false,
+      };
+    }
+    case "base_state": {
+      return {
+        createState: false,
+        selectState: false,
+        loadState: false,
+      };
+    }
+    case "loading_state": {
+      return {
+        createEvent: false,
+        selectState: false,
+        loadState: true,
+      };
+    }
+  }
+}
+
+const initialState = {
+  createState: false,
+  selectState: false,
+  loadState: true,
+};
+
+const transformToEvent = (oldEvent) => {
+  const startEvent = new Date(oldEvent.fecha_visita);
+  const durationMilliseconds = oldEvent.duracion * 60000;
+  const endEvent = new Date(startEvent.getTime() + durationMilliseconds);
+  return {
+    title: oldEvent.titulo,
+    start: startEvent,
+    end: endEvent,
+    proyecto: oldEvent.proyecto,
+    tipo: oldEvent.tipo,
+    descripcion: oldEvent.descripcion,
+    estado: oldEvent.estado,
+    ubicacion: oldEvent.ubicacion,
+    id: oldEvent.id,
+    asesor: oldEvent.asesor,
+    duracion: oldEvent.duracion,
+  };
+};
+
 export const CalendarView = () => {
-  /** Dialog state events */
+
+  const [state, dispatch] = useReducer(reducer, initialState);
   const [selectedEvent, setSelectedEvent] = useState(null);
-  const [createEvent, setCreateEvent] = useState(false);
-  /** Filter state events */
-  const [calendarEvents, setCalendarEvents] = useState(events);
-  const [filteredEvents, setFilteredEvents] = useState(events);
+  const [calendarEvents, setCalendarEvents] = useState([]);
+  const [typeEvents, setTypeEvents] = useState([]);
+
   const [filterStates, setFilterStates] = useState({
     visita: true,
     firma: true,
@@ -72,28 +105,31 @@ export const CalendarView = () => {
     setFilteredEvents(filtered);
   };
 
-  const handleSaveNewEvent = (formData) => {
-    const calculateStart = new Date(`${formData.date}T${formData.startTime}`);
-    const durationMs = formData.duration * 60000;
-    const calculateEnd = new Date(calculateStart.getTime() + durationMs);
-
-    const newEvent = {
-      id: calendarEvents.length + 1,
-      title: formData.title,
-      start: calculateStart,
-      end: calculateEnd,
-      category: { id: formData.category, text: "Llamada", color: "green" },
-      description: formData.description,
-    };
-    setCalendarEvents((prev) => [...prev, newEvent]);
+  const getCalendarData = async () => {
+    try {
+      const events = await getEvents();
+      const typeEvents = await getTipoEventos();
+      setTypeEvents(typeEvents);
+      setCalendarEvents(events.map((item) => transformToEvent(item)));
+      dispatch({ type: "base_state" });
+    } catch (error) {
+      console.error(error);
+    }
   };
 
+  useEffect(() => {
+    const controller = new AbortController();
+    getCalendarData();
+    return () => controller.abort();
+  }, []);
+
   return (
+    <React.Fragment>
     <div className="flex flex-col gap-y-3">
       <div className="flex justify-between">
         <button
           className="hover:shadow-xl hover:bg-slate-300 px-2 py-2 shadow-black border rounded w-20 text-xm"
-          onClick={() => setCreateEvent(true)}
+          onClick={() => dispatch({ type: "create_state" })}
         >
           Crear
         </button>
@@ -127,7 +163,7 @@ export const CalendarView = () => {
       <Calendar
         culture="es"
         localizer={localizer}
-        events={filteredEvents}
+        events={calendarEvents}
         startAccessor="start"
         endAccessor="end"
         style={{ height: 500 }}
@@ -141,22 +177,23 @@ export const CalendarView = () => {
         }}
       />
 
-      {selectedEvent && (
+      {state.selectState && (
         <DialogDetail
           selectedEvent={selectedEvent}
           onClose={() => setSelectedEvent(null)}
-          isOpen={selectedEvent !== null}
+          isOpen={state.selectState}
         />
       )}
 
-      {createEvent && (
+      {state.createState && (
         <DialogForm
-          categories={taskCategories}
-          onClose={() => setCreateEvent(false)}
-          isOpen={createEvent}
-          onSave={handleSaveNewEvent}
+          typeEvents={typeEvents}
+          onClose={() => dispatch({ type: "loading_state" })}
+          isOpen={state.createState}
         />
       )}
     </div>
+    { state.loadState && <CustomCircularProgress /> }
+    </React.Fragment>
   );
 };

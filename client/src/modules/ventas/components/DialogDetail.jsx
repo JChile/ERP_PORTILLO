@@ -3,7 +3,7 @@ import { Dialog, DialogContent, DialogTitle } from "@mui/material";
 export const DialogDetail = ({ onClose, selectedEvent, isOpen }) => {
   const { category, description, end, start, title } = selectedEvent;
 
-  console.log({ category, description, end, start, title });
+  //console.log(selectedEvent);
 
   return (
     <Dialog open={isOpen} onClose={onClose}>

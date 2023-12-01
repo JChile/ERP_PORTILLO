@@ -1,8 +1,6 @@
 import React from "react";
 
 export const CustomEventWrapper = (props) => {
-
-  
   const { event, children, onSelectEvent } = props;
 
   const eventStyle = {

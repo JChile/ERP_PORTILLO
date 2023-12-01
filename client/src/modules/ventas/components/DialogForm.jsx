@@ -4,18 +4,17 @@ import {
   DialogContent,
   DialogTitle,
   FormControl,
-  MenuItem,
-  Select,
   TextField,
+  Typography,
 } from "@mui/material";
 import { useForm } from "../hooks";
 import { createEvent } from "../helpers/eventCases";
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { AuthContext } from "../../../auth/context/AuthContext";
 import { FilterProyectos } from "../../../components";
 import { FilterTipoEvento } from "../../../components/filters/tipoEvento/FilterTipoEvento";
 
-export const DialogForm = ({ isOpen, typeEvents, onClose }) => {
+export const DialogForm = ({ isOpen, onClose }) => {
   const { currentUser } = useContext(AuthContext);
 
   const { form, handleChangeForm, handleSubmit } = useForm({
@@ -29,6 +28,8 @@ export const DialogForm = ({ isOpen, typeEvents, onClose }) => {
     horaInicio: "",
   });
 
+  const [formErrors, setFormErrors] = useState({});
+
   const {
     titulo,
     ubicacion,
@@ -41,21 +42,50 @@ export const DialogForm = ({ isOpen, typeEvents, onClose }) => {
   } = form;
 
   const handleSave = async () => {
-    const dateToSave = new Date(`${fecha}T${horaInicio}`);
-    const eventSave = {
-      titulo: titulo,
-      duracion: duracion,
-      fecha_visita: dateToSave.toISOString(),
-      ubicacion: ubicacion,
-      descripcion: descripcion,
-      asesor: currentUser.user.id,
-      tipo: tipo,
-      proyecto: proyecto,
-      estado: "A",
-    };
-    checkInputForm();
-    const result = await createEvent(eventSave);
-    onClose();
+    const errors = checkInputForm();
+    if (Object.keys(errors).length === 0) {
+      // No hay errores, procede a guardar el evento
+      const dateToSave = new Date(`${fecha}T${horaInicio}`);
+      const eventSave = {
+        titulo: titulo,
+        duracion: duracion,
+        fecha_visita: dateToSave.toISOString(),
+        ubicacion: ubicacion,
+        descripcion: descripcion,
+        asesor: currentUser.user.id,
+        tipo: tipo,
+        proyecto: proyecto,
+        estado: "A",
+      };
+      const result = await createEvent(eventSave);
+      onClose();
+    } else {
+      // Hay errores en el formulario, actualiza el estado con los errores
+      setFormErrors(errors);
+    }
+  };
+
+  const checkInputForm = () => {
+    const errors = {};
+    if (!titulo) {
+      errors.titulo = "El título es obligatorio";
+    }
+    if (!descripcion) {
+      errors.descripcion = "La descripción es obligatoria";
+    }
+    if (!fecha) {
+      errors.fecha = "La fecha es obligatoria";
+    }
+    if (duracion <= 0) {
+      errors.duracion = "La duración debe ser mayor a 0";
+    }
+    if (!tipo) {
+      errors.tipo = "El tipo es obligatorio";
+    }
+    if (!proyecto) {
+      errors.proyecto = "El proyecto es obligatorio";
+    }
+    return errors;
   };
 
   const onAddProyecto = (item) => {
@@ -74,18 +104,6 @@ export const DialogForm = ({ isOpen, typeEvents, onClose }) => {
         value: item.id,
       },
     });
-  };
-
-  const checkInputForm = () => {
-    if (!titulo) return;
-    if (!descripcion) return;
-    if (!fecha) return;
-    if (duracion <= 0) return;
-    if (!tipo) return;
-    if (!proyecto) return;
-    return {
-      ...form,
-    };
   };
 
   return (
@@ -182,6 +200,12 @@ export const DialogForm = ({ isOpen, typeEvents, onClose }) => {
             </div>
           </div>
         </FormControl>
+        {/* Mostrar mensajes de error debajo de los campos del formulario */}
+        {Object.keys(formErrors).map((fieldName) => (
+          <Typography key={fieldName} variant="subtitle2" color="error">
+            {formErrors[fieldName]}
+          </Typography>
+        ))}
       </DialogContent>
     </Dialog>
   );

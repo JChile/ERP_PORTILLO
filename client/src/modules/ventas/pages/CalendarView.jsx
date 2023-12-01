@@ -6,17 +6,21 @@ import moment from "moment";
 import { CustomToolbar, CustomEvent, CustomEventWrapper } from "../components";
 import { DialogForm } from "../components/DialogForm";
 import { DialogDetail } from "../components/DialogDetail";
-import { createEvent, getEvents } from "../helpers/eventCases";
+import { getEvents } from "../helpers/eventCases";
 import { getTipoEventos } from "../helpers/typeEventCases";
 import { CustomCircularProgress } from "../../../components";
+import {
+  Button,
+  Checkbox,
+  Drawer,
+  List,
+  ListItem,
+  ListItemSecondaryAction,
+  ListItemText,
+} from "@mui/material";
+import { transformToEvent } from "../utils/util";
 
 const localizer = momentLocalizer(moment);
-
-const taskCategories = [
-  { id: "visita", text: "visita", color: "red" },
-  { id: "llamada", text: "llamada", color: "green" },
-  { id: "firma", text: "firma", color: "blue" },
-];
 
 function reducer(state, action) {
   switch (action.type) {
@@ -25,6 +29,7 @@ function reducer(state, action) {
         createState: true,
         selectState: false,
         loadState: false,
+        filterState: false,
       };
     }
     case "update_state": {
@@ -32,6 +37,7 @@ function reducer(state, action) {
         createState: false,
         selectState: true,
         loadState: false,
+        filterState: false,
       };
     }
     case "base_state": {
@@ -39,6 +45,7 @@ function reducer(state, action) {
         createState: false,
         selectState: false,
         loadState: false,
+        filterState: false,
       };
     }
     case "loading_state": {
@@ -46,6 +53,15 @@ function reducer(state, action) {
         createEvent: false,
         selectState: false,
         loadState: true,
+        filterState: false,
+      };
+    }
+    case "filter_state": {
+      return {
+        createState: false,
+        selectState: false,
+        loadState: false,
+        filterState: true,
       };
     }
   }
@@ -57,60 +73,58 @@ const initialState = {
   loadState: true,
 };
 
-const transformToEvent = (oldEvent) => {
-  const startEvent = new Date(oldEvent.fecha_visita);
-  const durationMilliseconds = oldEvent.duracion * 60000;
-  const endEvent = new Date(startEvent.getTime() + durationMilliseconds);
-  return {
-    title: oldEvent.titulo,
-    start: startEvent,
-    end: endEvent,
-    proyecto: oldEvent.proyecto,
-    tipo: oldEvent.tipo,
-    descripcion: oldEvent.descripcion,
-    estado: oldEvent.estado,
-    ubicacion: oldEvent.ubicacion,
-    id: oldEvent.id,
-    asesor: oldEvent.asesor,
-    duracion: oldEvent.duracion,
-  };
-};
-
 export const CalendarView = () => {
-
   const [state, dispatch] = useReducer(reducer, initialState);
+  const [flagLoader, setFlagLoader] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [calendarEvents, setCalendarEvents] = useState([]);
   const [typeEvents, setTypeEvents] = useState([]);
+  const [originalEvents, setOriginalEvents] = useState([]);
+  const [selectedFilters, setSelectedFilters] = useState({});
+  const [tempFilters, setTempFilters] = useState({});
 
-  const [filterStates, setFilterStates] = useState({
-    visita: true,
-    firma: true,
-    llamada: true,
-  });
-
-  const handleFilterChange = (event) => {
+  const handleTempFilters = (event) => {
     const { name, checked } = event.target;
-    setFilterStates({
-      ...filterStates,
+    const updatedFilters = {
+      ...tempFilters,
       [name]: checked,
-    });
+    };
+    setTempFilters(updatedFilters);
   };
 
   const applyFilters = () => {
-    const filtered = calendarEvents.filter((event) => {
-      if (filterStates[event.category.id]) return true;
-      return false;
-    });
-    setFilteredEvents(filtered);
+    const filtered = originalEvents.filter(
+      (event) => tempFilters[event.tipo.nombre]
+    );
+    setCalendarEvents(filtered);
+    setSelectedFilters(tempFilters);
   };
 
   const getCalendarData = async () => {
     try {
       const events = await getEvents();
       const typeEvents = await getTipoEventos();
+
+      if (Object.keys(selectedFilters).length === 0) {
+        const initialFilters = {};
+        typeEvents.forEach((typeEvent) => {
+          initialFilters[typeEvent.nombre] = true;
+        });
+        setSelectedFilters(initialFilters);
+      }
       setTypeEvents(typeEvents);
-      setCalendarEvents(events.map((item) => transformToEvent(item)));
+      const transformedEvents = events.map((item) => transformToEvent(item));
+      // Aplicar filtros si existen antes de actualizar los eventos
+      if (Object.keys(selectedFilters).length > 0) {
+        const filteredEvents = transformedEvents.filter(
+          (event) => selectedFilters[event.tipo.nombre]
+        );
+        setCalendarEvents(filteredEvents);
+      } else {
+        setCalendarEvents(transformedEvents);
+      }
+
+      setOriginalEvents(transformedEvents);
       dispatch({ type: "base_state" });
     } catch (error) {
       console.error(error);
@@ -121,79 +135,156 @@ export const CalendarView = () => {
     const controller = new AbortController();
     getCalendarData();
     return () => controller.abort();
-  }, []);
+  }, [flagLoader]);
 
+  /**
+  useEffect(() => {
+    setTempFilters(selectedFilters);
+    console.log("---loading")
+  }, [selectedFilters]);
+ */
   return (
     <React.Fragment>
-    <div className="flex flex-col gap-y-3">
-      <div className="flex justify-between">
-        <button
-          className="hover:shadow-xl hover:bg-slate-300 px-2 py-2 shadow-black border rounded w-20 text-xm"
-          onClick={() => dispatch({ type: "create_state" })}
-        >
-          Crear
-        </button>
+      <div className="flex flex-col gap-y-3">
+        <div className="flex justify-between">
+          <Button
+            variant="contained"
+            color="inherit"
+            sx={{ textTransform: "capitalize" }}
+            onClick={() => dispatch({ type: "create_state" })}
+          >
+            Crear
+          </Button>
 
-        <button onClick={applyFilters} className="bg-slate-300">
-          Limitar a
-        </button>
-
-        <div className="flex gap-x-2">
-          {taskCategories.map((category) => {
-            return (
-              <label
-                key={category.id}
-                htmlFor={`${category.id}Checkbox`}
-                className={`flex gap-x-2 items-center h-7 px-2 justify-center rounded-md text-xs cursor-pointer`}
-              >
-                {category.text}
-                <input
-                  type="checkbox"
-                  name={category.text}
-                  id={`${category.id}Checkbox`}
-                  checked={filterStates[category.id]}
-                  onChange={(event) => handleFilterChange(event)}
-                />
-              </label>
-            );
-          })}
+          <Button
+            variant="contained"
+            color="inherit"
+            sx={{ textTransform: "capitalize" }}
+            onClick={() => dispatch({ type: "filter_state" })}
+          >
+            Filtrar eventos
+          </Button>
         </div>
+
+        <Drawer
+          anchor="right"
+          open={state.filterState}
+          onClose={() => {
+            setTempFilters(selectedFilters);
+            dispatch({ type: "base_state" });
+          }}
+        >
+          <div className="flex flex-col gap-y-2 h-full justify-between">
+            <div className="bg-[#282828]">
+              <h2 className=" text-white py-8 px-4 font-bold">Filtrar por:</h2>
+            </div>
+            <div className="overflow-auto flex-1">
+              <List
+                sx={{
+                  paddingX: "1rem",
+                }}
+              >
+                {typeEvents.map((type) => (
+                  <ListItem key={type.id} disablePadding>
+                    <ListItemText
+                      primary={type.nombre}
+                      sx={{
+                        textTransform: "capitalize",
+                      }}
+                    />
+                    <ListItemSecondaryAction>
+                      <Checkbox
+                        edge="end"
+                        onChange={handleTempFilters}
+                        checked={tempFilters[type.nombre] || false}
+                        inputProps={{ name: type.nombre }}
+                      />
+                    </ListItemSecondaryAction>
+                  </ListItem>
+                ))}
+              </List>
+            </div>
+
+            <div className="flex gap-x-2 px-4 py-4 bg-dark-purple justify-center">
+              <Button
+                variant="contained"
+                color="inherit"
+                sx={{
+                  textTransform: "capitalize",
+                }}
+                size="small"
+                onClick={() => {
+                  applyFilters();
+                  setFlagLoader((prev) => !prev);
+                  dispatch({ type: "loading_state" });
+                }}
+              >
+                Filtrar
+              </Button>
+              <Button
+                size="small"
+                variant="contained"
+                color="inherit"
+                sx={{
+                  textTransform: "capitalize",
+                }}
+                onClick={() => {
+                  setTempFilters(selectedFilters);
+                  dispatch({ type: "base_state" });
+                }}
+              >
+                Cancelar
+              </Button>
+            </div>
+          </div>
+        </Drawer>
+
+        <Calendar
+          culture="es"
+          localizer={localizer}
+          events={calendarEvents}
+          startAccessor="start"
+          endAccessor="end"
+          style={{ height: 500 }}
+          views={["month", "week"]}
+          components={{
+            eventWrapper: (props) => (
+              <CustomEventWrapper
+                {...props}
+                onSelectEvent={(event) => {
+                  dispatch({ type: "update_state" });
+                  setSelectedEvent(event);
+                }}
+              />
+            ),
+            event: CustomEvent,
+            toolbar: CustomToolbar,
+          }}
+        />
+
+        {state.selectState && (
+          <DialogDetail
+            selectedEvent={selectedEvent}
+            onClose={() => {
+              dispatch({ type: "base_state" });
+              setSelectedEvent(null);
+            }}
+            isOpen={state.selectState}
+          />
+        )}
+
+        {state.createState && (
+          <DialogForm
+            typeEvents={typeEvents}
+            onClose={() => {
+              dispatch({ type: "loading_state" });
+              setFlagLoader((prev) => !prev);
+            }}
+            isOpen={state.createState}
+          />
+        )}
       </div>
-
-      <Calendar
-        culture="es"
-        localizer={localizer}
-        events={calendarEvents}
-        startAccessor="start"
-        endAccessor="end"
-        style={{ height: 500 }}
-        views={["month", "week"]}
-        components={{
-          eventWrapper: (props) => (
-            <CustomEventWrapper {...props} onSelectEvent={setSelectedEvent} />
-          ),
-          event: CustomEvent,
-          toolbar: CustomToolbar,
-        }}
-      />
-
-      {state.selectState && (
-        <DialogDetail
-          selectedEvent={selectedEvent}
-          onClose={() => setSelectedEvent(null)}
-          isOpen={state.selectState}
-        />
-      )}
-
-      {state.createState && (
-        <DialogForm
-          typeEvents={typeEvents}
-          onClose={() => dispatch({ type: "loading_state" })}
-          isOpen={state.createState}
-        />
-      )}
-    </div>
-    { state.loadState && <CustomCircularProgress /> }
+      {state.loadState && <CustomCircularProgress />}
     </React.Fragment>
   );
 };

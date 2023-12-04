@@ -137,12 +137,6 @@ export const CalendarView = () => {
     return () => controller.abort();
   }, [flagLoader]);
 
-  /**
-  useEffect(() => {
-    setTempFilters(selectedFilters);
-    console.log("---loading")
-  }, [selectedFilters]);
- */
   return (
     <React.Fragment>
       <div className="flex flex-col gap-y-3">
@@ -160,7 +154,10 @@ export const CalendarView = () => {
             variant="contained"
             color="inherit"
             sx={{ textTransform: "capitalize" }}
-            onClick={() => dispatch({ type: "filter_state" })}
+            onClick={() => {
+              setTempFilters({ ...selectedFilters });
+              dispatch({ type: "filter_state" });
+            }}
           >
             Filtrar eventos
           </Button>
@@ -211,6 +208,7 @@ export const CalendarView = () => {
                 color="inherit"
                 sx={{
                   textTransform: "capitalize",
+                  width: "100%",
                 }}
                 size="small"
                 onClick={() => {
@@ -220,20 +218,6 @@ export const CalendarView = () => {
                 }}
               >
                 Filtrar
-              </Button>
-              <Button
-                size="small"
-                variant="contained"
-                color="inherit"
-                sx={{
-                  textTransform: "capitalize",
-                }}
-                onClick={() => {
-                  setTempFilters(selectedFilters);
-                  dispatch({ type: "base_state" });
-                }}
-              >
-                Cancelar
               </Button>
             </div>
           </div>

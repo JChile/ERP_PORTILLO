@@ -12,7 +12,6 @@ import { HiArrowDown } from "react-icons/hi";
 import { useNavigate } from "react-router-dom";
 
 export default function MenuSimple({ logoutUser }) {
-  
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
 
@@ -38,7 +37,6 @@ export default function MenuSimple({ logoutUser }) {
             <Avatar
               sx={{ width: 32, height: 32, backgroundColor: "#9e154a" }}
             />
-            <HiArrowDown style={{ color: "white", marginLeft: "10px" }} />
           </IconButton>
         </Tooltip>
       </Box>

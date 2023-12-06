@@ -71,7 +71,14 @@ export const CreateCampania = () => {
     });
   };
 
-  const validateCampaign = (nombre,fecha_estimada,fecha_cierre,coste_estimado,coste_real,proyecto,categoria
+  const validateCampaign = (
+    nombre,
+    fecha_estimada,
+    fecha_cierre,
+    coste_estimado,
+    coste_real,
+    proyecto,
+    categoria
   ) => {
     const errors = [];
 
@@ -120,7 +127,7 @@ export const CreateCampania = () => {
     } else {
       setVisibleProgress(true);
       const result = await createCampania(campaign);
-      console.log(result)
+      console.log(result);
       setVisibleProgress(false);
       onNavigateBack();
     }
@@ -128,8 +135,8 @@ export const CreateCampania = () => {
 
   return (
     <>
-      <div className="relative border-2 rounded-md border-inherit p-5">
-        <h1 className="text-lg font-bold">Campañas de marketing</h1>
+      <div className="relative p-5">
+        <h1 className="text-lg font-bold">Crear Campaña de Marketing</h1>
         <hr className="my-4"></hr>
         <form
           method="post"
@@ -137,7 +144,7 @@ export const CreateCampania = () => {
         >
           <div className="flex flex-row gap-y-6 gap-x-8">
             <div className="w-6/12 flex flex-col gap-y-5">
-              <label className="block flex flex-col gap-y-1 ">
+              <label className="flex flex-col gap-y-1 ">
                 <span className="after:content-['*'] after:ml-0.5 after:text-yellow-500 block text-sm font-medium">
                   Nombre de la campaña
                 </span>
@@ -152,7 +159,7 @@ export const CreateCampania = () => {
                 />
               </label>
 
-              <label className="block flex flex-col gap-y-1">
+              <label className="flex flex-col gap-y-1">
                 <span className="after:content-['*'] after:ml-0.5 after:text-yellow-500 block text-sm font-medium">
                   Costo estimado
                 </span>
@@ -166,10 +173,7 @@ export const CreateCampania = () => {
                 />
               </label>
 
-              <label
-                htmlFor="fecha_estimada"
-                className="block flex flex-col gap-y-1"
-              >
+              <label htmlFor="fecha_estimada" className="flex flex-col gap-y-1">
                 <span className="after:content-['*'] after:ml-0.5 after:text-yellow-500 block text-sm font-medium">
                   Fecha estimado inicio
                 </span>
@@ -182,7 +186,7 @@ export const CreateCampania = () => {
                   className="mt-1 px-3 py-2 bg-white border shadow-sm border-slate-300 placeholder-slate-400 focus:outline-none focus:border-sky-500 focus:ring-sky-500 block w-full rounded-md sm:text-sm focus:ring-1"
                 />
               </label>
-              <label className="block flex flex-col gap-y-1">
+              <label className="flex flex-col gap-y-1">
                 <span className="after:content-['*'] after:ml-0.5 after:text-yellow-500 block text-sm font-medium">
                   Categoria
                 </span>
@@ -194,7 +198,7 @@ export const CreateCampania = () => {
             </div>
 
             <div className="w-6/12 flex flex-col gap-y-5">
-              <label className="block flex flex-col gap-y-1">
+              <label className="flex flex-col gap-y-1">
                 <span className="after:content-['*'] after:ml-0.5 after:text-yellow-500 block text-sm font-medium">
                   Proyecto
                 </span>
@@ -203,7 +207,7 @@ export const CreateCampania = () => {
                   onNewInput={onAddProject}
                 />
               </label>
-              <label className="block flex flex-col gap-y-1">
+              <label className="flex flex-col gap-y-1">
                 <span className="after:content-['*'] after:ml-0.5 after:text-yellow-500 block text-sm font-medium">
                   Costo real
                 </span>
@@ -217,7 +221,7 @@ export const CreateCampania = () => {
                 />
               </label>
 
-              <label className="block flex flex-col gap-y-1">
+              <label className="flex flex-col gap-y-1">
                 <span className="after:content-['*'] after:ml-0.5 after:text-yellow-500 block text-sm font-medium">
                   Fecha estimado cierre
                 </span>
@@ -233,10 +237,7 @@ export const CreateCampania = () => {
             </div>
           </div>
           <div>
-            <label
-              htmlFor="descripcion"
-              className="block flex flex-col gap-y-1"
-            >
+            <label htmlFor="descripcion" className=" flex flex-col gap-y-1">
               <span className="after:content-['*'] after:ml-0.5 after:text-yellow-500 block text-sm font-medium">
                 Descripción
               </span>

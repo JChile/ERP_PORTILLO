@@ -11,7 +11,7 @@ export const CustomToolbar = (toolbar) => {
           onClick={() => toolbar.onNavigate("TODAY")}
           color="inherit"
           variant="contained"
-          sx={{ textTransform: "capitalize" }}
+          sx={{ textTransform: "capitalize", borderRadius: "0px" }}
         >
           Hoy
         </Button>
@@ -35,7 +35,7 @@ export const CustomToolbar = (toolbar) => {
       <div className="flex gap-x-2">
         <Button
           variant="contained"
-          sx={{ textTransform: "capitalize" }}
+          sx={{ textTransform: "capitalize", borderRadius: "0px" }}
           color="inherit"
           onClick={() => toolbar.onView("month")}
         >
@@ -43,7 +43,7 @@ export const CustomToolbar = (toolbar) => {
         </Button>
         <Button
           variant="contained"
-          sx={{ textTransform: "capitalize" }}
+          sx={{ textTransform: "capitalize", borderRadius: "0px" }}
           color="inherit"
           onClick={() => toolbar.onView("week")}
         >

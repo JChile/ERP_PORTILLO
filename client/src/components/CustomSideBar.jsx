@@ -88,7 +88,7 @@ export const CustomSideBar = ({ children, menus }) => {
           ))}
         </List>
       </Drawer>
-      <Box component="main" sx={{ flexGrow: 1, paddingX: 3, paddingTop: 11 }}>
+      <Box component="main" sx={{ flexGrow: 1, paddingX: 3, paddingTop: 11, paddingBottom: 5}}>
         {children}
       </Box>
     </Box>

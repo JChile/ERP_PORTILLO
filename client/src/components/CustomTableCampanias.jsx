@@ -30,7 +30,7 @@ export const CustomTableCampanias = ({
   ));
 
   return (
-    <Paper>
+    <Paper sx={{ borderRadius: "0px" }}>
       <TableContainer
         sx={{ minWidth: 700 }}
         arial-aria-labelledby="customized table"
@@ -40,8 +40,8 @@ export const CustomTableCampanias = ({
             <TableRow
               sx={{
                 "& th": {
-                  color: "rgba(96,96,96)",
-                  backgroundColor: "#f5f5f5",
+                  color: "rgba(200,200,200)",
+                  backgroundColor: "#404040",
                 },
               }}
             >

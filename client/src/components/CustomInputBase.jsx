@@ -1,73 +1,50 @@
-import {
-  Button,
-  IconButton,
-  InputBase,
-  MenuItem,
-  Paper,
-  Select,
-} from "@mui/material";
+import { Button, TextField } from "@mui/material";
 import React, { useState } from "react";
+import { MdClose, MdSearch } from "react-icons/md";
 
-export const CustomInputBase = ({ filters, defaultFilter, onSearch, placeholder }) => {
-  const [search, setSearch] = useState({ text: "", filter: defaultFilter });
-
-  const { text, filter } = search;
-
-  const hanldeChangeForm = (event) => {
-    const { name, value } = event.target;
-    setSearch((prev) => ({ ...prev, [name]: value }));
-  };
-
-  const filterList = filters.map((filter, index) => (
-    <MenuItem
-      sx={{
-        fontSize: "0.9rem",
-      }}
-      key={index}
-      value={filter}
-    >
-      {filter}
-    </MenuItem>
-  ));
+export const CustomInputBase = ({ onSearch, placeholder = "" }) => {
+  const [search, setSearch] = useState("");
 
   return (
-    <Paper
-      sx={{
-        p: "2px 8px",
-        display: "flex",
-        alignItems: "center",
-        minWidth: 540,
-        height: 50,
+    <form
+      className="flex gap-x-2 "
+      onSubmit={(event) => {
+        event.preventDefault();
+        onSearch(search);
       }}
-      elevation={0}
-      variant="outlined"
-
     >
-      <Select
-        value={filter}
-        label="Filtro"
-        onChange={hanldeChangeForm}
-        name="filter"
-        height="1"
-        sx={{
-            fontSize: "0.9rem",
-            height: "2rem",
-            width: "7.5rem"
-        }}
-      >
-        {filterList}
-      </Select>
-
-      <InputBase
-        value={text}
-        sx={{ ml: 1, flex: 1 }}
+      <TextField
         placeholder={placeholder}
-        inputProps={{ "aria-label": placeholder }}
-        onChange={hanldeChangeForm}
-        name="text"
+        size="small"
+        onChange={(event) => setSearch(event.target.value)}
+        value={search}
+        sx={{
+          borderRadius: "0px",
+        }}
+        InputProps={{
+          endAdornment: search ? (
+            <MdClose
+              onClick={() => setSearch("")}
+              color="black"
+              cursor="pointer"
+              className="hover:bg-gray-300 rounded-full w-5"
+            />
+          ) : (
+            <MdSearch color="black" className="w-5" />
+          ),
+        }}
       />
 
-      <Button onClick={() => onSearch(filter, text)} variant="contained">Buscar</Button>
-    </Paper>
+      <Button
+        variant="contained"
+        sx={{ textTransform: "capitalize", borderRadius: "0px" }}
+        onClick={(event) => {
+          event.preventDefault();
+          onSearch(search);
+        }}
+      >
+        Buscar
+      </Button>
+    </form>
   );
 };

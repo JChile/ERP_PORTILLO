@@ -1,11 +1,12 @@
-import { Dialog, DialogContent, DialogTitle } from "@mui/material";
+import { Backdrop, Dialog, DialogContent, DialogTitle } from "@mui/material";
 
 export const DialogDetail = ({ onClose, selectedEvent, isOpen }) => {
   const { category, description, end, start, title } = selectedEvent;
 
-  console.log({ category, description, end, start, title });
+  //console.log(selectedEvent);
 
   return (
+    <Backdrop open={isOpen}>
     <Dialog open={isOpen} onClose={onClose}>
       <DialogTitle className="text-black font-bold text-center">
         Detalle Evento
@@ -44,5 +45,6 @@ export const DialogDetail = ({ onClose, selectedEvent, isOpen }) => {
         </div>
       </DialogContent>
     </Dialog>
+    </Backdrop>
   );
 };

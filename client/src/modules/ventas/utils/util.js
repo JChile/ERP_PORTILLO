@@ -1,15 +1,18 @@
-import dayjs from "dayjs";
-
-export function getMonth(month = dayjs().month()) {
-  month = Math.floor(month)
-  const year = dayjs().year();
-  const firstDayOfTheMonth = dayjs(new Date(year, month, 1)).day();
-  let currentMonthCount = 0 - firstDayOfTheMonth;
-  const daysMatrix = new Array(5).fill([]).map(() => {
-    return new Array(7).fill(null).map(() => {
-      currentMonthCount++;
-      return dayjs(new Date(year, month, currentMonthCount));
-    });
-  });
-  return daysMatrix
-}
+export const transformToEvent = (oldEvent) => {
+  const startEvent = new Date(oldEvent.fecha_visita);
+  const durationMilliseconds = oldEvent.duracion * 60000;
+  const endEvent = new Date(startEvent.getTime() + durationMilliseconds);
+  return {
+    title: oldEvent.titulo,
+    start: startEvent,
+    end: endEvent,
+    proyecto: oldEvent.proyecto,
+    tipo: oldEvent.tipo,
+    descripcion: oldEvent.descripcion,
+    estado: oldEvent.estado,
+    ubicacion: oldEvent.ubicacion,
+    id: oldEvent.id,
+    asesor: oldEvent.asesor,
+    duracion: oldEvent.duracion,
+  };
+};

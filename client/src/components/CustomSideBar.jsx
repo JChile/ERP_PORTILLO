@@ -19,7 +19,6 @@ import { AuthContext } from "../auth";
 import MenuSimple from "./MenuSimple";
 
 const drawerWidth = 240;
-
 export const CustomSideBar = ({ children, menus }) => {
   const [open, setOpen] = useState(false);
   const { currentUser, logoutUser } = useContext(AuthContext);
@@ -58,7 +57,7 @@ export const CustomSideBar = ({ children, menus }) => {
         </Toolbar>
       </AppBar>
       <Drawer variant="permanent" open={open}>
-        <List sx={{ marginTop: 8, flex: 1 }}>
+        <List sx={{ marginTop: 8, flex: 1 }} className="">
           {menus.map((item, index) => (
             <NavLink to={item.url} key={item.title}>
               <ListItem disablePadding sx={{ display: "block" }}>
@@ -88,7 +87,10 @@ export const CustomSideBar = ({ children, menus }) => {
           ))}
         </List>
       </Drawer>
-      <Box component="main" sx={{ flexGrow: 1, paddingX: 3, paddingTop: 11, paddingBottom: 5}}>
+      <Box
+        component="main"
+        sx={{ flexGrow: 1, paddingX: 3, paddingTop: 11, paddingBottom: 5 }}
+      >
         {children}
       </Box>
     </Box>

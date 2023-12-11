@@ -27,6 +27,7 @@ export const AddLeadManual = () => {
     estadoLead: "EP",
     objecion: 1,
     campania: null,
+    horaRecepcion: "",
   });
 
   const {
@@ -40,6 +41,7 @@ export const AddLeadManual = () => {
     estado,
     estadoLead,
     objecion,
+    horaRecepcion,
     campania,
   } = lead;
 
@@ -62,6 +64,7 @@ export const AddLeadManual = () => {
     const { name, value } = target;
     setLead({ ...lead, [name]: value });
   };
+
   const onAddCheckInputLlamar = (event) => {
     setLead({ ...lead, llamar: !llamar });
   };
@@ -96,8 +99,13 @@ export const AddLeadManual = () => {
       handleClickFeedback();
     } else {
       setVisibleProgress(true);
-      console.log(lead);
-      const result = await createLead(lead);
+      const formatLead = { ...lead };
+
+      if (lead.horaRecepcion.length === 0) {
+        delete formatLead.horaRecepcion;
+      }
+      console.log(formatLead);
+      const result = await createLead(formatLead);
       setVisibleProgress(false);
       onNavigateBack();
     }
@@ -167,6 +175,22 @@ export const AddLeadManual = () => {
               />
             </label>
 
+            <label
+              htmlFor="horaRecepcion"
+              className="block flex flex-col gap-y-1"
+            >
+              <span className="after:content-['*'] after:ml-0.5 after:text-yellow-500 block text-sm font-medium">
+                Fecha recibido
+              </span>
+              <input
+                type="date"
+                name="horaRecepcion"
+                value={horaRecepcion}
+                onChange={handledForm}
+                className="mt-1 px-3 py-2 bg-white border shadow-sm border-slate-300 placeholder-slate-400 focus:outline-none focus:border-sky-500 focus:ring-sky-500 block w-full rounded-md sm:text-sm focus:ring-1"
+              />
+            </label>
+
             <label className="block flex flex-row gap-y-1">
               <span className="block text-sm font-medium flex items-center me-2">
                 Llamar?
@@ -211,7 +235,7 @@ export const AddLeadManual = () => {
               <span className="block text-sm font-medium">Comentario</span>
               <textarea
                 name="comentario"
-                rows="3"
+                rows="6"
                 className="mt-1 px-3 py-2 bg-white border shadow-sm border-slate-300 placeholder-slate-400 focus:outline-none focus:border-sky-500 focus:ring-sky-500 block w-full rounded-md sm:text-sm focus:ring-1"
                 placeholder="Comentario"
                 value={comentario}

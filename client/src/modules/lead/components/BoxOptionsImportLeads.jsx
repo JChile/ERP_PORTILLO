@@ -29,11 +29,13 @@ export const BoxOptionsImportLeads = ({
   };
 
   const validarDatosImportacion = () => {
+    const rangoDesdeParser = parseInt(rangoDesde);
+    const rangoHastaParser = parseInt(rangoHasta);
     if (
-      rangoDesde < rangoHasta &&
-      rangoDesde > 1 &&
-      rangoHasta > 2 &&
-      rangoDesde !== rangoHasta
+      rangoDesdeParser < rangoHastaParser &&
+      rangoDesdeParser > 1 &&
+      rangoHastaParser > 2 &&
+      rangoDesdeParser !== rangoHastaParser
     ) {
       if (proyecto !== null) {
         onValidateImportFileLeads(valuesOptions);
@@ -71,7 +73,6 @@ export const BoxOptionsImportLeads = ({
                 </label>
                 <input
                   type="number"
-                  id="desde"
                   name="rangoDesde"
                   value={rangoDesde}
                   onChange={handleInputs}
@@ -83,7 +84,6 @@ export const BoxOptionsImportLeads = ({
                 </label>
                 <input
                   type="number"
-                  id="hasta"
                   name="rangoHasta"
                   value={rangoHasta}
                   onChange={handleInputs}

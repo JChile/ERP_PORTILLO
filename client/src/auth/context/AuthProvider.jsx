@@ -57,7 +57,7 @@ export const AuthProvider = ({ children }) => {
         if (item["can_view"][0]) {
           permissions_user.push({
             title: item["nombre"],
-            url: item["model"],
+            url: item["url"],
             permissions: {
               can_add: item["can_add"][0],
               can_change: item["can_change"][0],

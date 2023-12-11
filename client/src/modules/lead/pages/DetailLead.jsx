@@ -14,16 +14,16 @@ export const DetailLead = () => {
     llamar: true,
     asesor: {
       user: {
-        username: ""
-      }
+        username: "",
+      },
     },
     estado: "A",
     estadoLead: "EP",
     objecion: {
-      nombre: ""
+      nombre: "",
     },
     campania: {
-      nombre: ""
+      nombre: "",
     },
   });
 
@@ -68,33 +68,32 @@ export const DetailLead = () => {
         <div className="p-3 border-[1px] flex flex-col gap-y-4">
           <div className="flex flex-col md:flex-row min-w-[242px] gap-x-2 gap-y-3">
             <div className="w-full flex flex-col gap-y-3">
-
               <label className="block flex gap-y-1 min-w-full">
                 <span className="block text-sm font-medium min-w-[10rem] text-zinc-500">
                   Nombre:
                 </span>
-                <span className="block text-sm">{nombre || ''}</span>
+                <span className="block text-sm">{nombre || ""}</span>
               </label>
 
               <label className="block flex gap-y-1 ">
                 <span className="block text-sm font-medium min-w-[10rem] text-zinc-500">
                   Apellido:
                 </span>
-                <span className="block text-sm">{apellido || ''}</span>
+                <span className="block text-sm">{apellido || ""}</span>
               </label>
 
               <label className="block flex gap-y-1 ">
                 <span className="block text-sm font-medium min-w-[10rem] text-zinc-500">
                   Celular:
                 </span>
-                <span className="block text-sm">{celular || ''}</span>
+                <span className="block text-sm">{celular || ""}</span>
               </label>
 
               <div className="w-full flex flex-col gap-y-1">
                 <span className="block text-sm font-medium min-w-[10rem] text-zinc-500">
                   Celular2:
                 </span>
-                <span className="block text-sm">{telefono || ''}</span>
+                <span className="block text-sm">{telefono || ""}</span>
               </div>
 
               <label className="block flex gap-y-1 ">
@@ -114,21 +113,23 @@ export const DetailLead = () => {
                 <span className="block text-sm font-medium min-w-[10rem] text-zinc-500">
                   Estado:
                 </span>
-                <span className="block text-sm">{estadoLead || ''}</span>
+                <span className="block text-sm">{estadoLead || ""}</span>
               </label>
 
               <label className="block flex gap-y-1 ">
                 <span className="block text-sm font-medium min-w-[10rem] text-zinc-500">
                   Objeciones:
                 </span>
-                <span className="block text-sm">{objecion?.nombre || ''}</span>
+                <span className="block text-sm">{objecion?.nombre || ""}</span>
               </label>
 
               <label className="block flex gap-y-1 ">
                 <span className="block text-sm font-medium min-w-[10rem] text-zinc-500">
                   Asesor:
                 </span>
-                <span className="block text-sm">{asesor?.user?.username || ''}</span>
+                <span className="block text-sm">
+                  {asesor?.codigo || "No asignado"}
+                </span>
               </label>
 
               <label className="block flex gap-y-1 ">
@@ -136,7 +137,9 @@ export const DetailLead = () => {
                   Campaña:
                 </span>
                 <span className="block text-sm">
-                  <span className="block text-sm">{campania?.nombre || ''}</span>
+                  <span className="block text-sm">
+                    {campania?.nombre || ""}
+                  </span>
                 </span>
               </label>
             </div>
@@ -147,9 +150,8 @@ export const DetailLead = () => {
               <span className="block text-sm font-medium min-w-[10rem] text-zinc-500">
                 Comentario:
               </span>
-              <span className="block text-sm">{comentario || ''}</span>
+              <span className="block text-sm">{comentario || ""}</span>
             </div>
-
           </div>
           <div className="flex justify-center">
             <button

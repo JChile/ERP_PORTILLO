@@ -134,8 +134,8 @@ export const AddLeadSheet = () => {
       raw: false,
     });
     const jsonDataRange = jsonData.slice(
-      parseInt(desde, 10) - 2,
-      parseInt(hasta, 10) - 1
+      parseInt(desde) - 2,
+      parseInt(hasta) - 1
     );
     // guardamos la data a importar
     setDataImport(jsonDataRange);
@@ -189,7 +189,6 @@ export const AddLeadSheet = () => {
 
   // revisar importacion de archivo
   const onValidateImportFileLeads = (options) => {
-    console.log(options);
     const { rangoDesde, rangoHasta, proyecto } = options;
     // cerramos dialogo de opciones
     onCloseOptions();
@@ -238,6 +237,7 @@ export const AddLeadSheet = () => {
       }
     } else {
       try {
+        console.log(dataImportAux);
         const result = await importLeadsModeManual(dataImportAux);
         console.log(result);
       } catch (error) {
@@ -292,7 +292,6 @@ export const AddLeadSheet = () => {
               Importar
             </button>
           </div>
-          <pre>{JSON.stringify(dataImport, null, 2)}</pre>
         </div>
       </div>
       {/* DIALOGO DE OPCIONES */}

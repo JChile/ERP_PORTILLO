@@ -1,18 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { RiAddBoxFill } from "react-icons/ri";
+import { RiFileExcel2Fill } from "react-icons/ri";
 import { deleteLead, getLeadsActivos } from "../helpers";
-import {
-  CustomCircularProgress,
-  CustomTablePagination,
-} from "../../../components";
-import { CustomTopBar } from "../../../components/CustomTopBar";
-import { FilterEstadoLead } from "../../../components/filters/estado/FilterEstadoLead";
+import { CustomCircularProgress } from "../../../components";
 import { CustomTable } from "../../../components/CustomLeadTable";
-import { Input } from "@mui/material";
 import { CustomInputBase } from "../../../components/CustomInputBase";
 import { CustomSelectedTable } from "../components/CustomSelectedTable";
 import { DialogDeleteLead } from "../components/DialogDeleteLead";
+import { HiUserGroup } from "react-icons/hi";
 
 const headers = [
   { name: "Acciones", width: 20 },
@@ -51,15 +46,14 @@ export const ListLeads = () => {
     const { id, celular } = item;
     const body = {
       estado: "I",
-      celular: celular
+      celular: celular,
     };
     console.log(body);
     const result = await deleteLead(id, body);
-    console.log(result)
+    console.log(result);
     loadLeads();
     onCloseDeleteDialog();
   };
-
 
   const loadLeads = async () => {
     const data = await getLeadsActivos();
@@ -127,27 +121,26 @@ export const ListLeads = () => {
   return (
     <>
       <div className="flex flex-col gap-y-1 items-end">
-        <span className="block text-sm">Añadir Lead</span>
         <div className="flex gap-x-2">
           <Link
             to={"/lead/create"}
-            className="bg-transparent hover:bg-blue-500 text-blue-500 hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded"
+            className="bg-lime-400 hover:bg-lime-600 text-white-500 hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded flex items-center"
           >
-            Manual
+            <HiUserGroup className="mr-2" />
+            Añadir Manual
           </Link>
 
           <Link
             to={"/lead/create/sheet"}
-            className="bg-transparent hover:bg-blue-500 text-blue-500  hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded"
+            className="bg-yellow-400 hover:bg-yellow-500 text-black-500 hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded flex items-center"
           >
-            Automatico
+            <RiFileExcel2Fill className="mr-2" />
+            Importar
           </Link>
         </div>
       </div>
 
       <div className="px-7 mt-8 mb-8 flex justify-between items-center">
-
-
         <div className="flex flex-col gap-y-1">
           <span className="block text-sm">Buscar lead</span>
           <CustomInputBase
@@ -158,29 +151,15 @@ export const ListLeads = () => {
           />
         </div>
 
-        <div className="flex flex-row gap-x-4">
+        <div className="flex flex-row gap-x-4 items-center">
           <div className="flex flex-col gap-y-1">
             <Link
               to={"/lead/asign"}
               className="bg-transparent hover:bg-blue-500 text-blue-500 hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded"
             >
-              Asignar Acesor
+              Asignación masiva
             </Link>
           </div>
-          {/* <div className="flex flex-col gap-y-1">
-            <span className="block text-sm">Filtrar leads</span>
-            <Link
-              style={{
-                width: "6.2rem",
-              }}
-              className="bg-transparent hover:bg-blue-500 text-blue-500 hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded"
-              onClick={toogleStateLeads}
-            >
-              {unassigendLeadsTable ? "Activos" : "Inactivos"}
-            </Link>
-          </div> */}
-
-
         </div>
       </div>
 

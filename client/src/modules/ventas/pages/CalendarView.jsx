@@ -171,6 +171,7 @@ export const CalendarView = () => {
             dispatch({ type: "base_state" });
           }}
         >
+          {/** HECHO CON TAILWIND CSS */}
           <div className="flex flex-col gap-y-2 h-full justify-between">
             <div className="bg-[#282828]">
               <h2 className=" text-white py-8 px-4 font-bold">Filtrar por:</h2>

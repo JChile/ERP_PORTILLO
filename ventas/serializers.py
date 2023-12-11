@@ -63,3 +63,15 @@ class EstadoLeadSerializer(serializers.ModelSerializer):
     class Meta:
         model = EstadoLead
         fields = '__all__'
+
+
+
+class EventoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Evento
+        fields = '__all__'
+
+class TipoEventoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = TipoEvento
+        fields = '__all__'

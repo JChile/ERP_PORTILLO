@@ -8,5 +8,8 @@ admin.site.register(WhatsApp)
 admin.site.register(Llamada)
 admin.site.register(Objecion)
 admin.site.register(EstadoLead)
+admin.site.register(Evento)
+admin.site.register(TipoEvento)
+
 
 

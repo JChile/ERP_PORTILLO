@@ -18,6 +18,30 @@ class Asesor(models.Model):
     def __str__(self):
         return self.codigo
 
+class TipoEvento(models.Model):
+    nombre = models.CharField(max_length=100, null=True)
+    estado = models.ForeignKey(
+        EstadoRegistro, on_delete=models.SET_NULL, default='A', null=True)
+
+    def __str__(self):
+        return self.nombre
+
+
+class Evento(models.Model):
+    asesor = models.ForeignKey(Asesor,  on_delete=models.CASCADE )
+    titulo = models.CharField(max_length=100, null=True)
+    duracion = models.IntegerField()
+    fecha_visita = models.DateTimeField()
+    tipo = models.ForeignKey(TipoEvento,  on_delete=models.CASCADE )
+    ubicacion = models.CharField(max_length=100, null=True)
+    proyecto = models.ForeignKey(Proyecto, on_delete=models.CASCADE)
+    descripcion = models.TextField(null=True)
+    estado = models.ForeignKey(
+        EstadoRegistro, on_delete=models.SET_NULL, default='A', null=True)
+
+    def __str__(self):
+        return self.titulo
+
 
 class Objecion(models.Model):
     nombre = models.CharField(max_length=100, null=True)

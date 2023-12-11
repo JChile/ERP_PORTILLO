@@ -1,19 +1,19 @@
 import React, { useState, useEffect } from "react";
-import { getCampania } from "./getCampania";
+import { getTipoEventos } from "../../../modules/ventas/helpers/typeEventCases";
 import { Autocomplete, TextField } from "@mui/material";
 
 const defaultOption = {
   value: 0,
-  label: "Seleccione una campaña",
+  label: "Seleccione un tipo evento",
   id: null,
 };
 
-export const FilterCampania = ({ defaultValue = null, onNewInput }) => {
+export const FilterTipoEvento = ({ defaultValue = null, onNewInput }) => {
   const [options, setOptions] = useState([defaultOption]);
   const [value, setValue] = useState(defaultOption);
 
-  const obtenerCampanias = async () => {
-    const result = await getCampania();
+  const obtenerTipoEventos = async () => {
+    const result = await getTipoEventos();
     const formatSelect = [
       defaultOption,
       ...result.map((element) => {
@@ -41,7 +41,7 @@ export const FilterCampania = ({ defaultValue = null, onNewInput }) => {
 
   useEffect(() => {
     const controller = new AbortController();
-    obtenerCampanias();
+    obtenerTipoEventos();
     return () => controller.abort();
   }, [defaultValue]);
 
@@ -53,7 +53,9 @@ export const FilterCampania = ({ defaultValue = null, onNewInput }) => {
       getOptionLabel={(option) => option.label}
       onChange={handleChange}
       isOptionEqualToValue={(option, value) => option.id == value.id}
-      renderInput={(params) => <TextField label="Camapaña" {...params} />}
+      renderInput={(params) => (
+        <TextField label="Tipo Evento" {...params} size="small" />
+      )}
     />
   );
 };

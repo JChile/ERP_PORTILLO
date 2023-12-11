@@ -19,6 +19,8 @@ urlpatterns = [
     
     re_path(r'^asesor/$', views.AsesorListSinFiltros.as_view()),
     re_path(r'^asesor/(?P<pk>[0-9]+)$', views.AsesorDetail.as_view()),
+    re_path(r'^asesorLead/$', views.AsesorLeadList.as_view()),
+    re_path(r'^asesorLead/(?P<pk>[0-9]+)$', views.AsesorLeadDetail.as_view()),
     re_path(r'^asesorActivo/$', views.AsesorListActivos.as_view()),
     re_path(r'^asesorInactivo/$', views.AsesorListInactivos.as_view()),
     re_path(r'^asesorAsignacion/$', views.AsesorAsignacion.as_view()),
@@ -44,5 +46,11 @@ urlpatterns = [
     re_path(r'^estadoLeadActivo/$', views.EstadoLeadActivos.as_view()),
     re_path(r'^estadoLeadInactivo/$', views.EstadoLeadInactivos.as_view()),
 
+
+    re_path(r'^evento/$', views.EventoList.as_view()),
+    re_path(r'^evento/(?P<pk>[\w-]+)$', views.EventoDetail.as_view()),
+
+    re_path(r'^tipoEvento/$', views.TipoEventoList.as_view()),
+    re_path(r'^tipoEvento/(?P<pk>[\w-]+)$', views.TipoEventoDetail.as_view()),
     
 ]

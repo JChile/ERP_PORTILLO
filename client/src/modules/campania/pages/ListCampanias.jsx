@@ -8,6 +8,8 @@ import {
 } from "../../../components";
 import { CustomInputBase } from "../../../components/CustomInputBase";
 import { CustomTableCampanias } from "../../../components/CustomTableCampanias";
+import { Button } from "@mui/material";
+import { MdAdd, MdHdrPlus, MdPlusOne } from "react-icons/md";
 
 export const ListCampanias = () => {
   // Informaciion de las campanias.
@@ -65,35 +67,23 @@ export const ListCampanias = () => {
       const result = await deleteCampania(id, body);
       obtenerCampanias();
       onCloseDeleteDialog();
-    }
-    catch (error) {
+    } catch (error) {
       // handled error.
     }
   };
 
-  const handleSearchButton = (filter, pattern) => {
-    const filteredValue = filters.find((element) => element === filter);
-    if (!filteredValue) return;
+  const handleSearchButton = (pattern) => {
+    const filteredData = campanias.filter((item) => {
+      const { nombre, proyecto } = item;
+      const projectName = proyecto.nombre.toLowerCase();
+      const searchPattern = pattern.toLowerCase();
 
-    switch (filteredValue) {
-      case "Nombre": {
-        const filteredData = campanias.filter((item) => {
-          const { nombre } = item;
-          return nombre.toLowerCase().includes(pattern.toLowerCase());
-        });
-        setCampaniasTemporal(filteredData);
-        break;
-      }
-      case "Proyecto": {
-        const filteredData = campanias.filter((item) => {
-          const { proyecto } = item;
-          const { nombre } = proyecto;
-          return nombre.toLowerCase().includes(pattern.toLowerCase());
-        });
-        setCampaniasTemporal(filteredData);
-        break;
-      }
-    }
+      return (
+        nombre.toLowerCase().includes(searchPattern) ||
+        projectName.includes(searchPattern)
+      );
+    });
+    setCampaniasTemporal(filteredData);
   };
 
   useEffect(() => {
@@ -112,37 +102,47 @@ export const ListCampanias = () => {
     <>
       <div className="flex items-center justify-between gap-x-4 mb-9">
         <div className="flex flex-col gap-y-1 align-middle">
-          <span className="block text-sm">Buscar Campanias</span>
           <CustomInputBase
-            filters={filters}
-            defaultFilter={filters[0]}
             onSearch={handleSearchButton}
-            placeholder="Buscar lead..."
+            placeholder="Buscar campania..."
           />
         </div>
 
         <div className="flex flex-col gap-y-1 align-middle">
-          <span className="block text-sm">Gestion de campanias</span>
           <div className="flex justify-center gap-x-3">
-            <button
+            <Button
+              variant="contained"
+              sx={{
+                borderRadius: "0px",
+                textTransform: "capitalize",
+                backgroundColor: activeButton ? "#1976d2" : "#d1d5db",
+                color: activeButton ? "white" : "black",
+              }}
               onClick={() => handleButtonState(true)}
-              className={`px-4 py-2 rounded ${activeButton ? "bg-blue-500 text-white" : "bg-gray-300"
-                }`}
             >
               Activas
-            </button>
-            <button
+            </Button>
+            <Button
+              variant="contained"
+              sx={{
+                borderRadius: "0px",
+                textTransform: "capitalize",
+                backgroundColor: !activeButton ? "#1976d2" : "#d1d5db",
+                color: !activeButton ? "white" : "black",
+              }}
               onClick={() => handleButtonState(false)}
-              className={`px-4 py-2 rounded ${!activeButton ? "bg-blue-500 text-white" : "bg-gray-300"
-                }`}
             >
               Inactivas
-            </button>
-            <Link
-              to={"/campania/create/"}
-              className="bg-transparent hover:bg-blue-500 text-blue-500 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded flex items-center"
-            >
-              Crear
+            </Button>
+            <Link to={"/campania/create/"}>
+              <Button
+                endIcon={<MdAdd />}
+                color="inherit"
+                variant="contained"
+                sx={{ borderRadius: "0px", textTransform: "capitalize" }}
+              >
+                Crear
+              </Button>
             </Link>
           </div>
         </div>

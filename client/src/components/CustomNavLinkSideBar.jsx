@@ -10,13 +10,15 @@ export const CustomNavLinkSideBar = ({ item, open }) => {
       to={url}
       className={({ isActive }) =>
         isActive
-          ? `bg-light-white flex rounded-md p-2 cursor-pointer hover:bg-light-white text-gray-300 text-sm items-center gap-x-4 
-          ${gap ? "mt-9" : "mt-2"}`
-          : `flex rounded-md p-2 cursor-pointer hover:bg-light-white text-gray-300 text-sm items-center gap-x-4 
-          ${gap ? "mt-9" : "mt-2"}`
+          ? `flex py-2 px-3 bg-light-white rounded cursor-pointer hover:bg-dark-purple-white my-1 text-gray-300 text-sm items-center gap-x-4 
+          ${gap ? "mt-9" : ""}`
+          : `flex py-2 px-3  cursor-pointer rounded hover:bg-light-white text-gray-300 text-sm my-1 items-center gap-x-4 
+          ${gap ? "mt-9" : ""}`
       }
     >
-      <div className={`${!open && "mx-auto"} `} ><FiSettings /></div>
+      <div className={`${!open && "mx-auto"} `}>
+        <FiSettings />
+      </div>
       <span className={`${!open && "hidden"} origin-left duration-200`}>
         {title}
       </span>

@@ -8,6 +8,7 @@ import { LeadRoutes } from "../modules/lead";
 import { AsesorRoutes } from "../modules/asesor";
 import { NotFoundPage } from "../components";
 import { NotPublicPage } from "../components/NotPublicPage";
+import { VentasRouter } from "../modules/ventas/router/VentasRouter";
 
 export const AppRouter = () => {
   return (
@@ -35,6 +36,7 @@ export const AppRouter = () => {
                   <Route path="campania/*" element={<CampaniaRoutes />}></Route>
                   <Route path="lead/*" element={<LeadRoutes />}></Route>
                   <Route path="asesor/*" element={<AsesorRoutes />} />
+                  <Route path="ventas/*" element={<VentasRouter />} />
                 </Routes>
 
               </MainContainerApp>

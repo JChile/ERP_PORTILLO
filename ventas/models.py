@@ -27,20 +27,7 @@ class TipoEvento(models.Model):
         return self.nombre
 
 
-class Evento(models.Model):
-    asesor = models.ForeignKey(Asesor,  on_delete=models.CASCADE )
-    titulo = models.CharField(max_length=100, null=True )
-    duracion = models.IntegerField(null=True,blank=True)
-    fecha_visita = models.DateTimeField(null=True,blank=True)
-    tipo = models.ForeignKey(TipoEvento,  on_delete=models.CASCADE)
-    ubicacion = models.CharField(max_length=100, null=True)
-    proyecto = models.ForeignKey(Proyecto, on_delete=models.CASCADE)
-    descripcion = models.TextField(null=True, blank=True)
-    estado = models.ForeignKey(
-        EstadoRegistro, on_delete=models.SET_NULL, default='A', null=True)
 
-    def __str__(self):
-        return self.titulo
 
 
 class Objecion(models.Model):
@@ -109,3 +96,21 @@ class Llamada(models.Model):
     detalle = models.TextField(max_length=200, null=True, blank=True)
     estado = models.ForeignKey(
         EstadoRegistro, on_delete=models.SET_NULL, default='A', null=True)
+
+
+class Evento(models.Model):
+    asesor = models.ForeignKey(Asesor,  on_delete=models.CASCADE )
+    lead = models.ForeignKey(Lead,  on_delete=models.CASCADE , null=True,blank=True)
+
+    titulo = models.CharField(max_length=100, null=True )
+    duracion = models.IntegerField(null=True,blank=True)
+    fecha_visita = models.DateTimeField(null=True,blank=True)
+    tipo = models.ForeignKey(TipoEvento,  on_delete=models.CASCADE)
+    ubicacion = models.CharField(max_length=100, null=True)
+    proyecto = models.ForeignKey(Proyecto, on_delete=models.CASCADE)
+    descripcion = models.TextField(null=True, blank=True)
+    estado = models.ForeignKey(
+        EstadoRegistro, on_delete=models.SET_NULL, default='A', null=True)
+
+    def __str__(self):
+        return self.titulo

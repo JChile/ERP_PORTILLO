@@ -18,7 +18,6 @@ import { CustomTablePagination } from "./CustomTablePagination";
  * @returns
  */
 export const CustomTable = ({ headerData, rowData, onShowDeleteDialog }) => {
-
   const headers = headerData.map((header, index) => (
     <TableCell key={index} align="left" width={header.width}>
       <b>{header.name}</b>

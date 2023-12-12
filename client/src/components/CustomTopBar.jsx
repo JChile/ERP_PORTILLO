@@ -11,13 +11,10 @@ export const CustomTopBar = () => {
   // bg-[#282828]
 
   return (
-    <AppBar
-      position="sticky"
-      sx={{ backgroundColor: "black", paddingY: "0.68rem" }}
-    >
+    <AppBar position="sticky" sx={{ backgroundColor: "black" }}>
       <Container>
         <Toolbar>
-          <Typography variant="h6">Sistema Portillo</Typography>
+          <Typography variant="h7">Sistema Portillo</Typography>
           <div style={{ flex: 1 }} />
           <div className="flex flex-row gap-x-3 items-center">
             <div>

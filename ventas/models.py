@@ -2,6 +2,7 @@ from django.db import models
 from cuenta.models import User, EstadoRegistro
 from marketing.models import Campania
 from marketing.models import Proyecto
+from django.utils import timezone
 
 
 class Asesor(models.Model):
@@ -69,18 +70,19 @@ class Lead(models.Model):
     celular2 = models.CharField(max_length=100, null=False, blank=True)
     comentario = models.TextField(max_length=200, null=False, blank=True)
     horaEntrega = models.DateTimeField(auto_now_add=True)
-    horaRecepcion = models.DateTimeField(null=True, blank=True)
-    llamar = models.BooleanField(default=False)
+    horaRecepcion = models.DateTimeField(
+        default=timezone.now, null=True, blank=True)
+    llamar = models.BooleanField(default=True)
     asesor = models.ForeignKey(
         Asesor, on_delete=models.CASCADE, null=True, blank=True)
     campania = models.ForeignKey(
         Campania, on_delete=models.CASCADE, null=True, blank=True)
     objecion = models.ForeignKey(
-        Objecion, on_delete=models.SET_NULL, null=True, blank=True)
+        Objecion, on_delete=models.SET_NULL, null=True, blank=True, default=1)
     estado = models.ForeignKey(
         EstadoRegistro, on_delete=models.SET_NULL, default='A', null=True)
     estadoLead = models.ForeignKey(
-        EstadoLead, on_delete=models.SET_NULL, null=True, blank=True)
+        EstadoLead, on_delete=models.SET_NULL, null=True, blank=True, default="EP")
 
     def __str__(self):
         return self.nombre

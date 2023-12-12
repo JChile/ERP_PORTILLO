@@ -19,7 +19,7 @@ export const FilterAsesor = ({ defaultValue = null, onNewInput }) => {
       ...result.map((element) => {
         return {
           value: element.id,
-          label: element.user.username,
+          label: element.codigo,
           id: element.id,
         };
       }),

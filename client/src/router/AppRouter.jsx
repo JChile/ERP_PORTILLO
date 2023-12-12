@@ -29,16 +29,14 @@ export const AppRouter = () => {
             path="/*"
             element={
               <MainContainerApp>
-
                 <Routes>
-                  <Route path="user/*" element={<UsuarioRoutes />}></Route>
-                  <Route path="group/*" element={<RolRoutes />}></Route>
+                  <Route path="usuario/*" element={<UsuarioRoutes />}></Route>
+                  <Route path="rol/*" element={<RolRoutes />}></Route>
                   <Route path="campania/*" element={<CampaniaRoutes />}></Route>
                   <Route path="lead/*" element={<LeadRoutes />}></Route>
                   <Route path="asesor/*" element={<AsesorRoutes />} />
                   <Route path="ventas/*" element={<VentasRouter />} />
                 </Routes>
-
               </MainContainerApp>
             }
           />

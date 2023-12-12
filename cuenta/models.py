@@ -2,35 +2,36 @@ from django.db import models
 from django.contrib.postgres.fields import ArrayField
 from django.core.validators import RegexValidator
 from django.contrib.auth.models import AbstractUser
-from django.contrib.auth.models import Group , Permission
+from django.contrib.auth.models import Group, Permission
 from django.dispatch import receiver
 from django.db.models.signals import post_save
 from django.utils.translation import gettext_lazy as _
 from django.contrib.contenttypes.models import ContentType
 
 
-
 class EstadoRegistro(models.Model):
     estado = models.CharField(max_length=1, primary_key=True)
     nombre = models.CharField(max_length=50, null=True, default=None)
+
     def __str__(self):
         return self.estado
 
+
 class Profile(models.Model):
-    
+
     FONDO_PENSIONES = (
-        ('o','ONP'),
-        ('a','AFP'),
-        ('p','Pendiente'),
+        ('o', 'ONP'),
+        ('a', 'AFP'),
+        ('p', 'Pendiente'),
     )
 
     ESTADO_CIVIL = (
-        ('s','Soltero'),
-        ('c','Casado'),
-        ('v','Viudo'),
-        ('v','Divorciado'),
+        ('s', 'Soltero'),
+        ('c', 'Casado'),
+        ('v', 'Viudo'),
+        ('v', 'Divorciado'),
     )
-    
+
     PAISES = (
         ('AF', 'Afganistán'),
         ('AL', 'Albania'),
@@ -225,7 +226,7 @@ class Profile(models.Model):
         ('ZM', 'Zambia'),
         ('ZW', 'Zimbabue')
     )
-    
+
     TALLAS = (
         ('XS', 'XS'),
         ('S', 'S'),
@@ -237,69 +238,88 @@ class Profile(models.Model):
     )
 
     GRUPOS_SANGUINEOS = (
-    ('A+', 'A positivo'),
-    ('A-', 'A negativo'),
-    ('B+', 'B positivo'),
-    ('B-', 'B negativo'),
-    ('AB+', 'AB positivo'),
-    ('AB-', 'AB negativo'),
-    ('O+', 'O positivo'),
-    ('O-', 'O negativo')
-)
-    
+        ('A+', 'A positivo'),
+        ('A-', 'A negativo'),
+        ('B+', 'B positivo'),
+        ('B-', 'B negativo'),
+        ('AB+', 'AB positivo'),
+        ('AB-', 'AB negativo'),
+        ('O+', 'O positivo'),
+        ('O-', 'O negativo')
+    )
+
     TRUE_FALSE_CHOICES = (
         (True, 'Si'),
         (False, 'No')
     )
 
- 
     dni = models.CharField(max_length=8, null=True, default=None)
     fecha = models.DateTimeField(blank=True, null=True)
-    nacionalidad = models.CharField(max_length=200,default='PE',choices=PAISES,blank=True, null=True)
-    estadoCivil =  models.CharField(max_length=200, default='s',choices=ESTADO_CIVIL,blank=True,null=True)
-    correoElectronico = models.EmailField(max_length=200,blank=True, null=True) 
-    phone_regex = RegexValidator(regex=r'^\+?1?\d{9,15}$', message="El número de teléfono debe ingresarse en el formato: '+999999999'. Se permiten hasta 15 dígitos.")
-    celular = models.CharField(validators=[phone_regex], max_length=17, blank=True,null=True) 
-    telefonoFijo = models.CharField(validators=[phone_regex], max_length=17, blank=True, null=True) 
-    profesion = models.CharField(max_length=200,blank=True, null=True) 
-    talla_polo = models.CharField(max_length=200,default='',choices=TALLAS,blank=True, null=True)
-    cuenta_ahorros = models.CharField(max_length=14,blank=True, null=True)
-    contacto_caso_accidentes = models.CharField(max_length=200,blank=True, null=True)
-    parentesco_contacto_caso_accidentes = models.CharField(max_length=200,blank=True, null=True)
-    grupo_sanguineo = models.CharField(choices=GRUPOS_SANGUINEOS,max_length=200,blank=True, null=True)
-    alergias =ArrayField(models.CharField(max_length=15), null=True, blank=True)   
-    fondo_pension = models.CharField(max_length=200, default='p',choices=FONDO_PENSIONES,blank=True,null=True)
-    primerTrabajo = models.CharField(max_length=200,blank=True, null=True)
+    nacionalidad = models.CharField(
+        max_length=200, default='PE', choices=PAISES, blank=True, null=True)
+    estadoCivil = models.CharField(
+        max_length=200, default='s', choices=ESTADO_CIVIL, blank=True, null=True)
+    correoElectronico = models.EmailField(
+        max_length=200, blank=True, null=True)
+    phone_regex = RegexValidator(
+        regex=r'^\+?1?\d{9,15}$', message="El número de teléfono debe ingresarse en el formato: '+999999999'. Se permiten hasta 15 dígitos.")
+    celular = models.CharField(
+        validators=[phone_regex], max_length=17, blank=True, null=True)
+    telefonoFijo = models.CharField(
+        validators=[phone_regex], max_length=17, blank=True, null=True)
+    profesion = models.CharField(max_length=200, blank=True, null=True)
+    talla_polo = models.CharField(
+        max_length=200, default='', choices=TALLAS, blank=True, null=True)
+    cuenta_ahorros = models.CharField(max_length=14, blank=True, null=True)
+    contacto_caso_accidentes = models.CharField(
+        max_length=200, blank=True, null=True)
+    parentesco_contacto_caso_accidentes = models.CharField(
+        max_length=200, blank=True, null=True)
+    grupo_sanguineo = models.CharField(
+        choices=GRUPOS_SANGUINEOS, max_length=200, blank=True, null=True)
+    alergias = ArrayField(models.CharField(
+        max_length=15), null=True, blank=True)
+    fondo_pension = models.CharField(
+        max_length=200, default='p', choices=FONDO_PENSIONES, blank=True, null=True)
+    primerTrabajo = models.CharField(max_length=200, blank=True, null=True)
     hijos = models.PositiveIntegerField(blank=True, null=True)
-    conyuge= models.CharField(max_length=200,blank=True, null=True)
-    #a_penales = models.CharField(choices=TRUE_FALSE_CHOICES,max_length=200,blank=True, null=True)
-    #a_policiales = models.CharField(choices=TRUE_FALSE_CHOICES,max_length=200,blank=True, null=True)
-    #a_judiciales = models.CharField(choices=TRUE_FALSE_CHOICES,max_length=200,blank=True, null=True)  
-    p_mp = models.CharField(max_length=200,blank=True, null=True)
-    fecha_inicio_contrato = models.DateField(max_length=200,blank=True, null=True)
-    fecha_fin_contrato = models.DateField(max_length=200,blank=True, null=True)
-    sueldo = models.FloatField(max_length=200,blank=True, null=True)
-    horario = models.CharField(max_length=200,blank=True, null=True)
-    #recibo_agua = models.CharField(choices=TRUE_FALSE_CHOICES,max_length=200,blank=True, null=True)
-    #recibo_luz = models.CharField(choices=TRUE_FALSE_CHOICES,max_length=200,blank=True, null=True)
-    documentos = models.FileField(upload_to='documentos/', blank=True, null=True)
-    estado_registro = models.ForeignKey(EstadoRegistro,on_delete=models.CASCADE, default='A')
-    ##def __str__(self):
-    ##    return self.dni
-    
+    conyuge = models.CharField(max_length=200, blank=True, null=True)
+    # a_penales = models.CharField(choices=TRUE_FALSE_CHOICES,max_length=200,blank=True, null=True)
+    # a_policiales = models.CharField(choices=TRUE_FALSE_CHOICES,max_length=200,blank=True, null=True)
+    # a_judiciales = models.CharField(choices=TRUE_FALSE_CHOICES,max_length=200,blank=True, null=True)
+    p_mp = models.CharField(max_length=200, blank=True, null=True)
+    fecha_inicio_contrato = models.DateField(
+        max_length=200, blank=True, null=True)
+    fecha_fin_contrato = models.DateField(
+        max_length=200, blank=True, null=True)
+    sueldo = models.FloatField(max_length=200, blank=True, null=True)
+    horario = models.CharField(max_length=200, blank=True, null=True)
+    # recibo_agua = models.CharField(choices=TRUE_FALSE_CHOICES,max_length=200,blank=True, null=True)
+    # recibo_luz = models.CharField(choices=TRUE_FALSE_CHOICES,max_length=200,blank=True, null=True)
+    documentos = models.FileField(
+        upload_to='documentos/', blank=True, null=True)
+    estado_registro = models.ForeignKey(
+        EstadoRegistro, on_delete=models.CASCADE, default='A')
+    # def __str__(self):
+    # return self.dni
 
-class User(AbstractUser): 
-    perfil = models.OneToOneField(Profile, on_delete=models.CASCADE,blank=True,null=True)
+
+class User(AbstractUser):
+    perfil = models.OneToOneField(
+        Profile, on_delete=models.CASCADE, blank=True, null=True)
+
     def __str__(self):
         return self.username
 
 
-
-
 class Modulo(models.Model):
     nombre = models.CharField(max_length=100, null=True, default=None)
-    contentType = models.OneToOneField(ContentType,on_delete=models.CASCADE, blank= True, null=True)
-    estado = models.ForeignKey(EstadoRegistro,on_delete=models.SET_NULL, default='A',null=True)
+    url = models.CharField(max_length=50, null=True, default=None)
+    contentType = models.ForeignKey(
+        ContentType, on_delete=models.CASCADE, blank=True, null=True)
+    estado = models.ForeignKey(
+        EstadoRegistro, on_delete=models.SET_NULL, default='A', null=True)
+
     def __str__(self):
         return self.nombre
 
@@ -311,10 +331,3 @@ class Modulo(models.Model):
 #         print( '\033[91m'+"validated data ------------------------->", user,'\033[0m')
 #         user.perfil = Profile.objects.get(id=profile[0].id)
 #         user.save()
-
-
-
-
-
-
-

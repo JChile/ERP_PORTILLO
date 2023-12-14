@@ -60,6 +60,7 @@ export const DialogForm = ({ isOpen, onClose }) => {
         estado: "A",
       };
       const result = await createEvent(eventSave);
+      console.log(result)
       onClose();
     } else {
       // Hay errores en el formulario, actualiza el estado con los errores

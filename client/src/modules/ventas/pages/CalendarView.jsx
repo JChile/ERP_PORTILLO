@@ -105,6 +105,8 @@ export const CalendarView = () => {
       const events = await getEvents();
       const typeEvents = await getTipoEventos();
 
+      //console.log(events)
+
       if (Object.keys(selectedFilters).length === 0) {
         const initialFilters = {};
         typeEvents.forEach((typeEvent) => {
@@ -136,6 +138,7 @@ export const CalendarView = () => {
     getCalendarData();
     return () => controller.abort();
   }, [flagLoader]);
+
 
   return (
     <React.Fragment>

@@ -14,7 +14,7 @@ class MultipleLeadSerializer(serializers.ListSerializer):
         return [Lead.objects.create(**item) for item in validated_data]
         
     def update(self, instance, validated_data):
-        pass
+        pass 
 
 class LeadListSerializer(LeadSerializer):
     class Meta:
@@ -22,24 +22,10 @@ class LeadListSerializer(LeadSerializer):
         fields = '__all__'
         list_serializer_class = MultipleLeadSerializer
 
-
-
 class AsesorSerializer(serializers.ModelSerializer):
     class Meta:
         model = Asesor
         fields = '__all__'
-
-
-class AsesorActivoSerializer(serializers.ModelSerializer):
-    first_name = serializers.CharField(
-        source='user.first_name', read_only=True)
-    last_name = serializers.CharField(source='user.last_name', read_only=True)
-    user_id = serializers.CharField(source='user.id', read_only=True)
-
-    class Meta:
-        model = Asesor
-        fields = ['user_id', 'first_name', 'last_name', 'estado']
-
 
 class WhatsAppSerializer(serializers.ModelSerializer):
     class Meta:
@@ -74,4 +60,48 @@ class EventoSerializer(serializers.ModelSerializer):
 class TipoEventoSerializer(serializers.ModelSerializer):
     class Meta:
         model = TipoEvento
+        fields = '__all__'
+
+
+class TipoProductoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = TipoProducto
+        fields = '__all__'
+
+
+class ProductoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Producto
+        fields = '__all__'
+
+class TipoCotizacionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = TipoCotizacion
+        fields = '__all__'
+
+
+class CotizacionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Cotizacion
+        fields = '__all__'
+
+class TipoCuotaSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = TipoCuota
+        fields = '__all__'
+
+
+class CuotaSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Cuota
+        fields = '__all__'
+
+class PrecioSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Precio
+        fields = '__all__'
+
+class ClienteSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Cliente
         fields = '__all__'

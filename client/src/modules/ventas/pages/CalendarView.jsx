@@ -12,6 +12,9 @@ import { CustomCircularProgress } from "../../../components";
 import {
   Button,
   Checkbox,
+  Dialog,
+  DialogContent,
+  DialogTitle,
   Drawer,
   List,
   ListItem,
@@ -19,6 +22,8 @@ import {
   ListItemText,
 } from "@mui/material";
 import { transformToEvent } from "../utils/util";
+import { PDFViewer } from "@react-pdf/renderer";
+import { PdfDocument } from "./PdfDocument";
 
 const localizer = momentLocalizer(moment);
 
@@ -83,6 +88,9 @@ export const CalendarView = () => {
   const [selectedFilters, setSelectedFilters] = useState({});
   const [tempFilters, setTempFilters] = useState({});
 
+  // temporary viewr
+  const [showPdf, setShowPdf] = useState(false);
+
   const handleTempFilters = (event) => {
     const { name, checked } = event.target;
     const updatedFilters = {
@@ -139,9 +147,19 @@ export const CalendarView = () => {
     return () => controller.abort();
   }, [flagLoader]);
 
-
   return (
     <React.Fragment>
+      {showPdf ? (
+        <div>
+          <Button onClick={() => setShowPdf((prev) => !prev)}>
+            Cerrar ventana
+          </Button>
+          <PDFViewer style={{ width: "100%", height: "100vh" }}>
+            <PdfDocument />
+          </PDFViewer>
+        </div>
+      ) : null}
+
       <div className="flex flex-col gap-y-3">
         <div className="flex justify-between">
           <Button
@@ -151,6 +169,13 @@ export const CalendarView = () => {
             onClick={() => dispatch({ type: "create_state" })}
           >
             Crear
+          </Button>
+
+          <Button
+            variant="contained"
+            onClick={() => setShowPdf((prev) => !prev)}
+          >
+            pdf
           </Button>
 
           <Button
@@ -213,7 +238,7 @@ export const CalendarView = () => {
                 sx={{
                   textTransform: "capitalize",
                   width: "100%",
-                  borderRadius: "0px"
+                  borderRadius: "0px",
                 }}
                 size="small"
                 onClick={() => {

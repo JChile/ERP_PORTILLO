@@ -17,6 +17,7 @@
     "@handsontable/react": "^13.0.0",
     "@mui/material": "^5.13.5",
     "@mui/x-data-grid": "^6.16.2",
+    "@react-pdf/renderer": "^3.1.14",
     "axios": "^1.4.0",
     "handsontable": "^13.0.0",
     "jsdom": "^22.1.0",

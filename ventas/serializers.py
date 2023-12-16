@@ -101,7 +101,4 @@ class PrecioSerializer(serializers.ModelSerializer):
         model = Precio
         fields = '__all__'
 
-class ClienteSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Cliente
-        fields = '__all__'
+

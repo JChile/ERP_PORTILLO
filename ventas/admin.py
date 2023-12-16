@@ -11,7 +11,6 @@ admin.site.register(EstadoLead)
 admin.site.register(Evento)
 admin.site.register(TipoEvento)
 
-admin.site.register(Cliente)
 admin.site.register(TipoCotizacion)
 admin.site.register(TipoCuota)
 admin.site.register(TipoProducto)

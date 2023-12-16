@@ -761,7 +761,6 @@ class CotizacionList(generics.ListCreateAPIView):
         cotizacion_queryset = self.queryset
         tipo_queryset = TipoCotizacion.objects.all()
         proyecto_queryset = Proyecto.objects.all()
-        cliente_queryset = Cliente.objects.all()
         asesor_queryset = Asesor.objects.all()
 
         dataJson = CotizacionSerializer(cotizacion_queryset, many = True).data
@@ -769,7 +768,6 @@ class CotizacionList(generics.ListCreateAPIView):
         for i in dataJson:        
             i["tipo"] = TipoCotizacionSerializer(tipo_queryset.get(id = i["tipo"])).data
             i["proyecto"] = ProyectoSerializer(proyecto_queryset.get(id = i["proyecto"])).data
-            i["cliente"] = ClienteSerializer(cliente_queryset.get(id = i["cliente"])).data
             i["asesor"] = AsesorSerializer(asesor_queryset.get(id = i["asesor"])).data
 
         return Response(dataJson)
@@ -798,13 +796,11 @@ class CotizacionDetail(generics.RetrieveUpdateDestroyAPIView):
         cotizacion = Cotizacion.objects.get(id = pk)        
         tipo_queryset = TipoCotizacion.objects.all()
         proyecto_queryset = Proyecto.objects.all()
-        cliente_queryset = Cliente.objects.all()
         asesor_queryset = Asesor.objects.all()
 
         dataJson = CotizacionSerializer(cotizacion).data
         dataJson["tipo"] = TipoCotizacionSerializer(tipo_queryset.get(id =  cotizacion.tipo.pk)).data
         dataJson["proyecto"] = ProyectoSerializer(proyecto_queryset.get(id =  cotizacion.proyecto.pk)).data
-        dataJson["cliente"] = ClienteSerializer(cliente_queryset.get(id =  cotizacion.cliente.pk)).data
         dataJson["asesor"] = AsesorSerializer(asesor_queryset.get(id =  cotizacion.asesor.pk)).data
 
         return Response(dataJson)
@@ -946,45 +942,5 @@ class PrecioDetail(generics.RetrieveUpdateDestroyAPIView):
 
 
 
-class ClienteList(generics.ListCreateAPIView):
-    serializer_class = ClienteSerializer
-    queryset = Cliente.objects.all()
-
-    def list(self, request):
-        cliente_queryset = self.queryset
-        lead_queryset = Lead.objects.all()
-        dataJson = ClienteSerializer(cliente_queryset, many = True).data
-
-        for i in dataJson:        
-            i["lead"] = LeadSerializer(lead_queryset.get(id = i["lead"])).data
-
-        return Response(dataJson)
 
 
-class ClienteListSinFiltros(ClienteList):
-    def list(self, request):
-        self.queryset = self.queryset.filter()
-        return super().list(request)
-
-class ClienteListActivos(ClienteList):
-    def list(self, request):
-        self.queryset = self.queryset.filter(estado="A")
-        return super().list(request)
-
-class ClienteListInactivos(ClienteList):
-    def list(self, request):
-        self.queryset = self.queryset.filter(estado="I")
-        return super().list(request)
-
-class ClienteDetail(generics.RetrieveUpdateDestroyAPIView):
-    serializer_class = ClienteSerializer
-    queryset = Cliente.objects.all()
-
-    def retrieve(self, request, pk=None):
-        cliente = Cliente.objects.get(id = pk)        
-        lead_queryset = Lead.objects.all()
-
-        dataJson = ClienteSerializer(cliente).data
-        dataJson["lead"] = LeadSerializer(lead_queryset.get(id =  cliente.lead.pk)).data
-
-        return Response(dataJson)

@@ -83,7 +83,7 @@ export const ListAsesores = () => {
   }, []);
 
   return (
-    <>
+    <React.Fragment>
       <div className="flex items-center justify-end bg-gray-100 p-4">
         {/* Botón de "Agregar usuario" en el extremo derecho */}
         <Link
@@ -93,15 +93,15 @@ export const ListAsesores = () => {
           <RiUserAddLine className="mr-2" /> Añadir asesor
         </Link>
       </div>
-      <Paper>
+      <Paper sx={{ borderRadius: "0px", marginTop: "1rem" }}>
         <TableContainer>
           <Table sx={{ minWidth: 700 }} aria-label="customized table">
             <TableHead>
               <TableRow
                 sx={{
                   "& th": {
-                    color: "rgba(96, 96, 96)",
-                    backgroundColor: "#f5f5f5",
+                    color: "rgba(200,200,200)",
+                    backgroundColor: "#404040",
                   },
                 }}
               >
@@ -158,6 +158,6 @@ export const ListAsesores = () => {
 
       {/* CIRCULAR PROGRESS */}
       {visibleProgress && <CustomCircularProgress />}
-    </>
+    </React.Fragment>
   );
 };

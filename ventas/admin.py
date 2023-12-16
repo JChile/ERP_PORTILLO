@@ -11,5 +11,14 @@ admin.site.register(EstadoLead)
 admin.site.register(Evento)
 admin.site.register(TipoEvento)
 
+admin.site.register(Cliente)
+admin.site.register(TipoCotizacion)
+admin.site.register(TipoCuota)
+admin.site.register(TipoProducto)
+admin.site.register(Cotizacion)
+admin.site.register(Cuota)
+admin.site.register(Producto)
+admin.site.register(Precio)
+
 
 

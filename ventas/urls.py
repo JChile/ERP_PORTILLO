@@ -90,11 +90,5 @@ urlpatterns = [
     re_path(r'^precio/(?P<pk>[\w-]+)$', views.PrecioDetail.as_view()),
     re_path(r'^precioActivo/$', views.PrecioListActivos.as_view()),
     re_path(r'^precioInactivo/$', views.PrecioListInactivos.as_view()),
-
-    re_path(r'^cliente/$', views.ClienteListSinFiltros.as_view()),
-    re_path(r'^cliente/(?P<pk>[\w-]+)$', views.ClienteDetail.as_view()),
-    re_path(r'^clienteActivo/$', views.ClienteListActivos.as_view()),
-    re_path(r'^clienteInactivo/$', views.ClienteListInactivos.as_view()),
-
     
 ]

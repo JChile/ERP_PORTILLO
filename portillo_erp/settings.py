@@ -100,6 +100,10 @@ DATABASES = {
         'NAME': 'portillo_erp',
         'USER': 'postgres',
         'PASSWORD': '123',
+<<<<<<< HEAD
+=======
+        #'PASSWORD': 'admin',
+>>>>>>> 13e13b6bd406fc192adfd08144ea48603aa31df5
         'HOST': 'localhost',
         'PORT': '',
     }

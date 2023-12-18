@@ -9,6 +9,7 @@ import { AsesorRoutes } from "../modules/asesor";
 import { NotFoundPage } from "../components";
 import { NotPublicPage } from "../components/NotPublicPage";
 import { VentasRouter } from "../modules/ventas/router/VentasRouter";
+import CotizacionRouter from "../modules/cotizaciones/router/CotizacionRouter";
 
 export const AppRouter = () => {
   return (
@@ -36,6 +37,7 @@ export const AppRouter = () => {
                   <Route path="lead/*" element={<LeadRoutes />}></Route>
                   <Route path="asesor/*" element={<AsesorRoutes />} />
                   <Route path="ventas/*" element={<VentasRouter />} />
+                  <Route path="cotizaciones/*" element={<CotizacionRouter />} />
                 </Routes>
               </MainContainerApp>
             }

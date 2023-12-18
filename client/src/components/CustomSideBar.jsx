@@ -28,7 +28,7 @@ export const CustomSideBar = ({ children, menus }) => {
   return (
     <Box sx={{ display: "flex" }}>
       <CssBaseline />
-      <AppBar position="fixed">
+      <AppBar position="fixed" sx={{ zIndex: 10 }}>
         <Toolbar>
           <IconButton
             color="inherit"
@@ -56,7 +56,7 @@ export const CustomSideBar = ({ children, menus }) => {
           </div>
         </Toolbar>
       </AppBar>
-      <Drawer variant="permanent" open={open}>
+      <Drawer variant="permanent" open={open} sx={{ zIndex: 9 }}>
         <List sx={{ marginTop: 8, flex: 1 }} className="">
           {menus.map((item, index) => (
             <NavLink to={item.url} key={item.title}>
@@ -156,39 +156,3 @@ const Drawer = styled(MuiDrawer, {
     "& .MuiDrawer-paper": closedMixin(theme),
   }),
 }));
-
-{
-  /*
-
-
-<div
-          className={`${
-            open ? "max-w-52 w-fit" : "w-32 "
-          } bg-dark-purple py-5 relative duration-300 flex flex-col items-center`}
-        >
-          <img
-            src={ArrowLeft}
-            className={`absolute cursor-pointer -right-3 top-9 w-7 border-dark-purple
-           border-2 rounded-full  ${!open && "rotate-180"}`}
-            onClick={() => setOpen(!open)}
-          />
-          <div className="flex gap-x-10 items-center">
-            <img
-              src={LogoPortillo}
-              className={`cursor-pointer duration-500 w-16 ${
-                open && "rotate-[360deg]"
-              }`}
-            />
-          </div>
-          <ul className="py-6 mx-2">
-            {menus.map((item, index) => (
-              <CustomNavLinkSideBar key={index} item={item} open={open} />
-            ))}
-          </ul>
-        </div>
-
-      <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
-        {children}
-      </Box>
-    */
-}

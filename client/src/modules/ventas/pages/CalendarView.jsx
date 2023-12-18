@@ -12,6 +12,9 @@ import { CustomCircularProgress } from "../../../components";
 import {
   Button,
   Checkbox,
+  Dialog,
+  DialogContent,
+  DialogTitle,
   Drawer,
   List,
   ListItem,
@@ -19,6 +22,9 @@ import {
   ListItemText,
 } from "@mui/material";
 import { transformToEvent } from "../utils/util";
+import { PDFViewer } from "@react-pdf/renderer";
+import { PdfDocument } from "../../cotizaciones/PdfDocument";
+import { CustomPdfViewer } from "../../cotizaciones/CustomPdfViewer";
 
 const localizer = momentLocalizer(moment);
 
@@ -83,6 +89,8 @@ export const CalendarView = () => {
   const [selectedFilters, setSelectedFilters] = useState({});
   const [tempFilters, setTempFilters] = useState({});
 
+  // temporary viewr
+
   const handleTempFilters = (event) => {
     const { name, checked } = event.target;
     const updatedFilters = {
@@ -139,9 +147,10 @@ export const CalendarView = () => {
     return () => controller.abort();
   }, [flagLoader]);
 
-
   return (
     <React.Fragment>
+      
+
       <div className="flex flex-col gap-y-3">
         <div className="flex justify-between">
           <Button
@@ -169,6 +178,7 @@ export const CalendarView = () => {
         <Drawer
           anchor="right"
           open={state.filterState}
+          className="z-20"
           onClose={() => {
             setTempFilters(selectedFilters);
             dispatch({ type: "base_state" });
@@ -213,7 +223,7 @@ export const CalendarView = () => {
                 sx={{
                   textTransform: "capitalize",
                   width: "100%",
-                  borderRadius: "0px"
+                  borderRadius: "0px",
                 }}
                 size="small"
                 onClick={() => {

@@ -11,7 +11,7 @@ export const CustomTopBar = () => {
   // bg-[#282828]
 
   return (
-    <AppBar position="sticky" sx={{ backgroundColor: "black" }}>
+    <AppBar position="sticky" sx={{ backgroundColor: "black" }} className="z-10">
       <Container>
         <Toolbar>
           <Typography variant="h7">Sistema Portillo</Typography>

@@ -23,7 +23,8 @@ import {
 } from "@mui/material";
 import { transformToEvent } from "../utils/util";
 import { PDFViewer } from "@react-pdf/renderer";
-import { PdfDocument } from "./PdfDocument";
+import { PdfDocument } from "../../cotizaciones/PdfDocument";
+import { CustomPdfViewer } from "../../cotizaciones/CustomPdfViewer";
 
 const localizer = momentLocalizer(moment);
 
@@ -89,7 +90,6 @@ export const CalendarView = () => {
   const [tempFilters, setTempFilters] = useState({});
 
   // temporary viewr
-  const [showPdf, setShowPdf] = useState(false);
 
   const handleTempFilters = (event) => {
     const { name, checked } = event.target;
@@ -149,16 +149,7 @@ export const CalendarView = () => {
 
   return (
     <React.Fragment>
-      {showPdf ? (
-        <div>
-          <Button onClick={() => setShowPdf((prev) => !prev)}>
-            Cerrar ventana
-          </Button>
-          <PDFViewer style={{ width: "100%", height: "100vh" }}>
-            <PdfDocument />
-          </PDFViewer>
-        </div>
-      ) : null}
+      
 
       <div className="flex flex-col gap-y-3">
         <div className="flex justify-between">
@@ -169,13 +160,6 @@ export const CalendarView = () => {
             onClick={() => dispatch({ type: "create_state" })}
           >
             Crear
-          </Button>
-
-          <Button
-            variant="contained"
-            onClick={() => setShowPdf((prev) => !prev)}
-          >
-            pdf
           </Button>
 
           <Button
@@ -194,6 +178,7 @@ export const CalendarView = () => {
         <Drawer
           anchor="right"
           open={state.filterState}
+          className="z-20"
           onClose={() => {
             setTempFilters(selectedFilters);
             dispatch({ type: "base_state" });

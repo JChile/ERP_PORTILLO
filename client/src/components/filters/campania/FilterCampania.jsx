@@ -8,7 +8,7 @@ const defaultOption = {
   id: null,
 };
 
-export const FilterCampania = ({ defaultValue = null, onNewInput }) => {
+export const FilterCampania = ({ defaultValue = null, onNewInput, label = "" }) => {
   const [options, setOptions] = useState([defaultOption]);
   const [value, setValue] = useState(defaultOption);
 
@@ -53,7 +53,7 @@ export const FilterCampania = ({ defaultValue = null, onNewInput }) => {
       getOptionLabel={(option) => option.label}
       onChange={handleChange}
       isOptionEqualToValue={(option, value) => option.id == value.id}
-      renderInput={(params) => <TextField label="Camapaña" {...params} />}
+      renderInput={(params) => <TextField label={label} {...params} />}
     />
   );
 };

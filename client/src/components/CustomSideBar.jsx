@@ -57,7 +57,7 @@ export const CustomSideBar = ({ children, menus }) => {
         </Toolbar>
       </AppBar>
       <Drawer variant="permanent" open={open} sx={{ zIndex: 9 }}>
-        <List sx={{ marginTop: 8, flex: 1 }} className="">
+        <List sx={{ marginTop: 8, flex: 1 }}>
           {menus.map((item, index) => (
             <NavLink to={item.url} key={item.title}>
               <ListItem disablePadding sx={{ display: "block" }}>

@@ -163,8 +163,7 @@ class Cuota(models.Model):
     fecha = models.DateTimeField(null=True,blank=True)
     estado = models.ForeignKey(EstadoRegistro, on_delete=models.SET_NULL, default='A', null=True)
 
-    def __str__(self):
-        return self.tipo
+ 
 
 
 class Precio(models.Model):

@@ -173,7 +173,9 @@ class CotizacionTipoProducto(models.Model):
     precio = models.FloatField(null=True, blank=True, default=0)
     estado = models.ForeignKey(EstadoRegistro, on_delete=models.SET_NULL, default='A', null=True)
 
-
+class ProyectoTipoProducto(models.Model):
+    proyecto = models.ForeignKey(Proyecto, on_delete=models.CASCADE , null=True, blank=True)
+    tipo_producto = models.ForeignKey(TipoProducto, on_delete=models.CASCADE , null=True, blank=True)
 
 
 

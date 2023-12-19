@@ -201,3 +201,10 @@ class Precio(models.Model):
 
     def __str__(self):
         return f'{self.cotizacion.tipo.nombre} - {self.tipoProducto.nombre}'
+
+
+class ProyectoTipoProducto(models.Model):
+    proyecto = models.ForeignKey(
+        Proyecto, on_delete=models.CASCADE, null=True, blank=True)
+    tipo_producto = models.ForeignKey(
+        TipoProducto, on_delete=models.CASCADE, null=True, blank=True)

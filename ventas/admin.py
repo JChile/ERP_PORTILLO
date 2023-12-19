@@ -18,6 +18,7 @@ admin.site.register(Cotizacion)
 admin.site.register(Cuota)
 admin.site.register(Producto)
 admin.site.register(Precio)
+admin.site.register(ProyectoTipoProducto)
 
 
 

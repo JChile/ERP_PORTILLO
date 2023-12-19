@@ -101,4 +101,8 @@ class PrecioSerializer(serializers.ModelSerializer):
         model = Precio
         fields = '__all__'
 
+class ProyectoTipoProductoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ProyectoTipoProducto
+        fields = '__all__'
 

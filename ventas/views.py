@@ -461,7 +461,11 @@ class AsesorLeadList(APIView):
 
 class AsesorLeadDetail(APIView):
     def get(self, request, pk=None):
-        asesor_queryset = Asesor.objects.get(id = pk)
+
+        try:
+            asesor_queryset = Asesor.objects.get(id = pk)
+        except :
+            return Response({"mesaje": "asesor no existe"})
         asesorSerializer = AsesorSerializer(asesor_queryset)
         dataJson = asesorSerializer.data
         dataJson["leads"] = LeadSerializer(Lead.objects.filter(asesor = asesor_queryset.pk),many = True).data

@@ -12,7 +12,7 @@ from datetime import datetime, timedelta
 from django.http import Http404
 from rest_framework.views import APIView
 
-
+ 
 class LeadList(generics.ListCreateAPIView):
     serializer_class = LeadSerializer
     queryset = Lead.objects.all()
@@ -625,7 +625,7 @@ class EventoList(generics.ListCreateAPIView):
     queryset = Evento.objects.all()
 
     def list(self, request):
-        evento_queryset = Evento.objects.all()
+        evento_queryset = self.queryset
         asesor_queryset = Asesor.objects.all()
         tipo_queryset = TipoEvento.objects.all()
         proyecto_queryset = Proyecto.objects.all()
@@ -638,9 +638,22 @@ class EventoList(generics.ListCreateAPIView):
             i["tipo"] = TipoEventoSerializer(tipo_queryset.get(id = i["tipo"])).data
             i["proyecto"] = ProyectoSerializer(proyecto_queryset.get(id = i["proyecto"])).data
 
-
-
         return Response(dataJson)
+
+class EventoListSinFiltros(EventoList):
+    def list(self, request):
+        self.queryset = self.queryset.filter()
+        return super().list(request)
+
+class EventoListActivos(EventoList):
+    def list(self, request):
+        self.queryset = self.queryset.filter(estado="A")
+        return super().list(request)
+
+class EventoListInactivos(EventoList):
+    def list(self, request):
+        self.queryset = self.queryset.filter(estado="I")
+        return super().list(request)
 
 
 class EventoDetail(generics.RetrieveUpdateDestroyAPIView):
@@ -663,6 +676,271 @@ class TipoEventoList(generics.ListCreateAPIView):
     serializer_class = TipoEventoSerializer
     queryset = TipoEvento.objects.all()
 
+
+class TipoEventoListActivos(TipoEventoList):
+    def list(self, request):
+        self.queryset = self.queryset.filter(estado="A")
+        return super().list(request)
+
+class TipoEventoListInactivos(TipoEventoList):
+    def list(self, request):
+        self.queryset = self.queryset.filter(estado="I")
+        return super().list(request)
+
 class TipoEventoDetail(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = TipoEventoSerializer
     queryset = TipoEvento.objects.all()
+
+
+class ProductoList(generics.ListCreateAPIView):
+    serializer_class = ProductoSerializer
+    queryset = Producto.objects.all()
+
+    def list(self, request):
+        producto_queryset = self.queryset
+        tipo_queryset = TipoProducto.objects.all()
+        dataJson = ProductoSerializer(producto_queryset, many = True).data
+
+        for i in dataJson:        
+            i["tipo"] = TipoEventoSerializer(tipo_queryset.get(id = i["tipo"])).data
+
+        return Response(dataJson)
+
+class ProductoListSinFiltros(ProductoList):
+    def list(self, request):
+        self.queryset = self.queryset.filter()
+        return super().list(request)
+
+class ProductoListActivos(ProductoList):
+    def list(self, request):
+        self.queryset = self.queryset.filter(estado="A")
+        return super().list(request)
+
+class ProductoListInactivos(ProductoList):
+    def list(self, request):
+        self.queryset = self.queryset.filter(estado="I")
+        return super().list(request)
+
+class ProductoDetail(generics.RetrieveUpdateDestroyAPIView):
+    serializer_class = ProductoSerializer
+    queryset = Producto.objects.all()
+
+    def retrieve(self, request, pk=None):
+        producto = Producto.objects.get(id = pk)        
+        tipo_queryset = TipoProducto.objects.all()
+        dataJson = ProductoSerializer(producto).data
+        dataJson["tipo"] = TipoProductoSerializer(tipo_queryset.get(id =  producto.tipo.pk)).data
+        return Response(dataJson)
+
+
+class TipoProductoList(generics.ListCreateAPIView):
+    serializer_class = TipoProductoSerializer
+    queryset = TipoProducto.objects.all()
+
+class TipoProductoListActivos(TipoProductoList):
+    def list(self, request):
+        self.queryset = self.queryset.filter(estado="A")
+        return super().list(request)
+
+class TipoProductoListInactivos(TipoProductoList):
+    def list(self, request):
+        self.queryset = self.queryset.filter(estado="I")
+        return super().list(request)
+
+
+class TipoProductoDetail(generics.RetrieveUpdateDestroyAPIView):
+    serializer_class = TipoProductoSerializer
+    queryset = TipoProducto.objects.all()
+
+
+class CotizacionList(generics.ListCreateAPIView):
+    serializer_class = CotizacionSerializer
+    queryset = Cotizacion.objects.all()
+
+    def list(self, request):
+        cotizacion_queryset = self.queryset
+        tipo_queryset = TipoCotizacion.objects.all()
+        proyecto_queryset = Proyecto.objects.all()
+        asesor_queryset = Asesor.objects.all()
+
+        dataJson = CotizacionSerializer(cotizacion_queryset, many = True).data
+
+        for i in dataJson:        
+            i["tipo"] = TipoCotizacionSerializer(tipo_queryset.get(id = i["tipo"])).data
+            i["proyecto"] = ProyectoSerializer(proyecto_queryset.get(id = i["proyecto"])).data
+            i["asesor"] = AsesorSerializer(asesor_queryset.get(id = i["asesor"])).data
+
+        return Response(dataJson)
+
+
+class CotizacionListSinFiltros(CotizacionList):
+    def list(self, request):
+        self.queryset = self.queryset.filter()
+        return super().list(request)
+
+class CotizacionListActivos(CotizacionList):
+    def list(self, request):
+        self.queryset = self.queryset.filter(estado="A")
+        return super().list(request)
+
+class CotizacionListInactivos(CotizacionList):
+    def list(self, request):
+        self.queryset = self.queryset.filter(estado="I")
+        return super().list(request)
+
+class CotizacionDetail(generics.RetrieveUpdateDestroyAPIView):
+    serializer_class = CotizacionSerializer
+    queryset = Cotizacion.objects.all()
+
+    def retrieve(self, request, pk=None):
+        cotizacion = Cotizacion.objects.get(id = pk)        
+        tipo_queryset = TipoCotizacion.objects.all()
+        proyecto_queryset = Proyecto.objects.all()
+        asesor_queryset = Asesor.objects.all()
+
+        dataJson = CotizacionSerializer(cotizacion).data
+        dataJson["tipo"] = TipoCotizacionSerializer(tipo_queryset.get(id =  cotizacion.tipo.pk)).data
+        dataJson["proyecto"] = ProyectoSerializer(proyecto_queryset.get(id =  cotizacion.proyecto.pk)).data
+        dataJson["asesor"] = AsesorSerializer(asesor_queryset.get(id =  cotizacion.asesor.pk)).data
+
+        return Response(dataJson)
+
+class TipoCotizacionList(generics.ListCreateAPIView):
+    serializer_class = TipoCotizacionSerializer
+    queryset = TipoCotizacion.objects.all()
+
+class TipoCotizacionListActivos(TipoCotizacionList):
+    def list(self, request):
+        self.queryset = self.queryset.filter(estado="A")
+        return super().list(request)
+
+class TipoCotizacionListInactivos(TipoCotizacionList):
+    def list(self, request):
+        self.queryset = self.queryset.filter(estado="I")
+        return super().list(request)
+
+class TipoCotizacionDetail(generics.RetrieveUpdateDestroyAPIView):
+    serializer_class = TipoCotizacionSerializer
+    queryset = TipoCotizacion.objects.all()
+
+
+class CuotaList(generics.ListCreateAPIView):
+    serializer_class = CuotaSerializer
+    queryset = Cuota.objects.all()
+
+    def list(self, request):
+        cuota_queryset = self.queryset
+        cotizacion_queryset = Cotizacion.objects.all()
+        tipo_queryset = TipoCuota.objects.all()
+        dataJson = CuotaSerializer(cuota_queryset, many = True).data
+
+        for i in dataJson:        
+            i["tipo"] = TipoCuotaSerializer(tipo_queryset.get(id = i["tipo"])).data
+            i["cotizacion"] = CotizacionSerializer(cotizacion_queryset.get(id = i["cotizacion"])).data
+
+        return Response(dataJson)
+
+
+class CuotaListSinFiltros(CuotaList):
+    def list(self, request):
+        self.queryset = self.queryset.filter()
+        return super().list(request)
+
+class CuotaListActivos(CuotaList):
+    def list(self, request):
+        self.queryset = self.queryset.filter(estado="A")
+        return super().list(request)
+
+class CuotaListInactivos(CuotaList):
+    def list(self, request):
+        self.queryset = self.queryset.filter(estado="I")
+        return super().list(request)
+
+
+class CuotaDetail(generics.RetrieveUpdateDestroyAPIView):
+    serializer_class = CuotaSerializer
+    queryset = Cuota.objects.all()
+
+    def retrieve(self, request, pk=None):
+        cuota = Cuota.objects.get(id = pk)   
+        cotizacion_queryset = Cotizacion.objects.all()     
+        tipo_queryset = TipoCuota.objects.all()
+
+        dataJson = CuotaSerializer(cuota).data
+        dataJson["tipo"] = TipoCuotaSerializer(tipo_queryset.get(id =  cuota.tipo.pk)).data
+        dataJson["cotizacion"] = CotizacionSerializer(cotizacion_queryset.get(id =  cuota.cotizacion.pk)).data  
+
+        return Response(dataJson)
+
+class TipoCuotaList(generics.ListCreateAPIView):
+    serializer_class = TipoCuotaSerializer
+    queryset = TipoCuota.objects.all()
+
+
+class TipoCuotaListActivos(TipoCuotaList):
+    def list(self, request):
+        self.queryset = self.queryset.filter(estado="A")
+        return super().list(request)
+
+class TipoCuotaListInactivos(TipoCuotaList):
+    def list(self, request):
+        self.queryset = self.queryset.filter(estado="I")
+        return super().list(request)
+
+
+class TipoCuotaDetail(generics.RetrieveUpdateDestroyAPIView):
+    serializer_class = TipoCuotaSerializer
+    queryset = TipoCuota.objects.all()
+
+
+class PrecioList(generics.ListCreateAPIView):
+    serializer_class = PrecioSerializer
+    queryset = Precio.objects.all()
+
+    def list(self, request):
+        precio_queryset = self.queryset
+        tipo_producto_queryset = TipoProducto.objects.all()    
+        cotizacion_queryset = Cotizacion.objects.all()
+        dataJson = PrecioSerializer(precio_queryset, many = True).data
+
+        for i in dataJson:        
+            i["tipoProducto"] = TipoProductoSerializer(tipo_producto_queryset.get(id = i["tipoProducto"])).data
+            i["cotizacion"] = CotizacionSerializer(cotizacion_queryset.get(id = i["cotizacion"])).data
+
+        return Response(dataJson)
+
+class PrecioListSinFiltros(PrecioList):
+    def list(self, request):
+        self.queryset = self.queryset.filter()
+        return super().list(request)
+
+class PrecioListActivos(PrecioList):
+    def list(self, request):
+        self.queryset = self.queryset.filter(estado="A")
+        return super().list(request)
+
+class PrecioListInactivos(PrecioList):
+    def list(self, request):
+        self.queryset = self.queryset.filter(estado="I")
+        return super().list(request)
+
+
+class PrecioDetail(generics.RetrieveUpdateDestroyAPIView):
+    serializer_class = PrecioSerializer
+    queryset = Precio.objects.all()
+
+    def retrieve(self, request, pk=None):
+        precio = Precio.objects.get(id = pk)   
+        tipo_producto_queryset = TipoProducto.objects.all()
+        cotizacion_queryset = Cotizacion.objects.all()     
+
+        dataJson = PrecioSerializer(precio).data
+        dataJson["tipoProducto"] = TipoProductoSerializer(tipo_producto_queryset.get(id =  precio.tipoProducto.pk)).data
+        dataJson["cotizacion"] = CotizacionSerializer(cotizacion_queryset.get(id =  precio.cotizacion.pk)).data  
+
+        return Response(dataJson)
+
+
+
+
+

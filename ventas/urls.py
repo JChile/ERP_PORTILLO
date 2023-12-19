@@ -16,7 +16,7 @@ urlpatterns = [
     re_path(r'^leadMultipleCreationAutomatic/$', views.leadMultipleCreationAutomatic.as_view()),
     re_path(r'^leadMultipleAssign/$', views.LeadMultipleAssign.as_view()),
     re_path(r'^leadMultipleCreationManual/$', views.LeadMultipleCreationManual.as_view()),
-    
+     
     re_path(r'^asesor/$', views.AsesorListSinFiltros.as_view()),
     re_path(r'^asesor/(?P<pk>[0-9]+)$', views.AsesorDetail.as_view()),
     re_path(r'^asesorLead/$', views.AsesorLeadList.as_view()),
@@ -46,11 +46,49 @@ urlpatterns = [
     re_path(r'^estadoLeadActivo/$', views.EstadoLeadActivos.as_view()),
     re_path(r'^estadoLeadInactivo/$', views.EstadoLeadInactivos.as_view()),
 
-
-    re_path(r'^evento/$', views.EventoList.as_view()),
+    re_path(r'^evento/$', views.EventoListSinFiltros.as_view()),
     re_path(r'^evento/(?P<pk>[\w-]+)$', views.EventoDetail.as_view()),
-
+    re_path(r'^eventoActivo/$', views.EventoListActivos.as_view()),
+    re_path(r'^eventoInactivo/$', views.EventoListInactivos.as_view()),
+    
     re_path(r'^tipoEvento/$', views.TipoEventoList.as_view()),
     re_path(r'^tipoEvento/(?P<pk>[\w-]+)$', views.TipoEventoDetail.as_view()),
+    re_path(r'^tipoEventoActivo/$', views.TipoEventoListActivos.as_view()),
+    re_path(r'^tipoEventoInactivo/$', views.TipoEventoListInactivos.as_view()),
+
+    re_path(r'^producto/$', views.ProductoListSinFiltros.as_view()),
+    re_path(r'^producto/(?P<pk>[\w-]+)$', views.ProductoDetail.as_view()),
+    re_path(r'^productoActivo/$', views.ProductoListActivos.as_view()),
+    re_path(r'^productoInactivo/$', views.ProductoListInactivos.as_view()),
+
+    re_path(r'^tipoProducto/$', views.TipoProductoList.as_view()),
+    re_path(r'^tipoProducto/(?P<pk>[\w-]+)$', views.TipoProductoDetail.as_view()),
+    re_path(r'^tipoProductoActivo/$', views.TipoProductoListActivos.as_view()),
+    re_path(r'^tipoProductoInactivo/$', views.TipoProductoListInactivos.as_view()),
+
+    re_path(r'^cotizacion/$', views.CotizacionListSinFiltros.as_view()),
+    re_path(r'^cotizacion/(?P<pk>[\w-]+)$', views.CotizacionDetail.as_view()),
+    re_path(r'^cotizacionActivo/$', views.CotizacionListActivos.as_view()),
+    re_path(r'^cotizacionInactivo/$', views.CotizacionListInactivos.as_view()),
+
+    re_path(r'^tipoCotizacion/$', views.TipoCotizacionList.as_view()),
+    re_path(r'^tipoCotizacion/(?P<pk>[\w-]+)$', views.TipoCotizacionDetail.as_view()),
+    re_path(r'^tipoCotizacionActivo/$', views.TipoCotizacionListActivos.as_view()),
+    re_path(r'^tipoCotizacionInactivo/$', views.TipoCotizacionListInactivos.as_view()),
+
+    re_path(r'^cuota/$', views.CuotaListSinFiltros.as_view()),
+    re_path(r'^cuota/(?P<pk>[\w-]+)$', views.CuotaDetail.as_view()),
+    re_path(r'^cuotaActivo/$', views.CuotaListActivos.as_view()),
+    re_path(r'^cuotaInactivo/$', views.CuotaListInactivos.as_view()),
+
+    re_path(r'^tipoCuota/$', views.TipoCuotaList.as_view()),
+    re_path(r'^tipoCuota/(?P<pk>[\w-]+)$', views.TipoCuotaDetail.as_view()),
+    re_path(r'^tipoCuotaActivo/$', views.TipoCuotaListActivos.as_view()),
+    re_path(r'^tipoCuotaInactivo/$', views.TipoCuotaListInactivos.as_view()),
+
+    re_path(r'^precio/$', views.PrecioListSinFiltros.as_view()),
+    re_path(r'^precio/(?P<pk>[\w-]+)$', views.PrecioDetail.as_view()),
+    re_path(r'^precioActivo/$', views.PrecioListActivos.as_view()),
+    re_path(r'^precioInactivo/$', views.PrecioListInactivos.as_view()),
     
 ]

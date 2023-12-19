@@ -8,6 +8,7 @@ import { CustomInputBase } from "../../../components/CustomInputBase";
 import { CustomSelectedTable } from "../components/CustomSelectedTable";
 import { DialogDeleteLead } from "../components/DialogDeleteLead";
 import { HiUserGroup } from "react-icons/hi";
+import { Button } from "@mui/material";
 
 const headers = [
   { name: "Acciones", width: 20 },
@@ -122,45 +123,66 @@ export const ListLeads = () => {
     <>
       <div className="flex flex-col gap-y-1 items-end">
         <div className="flex gap-x-2">
-          <Link
-            to={"/lead/create"}
-            className="bg-lime-400 hover:bg-lime-600 text-white-500 hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded flex items-center"
+          <Button
+            startIcon={<HiUserGroup />}
+            sx={{
+              backgroundColor: "#a3e635",
+              paddingX: "1rem",
+              paddingY: "0.6rem",
+              borderRadius: "0px",
+              textTransform: "capitalize",
+              color: "black",
+              ":hover": {
+                backgroundColor: "#65a30d",
+                color: "whitesmoke",
+              },
+            }}
           >
-            <HiUserGroup className="mr-2" />
-            Añadir Manual
-          </Link>
-
-          <Link
-            to={"/lead/create/sheet"}
-            className="bg-yellow-400 hover:bg-yellow-500 text-black-500 hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded flex items-center"
+            <Link to={"/lead/create"}>Añadir Manual</Link>
+          </Button>
+          <Button
+            startIcon={<RiFileExcel2Fill />}
+            sx={{
+              backgroundColor: "#facc15",
+              paddingX: "1rem",
+              paddingY: "0.6rem",
+              borderRadius: "0px",
+              color: "black",
+              textTransform: "capitalize",
+              ": hover": {
+                backgroundColor: "#eab308",
+                color: "whitesmoke",
+              },
+            }}
           >
-            <RiFileExcel2Fill className="mr-2" />
-            Importar
-          </Link>
+            <Link to={"/lead/create/sheet"}>Importar</Link>
+          </Button>
         </div>
       </div>
 
       <div className="px-7 mt-8 mb-8 flex justify-between items-center">
-        <div className="flex flex-col gap-y-1">
-          <span className="block text-sm">Buscar lead</span>
-          <CustomInputBase
-            filters={filters}
-            defaultFilter={filters[0]}
-            onSearch={handleSearchButton}
-            placeholder="Buscar lead..."
-          />
-        </div>
+        <CustomInputBase
+          filters={filters}
+          defaultFilter={filters[0]}
+          onSearch={handleSearchButton}
+          placeholder="Buscar lead..."
+        />
 
-        <div className="flex flex-row gap-x-4 items-center">
-          <div className="flex flex-col gap-y-1">
-            <Link
-              to={"/lead/asign"}
-              className="bg-transparent hover:bg-blue-500 text-blue-500 hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded"
-            >
-              Asignación masiva
-            </Link>
-          </div>
-        </div>
+        <Button
+          sx={{
+            textTransform: "capitalize",
+            borderRadius: "0px",
+            paddingX: "1rem",
+            paddingY: "0.6rem",
+            ":hover": {
+              backgroundColor: "#1976d2",
+              color: "white",
+            },
+          }}
+          variant="outlined"
+        >
+          <Link to={"/lead/asign"}>Asignación masiva</Link>
+        </Button>
       </div>
 
       <div className="px-7">

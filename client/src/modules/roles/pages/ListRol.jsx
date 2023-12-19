@@ -56,7 +56,7 @@ export const ListRol = () => {
   }, []);
 
   return (
-    <>
+    <React.Fragment>
       <div className="flex items-center justify-end bg-gray-100 p-4">
         <Link
           to={"/rol/create"}
@@ -65,15 +65,15 @@ export const ListRol = () => {
           <RiUserAddLine className="mr-2" /> Añadir Rol
         </Link>
       </div>
-      <Paper className="mt-4">
+      <Paper sx={{ marginTop: "1rem", borderRadius: "0px" }}>
         <TableContainer>
           <Table sx={{ minWidth: 700 }} aria-label="customized table">
             <TableHead>
               <TableRow
                 sx={{
                   "& th": {
-                    color: "rgba(96, 96, 96)",
-                    backgroundColor: "#f5f5f5",
+                    color: "rgba(200,200,200)",
+                    backgroundColor: "#404040",
                   },
                 }}
               >
@@ -102,6 +102,6 @@ export const ListRol = () => {
       />
       {/* CIRCULAR PROGRESS */}
       {visibleProgress && <CustomCircularProgress />}
-    </>
+    </React.Fragment>
   );
 };

@@ -109,39 +109,41 @@ export const ListUsuarios = () => {
           <RiUserAddLine className="mr-2" /> Añadir usuario
         </Link>
       </div>
+
+      <div className="flex justify-center mt-4 mb-4">
+        <button
+          onClick={() => {
+            handleButtonClick(true);
+            filtrar("filterActivateUsuario", true);
+          }}
+          className={`px-4 py-2 mr-2 rounded ${
+            activeButton === true ? "bg-blue-500 text-white" : "bg-gray-300"
+          }`}
+        >
+          Usuarios Activos
+        </button>
+        <button
+          onClick={() => {
+            handleButtonClick(false);
+            filtrar("filterActivateUsuario", false);
+          }}
+          className={`px-4 py-2 rounded ${
+            activeButton === false ? "bg-blue-500 text-white" : "bg-gray-300"
+          }`}
+        >
+          Usuarios Inactivos
+        </button>
+      </div>
+
       <Paper>
-        <div className="flex justify-center mt-4 mb-4">
-          <button
-            onClick={() => {
-              handleButtonClick(true);
-              filtrar("filterActivateUsuario", true);
-            }}
-            className={`px-4 py-2 mr-2 rounded ${
-              activeButton === true ? "bg-blue-500 text-white" : "bg-gray-300"
-            }`}
-          >
-            Usuarios Activos
-          </button>
-          <button
-            onClick={() => {
-              handleButtonClick(false);
-              filtrar("filterActivateUsuario", false);
-            }}
-            className={`px-4 py-2 rounded ${
-              activeButton === false ? "bg-blue-500 text-white" : "bg-gray-300"
-            }`}
-          >
-            Usuarios Inactivos
-          </button>
-        </div>
         <TableContainer>
           <Table sx={{ minWidth: 700 }} aria-label="customized table">
             <TableHead>
               <TableRow
                 sx={{
                   "& th": {
-                    color: "rgba(96, 96, 96)",
-                    backgroundColor: "#f5f5f5",
+                    color: "rgba(200,200,200)",
+                    backgroundColor: "#404040",
                   },
                 }}
               >

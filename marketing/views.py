@@ -13,8 +13,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 class ProyectoList(generics.ListCreateAPIView):
     serializer_class = ProyectoSerializer
     queryset = Proyecto.objects.all()
-    filter_backends = [DjangoFilterBackend]
-    filterset_fields = ['estado']
+
 
 
 class ProyectoDetail(generics.RetrieveUpdateDestroyAPIView):
@@ -25,8 +24,7 @@ class ProyectoDetail(generics.RetrieveUpdateDestroyAPIView):
 class CategoriaList(generics.ListCreateAPIView):
     serializer_class = CategoriaSerializer
     queryset = Categoria.objects.all()
-    filter_backends = [DjangoFilterBackend]
-    filterset_fields = ['estado']
+
 
 
 class CategoriaDetail(generics.RetrieveUpdateDestroyAPIView):

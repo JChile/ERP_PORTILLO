@@ -968,7 +968,12 @@ class ProyectoTipoProductoListSinFiltros(ProyectoTipoProductoList):
 
 class ProyectoTipoProductoDetail(APIView):    
     def get(self, request, pk=None):
-        proyecto_tipo_producto_queryset = ProyectoTipoProducto.objects.get(id=pk)
+        
+        try:
+            proyecto_tipo_producto_queryset = ProyectoTipoProducto.objects.get(id=pk)
+        except :
+            return Response({"mesaje": "proyecto no existe"})
+        
         proyectoTipoProductoSerializer = ProyectoTipoProductoSerializer(proyecto_tipo_producto_queryset)
         proyecto_queryset = Proyecto.objects.all()
         tipo_producto_queryset = TipoProducto.objects.all()
@@ -991,3 +996,34 @@ class ProyectoTipoProductoDetail(APIView):
         return Response(dataJson)
 
 
+
+
+class ProyectoCotizaciones(APIView):    
+    def get(self, request, pk=None):
+
+        try:
+            proyecto_queryset = Proyecto.objects.get(id=pk)
+        except :
+            return Response({"mesaje": "proyecto no existe"})
+        
+        proyectoSerializer = ProyectoSerializer(proyecto_queryset).data
+        proyectoTipoProducto_queryset = ProyectoTipoProducto.objects.all()
+        cotizacion_queryset = Cotizacion.objects.all()
+        cuota_queryset = Cuota.objects.all()
+        precio_queryset = Precio.objects.all()
+        tipoProducto_queryset = TipoProducto.objects.all()
+
+        cotizacion_serializer = CotizacionSerializer(cotizacion_queryset.filter(proyecto = pk), many = True)
+        tipoProducto_serializer = ProyectoTipoProductoSerializer(proyectoTipoProducto_queryset.filter(proyecto = pk), many = True)
+        
+        for i in tipoProducto_serializer.data:
+            i["tipo"] = TipoProductoSerializer(tipoProducto_queryset.get(id = i["tipo_producto"])).data
+        for i in cotizacion_serializer.data:
+            i["cuota"] = CuotaSerializer(cuota_queryset.filter(cotizacion = i["id"]), many = True).data
+            i["precio"] = PrecioSerializer(precio_queryset.filter(cotizacion = i["id"]), many = True).data
+
+        proyectoSerializer["tipoProducto"]= tipoProducto_serializer.data
+        proyectoSerializer["cotizacion"]= cotizacion_serializer.data
+
+
+        return Response(proyectoSerializer)

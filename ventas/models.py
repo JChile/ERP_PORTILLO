@@ -18,9 +18,12 @@ class Asesor(models.Model):
     def __str__(self):
         return self.codigo
 
+
 class TipoEvento(models.Model):
     nombre = models.CharField(max_length=100, null=True)
-    estado = models.ForeignKey(EstadoRegistro, on_delete=models.SET_NULL, default='A', null=True)
+    estado = models.ForeignKey(
+        EstadoRegistro, on_delete=models.SET_NULL, default='A', null=True)
+
     def __str__(self):
         return self.nombre
 
@@ -94,17 +97,19 @@ class Llamada(models.Model):
 
 
 class Evento(models.Model):
-    asesor = models.ForeignKey(Asesor,  on_delete=models.CASCADE )
-    lead = models.ForeignKey(Lead,  on_delete=models.CASCADE , null=True,blank=True)
+    asesor = models.ForeignKey(Asesor,  on_delete=models.CASCADE)
+    lead = models.ForeignKey(
+        Lead,  on_delete=models.CASCADE, null=True, blank=True)
 
-    titulo = models.CharField(max_length=100, null=True )
-    duracion = models.IntegerField(null=True,blank=True)
-    fecha_visita = models.DateTimeField(null=True,blank=True)
+    titulo = models.CharField(max_length=100, null=True)
+    duracion = models.IntegerField(null=True, blank=True)
+    fecha_visita = models.DateTimeField(null=True, blank=True)
     tipo = models.ForeignKey(TipoEvento,  on_delete=models.CASCADE)
     ubicacion = models.CharField(max_length=100, null=True)
     proyecto = models.ForeignKey(Proyecto, on_delete=models.CASCADE)
     descripcion = models.TextField(null=True, blank=True)
-    estado = models.ForeignKey(EstadoRegistro, on_delete=models.SET_NULL, default='A', null=True)
+    estado = models.ForeignKey(
+        EstadoRegistro, on_delete=models.SET_NULL, default='A', null=True)
 
     def __str__(self):
         return self.titulo
@@ -112,37 +117,49 @@ class Evento(models.Model):
 
 class TipoProducto(models.Model):
     nombre = models.CharField(max_length=100, null=False, blank=True)
-    estado = models.ForeignKey(EstadoRegistro, on_delete=models.SET_NULL, default='A', null=True)
+    estado = models.ForeignKey(
+        EstadoRegistro, on_delete=models.SET_NULL, default='A', null=True)
 
     def __str__(self):
         return self.nombre
+
 
 class Producto(models.Model):
     nombre = models.CharField(max_length=100, null=False, blank=True)
-    codigo = models.CharField(max_length=100, null=False, blank=True, unique=True)
-    tipo = models.ForeignKey(TipoProducto, on_delete=models.CASCADE , null=True, blank=True)
-    proyecto = models.ForeignKey(Proyecto, on_delete=models.CASCADE , null=True, blank=True)
+    codigo = models.CharField(
+        max_length=100, null=False, blank=True, unique=True)
+    tipo = models.ForeignKey(
+        TipoProducto, on_delete=models.CASCADE, null=True, blank=True)
+    proyecto = models.ForeignKey(
+        Proyecto, on_delete=models.CASCADE, null=True, blank=True)
     numero = models.IntegerField(null=True, blank=True, default=0)
     area = models.FloatField(null=True, blank=True, default=0)
-    estado = models.ForeignKey(EstadoRegistro, on_delete=models.SET_NULL, default='A', null=True)
+    estado = models.ForeignKey(
+        EstadoRegistro, on_delete=models.SET_NULL, default='A', null=True)
 
     def __str__(self):
         return self.nombre
-    
+
+
 class TipoCotizacion(models.Model):
     nombre = models.CharField(max_length=100, null=False, blank=True)
-    estado = models.ForeignKey(EstadoRegistro, on_delete=models.SET_NULL, default='A', null=True)
-    
+    estado = models.ForeignKey(
+        EstadoRegistro, on_delete=models.SET_NULL, default='A', null=True)
+
     def __str__(self):
         return self.nombre
+
 
 class Cotizacion(models.Model):
     nombre = models.CharField(max_length=100, null=False, blank=True)
-    tipo = models.ForeignKey(TipoCotizacion, on_delete=models.CASCADE , null=True, blank=True)
-    proyecto = models.ForeignKey(Proyecto, on_delete=models.CASCADE , null=True, blank=True)
-    fecha = models.DateTimeField(null=True,blank=True)
+    tipo = models.ForeignKey(
+        TipoCotizacion, on_delete=models.CASCADE, null=True, blank=True)
+    proyecto = models.ForeignKey(
+        Proyecto, on_delete=models.CASCADE, null=True, blank=True)
+    fecha = models.DateTimeField(null=True, blank=True)
     duracion = models.IntegerField(null=True, blank=True, default=0)
-    estado = models.ForeignKey(EstadoRegistro, on_delete=models.SET_NULL, default='A', null=True)
+    estado = models.ForeignKey(
+        EstadoRegistro, on_delete=models.SET_NULL, default='A', null=True)
 
     def __str__(self):
         return self.nombre
@@ -150,35 +167,44 @@ class Cotizacion(models.Model):
 
 class TipoCuota(models.Model):
     nombre = models.CharField(max_length=100, null=False, blank=True)
-    estado = models.ForeignKey(EstadoRegistro, on_delete=models.SET_NULL, default='A', null=True)
+    estado = models.ForeignKey(
+        EstadoRegistro, on_delete=models.SET_NULL, default='A', null=True)
+
     def __str__(self):
         return self.nombre
-    
+
+
 class Cuota(models.Model):
-    tipo = models.ForeignKey(TipoCuota, on_delete=models.CASCADE , null=True, blank=True)
-    cotizacion = models.ForeignKey(Cotizacion, on_delete=models.CASCADE , null=True, blank=True)
+    tipo = models.ForeignKey(
+        TipoCuota, on_delete=models.CASCADE, null=True, blank=True)
+    cotizacion = models.ForeignKey(
+        Cotizacion, on_delete=models.CASCADE, null=True, blank=True)
     numero = models.IntegerField(null=True, blank=True)
     tiempo = models.IntegerField(null=True, blank=True)
     porcentaje = models.FloatField(null=True, blank=True, default=0)
-    fecha = models.DateTimeField(null=True,blank=True)
-    estado = models.ForeignKey(EstadoRegistro, on_delete=models.SET_NULL, default='A', null=True)
+    fecha = models.DateTimeField(null=True, blank=True)
+    estado = models.ForeignKey(
+        EstadoRegistro, on_delete=models.SET_NULL, default='A', null=True)
 
     def __str__(self):
-        return self.tipo
+        return f'{self.cotizacion.tipo.nombre} -  Cuota {str(self.numero)}: {self.tipo.nombre}'
 
 
 class Precio(models.Model):
-    tipoProducto = models.ForeignKey(TipoCuota, on_delete=models.CASCADE , null=True, blank=True)
-    cotizacion = models.ForeignKey(Cotizacion, on_delete=models.CASCADE , null=True, blank=True)
+    tipoProducto = models.ForeignKey(
+        TipoProducto, on_delete=models.CASCADE, null=True, blank=True)
+    cotizacion = models.ForeignKey(
+        Cotizacion, on_delete=models.CASCADE, null=True, blank=True)
     precio = models.FloatField(null=True, blank=True, default=0)
-    estado = models.ForeignKey(EstadoRegistro, on_delete=models.SET_NULL, default='A', null=True)
+    estado = models.ForeignKey(
+        EstadoRegistro, on_delete=models.SET_NULL, default='A', null=True)
+
+    def __str__(self):
+        return f'{self.cotizacion.tipo.nombre} - {self.tipoProducto.nombre}'
 
 
-
-
-
-
-
-
-
-    
+class ProyectoTipoProducto(models.Model):
+    proyecto = models.ForeignKey(
+        Proyecto, on_delete=models.CASCADE, null=True, blank=True)
+    tipo_producto = models.ForeignKey(
+        TipoProducto, on_delete=models.CASCADE, null=True, blank=True)

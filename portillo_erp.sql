@@ -46,15 +46,22 @@ COPY public.django_content_type (id, app_label, model) FROM stdin;
 11	marketing	categoria
 12	marketing	campania
 13	ventas	asesor
-14	ventas	estadolead
-15	ventas	lead
-16	ventas	whatsapp
-17	ventas	objecion
-18	ventas	llamada
-19	token_blacklist	blacklistedtoken
-20	token_blacklist	outstandingtoken
-21	ventas	evento
-22	ventas	tipoevento
+14	ventas	cotizacion
+15	ventas	estadolead
+16	ventas	lead
+17	ventas	whatsapp
+18	ventas	tipoproducto
+19	ventas	tipoevento
+20	ventas	tipocuota
+21	ventas	tipocotizacion
+22	ventas	producto
+23	ventas	precio
+24	ventas	objecion
+25	ventas	llamada
+26	ventas	evento
+27	ventas	cuota
+28	token_blacklist	blacklistedtoken
+29	token_blacklist	outstandingtoken
 \.
 
 
@@ -115,42 +122,70 @@ COPY public.auth_permission (id, name, content_type_id, codename) FROM stdin;
 50	Can change asesor	13	change_asesor
 51	Can delete asesor	13	delete_asesor
 52	Can view asesor	13	view_asesor
-53	Can add estado lead	14	add_estadolead
-54	Can change estado lead	14	change_estadolead
-55	Can delete estado lead	14	delete_estadolead
-56	Can view estado lead	14	view_estadolead
-57	Can add lead	15	add_lead
-58	Can change lead	15	change_lead
-59	Can delete lead	15	delete_lead
-60	Can view lead	15	view_lead
-61	Can add whats app	16	add_whatsapp
-62	Can change whats app	16	change_whatsapp
-63	Can delete whats app	16	delete_whatsapp
-64	Can view whats app	16	view_whatsapp
-65	Can add objecion	17	add_objecion
-66	Can change objecion	17	change_objecion
-67	Can delete objecion	17	delete_objecion
-68	Can view objecion	17	view_objecion
-69	Can add llamada	18	add_llamada
-70	Can change llamada	18	change_llamada
-71	Can delete llamada	18	delete_llamada
-72	Can view llamada	18	view_llamada
-73	Can add blacklisted token	19	add_blacklistedtoken
-74	Can change blacklisted token	19	change_blacklistedtoken
-75	Can delete blacklisted token	19	delete_blacklistedtoken
-76	Can view blacklisted token	19	view_blacklistedtoken
-77	Can add outstanding token	20	add_outstandingtoken
-78	Can change outstanding token	20	change_outstandingtoken
-79	Can delete outstanding token	20	delete_outstandingtoken
-80	Can view outstanding token	20	view_outstandingtoken
-81	Can add evento	21	add_evento
-82	Can change evento	21	change_evento
-83	Can delete evento	21	delete_evento
-84	Can view evento	21	view_evento
-85	Can add tipo evento	22	add_tipoevento
-86	Can change tipo evento	22	change_tipoevento
-87	Can delete tipo evento	22	delete_tipoevento
-88	Can view tipo evento	22	view_tipoevento
+53	Can add cotizacion	14	add_cotizacion
+54	Can change cotizacion	14	change_cotizacion
+55	Can delete cotizacion	14	delete_cotizacion
+56	Can view cotizacion	14	view_cotizacion
+57	Can add estado lead	15	add_estadolead
+58	Can change estado lead	15	change_estadolead
+59	Can delete estado lead	15	delete_estadolead
+60	Can view estado lead	15	view_estadolead
+61	Can add lead	16	add_lead
+62	Can change lead	16	change_lead
+63	Can delete lead	16	delete_lead
+64	Can view lead	16	view_lead
+65	Can add whats app	17	add_whatsapp
+66	Can change whats app	17	change_whatsapp
+67	Can delete whats app	17	delete_whatsapp
+68	Can view whats app	17	view_whatsapp
+69	Can add tipo producto	18	add_tipoproducto
+70	Can change tipo producto	18	change_tipoproducto
+71	Can delete tipo producto	18	delete_tipoproducto
+72	Can view tipo producto	18	view_tipoproducto
+73	Can add tipo evento	19	add_tipoevento
+74	Can change tipo evento	19	change_tipoevento
+75	Can delete tipo evento	19	delete_tipoevento
+76	Can view tipo evento	19	view_tipoevento
+77	Can add tipo cuota	20	add_tipocuota
+78	Can change tipo cuota	20	change_tipocuota
+79	Can delete tipo cuota	20	delete_tipocuota
+80	Can view tipo cuota	20	view_tipocuota
+81	Can add tipo cotizacion	21	add_tipocotizacion
+82	Can change tipo cotizacion	21	change_tipocotizacion
+83	Can delete tipo cotizacion	21	delete_tipocotizacion
+84	Can view tipo cotizacion	21	view_tipocotizacion
+85	Can add producto	22	add_producto
+86	Can change producto	22	change_producto
+87	Can delete producto	22	delete_producto
+88	Can view producto	22	view_producto
+89	Can add precio	23	add_precio
+90	Can change precio	23	change_precio
+91	Can delete precio	23	delete_precio
+92	Can view precio	23	view_precio
+93	Can add objecion	24	add_objecion
+94	Can change objecion	24	change_objecion
+95	Can delete objecion	24	delete_objecion
+96	Can view objecion	24	view_objecion
+97	Can add llamada	25	add_llamada
+98	Can change llamada	25	change_llamada
+99	Can delete llamada	25	delete_llamada
+100	Can view llamada	25	view_llamada
+101	Can add evento	26	add_evento
+102	Can change evento	26	change_evento
+103	Can delete evento	26	delete_evento
+104	Can view evento	26	view_evento
+105	Can add cuota	27	add_cuota
+106	Can change cuota	27	change_cuota
+107	Can delete cuota	27	delete_cuota
+108	Can view cuota	27	view_cuota
+109	Can add blacklisted token	28	add_blacklistedtoken
+110	Can change blacklisted token	28	change_blacklistedtoken
+111	Can delete blacklisted token	28	delete_blacklistedtoken
+112	Can view blacklisted token	28	view_blacklistedtoken
+113	Can add outstanding token	29	add_outstandingtoken
+114	Can change outstanding token	29	change_outstandingtoken
+115	Can delete outstanding token	29	delete_outstandingtoken
+116	Can view outstanding token	29	view_outstandingtoken
 \.
 
 
@@ -224,13 +259,13 @@ I	Inactivo
 -- Data for Name: cuenta_modulo; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public.cuenta_modulo (id, nombre, "contentType_id", estado_id, url) FROM stdin;
-7	Gestión de leads	15	A	lead
-6	Gestion de eventos	21	A	evento
-5	Gestion de usuarios	9	A	usuario
-4	Gestión de asesores	13	A	asesor
-3	Gestion de roles	3	A	rol
-2	Gestion de campañas	12	A	campania
+COPY public.cuenta_modulo (id, nombre, url, "contentType_id", estado_id) FROM stdin;
+7	Gestión de leads	lead	15	A
+6	Gestion de eventos	evento	21	A
+5	Gestion de usuarios	usuario	9	A
+4	Gestión de asesores	asesor	13	A
+3	Gestion de roles	rol	3	A
+2	Gestion de campañas	campania	12	A
 \.
 
 
@@ -418,6 +453,53 @@ COPY public.django_admin_log (id, action_time, object_id, object_repr, action_fl
 115	2023-12-10 23:34:23.507148-05	4	Gestión de asesores	2	[]	8	1
 116	2023-12-10 23:34:25.533787-05	3	Gestion de roles	2	[]	8	1
 117	2023-12-10 23:34:27.706564-05	2	Gestion de campañas	2	[]	8	1
+118	2023-12-18 23:01:05.025009-05	1	Departamento	1	[{"added": {}}]	18	1
+119	2023-12-18 23:01:23.750757-05	2	Cochera	1	[{"added": {}}]	18	1
+120	2023-12-18 23:01:34.582496-05	3	Depósito	1	[{"added": {}}]	18	1
+121	2023-12-18 23:01:41.770486-05	4	Condominio	1	[{"added": {}}]	18	1
+122	2023-12-18 23:02:11.311774-05	1	Inicial	1	[{"added": {}}]	19	1
+123	2023-12-18 23:02:22.986733-05	2	Obra culminada	1	[{"added": {}}]	19	1
+124	2023-12-18 23:02:30.413173-05	3	Credito	1	[{"added": {}}]	19	1
+125	2023-12-18 23:02:37.857042-05	3	Crédito	2	[{"changed": {"fields": ["Nombre"]}}]	19	1
+126	2023-12-18 23:02:58.019582-05	1	Pago Contado	1	[{"added": {}}]	21	1
+127	2023-12-18 23:03:09.38226-05	2	Crédito Hipotecario	1	[{"added": {}}]	21	1
+128	2023-12-18 23:03:16.939499-05	3	Pago 18 meses	1	[{"added": {}}]	21	1
+129	2023-12-18 23:09:14.244288-05	1	Departamento 1	1	[{"added": {}}]	22	1
+130	2023-12-18 23:09:46.668272-05	2	Departamento 2	1	[{"added": {}}]	22	1
+131	2023-12-18 23:11:44.316664-05	3	Estacionamiento carpor 1	1	[{"added": {}}]	22	1
+132	2023-12-18 23:12:22.418914-05	4	Estacionamiento semi 2	1	[{"added": {}}]	22	1
+133	2023-12-18 23:13:01.772857-05	5	Depósito 1	1	[{"added": {}}]	22	1
+134	2023-12-18 23:13:40.358706-05	6	Depósito 2	1	[{"added": {}}]	22	1
+135	2023-12-18 23:14:58.330376-05	1	Pago Contado	1	[{"added": {}}]	14	1
+136	2023-12-18 23:15:32.660193-05	2	Crédito hipotecario	1	[{"added": {}}]	14	1
+137	2023-12-18 23:15:53.446572-05	3	Pago 18 meses	1	[{"added": {}}]	14	1
+138	2023-12-18 23:22:54.117725-05	1	Inicial	1	[{"added": {}}]	20	1
+139	2023-12-18 23:23:00.571624-05	2	Obra culminada	1	[{"added": {}}]	20	1
+140	2023-12-18 23:23:06.054277-05	3	Crédito	1	[{"added": {}}]	20	1
+141	2023-12-18 23:23:29.638202-05	1	Llamada	2	[{"changed": {"fields": ["Nombre"]}}]	19	1
+142	2023-12-18 23:23:36.313745-05	2	Visita	2	[{"changed": {"fields": ["Nombre"]}}]	19	1
+143	2023-12-18 23:23:43.102154-05	3	Firma contrato	2	[{"changed": {"fields": ["Nombre"]}}]	19	1
+144	2023-12-18 23:35:16.499471-05	7	Inicial	1	[{"added": {}}]	27	1
+145	2023-12-18 23:42:06.93822-05	8	Pago Contado -  Cuota 2: Obra culminada	1	[{"added": {}}]	27	1
+146	2023-12-18 23:42:15.082735-05	8	Pago Contado -  Cuota 2: Crédito	2	[{"changed": {"fields": ["Tipo"]}}]	27	1
+147	2023-12-18 23:43:20.393508-05	1	Automático	2	[{"changed": {"fields": ["Nombre"]}}]	20	1
+148	2023-12-18 23:43:35.156823-05	2	Periodo	2	[{"changed": {"fields": ["Nombre"]}}]	20	1
+149	2023-12-18 23:43:47.481205-05	3	Periodo aproximado	2	[{"changed": {"fields": ["Nombre"]}}]	20	1
+150	2023-12-18 23:43:57.785098-05	4	Estático	1	[{"added": {}}]	20	1
+151	2023-12-18 23:44:26.684915-05	8	Pago Contado -  Cuota 2: Periodo	2	[{"changed": {"fields": ["Tipo"]}}]	27	1
+152	2023-12-18 23:44:49.818377-05	9	Pago Contado -  Cuota 3: Periodo aproximado	1	[{"added": {}}]	27	1
+153	2023-12-18 23:47:37.907978-05	1	Precio object (1)	1	[{"added": {}}]	23	1
+154	2023-12-18 23:48:45.317389-05	2	Pago Contado - Cochera	1	[{"added": {}}]	23	1
+155	2023-12-18 23:48:58.292137-05	3	Pago Contado - Depósito	1	[{"added": {}}]	23	1
+156	2023-12-18 23:50:18.320272-05	10	Crédito Hipotecario -  Cuota 1: Automático	1	[{"added": {}}]	27	1
+157	2023-12-18 23:51:42.354337-05	11	Crédito Hipotecario -  Cuota 2: Periodo	1	[{"added": {}}]	27	1
+158	2023-12-18 23:52:07.690271-05	10	Crédito Hipotecario -  Cuota 1: Automático	2	[{"changed": {"fields": ["Porcentaje"]}}]	27	1
+159	2023-12-18 23:53:10.355171-05	12	Crédito Hipotecario -  Cuota 3: Estático	1	[{"added": {}}]	27	1
+160	2023-12-18 23:54:32.71542-05	9	Pago Contado -  Cuota 3: Estático	2	[{"changed": {"fields": ["Tipo", "Tiempo", "Fecha"]}}]	27	1
+161	2023-12-18 23:55:28.924051-05	13	Pago 18 meses -  Cuota 1: Automático	1	[{"added": {}}]	27	1
+162	2023-12-18 23:56:07.952434-05	14	Pago 18 meses -  Cuota 2: Periodo	1	[{"added": {}}]	27	1
+163	2023-12-18 23:56:28.461357-05	15	Pago 18 meses -  Cuota 3: Periodo	1	[{"added": {}}]	27	1
+164	2023-12-18 23:57:00.181138-05	16	Pago 18 meses -  Cuota 4: Periodo aproximado	1	[{"added": {}}]	27	1
 \.
 
 
@@ -426,46 +508,39 @@ COPY public.django_admin_log (id, action_time, object_id, object_repr, action_fl
 --
 
 COPY public.django_migrations (id, app, name, applied) FROM stdin;
-1	contenttypes	0001_initial	2023-10-11 13:34:00.799355-05
-2	contenttypes	0002_remove_content_type_name	2023-10-11 13:34:00.817757-05
-3	auth	0001_initial	2023-10-11 13:34:00.882135-05
-4	auth	0002_alter_permission_name_max_length	2023-10-11 13:34:00.891358-05
-5	auth	0003_alter_user_email_max_length	2023-10-11 13:34:00.89868-05
-6	auth	0004_alter_user_username_opts	2023-10-11 13:34:00.89868-05
-7	auth	0005_alter_user_last_login_null	2023-10-11 13:34:00.91306-05
-8	auth	0006_require_contenttypes_0002	2023-10-11 13:34:00.916998-05
-9	auth	0007_alter_validators_add_error_messages	2023-10-11 13:34:00.916998-05
-10	auth	0008_alter_user_username_max_length	2023-10-11 13:34:00.916998-05
-11	auth	0009_alter_user_last_name_max_length	2023-10-11 13:34:00.932007-05
-12	auth	0010_alter_group_name_max_length	2023-10-11 13:34:00.948833-05
-13	auth	0011_update_proxy_permissions	2023-10-11 13:34:00.949349-05
-14	auth	0012_alter_user_first_name_max_length	2023-10-11 13:34:00.949349-05
-15	cuenta	0001_initial	2023-10-11 13:34:01.080641-05
-16	admin	0001_initial	2023-10-11 13:34:01.103046-05
-17	admin	0002_logentry_remove_auto_add	2023-10-11 13:34:01.117225-05
-18	admin	0003_logentry_add_action_flag_choices	2023-10-11 13:34:01.122361-05
-19	marketing	0001_initial	2023-10-11 13:34:01.200601-05
-20	sessions	0001_initial	2023-10-11 13:34:01.224656-05
-21	token_blacklist	0001_initial	2023-10-11 13:34:01.271069-05
-22	token_blacklist	0002_outstandingtoken_jti_hex	2023-10-11 13:34:01.279661-05
-23	token_blacklist	0003_auto_20171017_2007	2023-10-11 13:34:01.296113-05
-24	token_blacklist	0004_auto_20171017_2013	2023-10-11 13:34:01.3127-05
-25	token_blacklist	0005_remove_outstandingtoken_jti	2023-10-11 13:34:01.319838-05
-26	token_blacklist	0006_auto_20171017_2113	2023-10-11 13:34:01.333705-05
-27	token_blacklist	0007_auto_20171017_2214	2023-10-11 13:34:01.367837-05
-28	token_blacklist	0008_migrate_to_bigautofield	2023-10-11 13:34:01.430239-05
-29	token_blacklist	0010_fix_migrate_to_bigautofield	2023-10-11 13:34:01.44891-05
-30	token_blacklist	0011_linearizes_history	2023-10-11 13:34:01.44891-05
-31	token_blacklist	0012_alter_outstandingtoken_user	2023-10-11 13:34:01.472787-05
-32	ventas	0001_initial	2023-10-11 13:34:01.688774-05
-35	ventas	0002_alter_lead_llamar	2023-10-22 11:38:13.375514-05
-36	ventas	0003_alter_lead_estadolead_alter_lead_objecion	2023-10-22 11:41:26.785094-05
-37	ventas	0004_alter_lead_horarecepcion	2023-10-22 12:05:08.979259-05
-38	ventas	0005_alter_lead_horarecepcion	2023-10-22 12:56:31.425706-05
-39	ventas	0006_alter_lead_horarecepcion	2023-10-22 13:24:51.517049-05
-40	ventas	0007_tipoevento_evento	2023-12-10 22:12:57.39895-05
-41	cuenta	0002_alter_modulo_contenttype	2023-12-10 23:09:51.938644-05
-42	cuenta	0003_modulo_url	2023-12-10 23:15:39.26857-05
+1	contenttypes	0001_initial	2023-12-18 23:00:02.827745-05
+2	contenttypes	0002_remove_content_type_name	2023-12-18 23:00:02.838792-05
+3	auth	0001_initial	2023-12-18 23:00:02.897691-05
+4	auth	0002_alter_permission_name_max_length	2023-12-18 23:00:02.902707-05
+5	auth	0003_alter_user_email_max_length	2023-12-18 23:00:02.908443-05
+6	auth	0004_alter_user_username_opts	2023-12-18 23:00:02.916654-05
+7	auth	0005_alter_user_last_login_null	2023-12-18 23:00:02.923803-05
+8	auth	0006_require_contenttypes_0002	2023-12-18 23:00:02.926303-05
+9	auth	0007_alter_validators_add_error_messages	2023-12-18 23:00:02.93344-05
+10	auth	0008_alter_user_username_max_length	2023-12-18 23:00:02.939987-05
+11	auth	0009_alter_user_last_name_max_length	2023-12-18 23:00:02.945999-05
+12	auth	0010_alter_group_name_max_length	2023-12-18 23:00:02.957554-05
+13	auth	0011_update_proxy_permissions	2023-12-18 23:00:02.964837-05
+14	auth	0012_alter_user_first_name_max_length	2023-12-18 23:00:02.970376-05
+15	cuenta	0001_initial	2023-12-18 23:00:03.088254-05
+16	admin	0001_initial	2023-12-18 23:00:03.118727-05
+17	admin	0002_logentry_remove_auto_add	2023-12-18 23:00:03.129099-05
+18	admin	0003_logentry_add_action_flag_choices	2023-12-18 23:00:03.142885-05
+19	marketing	0001_initial	2023-12-18 23:00:03.228256-05
+20	sessions	0001_initial	2023-12-18 23:00:03.244631-05
+21	token_blacklist	0001_initial	2023-12-18 23:00:03.292691-05
+22	token_blacklist	0002_outstandingtoken_jti_hex	2023-12-18 23:00:03.301276-05
+23	token_blacklist	0003_auto_20171017_2007	2023-12-18 23:00:03.315935-05
+24	token_blacklist	0004_auto_20171017_2013	2023-12-18 23:00:03.331019-05
+25	token_blacklist	0005_remove_outstandingtoken_jti	2023-12-18 23:00:03.343879-05
+26	token_blacklist	0006_auto_20171017_2113	2023-12-18 23:00:03.357729-05
+27	token_blacklist	0007_auto_20171017_2214	2023-12-18 23:00:03.391326-05
+28	token_blacklist	0008_migrate_to_bigautofield	2023-12-18 23:00:03.45423-05
+29	token_blacklist	0010_fix_migrate_to_bigautofield	2023-12-18 23:00:03.481345-05
+30	token_blacklist	0011_linearizes_history	2023-12-18 23:00:03.484458-05
+31	token_blacklist	0012_alter_outstandingtoken_user	2023-12-18 23:00:03.526215-05
+32	ventas	0001_initial	2023-12-18 23:00:04.02734-05
+43	ventas	0002_alter_precio_tipoproducto	2023-12-18 23:47:03.312885-05
 \.
 
 
@@ -561,6 +636,58 @@ COPY public.ventas_asesor (id, codigo, "numeroLeads", "maximoLeads", "fechaCread
 
 
 --
+-- Data for Name: ventas_tipocotizacion; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.ventas_tipocotizacion (id, nombre, estado_id) FROM stdin;
+1	Pago Contado	A
+2	Crédito Hipotecario	A
+3	Pago 18 meses	A
+\.
+
+
+--
+-- Data for Name: ventas_cotizacion; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.ventas_cotizacion (id, nombre, fecha, duracion, estado_id, proyecto_id, tipo_id) FROM stdin;
+1	Pago Contado	2023-12-18 23:14:51-05	4	A	1	1
+2	Crédito hipotecario	2023-12-18 23:15:25-05	4	A	1	2
+3	Pago 18 meses	2023-12-18 23:15:48-05	4	A	1	3
+\.
+
+
+--
+-- Data for Name: ventas_tipocuota; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.ventas_tipocuota (id, nombre, estado_id) FROM stdin;
+1	Automático	A
+2	Periodo	A
+3	Periodo aproximado	A
+4	Estático	A
+\.
+
+
+--
+-- Data for Name: ventas_cuota; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.ventas_cuota (id, numero, tiempo, porcentaje, fecha, cotizacion_id, estado_id, tipo_id) FROM stdin;
+7	1	0	40	\N	1	A	1
+8	2	6	50	\N	1	A	2
+11	2	6	25	\N	2	A	2
+10	1	0	25	\N	2	A	1
+12	3	0	50	2024-02-29 23:53:03-05	2	A	4
+9	3	0	10	2024-02-22 23:54:29-05	1	A	4
+13	1	0	25	\N	3	A	1
+14	2	6	25	\N	3	A	2
+15	3	0	0	\N	3	A	2
+16	4	6	0	\N	3	A	3
+\.
+
+
+--
 -- Data for Name: ventas_estadolead; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
@@ -572,22 +699,6 @@ TB	Tibio	A
 CH	Caliente	A
 SE	Separaciones	A
 CI	Cierre	A
-\.
-
-
---
--- Data for Name: ventas_tipoevento; Type: TABLE DATA; Schema: public; Owner: postgres
---
-
-COPY public.ventas_tipoevento (id, nombre, estado_id) FROM stdin;
-\.
-
-
---
--- Data for Name: ventas_evento; Type: TABLE DATA; Schema: public; Owner: postgres
---
-
-COPY public.ventas_evento (id, titulo, duracion, fecha_visita, ubicacion, descripcion, asesor_id, estado_id, proyecto_id, tipo_id) FROM stdin;
 \.
 
 
@@ -626,10 +737,66 @@ COPY public.ventas_lead (id, nombre, apellido, asignado, celular, celular2, come
 
 
 --
+-- Data for Name: ventas_tipoevento; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.ventas_tipoevento (id, nombre, estado_id) FROM stdin;
+1	Llamada	A
+2	Visita	A
+3	Firma contrato	A
+\.
+
+
+--
+-- Data for Name: ventas_evento; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.ventas_evento (id, titulo, duracion, fecha_visita, ubicacion, descripcion, asesor_id, estado_id, lead_id, proyecto_id, tipo_id) FROM stdin;
+\.
+
+
+--
 -- Data for Name: ventas_llamada; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
 COPY public.ventas_llamada (id, detalle, estado_id, lead_id) FROM stdin;
+\.
+
+
+--
+-- Data for Name: ventas_tipoproducto; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.ventas_tipoproducto (id, nombre, estado_id) FROM stdin;
+1	Departamento	A
+2	Cochera	A
+3	Depósito	A
+4	Condominio	A
+\.
+
+
+--
+-- Data for Name: ventas_precio; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.ventas_precio (id, precio, cotizacion_id, estado_id, "tipoProducto_id") FROM stdin;
+1	1350	1	A	1
+2	800	1	A	2
+3	800	1	A	3
+\.
+
+
+--
+-- Data for Name: ventas_producto; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.ventas_producto (id, nombre, codigo, numero, area, estado_id, proyecto_id, tipo_id) FROM stdin;
+1	Departamento 1	SD000001	101	79.5	A	1	1
+2	Departamento 2	SD000002	102	114.6	A	1	1
+3	Estacionamiento carpor 1	SE000001	1	14.85	A	1	2
+4	Estacionamiento semi 2	SE0000002	2	13.15	A	1	2
+5	Depósito 1	SDE000001	1	4.55	A	1	3
+6	Depósito 2	SDE000002	2	2.15	A	1	3
 \.
 
 
@@ -701,7 +868,7 @@ SELECT pg_catalog.setval('public.cuenta_user_user_permissions_id_seq', 1, false)
 -- Name: django_admin_log_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.django_admin_log_id_seq', 117, true);
+SELECT pg_catalog.setval('public.django_admin_log_id_seq', 164, true);
 
 
 --
@@ -715,7 +882,7 @@ SELECT pg_catalog.setval('public.django_content_type_id_seq', 22, true);
 -- Name: django_migrations_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.django_migrations_id_seq', 42, true);
+SELECT pg_catalog.setval('public.django_migrations_id_seq', 43, true);
 
 
 --
@@ -761,6 +928,20 @@ SELECT pg_catalog.setval('public.ventas_asesor_id_seq', 6, true);
 
 
 --
+-- Name: ventas_cotizacion_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.ventas_cotizacion_id_seq', 3, true);
+
+
+--
+-- Name: ventas_cuota_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.ventas_cuota_id_seq', 16, true);
+
+
+--
 -- Name: ventas_evento_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
@@ -789,10 +970,45 @@ SELECT pg_catalog.setval('public.ventas_objecion_id_seq', 10, true);
 
 
 --
+-- Name: ventas_precio_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.ventas_precio_id_seq', 3, true);
+
+
+--
+-- Name: ventas_producto_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.ventas_producto_id_seq', 6, true);
+
+
+--
+-- Name: ventas_tipocotizacion_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.ventas_tipocotizacion_id_seq', 3, true);
+
+
+--
+-- Name: ventas_tipocuota_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.ventas_tipocuota_id_seq', 4, true);
+
+
+--
 -- Name: ventas_tipoevento_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.ventas_tipoevento_id_seq', 1, false);
+SELECT pg_catalog.setval('public.ventas_tipoevento_id_seq', 3, true);
+
+
+--
+-- Name: ventas_tipoproducto_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.ventas_tipoproducto_id_seq', 4, true);
 
 
 --

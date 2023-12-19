@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django_filters',
     'cuenta.apps.CuentaConfig',
     'marketing.apps.MarketingConfig',
     'ventas.apps.VentasConfig',
@@ -100,10 +101,7 @@ DATABASES = {
         'NAME': 'portillo_erp',
         'USER': 'postgres',
         'PASSWORD': '123',
-<<<<<<< HEAD
-=======
         #'PASSWORD': 'admin',
->>>>>>> 13e13b6bd406fc192adfd08144ea48603aa31df5
         'HOST': 'localhost',
         'PORT': '',
     }

@@ -940,6 +940,50 @@ class PrecioDetail(generics.RetrieveUpdateDestroyAPIView):
         return Response(dataJson)
 
 
+class ProyectoTipoProductoList(generics.ListCreateAPIView):
+    serializer_class = ProyectoTipoProductoSerializer
+    queryset = ProyectoTipoProducto.objects.all()
 
+    def list(self, request):
+        proyecto_tipo_producto_queryset = self.queryset
+        proyecto_queryset = Proyecto.objects.all()
+        tipo_producto_queryset = TipoProducto.objects.all()
+
+        dataJson = ProyectoTipoProductoSerializer(proyecto_tipo_producto_queryset, many = True).data
+
+        for i in dataJson:        
+            i["proyecto"] = ProyectoSerializer(proyecto_queryset.get(id = i["proyecto"])).data
+            i["tipo_producto"] = TipoProductoSerializer(tipo_producto_queryset.get(id = i["tipo_producto"])).data
+
+        return Response(dataJson)
+
+class ProyectoTipoProductoListSinFiltros(ProyectoTipoProductoList):
+    def list(self, request):
+        self.queryset = self.queryset.filter()
+        return super().list(request)
+
+class ProyectoTipoProductoDetail(APIView):    
+    def get(self, request, pk=None):
+        proyecto_tipo_producto_queryset = ProyectoTipoProducto.objects.get(id=pk)
+        proyectoTipoProductoSerializer = ProyectoTipoProductoSerializer(proyecto_tipo_producto_queryset)
+        proyecto_queryset = Proyecto.objects.all()
+        tipo_producto_queryset = TipoProducto.objects.all()
+
+        dataJson = proyectoTipoProductoSerializer.data
+        dataJson["proyecto"] = ProyectoSerializer(proyecto_queryset.get(id=proyecto_tipo_producto_queryset.proyecto.pk)).data
+        dataProyecto = ProyectoTipoProductoSerializer(ProyectoTipoProducto.objects.filter(proyecto=proyecto_tipo_producto_queryset.proyecto.pk), many=True).data
+
+        tipo_producto_data = []
+        for i in dataProyecto:
+            tipo_producto_id = i["tipo_producto"]
+            intance = tipo_producto_queryset.get(id=tipo_producto_id)
+            tipo_producto_data.append({
+                'id': intance.id,
+                'nombre': intance.nombre,
+            })
+
+        dataJson["tipo_producto"] = tipo_producto_data
+
+        return Response(dataJson)
 
 

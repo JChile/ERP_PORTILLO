@@ -460,9 +460,12 @@ class AsesorLeadList(APIView):
 
 
 class AsesorLeadDetail(APIView):
-
     def get(self, request, pk=None):
-        asesor_queryset = Asesor.objects.get(id = pk)
+
+        try:
+            asesor_queryset = Asesor.objects.get(id = pk)
+        except :
+            return Response({"mesaje": "asesor no existe"})
         asesorSerializer = AsesorSerializer(asesor_queryset)
         dataJson = asesorSerializer.data
         dataJson["leads"] = LeadSerializer(Lead.objects.filter(asesor = asesor_queryset.pk),many = True).data
@@ -941,6 +944,86 @@ class PrecioDetail(generics.RetrieveUpdateDestroyAPIView):
         return Response(dataJson)
 
 
+class ProyectoTipoProductoList(generics.ListCreateAPIView):
+    serializer_class = ProyectoTipoProductoSerializer
+    queryset = ProyectoTipoProducto.objects.all()
+
+    def list(self, request):
+        proyecto_tipo_producto_queryset = self.queryset
+        proyecto_queryset = Proyecto.objects.all()
+        tipo_producto_queryset = TipoProducto.objects.all()
+
+        dataJson = ProyectoTipoProductoSerializer(proyecto_tipo_producto_queryset, many = True).data
+
+        for i in dataJson:        
+            i["proyecto"] = ProyectoSerializer(proyecto_queryset.get(id = i["proyecto"])).data
+            i["tipo_producto"] = TipoProductoSerializer(tipo_producto_queryset.get(id = i["tipo_producto"])).data
+
+        return Response(dataJson)
+
+class ProyectoTipoProductoListSinFiltros(ProyectoTipoProductoList):
+    def list(self, request):
+        self.queryset = self.queryset.filter()
+        return super().list(request)
+
+class ProyectoTipoProductoDetail(APIView):    
+    def get(self, request, pk=None):
+        
+        try:
+            proyecto_tipo_producto_queryset = ProyectoTipoProducto.objects.get(id=pk)
+        except :
+            return Response({"mesaje": "proyecto no existe"})
+        
+        proyectoTipoProductoSerializer = ProyectoTipoProductoSerializer(proyecto_tipo_producto_queryset)
+        proyecto_queryset = Proyecto.objects.all()
+        tipo_producto_queryset = TipoProducto.objects.all()
+
+        dataJson = proyectoTipoProductoSerializer.data
+        dataJson["proyecto"] = ProyectoSerializer(proyecto_queryset.get(id=proyecto_tipo_producto_queryset.proyecto.pk)).data
+        dataProyecto = ProyectoTipoProductoSerializer(ProyectoTipoProducto.objects.filter(proyecto=proyecto_tipo_producto_queryset.proyecto.pk), many=True).data
+
+        tipo_producto_data = []
+        for i in dataProyecto:
+            tipo_producto_id = i["tipo_producto"]
+            intance = tipo_producto_queryset.get(id=tipo_producto_id)
+            tipo_producto_data.append({
+                'id': intance.id,
+                'nombre': intance.nombre,
+            })
+
+        dataJson["tipo_producto"] = tipo_producto_data
+
+        return Response(dataJson)
 
 
 
+
+class ProyectoCotizaciones(APIView):    
+    def get(self, request, pk=None):
+
+        try:
+            proyecto_queryset = Proyecto.objects.get(id=pk)
+        except :
+            return Response({"mesaje": "proyecto no existe"})
+        
+        proyectoSerializer = ProyectoSerializer(proyecto_queryset).data
+        proyectoTipoProducto_queryset = ProyectoTipoProducto.objects.all()
+        cotizacion_queryset = Cotizacion.objects.all()
+        cuota_queryset = Cuota.objects.all()
+        precio_queryset = Precio.objects.all()
+        tipoProducto_queryset = TipoProducto.objects.all()
+
+        cotizacion_serializer = CotizacionSerializer(cotizacion_queryset.filter(proyecto = pk), many = True)
+        tipoProducto_serializer = ProyectoTipoProductoSerializer(proyectoTipoProducto_queryset.filter(proyecto = pk), many = True)
+        
+        for i in tipoProducto_serializer.data:
+            i["tipo"] = TipoProductoSerializer(tipoProducto_queryset.get(id = i["tipo_producto"])).data
+        for i in cotizacion_serializer.data:
+            i["cuota"] = CuotaSerializer(cuota_queryset.filter(cotizacion = i["id"]), many = True).data
+            i["precio"] = PrecioSerializer(precio_queryset.filter(cotizacion = i["id"]), many = True).data
+
+        proyectoSerializer["tipoProducto"]= tipoProducto_serializer.data
+        proyectoSerializer["cotizacion"]= cotizacion_serializer.data
+
+
+        return Response(proyectoSerializer)

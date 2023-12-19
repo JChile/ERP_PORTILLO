@@ -446,6 +446,7 @@ class AsesorList(generics.ListCreateAPIView):
 
 
 
+
 class AsesorLeadList(APIView):
 
     def get(self, request):
@@ -628,7 +629,7 @@ class EventoList(generics.ListCreateAPIView):
     queryset = Evento.objects.all()
 
     def list(self, request):
-        evento_queryset = self.queryset
+        evento_queryset = Evento.objects.all()
         asesor_queryset = Asesor.objects.all()
         tipo_queryset = TipoEvento.objects.all()
         proyecto_queryset = Proyecto.objects.all()
@@ -642,6 +643,23 @@ class EventoList(generics.ListCreateAPIView):
             i["proyecto"] = ProyectoSerializer(proyecto_queryset.get(id = i["proyecto"])).data
 
         return Response(dataJson)
+
+    
+    def post(self, request):
+
+        idUsuario = request.data.pop("idUsuario")
+        serializer = EventoSerializer(data=request.data)
+        
+        try:
+            idUser = Asesor.objects.get(id = idUsuario)
+        except:
+            return Response({"detail":"El asesor no existe"})
+
+        print(idUser) 
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class EventoListSinFiltros(EventoList):
     def list(self, request):

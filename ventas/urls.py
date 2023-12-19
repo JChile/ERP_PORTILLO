@@ -90,5 +90,8 @@ urlpatterns = [
     re_path(r'^precio/(?P<pk>[\w-]+)$', views.PrecioDetail.as_view()),
     re_path(r'^precioActivo/$', views.PrecioListActivos.as_view()),
     re_path(r'^precioInactivo/$', views.PrecioListInactivos.as_view()),
+
+    re_path(r'^proyectoTipoProducto/$', views.ProyectoTipoProductoListSinFiltros.as_view()),
+    re_path(r'^proyectoTipoProducto/(?P<pk>[\w-]+)$', views.ProyectoTipoProductoDetail.as_view()),
     
 ]

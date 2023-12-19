@@ -460,7 +460,6 @@ class AsesorLeadList(APIView):
 
 
 class AsesorLeadDetail(APIView):
-
     def get(self, request, pk=None):
         asesor_queryset = Asesor.objects.get(id = pk)
         asesorSerializer = AsesorSerializer(asesor_queryset)

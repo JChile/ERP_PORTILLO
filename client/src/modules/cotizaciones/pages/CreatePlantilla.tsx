@@ -1,22 +1,8 @@
 import { Button, FormControl } from "@mui/material";
 import React, { useState } from "react";
+import { BsBack, BsBackspace } from "react-icons/bs";
 import { MdAdd } from "react-icons/md";
-
-{
-  /*
-
-Una plantilla esta formado por lo siguiente.
-  cantidad de cuotas
-  cuota:
-    una cuota tiene lo siguiente:
-      fecha:
-      n° (nombre):
-      cuotas:
-      monto: precio_total * cuota 
-
-
-*/
-}
+import { useNavigate } from "react-router-dom";
 
 interface PlantillaItem {
   id: number;
@@ -28,6 +14,8 @@ interface PlantillaItem {
 const CreatePlantilla = () => {
   const [cuotas, setCuotas] = useState<PlantillaItem[]>([]);
 
+  const navigate = useNavigate();
+
   const addNewRow = (event: any) => {
     console.log(event);
   };
@@ -36,6 +24,17 @@ const CreatePlantilla = () => {
     <React.Fragment>
       <div className="flex justify-between">
         <h1>Crear plantilla</h1>
+
+        <Button
+          variant="contained"
+          color="inherit"
+          sx={{ textTransform: "capitalize" }}
+          endIcon={<BsBackspace />}
+          onClick={() => navigate(-1)}
+        >
+          Volver
+        </Button>
+
         <Button
           variant="contained"
           color="success"

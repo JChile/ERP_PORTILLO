@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { getLead } from "../helpers";
 import { Button, Checkbox } from "@mui/material";
 import { DialogForm } from "../../ventas/components/DialogForm";
@@ -163,7 +163,7 @@ export const DetailLead = () => {
             </div>
           </div>
 
-          <div>
+          <div className="flex gap-2">
             <Button
               variant="contained"
               color="success"
@@ -171,6 +171,9 @@ export const DetailLead = () => {
               onClick={() => setShowDialog(true)}
             >
               Crear Evento
+            </Button>
+            <Button variant="contained" sx={{ textTransform: "capitalize" }}>
+              <Link to={"cotizacion/"}>Generar Cotización</Link>
             </Button>
           </div>
 

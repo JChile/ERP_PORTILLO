@@ -8,14 +8,6 @@ import { Link } from "react-router-dom";
 function CreateCotizaciones() {
   const [showPdf, setShowPdf] = useState(false);
 
-  {
-  /**
-  Tareas a realizar:
-    
-
-  */
-  }
-
   return (
     <React.Fragment>
       <h1>Crear cotizacion</h1>

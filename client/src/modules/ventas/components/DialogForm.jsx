@@ -15,8 +15,9 @@ import { useContext, useState } from "react";
 import { AuthContext } from "../../../auth/context/AuthContext";
 import { FilterProyectos } from "../../../components";
 import { FilterTipoEvento } from "../../../components/filters/tipoEvento/FilterTipoEvento";
+import { FilterLeads } from "../../../components/filters/lead/FilterLead";
 
-export const DialogForm = ({ isOpen, onClose }) => {
+export const DialogForm = ({ isOpen, onClose, idLead = null }) => {
   const { currentUser } = useContext(AuthContext);
 
   const { form, handleChangeForm, handleSubmit } = useForm({
@@ -28,8 +29,8 @@ export const DialogForm = ({ isOpen, onClose }) => {
     tipo: null,
     proyecto: null,
     horaInicio: "",
+    lead: idLead,
   });
-
   const [formErrors, setFormErrors] = useState({});
 
   const {
@@ -41,6 +42,7 @@ export const DialogForm = ({ isOpen, onClose }) => {
     fecha,
     horaInicio,
     duracion,
+    lead,
   } = form;
 
   const handleSave = async () => {
@@ -54,13 +56,14 @@ export const DialogForm = ({ isOpen, onClose }) => {
         fecha_visita: dateToSave.toISOString(),
         ubicacion: ubicacion,
         descripcion: descripcion,
-        asesor: currentUser.user.id,
+        idUsuario: currentUser.user.id,
         tipo: tipo,
         proyecto: proyecto,
         estado: "A",
+        lead: lead,
       };
       const result = await createEvent(eventSave);
-      console.log(result)
+      console.log(result);
       onClose();
     } else {
       // Hay errores en el formulario, actualiza el estado con los errores
@@ -104,6 +107,15 @@ export const DialogForm = ({ isOpen, onClose }) => {
     handleChangeForm({
       target: {
         name: "tipo",
+        value: item.id,
+      },
+    });
+  };
+
+  const onAddLead = (item) => {
+    handleChangeForm({
+      target: {
+        name: "lead",
         value: item.id,
       },
     });
@@ -193,6 +205,8 @@ export const DialogForm = ({ isOpen, onClose }) => {
                   name="ubicacion"
                   size="small"
                 />
+
+                <FilterLeads defaultValue={idLead} onNewInput={onAddLead} />
               </div>
             </div>
           </FormControl>

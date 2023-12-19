@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { getLead } from "../helpers";
-import { Checkbox } from "@mui/material";
+import { Button, Checkbox } from "@mui/material";
+import { DialogForm } from "../../ventas/components/DialogForm";
 
 export const DetailLead = () => {
   const { idLead } = useParams();
+  const [showDialog, setShowDialog] = useState(false);
   const [lead, setLead] = useState({
     nombre: "",
     apellido: "",
@@ -43,7 +45,6 @@ export const DetailLead = () => {
 
   const obtenerLead = async (idLead) => {
     const auxLead = await getLead(idLead);
-    console.log(auxLead);
     setLead(auxLead);
   };
 
@@ -60,6 +61,14 @@ export const DetailLead = () => {
 
   return (
     <>
+      {showDialog ? (
+        <DialogForm
+          leadId={idLead}
+          isOpen={showDialog}
+          onClose={() => setShowDialog(false)}
+        />
+      ) : null}
+
       <div className="flex flex-col gap-y-4">
         <div className="p-3 border-[1px] flex flex-col gap-x-5">
           <h1 className="text-lg font-bold">Detalle Lead</h1>
@@ -153,6 +162,18 @@ export const DetailLead = () => {
               <span className="block text-sm">{comentario || ""}</span>
             </div>
           </div>
+
+          <div>
+            <Button
+              variant="contained"
+              color="success"
+              sx={{ textTransform: "capitalize" }}
+              onClick={() => setShowDialog(true)}
+            >
+              Crear Evento
+            </Button>
+          </div>
+
           <div className="flex justify-center">
             <button
               className="bg-gray-500 hover:bg-gray-600 text-white py-2 px-4 rounded"

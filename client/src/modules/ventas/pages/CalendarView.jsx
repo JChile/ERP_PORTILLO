@@ -1,4 +1,4 @@
-import React, { useEffect, useReducer, useState } from "react";
+import React, { useContext, useEffect, useReducer, useState } from "react";
 import { Calendar, momentLocalizer } from "react-big-calendar";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import "./../components/calendar.css";
@@ -12,6 +12,9 @@ import { CustomCircularProgress } from "../../../components";
 import {
   Button,
   Checkbox,
+  Dialog,
+  DialogContent,
+  DialogTitle,
   Drawer,
   List,
   ListItem,
@@ -19,6 +22,10 @@ import {
   ListItemText,
 } from "@mui/material";
 import { transformToEvent } from "../utils/util";
+import { PDFViewer } from "@react-pdf/renderer";
+import { PdfDocument } from "../../cotizaciones/PdfDocument";
+import { CustomPdfViewer } from "../../cotizaciones/CustomPdfViewer";
+import { AuthContext } from "../../../auth";
 
 const localizer = momentLocalizer(moment);
 
@@ -74,6 +81,7 @@ const initialState = {
 };
 
 export const CalendarView = () => {
+  const { currentUser, logoutUser } = useContext(AuthContext);
   const [state, dispatch] = useReducer(reducer, initialState);
   const [flagLoader, setFlagLoader] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState(null);
@@ -102,17 +110,16 @@ export const CalendarView = () => {
     setSelectedFilters(tempFilters);
   };
 
-  const getCalendarData = async () => {
+  const getCalendarData = async (user_id) => {
     try {
-      const events = await getEvents();
+      const events = await getEvents(user_id);
       const typeEvents = await getTipoEventos();
 
-      console.log({ events, typeEvents });
 
       if (Object.keys(selectedFilters).length === 0) {
         const initialFilters = {};
         typeEvents.forEach((typeEvent) => {
-          initialFilters[typeEvent.id] = true;
+          initialFilters[typeEvent.nombre] = true;
         });
         setSelectedFilters(initialFilters);
       }
@@ -121,7 +128,7 @@ export const CalendarView = () => {
       // Aplicar filtros si existen antes de actualizar los eventos
       if (Object.keys(selectedFilters).length > 0) {
         const filteredEvents = transformedEvents.filter(
-          (event) => selectedFilters[event.tipo]
+          (event) => selectedFilters[event.tipo.nombre]
         );
         setCalendarEvents(filteredEvents);
       } else {
@@ -135,14 +142,13 @@ export const CalendarView = () => {
     }
   };
 
+
   useEffect(() => {
     const controller = new AbortController();
-    getCalendarData();
-    console.log("llamando useEffect");
+    getCalendarData(currentUser.user_id);
     return () => controller.abort();
   }, [flagLoader]);
 
-  console.log({ calendarEvents, flagLoader });
 
   return (
     <React.Fragment>
@@ -202,7 +208,7 @@ export const CalendarView = () => {
                       <Checkbox
                         edge="end"
                         onChange={handleTempFilters}
-                        checked={tempFilters[type.id] || false}
+                        checked={tempFilters[type.nombre] || false}
                         inputProps={{ name: type.nombre }}
                       />
                     </ListItemSecondaryAction>

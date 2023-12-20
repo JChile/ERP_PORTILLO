@@ -2,8 +2,8 @@ import axios from "axios";
 
 const DOMAIN = import.meta.env.VITE_BACKEND_URL;
 
-const getEvents = async () => {
-  const URL = `${DOMAIN}/api/evento/`;
+const getEvents = async (user_id) => {
+  const URL = `${DOMAIN}/api/evento/?usuarioId=${user_id}`;
   const { data } = await axios.get(URL);
   return data;
 };

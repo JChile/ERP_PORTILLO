@@ -661,7 +661,31 @@ class EventoList(generics.ListCreateAPIView):
             evento_queryset = Evento.objects.filter(asesor=asesorId)
         else:
             evento_queryset = Evento.objects.all()
+
+        
+        asesor_queryset = Asesor.objects.all()
+        lead_queryset = Lead.objects.all()
+        tipoEvento_queryset = TipoEvento.objects.all()
+
         dataJson = EventoSerializer(evento_queryset, many = True).data
+
+        for i in dataJson:
+            try :
+                i["tipo"] = TipoEventoSerializer(tipoEvento_queryset.get(id = i["tipo"])).data
+            except :
+                pass
+
+            try :
+                i["lead"] = LeadSerializer(lead_queryset.get(id = i["lead"])).data
+            except :
+                pass
+
+            try : 
+                i["asesor"] = AsesorSerializer(asesor_queryset.get(id = i["asesor"])).data
+
+            except :
+                pass
+
         return Response(dataJson)
 
 

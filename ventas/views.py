@@ -446,6 +446,7 @@ class AsesorList(generics.ListCreateAPIView):
 
 
 
+
 class AsesorLeadList(APIView):
 
     def get(self, request):
@@ -628,7 +629,7 @@ class EventoList(generics.ListCreateAPIView):
     queryset = Evento.objects.all()
 
     def list(self, request):
-        evento_queryset = self.queryset
+        evento_queryset = Evento.objects.all()
         asesor_queryset = Asesor.objects.all()
         tipo_queryset = TipoEvento.objects.all()
         proyecto_queryset = Proyecto.objects.all()
@@ -642,6 +643,29 @@ class EventoList(generics.ListCreateAPIView):
             i["proyecto"] = ProyectoSerializer(proyecto_queryset.get(id = i["proyecto"])).data
 
         return Response(dataJson)
+
+    
+    def post(self, request):
+
+        idUsuario = request.data.pop("idUsuario")
+        request.data["asesor"] = 7
+        serializer = EventoSerializer(data=request.data)
+        
+
+        print("id userr", idUsuario)
+        try:
+            idUser = Asesor.objects.get(user = idUsuario)
+            print(serializer)
+        except:
+            return Response({"detail":"El asesor no existe"})
+            print("errrrorrrr")
+
+
+        print(idUser) 
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class EventoListSinFiltros(EventoList):
     def list(self, request):
@@ -968,7 +992,12 @@ class ProyectoTipoProductoListSinFiltros(ProyectoTipoProductoList):
 
 class ProyectoTipoProductoDetail(APIView):    
     def get(self, request, pk=None):
-        proyecto_tipo_producto_queryset = ProyectoTipoProducto.objects.get(id=pk)
+        
+        try:
+            proyecto_tipo_producto_queryset = ProyectoTipoProducto.objects.get(id=pk)
+        except :
+            return Response({"mesaje": "proyecto no existe"})
+        
         proyectoTipoProductoSerializer = ProyectoTipoProductoSerializer(proyecto_tipo_producto_queryset)
         proyecto_queryset = Proyecto.objects.all()
         tipo_producto_queryset = TipoProducto.objects.all()
@@ -991,3 +1020,34 @@ class ProyectoTipoProductoDetail(APIView):
         return Response(dataJson)
 
 
+
+
+class ProyectoCotizaciones(APIView):    
+    def get(self, request, pk=None):
+
+        try:
+            proyecto_queryset = Proyecto.objects.get(id=pk)
+        except :
+            return Response({"mesaje": "proyecto no existe"})
+        
+        proyectoSerializer = ProyectoSerializer(proyecto_queryset).data
+        proyectoTipoProducto_queryset = ProyectoTipoProducto.objects.all()
+        cotizacion_queryset = Cotizacion.objects.all()
+        cuota_queryset = Cuota.objects.all()
+        precio_queryset = Precio.objects.all()
+        tipoProducto_queryset = TipoProducto.objects.all()
+
+        cotizacion_serializer = CotizacionSerializer(cotizacion_queryset.filter(proyecto = pk), many = True)
+        tipoProducto_serializer = ProyectoTipoProductoSerializer(proyectoTipoProducto_queryset.filter(proyecto = pk), many = True)
+        
+        for i in tipoProducto_serializer.data:
+            i["tipo"] = TipoProductoSerializer(tipoProducto_queryset.get(id = i["tipo_producto"])).data
+        for i in cotizacion_serializer.data:
+            i["cuota"] = CuotaSerializer(cuota_queryset.filter(cotizacion = i["id"]), many = True).data
+            i["precio"] = PrecioSerializer(precio_queryset.filter(cotizacion = i["id"]), many = True).data
+
+        proyectoSerializer["tipoProducto"]= tipoProducto_serializer.data
+        proyectoSerializer["cotizacion"]= cotizacion_serializer.data
+
+
+        return Response(proyectoSerializer)

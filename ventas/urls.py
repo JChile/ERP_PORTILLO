@@ -46,7 +46,7 @@ urlpatterns = [
     re_path(r'^estadoLeadActivo/$', views.EstadoLeadActivos.as_view()),
     re_path(r'^estadoLeadInactivo/$', views.EstadoLeadInactivos.as_view()),
 
-    re_path(r'^evento/$', views.EventoListSinFiltros.as_view()),
+    re_path(r'^evento/$', views.EventoList.as_view()),
     re_path(r'^evento/(?P<pk>[\w-]+)$', views.EventoDetail.as_view()),
     re_path(r'^eventoActivo/$', views.EventoListActivos.as_view()),
     re_path(r'^eventoInactivo/$', views.EventoListInactivos.as_view()),
@@ -93,5 +93,10 @@ urlpatterns = [
 
     re_path(r'^proyectoTipoProducto/$', views.ProyectoTipoProductoListSinFiltros.as_view()),
     re_path(r'^proyectoTipoProducto/(?P<pk>[\w-]+)$', views.ProyectoTipoProductoDetail.as_view()),
+
+    re_path(r'^proyectoCotizaciones/(?P<pk>[\w-]+)$', views.ProyectoCotizaciones.as_view()),
+
+
+    
     
 ]

@@ -36,7 +36,7 @@ export const AppRouter = () => {
                   <Route path="campania/*" element={<CampaniaRoutes />}></Route>
                   <Route path="lead/*" element={<LeadRoutes />}></Route>
                   <Route path="asesor/*" element={<AsesorRoutes />} />
-                  <Route path="ventas/*" element={<VentasRouter />} />
+                  <Route path="evento/*" element={<VentasRouter />} />
                   <Route path="cotizaciones/*" element={<CotizacionRouter />} />
                 </Routes>
               </MainContainerApp>

@@ -117,7 +117,7 @@ export const AddLeadManual = () => {
         <hr className="my-4"></hr>
         <form method="post" className="min-w-[242px] flex gap-x-8">
           <div className="flex-1 flex flex-col gap-y-6">
-            <label className="block flex flex-col gap-y-1">
+            <label className="flex flex-col gap-y-1">
               <span className="block text-sm font-medium">Nombre</span>
               <input
                 type="text"
@@ -129,7 +129,7 @@ export const AddLeadManual = () => {
               />
             </label>
 
-            <label className="block flex flex-col gap-y-1">
+            <label className="flex flex-col gap-y-1">
               <span className="block text-sm font-medium">Apellido</span>
               <input
                 type="text"
@@ -141,8 +141,8 @@ export const AddLeadManual = () => {
               />
             </label>
 
-            <label className="block flex flex-col gap-y-1">
-              <span className="after:content-['*'] after:ml-0.5 after:text-yellow-500 block text-sm font-medium flex items-center me-2">
+            <label className="flex flex-col gap-y-1">
+              <span className="after:content-['*'] after:ml-0.5 after:text-yellow-500 text-sm font-medium flex items-center me-2">
                 Celular
               </span>
               <MuiTelInput
@@ -159,7 +159,7 @@ export const AddLeadManual = () => {
               />
             </label>
 
-            <label className="block flex flex-col gap-y-1">
+            <label className="flex flex-col gap-y-1">
               <span className="block text-sm font-medium">Celular 2</span>
               <MuiTelInput
                 defaultCountry="PE"
@@ -175,10 +175,7 @@ export const AddLeadManual = () => {
               />
             </label>
 
-            <label
-              htmlFor="horaRecepcion"
-              className="block flex flex-col gap-y-1"
-            >
+            <label htmlFor="horaRecepcion" className="flex flex-col gap-y-1">
               <span className="after:content-['*'] after:ml-0.5 after:text-yellow-500 block text-sm font-medium">
                 Fecha recibido
               </span>
@@ -191,8 +188,8 @@ export const AddLeadManual = () => {
               />
             </label>
 
-            <label className="block flex flex-row gap-y-1">
-              <span className="block text-sm font-medium flex items-center me-2">
+            <label className="flex flex-row gap-y-1">
+              <span className="text-sm font-medium flex items-center me-2">
                 Llamar?
               </span>
               <Checkbox
@@ -205,7 +202,7 @@ export const AddLeadManual = () => {
           </div>
 
           <div className="flex-1 flex flex-col gap-y-6">
-            <label className="block flex flex-col gap-y-1">
+            <label className="flex flex-col gap-y-1">
               <span className="block text-sm font-medium">Estado Lead</span>
               <FilterEstadoLead
                 onNewInput={onAddEstadoLead}
@@ -213,7 +210,7 @@ export const AddLeadManual = () => {
               />
             </label>
 
-            <label className="block flex flex-col gap-y-1">
+            <label className="flex flex-col gap-y-1">
               <span className="block text-sm font-medium">Objecion</span>
               <FilterObjecion
                 onNewInput={onAddObjecion}
@@ -221,17 +218,17 @@ export const AddLeadManual = () => {
               />
             </label>
 
-            <label className="block flex flex-col gap-y-1">
+            <label className="flex flex-col gap-y-1">
               <span className="block text-sm font-medium">Asesor Asignado</span>
               <FilterAsesor onNewInput={onAddAsesor} />
             </label>
 
-            <label className="block flex flex-col gap-y-1">
+            <label className="flex flex-col gap-y-1">
               <span className="block text-sm font-medium">Campaña</span>
               <FilterCampania onNewInput={onAddCampania} />
             </label>
 
-            <label className="block flex flex-col gap-y-1">
+            <label className="flex flex-col gap-y-1">
               <span className="block text-sm font-medium">Comentario</span>
               <textarea
                 name="comentario"

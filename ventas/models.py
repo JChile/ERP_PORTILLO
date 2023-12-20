@@ -97,7 +97,7 @@ class Llamada(models.Model):
 
 
 class Evento(models.Model):
-    asesor = models.ForeignKey(Asesor,  on_delete=models.CASCADE)
+    asesor = models.ForeignKey(Asesor,  on_delete=models.CASCADE,null=True, blank=True)
     lead = models.ForeignKey(
         Lead,  on_delete=models.CASCADE, null=True, blank=True)
 

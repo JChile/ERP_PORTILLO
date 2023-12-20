@@ -3,18 +3,12 @@ import { FilterProyectos } from "../../../components";
 import { Button } from "@mui/material";
 import { useState } from "react";
 import { CustomPdfViewer } from "../CustomPdfViewer";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { BsBackspace } from "react-icons/bs";
 
 function CreateCotizaciones() {
   const [showPdf, setShowPdf] = useState(false);
-
-  {
-  /**
-  Tareas a realizar:
-    
-
-  */
-  }
+  const navigate = useNavigate();
 
   return (
     <React.Fragment>
@@ -27,9 +21,21 @@ function CreateCotizaciones() {
         >
           Generar PDF
         </Button>
+
+        <Button
+          variant="contained"
+          color="inherit"
+          sx={{ textTransform: "capitalize" }}
+          endIcon={<BsBackspace />}
+          onClick={() => navigate(-1)}
+        >
+          Volver
+        </Button>
+
         <Button variant="contained" sx={{ textTransform: "capitalize" }}>
           <Link to={"plantilla/"}>Crear plantilla</Link>
         </Button>
+
         {showPdf ? (
           <CustomPdfViewer open={showPdf} onClose={() => setShowPdf(false)} />
         ) : null}

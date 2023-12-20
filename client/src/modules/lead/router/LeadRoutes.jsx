@@ -8,6 +8,8 @@ import {
   UpdateLead,
   AsignLeads,
 } from "../pages";
+import CreateCotizaciones from "../../cotizaciones/pages/CreateCotizaciones";
+import CreatePlantilla from "../../cotizaciones/pages/CreatePlantilla";
 
 export const LeadRoutes = () => {
   return (
@@ -18,6 +20,15 @@ export const LeadRoutes = () => {
       <Route path="detail/:idLead" element={<DetailLead />} />
       <Route path="update/:idLead" element={<UpdateLead />} />
       <Route path="asign" element={<AsignLeads />} />
+      <Route
+        path="detail/:idLead/cotizacion/"
+        element={<CreateCotizaciones />}
+      />
+
+      <Route
+        path="detail/:idLead/cotizacion/plantilla/"
+        element={<CreatePlantilla />}
+      />
     </Routes>
   );
 };

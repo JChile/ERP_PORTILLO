@@ -17,7 +17,7 @@ import { FilterProyectos } from "../../../components";
 import { FilterTipoEvento } from "../../../components/filters/tipoEvento/FilterTipoEvento";
 import { FilterLeads } from "../../../components/filters/lead/FilterLead";
 
-export const DialogForm = ({ isOpen, onClose, idLead = null }) => {
+export const DialogForm = ({ isOpen, onClose }) => {
   const { currentUser } = useContext(AuthContext);
 
   const { form, handleChangeForm, handleSubmit } = useForm({
@@ -29,7 +29,7 @@ export const DialogForm = ({ isOpen, onClose, idLead = null }) => {
     tipo: null,
     proyecto: null,
     horaInicio: "",
-    lead: idLead,
+    lead: null,
   });
   const [formErrors, setFormErrors] = useState({});
 
@@ -207,7 +207,7 @@ export const DialogForm = ({ isOpen, onClose, idLead = null }) => {
                   size="small"
                 />
 
-                <FilterLeads defaultValue={idLead} onNewInput={onAddLead} />
+                <FilterLeads defaultValue={null} onNewInput={onAddLead} label="Lead"/>
               </div>
             </div>
           </FormControl>

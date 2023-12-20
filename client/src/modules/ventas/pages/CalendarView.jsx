@@ -12,9 +12,6 @@ import { CustomCircularProgress } from "../../../components";
 import {
   Button,
   Checkbox,
-  Dialog,
-  DialogContent,
-  DialogTitle,
   Drawer,
   List,
   ListItem,
@@ -22,9 +19,6 @@ import {
   ListItemText,
 } from "@mui/material";
 import { transformToEvent } from "../utils/util";
-import { PDFViewer } from "@react-pdf/renderer";
-import { PdfDocument } from "../../cotizaciones/PdfDocument";
-import { CustomPdfViewer } from "../../cotizaciones/CustomPdfViewer";
 
 const localizer = momentLocalizer(moment);
 
@@ -113,12 +107,12 @@ export const CalendarView = () => {
       const events = await getEvents();
       const typeEvents = await getTipoEventos();
 
-      //console.log(events)
+      console.log({ events, typeEvents });
 
       if (Object.keys(selectedFilters).length === 0) {
         const initialFilters = {};
         typeEvents.forEach((typeEvent) => {
-          initialFilters[typeEvent.nombre] = true;
+          initialFilters[typeEvent.id] = true;
         });
         setSelectedFilters(initialFilters);
       }
@@ -127,7 +121,7 @@ export const CalendarView = () => {
       // Aplicar filtros si existen antes de actualizar los eventos
       if (Object.keys(selectedFilters).length > 0) {
         const filteredEvents = transformedEvents.filter(
-          (event) => selectedFilters[event.tipo.nombre]
+          (event) => selectedFilters[event.tipo]
         );
         setCalendarEvents(filteredEvents);
       } else {
@@ -144,13 +138,14 @@ export const CalendarView = () => {
   useEffect(() => {
     const controller = new AbortController();
     getCalendarData();
+    console.log("llamando useEffect");
     return () => controller.abort();
   }, [flagLoader]);
 
+  console.log({ calendarEvents, flagLoader });
+
   return (
     <React.Fragment>
-      
-
       <div className="flex flex-col gap-y-3">
         <div className="flex justify-between">
           <Button
@@ -207,7 +202,7 @@ export const CalendarView = () => {
                       <Checkbox
                         edge="end"
                         onChange={handleTempFilters}
-                        checked={tempFilters[type.nombre] || false}
+                        checked={tempFilters[type.id] || false}
                         inputProps={{ name: type.nombre }}
                       />
                     </ListItemSecondaryAction>

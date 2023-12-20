@@ -628,7 +628,30 @@ class EventoList(generics.ListCreateAPIView):
     serializer_class = EventoSerializer
     queryset = Evento.objects.all()
 
-    def list(self, request):
+    def post(self, request):
+
+        idUsuario = request.data.pop("idUsuario")
+ 
+        
+
+        print("id userr", idUsuario)
+        try:
+            request.data["asesor"] = Asesor.objects.get(user = idUsuario).pk
+            serializer = EventoSerializer(data=request.data)
+        except:
+            return Response({"detail":"El asesor no existe"})
+            print("errrrorrrr")
+
+
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+
+''' 
+  def list(self, request):
         evento_queryset = Evento.objects.all()
         asesor_queryset = Asesor.objects.all()
         tipo_queryset = TipoEvento.objects.all()
@@ -644,28 +667,8 @@ class EventoList(generics.ListCreateAPIView):
 
         return Response(dataJson)
 
-    
-    def post(self, request):
+'''
 
-        idUsuario = request.data.pop("idUsuario")
-        request.data["asesor"] = 7
-        serializer = EventoSerializer(data=request.data)
-        
-
-        print("id userr", idUsuario)
-        try:
-            idUser = Asesor.objects.get(user = idUsuario)
-            print(serializer)
-        except:
-            return Response({"detail":"El asesor no existe"})
-            print("errrrorrrr")
-
-
-        print(idUser) 
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class EventoListSinFiltros(EventoList):
     def list(self, request):

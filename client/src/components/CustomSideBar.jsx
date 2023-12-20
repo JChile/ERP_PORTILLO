@@ -19,7 +19,7 @@ import { AuthContext } from "../auth";
 import MenuSimple from "./MenuSimple";
 
 const drawerWidth = 240;
-export const CustomSideBar = ({ children, menus }) => {
+export const CustomSideBar = ({ children, permissions }) => {
   const [open, setOpen] = useState(false);
   const { currentUser, logoutUser } = useContext(AuthContext);
   const { user } = currentUser;
@@ -58,7 +58,7 @@ export const CustomSideBar = ({ children, menus }) => {
       </AppBar>
       <Drawer variant="permanent" open={open} sx={{ zIndex: 9 }}>
         <List sx={{ marginTop: 8, flex: 1 }}>
-          {menus.map((item, index) => (
+          {permissions.map((item, index) => (
             <NavLink to={item.url} key={item.title}>
               <ListItem disablePadding sx={{ display: "block" }}>
                 <ListItemButton
@@ -97,62 +97,3 @@ export const CustomSideBar = ({ children, menus }) => {
   );
 };
 
-/** Style component */
-const openedMixin = (theme) => ({
-  width: drawerWidth,
-  transition: theme.transitions.create("width", {
-    easing: theme.transitions.easing.sharp,
-    duration: theme.transitions.duration.enteringScreen,
-  }),
-  overflowX: "hidden",
-});
-
-const closedMixin = (theme) => ({
-  transition: theme.transitions.create("width", {
-    easing: theme.transitions.easing.sharp,
-    duration: theme.transitions.duration.leavingScreen,
-  }),
-  overflowX: "hidden",
-  width: `calc(${theme.spacing(7)} + 1px)`,
-  [theme.breakpoints.up("sm")]: {
-    width: `calc(${theme.spacing(8)} + 1px)`,
-  },
-});
-
-const AppBar = styled(MuiAppBar, {
-  shouldForwardProp: (prop) => prop !== "open",
-})(({ theme, open }) => ({
-  backgroundColor: "black",
-  zIndex: theme.zIndex.drawer + 1,
-  transition: theme.transitions.create(["width", "margin"], {
-    easing: theme.transitions.easing.sharp,
-    duration: theme.transitions.duration.leavingScreen,
-  }),
-  ...(open && {
-    marginLeft: drawerWidth,
-    width: `calc(100% - ${drawerWidth}px)`,
-    transition: theme.transitions.create(["width", "margin"], {
-      easing: theme.transitions.easing.sharp,
-      duration: theme.transitions.duration.enteringScreen,
-    }),
-  }),
-}));
-
-const Drawer = styled(MuiDrawer, {
-  shouldForwardProp: (prop) => prop !== "open",
-})(({ theme, open }) => ({
-  width: drawerWidth,
-  flexShrink: 0,
-  whiteSpace: "nowrap",
-  boxSizing: "border-box",
-  backgroundColor: "#9e154a",
-  ...(open && {
-    ...openedMixin(theme),
-    "& .MuiDrawer-paper": openedMixin(theme),
-  }),
-  ...(!open && {
-    backgroundColor: "#9e154a",
-    ...closedMixin(theme),
-    "& .MuiDrawer-paper": closedMixin(theme),
-  }),
-}));

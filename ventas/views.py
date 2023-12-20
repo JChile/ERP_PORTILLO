@@ -648,12 +648,18 @@ class EventoList(generics.ListCreateAPIView):
     def post(self, request):
 
         idUsuario = request.data.pop("idUsuario")
+        request.data["asesor"] = 7
         serializer = EventoSerializer(data=request.data)
         
+
+        print("id userr", idUsuario)
         try:
-            idUser = Asesor.objects.get(id = idUsuario)
+            idUser = Asesor.objects.get(user = idUsuario)
+            print(serializer)
         except:
             return Response({"detail":"El asesor no existe"})
+            print("errrrorrrr")
+
 
         print(idUser) 
         if serializer.is_valid():

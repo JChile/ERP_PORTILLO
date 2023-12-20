@@ -57,6 +57,7 @@ export const DialogForm = ({ isOpen, onClose, idLead = null }) => {
         ubicacion: ubicacion,
         descripcion: descripcion,
         idUsuario: currentUser.user.id,
+      
         tipo: tipo,
         proyecto: proyecto,
         estado: "A",

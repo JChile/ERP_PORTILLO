@@ -1,1 +1,1 @@
-export * from "./getProyectos";
+export * from "../../proyectos/helpers/getProyectos";

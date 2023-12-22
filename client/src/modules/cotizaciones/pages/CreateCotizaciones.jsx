@@ -32,10 +32,6 @@ function CreateCotizaciones() {
           Volver
         </Button>
 
-        <Button variant="contained" sx={{ textTransform: "capitalize" }}>
-          <Link to={"plantilla/"}>Crear plantilla</Link>
-        </Button>
-
         {showPdf ? (
           <CustomPdfViewer open={showPdf} onClose={() => setShowPdf(false)} />
         ) : null}

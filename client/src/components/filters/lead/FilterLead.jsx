@@ -2,18 +2,9 @@ import { useEffect, useState } from "react";
 import { getLeads } from "../../../modules/lead/helpers/getLeads";
 import { Autocomplete, TextField } from "@mui/material";
 
-const defaultOption = {
-  value: 0,
-  label: "Seleccione lead",
-  id: 0,
-};
+const defaultOption = { value: 0, label: "Seleccione lead", id: null };
 
-export const FilterLeads = ({
-  defaultValue = null,
-  onNewInput,
-  name,
-  style,
-}) => {
+export const FilterLeads = ({ defaultValue = null, onNewInput, label = "" }) => {
   const [options, setOptions] = useState([defaultOption]);
   const [value, setValue] = useState(defaultOption);
 
@@ -39,7 +30,7 @@ export const FilterLeads = ({
   };
 
   const handleChange = (event, value) => {
-    onNewInput({ target: { name: name, value: value.id } });
+    onNewInput(value);
     setValue(value);
   };
 
@@ -52,15 +43,12 @@ export const FilterLeads = ({
   return (
     <Autocomplete
       options={options}
-      style={style}
       value={value}
       disableClearable
       getOptionLabel={(option) => option.label}
       onChange={handleChange}
       isOptionEqualToValue={(option, value) => option.id == value.id}
-      renderInput={(params) => (
-        <TextField {...params} variant="filled" style={{ width: "100%" }} />
-      )}
+      renderInput={(params) => <TextField {...params} label={label} />}
     />
   );
 };

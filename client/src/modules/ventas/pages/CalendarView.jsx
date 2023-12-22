@@ -1,4 +1,4 @@
-import React, { useEffect, useReducer, useState } from "react";
+import React, { useContext, useEffect, useReducer, useState } from "react";
 import { Calendar, momentLocalizer } from "react-big-calendar";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import "./../components/calendar.css";
@@ -25,6 +25,7 @@ import { transformToEvent } from "../utils/util";
 import { PDFViewer } from "@react-pdf/renderer";
 import { PdfDocument } from "../../cotizaciones/PdfDocument";
 import { CustomPdfViewer } from "../../cotizaciones/CustomPdfViewer";
+import { AuthContext } from "../../../auth";
 
 const localizer = momentLocalizer(moment);
 
@@ -80,6 +81,7 @@ const initialState = {
 };
 
 export const CalendarView = () => {
+  const { currentUser, logoutUser } = useContext(AuthContext);
   const [state, dispatch] = useReducer(reducer, initialState);
   const [flagLoader, setFlagLoader] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState(null);
@@ -108,12 +110,11 @@ export const CalendarView = () => {
     setSelectedFilters(tempFilters);
   };
 
-  const getCalendarData = async () => {
+  const getCalendarData = async (user_id) => {
     try {
-      const events = await getEvents();
+      const events = await getEvents(user_id);
       const typeEvents = await getTipoEventos();
 
-      //console.log(events)
 
       if (Object.keys(selectedFilters).length === 0) {
         const initialFilters = {};
@@ -141,16 +142,16 @@ export const CalendarView = () => {
     }
   };
 
+
   useEffect(() => {
     const controller = new AbortController();
-    getCalendarData();
+    getCalendarData(currentUser.user_id);
     return () => controller.abort();
   }, [flagLoader]);
 
+
   return (
     <React.Fragment>
-      
-
       <div className="flex flex-col gap-y-3">
         <div className="flex justify-between">
           <Button

@@ -628,44 +628,68 @@ class EventoList(generics.ListCreateAPIView):
     serializer_class = EventoSerializer
     queryset = Evento.objects.all()
 
-    def list(self, request):
-        evento_queryset = Evento.objects.all()
-        asesor_queryset = Asesor.objects.all()
-        tipo_queryset = TipoEvento.objects.all()
-        proyecto_queryset = Proyecto.objects.all()
-
-
-        dataJson = EventoSerializer(evento_queryset, many = True).data
-
-        for i in dataJson:
-            i["asesor"] = AsesorSerializer(asesor_queryset.get(id = i["asesor"])).data
-            i["tipo"] = TipoEventoSerializer(tipo_queryset.get(id = i["tipo"])).data
-            i["proyecto"] = ProyectoSerializer(proyecto_queryset.get(id = i["proyecto"])).data
-
-        return Response(dataJson)
-
-    
     def post(self, request):
 
         idUsuario = request.data.pop("idUsuario")
-        request.data["asesor"] = 7
-        serializer = EventoSerializer(data=request.data)
-        
-
         print("id userr", idUsuario)
         try:
-            idUser = Asesor.objects.get(user = idUsuario)
-            print(serializer)
+            request.data["asesor"] = Asesor.objects.get(user = idUsuario).pk
+            serializer = EventoSerializer(data=request.data)
         except:
             return Response({"detail":"El asesor no existe"})
             print("errrrorrrr")
 
 
-        print(idUser) 
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def list(self, request):
+        usuarioId = request.query_params.get('usuarioId')
+        print(usuarioId)
+
+        asesorId = -1
+        
+        if usuarioId:
+            try:
+                asesorId = Asesor.objects.get(user = usuarioId).pk
+            except:
+                return Response({"detail":"El asesor no existe"})
+
+        if asesorId != -1:
+            evento_queryset = Evento.objects.filter(asesor=asesorId)
+        else:
+            evento_queryset = Evento.objects.all()
+
+        
+        asesor_queryset = Asesor.objects.all()
+        lead_queryset = Lead.objects.all()
+        tipoEvento_queryset = TipoEvento.objects.all()
+
+        dataJson = EventoSerializer(evento_queryset, many = True).data
+
+        for i in dataJson:
+            try :
+                i["tipo"] = TipoEventoSerializer(tipoEvento_queryset.get(id = i["tipo"])).data
+            except :
+                pass
+
+            try :
+                i["lead"] = LeadSerializer(lead_queryset.get(id = i["lead"])).data
+            except :
+                pass
+
+            try : 
+                i["asesor"] = AsesorSerializer(asesor_queryset.get(id = i["asesor"])).data
+
+            except :
+                pass
+
+        return Response(dataJson)
+
+
+
 
 class EventoListSinFiltros(EventoList):
     def list(self, request):

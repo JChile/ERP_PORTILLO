@@ -1,7 +1,6 @@
 import React, { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { MenuItem, Select, TextField } from "@mui/material";
-import jwtDecode from "jwt-decode";
 import { createCampania } from "../helpers";
 import { useAlertMUI } from "../../../hooks";
 import {

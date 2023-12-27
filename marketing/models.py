@@ -6,7 +6,7 @@ from django.db import models
 class Proyecto(models.Model):
     nombre = models.CharField(max_length=100, null=True)
     ubicacion = models.CharField(max_length=100, null=True, blank=True)
-    descripcion = models.CharField(max_length=100, null=True, blank=True)
+    descripcion = models.TextField(null=True, blank=True)
     estado = models.ForeignKey(
         EstadoRegistro, on_delete=models.SET_NULL, default='A', null=True)
 

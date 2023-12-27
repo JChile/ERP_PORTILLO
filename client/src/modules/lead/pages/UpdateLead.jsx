@@ -102,12 +102,7 @@ export const UpdateLead = () => {
   };
 
   const actualizarLead = async () => {
-    const validationMessage = validateLead(
-      celular,
-      asesor,
-      campania,
-      objecion
-    );
+    const validationMessage = validateLead(celular, asesor, campania, objecion);
 
     if (validationMessage) {
       // Si hay campos faltantes, mostrar una alerta con los mensajes de error concatenados
@@ -118,7 +113,7 @@ export const UpdateLead = () => {
       handleClickFeedback();
     } else {
       setVisibleProgress(true);
-      console.log(lead)
+      console.log(lead);
       const result = await updateLead(idLead, lead);
       setVisibleProgress(false);
       onNavigateBack();

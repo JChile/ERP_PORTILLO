@@ -3,7 +3,7 @@ import { FilterProyectos } from "../../../components";
 import { Button } from "@mui/material";
 import { useState } from "react";
 import { CustomPdfViewer } from "../CustomPdfViewer";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { BsBackspace } from "react-icons/bs";
 
 function CreateCotizaciones() {

@@ -53,6 +53,7 @@ export const AuthProvider = ({ children }) => {
       // obtenemos los modulos con permisos
       const { modulos } = groups;
 
+      
       modulos.forEach((item) => {
         if (item["can_view"][0]) {
           permissions_user.push({

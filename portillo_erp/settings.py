@@ -101,7 +101,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'portillo_erp',
         'USER': 'postgres',
-        'PASSWORD': 'admin',
+        'PASSWORD': '123',
         #'PASSWORD': '123',
         'HOST': 'localhost',
         'PORT': '',
@@ -180,9 +180,16 @@ LANGUAGE_CODE = 'es'
 
 TIME_ZONE = 'America/Lima'
 
+
+DATETIME_FORMAT = '%d-%m-%Y %H:%M:%S'
+
+USE_L10N = False
+
+USE_TZ = False
+
 USE_I18N = True
 
-USE_TZ = True
+DATE_INPUT_FORMATS = ['%d-%m-%Y']
 
 
 # Static files (CSS, JavaScript, Images)

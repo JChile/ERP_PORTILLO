@@ -11,6 +11,7 @@ from rest_framework import status
 from datetime import datetime, timedelta
 from django.http import Http404
 from rest_framework.views import APIView
+from rest_framework.permissions import IsAuthenticated
 
  
 def get_or_none(classmodel, **kwargs):
@@ -435,18 +436,32 @@ class AsesorLeadList(APIView):
 
 
 class AsesorLeadDetail(APIView):
+    permission_classes = [IsAuthenticated]
     def get(self, request, pk=None):
+        print(request.user.groups.first().name) 
 
-        try:
-            asesor_queryset = User.objects.get(id = pk)
-        except :
-            return Response({"mesaje": "asesor no existe"})
-        asesorSerializer = UserSerializer(asesor_queryset)
-        dataJson = asesorSerializer.data
-        dataJson["leads"] = LeadSerializer(Lead.objects.filter(asesor = asesor_queryset.pk),many = True).data
-
-        return Response(dataJson)
-
+        if "jefe_ventas" == request.user.groups.first().name : 
+            try:
+                asesor_queryset = User.objects.get(id = pk)
+            except :
+                return Response({"mesaje": "asesor no existe"})
+            asesorSerializer = UserSerializer(asesor_queryset,fields=(
+                'id', 'first_name', 'last_name', 'username'))
+            dataJson = asesorSerializer.data
+            dataJson["leads"] = LeadSerializer(Lead.objects.all(),many = True).data
+            return Response(dataJson)
+        elif "asesor" == request.user.groups.first().name :
+            try:
+                asesor_queryset = User.objects.get(id = pk)
+            except :
+                return Response({"mesaje": "asesor no existe"})
+            asesorSerializer = UserSerializer(asesor_queryset,fields=(
+                'id', 'first_name', 'last_name', 'username'))
+            dataJson = asesorSerializer.data
+            dataJson["leads"] = LeadSerializer(Lead.objects.filter(asesor = asesor_queryset.pk),many = True).data
+            return Response(dataJson)
+        
+        return Response({"message" : "Usuario no tiene permimos"})
 
 
 

@@ -451,13 +451,7 @@ class AsesorLead(APIView):
             dataJson["leads"] = LeadSerializer(Lead.objects.filter(asesor = asesor_queryset.pk),many = True).data
             return Response(dataJson)
         
-        return Response({"message" : "Usuario no tiene permimos"}, status=403)
-
-
-
-
-
-
+        return Response({"message" : "Usuario no tiene el rol"}, status=403)
 
 
 class WhatsAppList(generics.ListCreateAPIView):
@@ -568,7 +562,7 @@ class EventoList(generics.ListCreateAPIView):
             request.data["asesor"] = User.objects.get(user = idUsuario).pk
             serializer = EventoSerializer(data=request.data)
         except:
-            return Response({"detail":"El asesor no existe"})
+            return Response({"message":"El asesor no existe"})
 
         if serializer.is_valid():
             serializer.save()
@@ -577,13 +571,12 @@ class EventoList(generics.ListCreateAPIView):
     
     def list(self, request):
         usuarioId = request.user.pk
-
         if RolesERP.ASESOR == request.user.groups.first().name:
             evento_queryset = Evento.objects.filter(asesor=usuarioId)
         elif RolesERP.JEFE_VENTAS == request.user.groups.first().name:
             evento_queryset = Evento.objects.all()
         else :
-            return Response({"detail":"El usuario no tiene el rol"})
+            return Response({"message" : "Usuario no tiene el rol"}, status=403)
         
         evento_data = EventoSerializer(evento_queryset, many = True).data
         print(evento_data)

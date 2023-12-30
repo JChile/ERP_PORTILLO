@@ -5,18 +5,7 @@ from marketing.models import Proyecto
 from django.utils import timezone
 
 
-class Asesor(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
-    codigo = models.CharField(unique=True, blank=False, null=False)
-    numeroLeads = models.IntegerField(null=True, blank=True, default=0)
-    maximoLeads = models.IntegerField(null=True, blank=True, default=0)
-    fechaCreado = models.DateTimeField(auto_now_add=True)
-    fechaActualizado = models.DateTimeField(auto_now=True)
-    estado = models.ForeignKey(
-        EstadoRegistro, on_delete=models.SET_NULL, default='A', null=True)
 
-    def __str__(self):
-        return self.codigo
 
 
 class TipoEvento(models.Model):
@@ -58,7 +47,7 @@ class Lead(models.Model):
         default=timezone.now, null=True, blank=True)
     llamar = models.BooleanField(default=True)
     asesor = models.ForeignKey(
-        Asesor, on_delete=models.CASCADE, null=True, blank=True)
+        User, on_delete=models.CASCADE, null=True, blank=True)
     campania = models.ForeignKey(
         Campania, on_delete=models.CASCADE, null=True, blank=True)
     objecion = models.ForeignKey(
@@ -103,7 +92,7 @@ class HistoricoLeadAsesor(models.Model):
     lead =   models.ForeignKey(Lead, on_delete=models.SET_NULL, null=True)
     usuario =   models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
     fecha_creacion = models.DateField(auto_now=True)
-    pass
+    
 
 class Llamada(models.Model):
     lead = models.ForeignKey(Lead, on_delete=models.SET_NULL, null=True)
@@ -116,7 +105,7 @@ class Llamada(models.Model):
     fecha_actualizacion = models.DateTimeField(blank = True, null = True)
 
 class Evento(models.Model):
-    asesor = models.ForeignKey(Asesor,  on_delete=models.CASCADE,null=True, blank=True)
+    asesor = models.ForeignKey(User,  on_delete=models.CASCADE,null=True, blank=True)
     lead = models.ForeignKey(
         Lead,  on_delete=models.CASCADE, null=True, blank=True)
 

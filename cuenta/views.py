@@ -54,8 +54,6 @@ class PermissionDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Permission.objects.all()
     serializer_class = PermissionSerializer
 
-from rest_framework.permissions import IsAuthenticated
-
 
 class UserList(generics.ListCreateAPIView):
     serializer_class = UserSerializer

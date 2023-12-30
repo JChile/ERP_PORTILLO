@@ -181,15 +181,14 @@ LANGUAGE_CODE = 'es'
 TIME_ZONE = 'America/Lima'
 
 
-DATETIME_FORMAT = '%d-%m-%Y %H:%M:%S'
 
-USE_L10N = False
 
-USE_TZ = False
+
+USE_TZ = True
 
 USE_I18N = True
 
-DATE_INPUT_FORMATS = ['%d-%m-%Y']
+
 
 
 # Static files (CSS, JavaScript, Images)

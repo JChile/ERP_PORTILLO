@@ -31,7 +31,11 @@ export const AuthProvider = ({ children }) => {
   // funcion para logearse
   const loginUser = async (username, password) => {
     const permissions_user = [];
-    const DOMAIN = process.env.VITE_BACKEND_URL; //"http://127.0.0.1:8000"  import.meta.env.VITE_BACKEND_URL || "http://127.0.0.1:8000";    // ENDOINT AUTENTICACION
+    const DOMAIN = process.env.VITE_BACKEND_URL;
+     
+    // "http://127.0.0.1:8000"  
+    // import.meta.env.VITE_BACKEND_URL || "http://127.0.0.1:8000";    
+    // ENDOINT AUTENTICACION
 
     const ENDPOINT = `${DOMAIN}/api/token/`;
     const response = await fetch(ENDPOINT, {
@@ -53,7 +57,7 @@ export const AuthProvider = ({ children }) => {
       // obtenemos los modulos con permisos
       const { modulos } = groups;
 
-      
+
       modulos.forEach((item) => {
         if (item["can_view"][0]) {
           permissions_user.push({

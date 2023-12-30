@@ -424,22 +424,10 @@ class AsesorAsignacion(APIView):
 
 
 class AsesorLeadList(APIView):
-    def get(self, request):
-        asesor_queryset = User.objects.all()
-        asesorSerializer = UserSerializer(asesor_queryset, many=True)
-        dataJson = asesorSerializer.data
-        for i in dataJson:
-            i["leads"] = LeadSerializer(Lead.objects.filter(asesor = i["id"]),many = True).data
-
-        return Response(dataJson)
-
-
-
-class AsesorLeadDetail(APIView):
     permission_classes = [IsAuthenticated]
-    def get(self, request, pk=None):
-        print(request.user.groups.first().name) 
-
+    def get(self, request):
+        print(request.user.id) 
+        pk = request.user.pk
         if "jefe_ventas" == request.user.groups.first().name : 
             try:
                 asesor_queryset = User.objects.get(id = pk)
@@ -461,7 +449,12 @@ class AsesorLeadDetail(APIView):
             dataJson["leads"] = LeadSerializer(Lead.objects.filter(asesor = asesor_queryset.pk),many = True).data
             return Response(dataJson)
         
-        return Response({"message" : "Usuario no tiene permimos"})
+        return Response({"message" : "Usuario no tiene permimos"}, status=403)
+
+
+
+
+
 
 
 

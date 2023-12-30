@@ -17,7 +17,7 @@ urlpatterns = [
     re_path(r'^leadMultipleAssign/$', views.LeadMultipleAssign.as_view()),
     re_path(r'^leadMultipleCreationManual/$', views.LeadMultipleCreationManual.as_view()),
 
-    re_path(r'^asesorLead/$', views.AsesorLeadList.as_view()),
+    re_path(r'^asesorLead/$', views.AsesorLead.as_view()),
     re_path(r'^asesorAsignacion/$', views.AsesorAsignacion.as_view()),
 
 

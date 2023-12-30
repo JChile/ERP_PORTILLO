@@ -423,7 +423,7 @@ class AsesorAsignacion(APIView):
 
 
 
-class AsesorLeadList(APIView):
+class AsesorLead(APIView):
     permission_classes = [IsAuthenticated]
     def get(self, request):
         print(request.user.id) 
@@ -559,7 +559,7 @@ class EstadoLeadInactivos(EstadoLeadList):
 class EventoList(generics.ListCreateAPIView):
     serializer_class = EventoSerializer
     queryset = Evento.objects.all()
-
+    
     def post(self, request):
 
         idUsuario = request.data.pop("idUsuario")
@@ -613,7 +613,8 @@ class EventoList(generics.ListCreateAPIView):
                 pass
 
             try : 
-                i["asesor"] = UserSerializer(asesor_queryset.get(id = i["asesor"])).data
+                i["asesor"] = UserSerializer(asesor_queryset.get(id = i["asesor"]),fields=(
+                'id', 'first_name', 'last_name', 'username')).data
 
             except :
                 pass
@@ -644,16 +645,26 @@ class EventoDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Evento.objects.all()
 
     def retrieve(self, request, pk=None):
-        evento = Evento.objects.get(id = pk)
-        asesor_queryset = User.objects.all()
-        tipo_queryset = TipoEvento.objects.all()
-        proyecto_queryset = Proyecto.objects.all()
+        try :
+            evento = Evento.objects.get(id = pk)
+        except :
+            return Response({"detail":"El evento no existe"})        
+        
+        asesor = get_or_none(User, id = evento.asesor.pk)
+        tipo = get_or_none(TipoEvento, id = evento.tipo.pk)
+        proyecto = get_or_none(Proyecto, id = evento.proyecto.pk)
 
-        dataJson = EventoSerializer(evento).data
-        dataJson["asesor"] = UserSerializer(asesor_queryset.get(id = evento.asesor.pk)).data
-        dataJson["tipo"] = TipoEventoSerializer(tipo_queryset.get(id =  evento.tipo.pk)).data
-        dataJson["proyecto"] = ProyectoSerializer(proyecto_queryset.get(id =  evento.proyecto.pk)).data
-        return Response(dataJson)
+        asesorSerlializer = UserSerializer(asesor,fields=('id', 'first_name', 'last_name', 'username')) if asesor else None
+        tipoSerializer = TipoEventoSerializer(tipo) if tipo else None
+        proyectoSerializer = ProyectoSerializer(proyecto) if proyecto else None
+
+        evento_dataJson = EventoSerializer(evento).data
+        evento_dataJson["asesor"] = asesorSerlializer.data if asesorSerlializer else {}
+        evento_dataJson["tipo"] = tipoSerializer.data if tipoSerializer else {}
+        evento_dataJson["proyecto"] = proyectoSerializer.data if proyectoSerializer else {}
+        
+        
+        return Response(evento_dataJson)
 
 class TipoEventoList(generics.ListCreateAPIView):
     serializer_class = TipoEventoSerializer
@@ -785,6 +796,14 @@ class CotizacionDetail(generics.RetrieveUpdateDestroyAPIView):
         dataJson["tipo"] = TipoCotizacionSerializer(tipo_queryset.get(id =  cotizacion.tipo.pk)).data
         dataJson["proyecto"] = ProyectoSerializer(proyecto_queryset.get(id =  cotizacion.proyecto.pk)).data
         dataJson["asesor"] = UserSerializer(asesor_queryset.get(id =  cotizacion.asesor.pk)).data
+
+
+
+
+
+
+
+
 
         return Response(dataJson)
 

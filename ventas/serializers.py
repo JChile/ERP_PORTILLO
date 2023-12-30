@@ -22,10 +22,7 @@ class LeadListSerializer(LeadSerializer):
         fields = '__all__'
         list_serializer_class = MultipleLeadSerializer
 
-class AsesorSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Asesor
-        fields = '__all__'
+
 
 class WhatsAppSerializer(serializers.ModelSerializer):
     class Meta:

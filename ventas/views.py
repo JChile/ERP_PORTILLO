@@ -11,48 +11,49 @@ from rest_framework import status
 from datetime import datetime, timedelta
 from django.http import Http404
 from rest_framework.views import APIView
+from rest_framework.permissions import IsAuthenticated
 
  
+def get_or_none(classmodel, **kwargs):
+    try:
+        return classmodel.objects.get(**kwargs)
+    except classmodel.DoesNotExist:
+        return None
+
 class LeadList(generics.ListCreateAPIView):
     serializer_class = LeadSerializer
     queryset = Lead.objects.all()
 
     def list(self, request):
         lead_queryset = self.queryset
-        groupserializer = LeadSerializer(lead_queryset, many=True)
+        leadSerializer = LeadSerializer(lead_queryset, many=True)
+        leadData = leadSerializer.data
+     
 
-        users = User.objects.all()
-        asesores = Asesor.objects.all()
-        campanias = Campania.objects.all()
-        objeciones = Objecion.objects.all()
+        for i in leadData:
+            user_data = get_or_none(User, id=i["asesor"])
+            userCreador_data = get_or_none(User, id=i["usuarioCreador"])
+            userActualizador_data = get_or_none(User, id=i["usuarioActualizador"])
+            campania_data = get_or_none(Campania, id=i["campania"])
+            objecion_data = get_or_none(Objecion, id=i["objecion"])
+            
+            userSerializer = UserSerializer(user_data,fields=(
+            'id', 'first_name', 'last_name', 'username')) if user_data else None
+            userCreadorSerializer = UserSerializer(userCreador_data,fields=(
+            'id', 'first_name', 'last_name', 'username')) if userCreador_data else None
+            userActualizadorializer = UserSerializer(userActualizador_data,fields=(
+            'id', 'first_name', 'last_name', 'username')) if userActualizador_data else None
+            campaniaSerializer = CampaniaSerializer(campania_data) if campania_data else None
+            objecionSerializer = ObjecionSerializer(objecion_data) if objecion_data else None
 
-        dataJson = groupserializer.data
-        user_fields = ["id", "username", "first_name", "last_name"]
-
-        for i in dataJson:
-            asesor_data = asesores.filter(id=i["asesor"]).first()
-            campania_data = campanias.filter(id=i["campania"]).first()
-            objecion_data = objeciones.filter(id=i["objecion"]).first()
-
-            asesorSerializer = AsesorSerializer(
-                asesor_data) if asesor_data else None
-            campaniaSerializer = CampaniaSerializer(
-                campania_data) if campania_data else None
-            objecionSerializer = ObjecionSerializer(
-                objecion_data) if objecion_data else None
-
-            i["asesor"] = asesorSerializer.data if asesorSerializer else {}
+            i["asesor"] = userSerializer.data if userSerializer else {}
+            i["usuarioCreador"] = userCreadorSerializer.data if userCreadorSerializer else {}
+            i["usuarioActualizador"] = userActualizadorializer.data if userActualizadorializer else {}
             i["campania"] = campaniaSerializer.data if campaniaSerializer else {}
             i["objecion"] = objecionSerializer.data if objecionSerializer else {}
 
-            if asesor_data:
-                user_data = users.filter(id=asesor_data.user.id).first()
-                userSerializer = UserSerializer(user_data)
-                user_data_serialized = userSerializer.data
-                i["asesor"]["user"] = {
-                    field: user_data_serialized[field] for field in user_fields}
 
-        return Response(dataJson)
+        return Response(leadData)
 
 
 class LeadListSinFiltros(LeadList):
@@ -93,32 +94,30 @@ class LeadDetail(generics.RetrieveUpdateDestroyAPIView):
         lead_queryset = Lead.objects.all()
         lead = get_object_or_404(lead_queryset, pk=pk)
         leadSerializer = LeadSerializer(lead)
-        dataJson = leadSerializer.data
+        lead_data = leadSerializer.data
 
-        user_fields = ["id", "username", "first_name", "last_name"]
+        user_data = get_or_none(User, id=lead_data["asesor"])
+        userCreador_data = get_or_none(User, id=lead_data["usuarioCreador"])
+        userActualizador_data = get_or_none(User, id=lead_data["usuarioActualizador"])
+        campania_data = get_or_none(Campania, id=lead_data["campania"])
+        objecion_data = get_or_none(Objecion, id=lead_data["objecion"])
 
-        asesor = Asesor.objects.all().filter(id=dataJson["asesor"]).first()
-        campania = Campania.objects.all().filter(
-            id=dataJson["campania"]).first()
-        objecion = Objecion.objects.all().filter(
-            id=dataJson["objecion"]).first()
+        userSerializer = UserSerializer(user_data,fields=(
+        'id', 'first_name', 'last_name', 'username')) if user_data else None
+        userCreadorSerializer = UserSerializer(userCreador_data,fields=(
+        'id', 'first_name', 'last_name', 'username')) if userCreador_data else None
+        userActualizadorializer = UserSerializer(userActualizador_data,fields=(
+        'id', 'first_name', 'last_name', 'username')) if userActualizador_data else None
+        campaniaSerializer = CampaniaSerializer(campania_data) if campania_data else None
+        objecionSerializer = ObjecionSerializer(objecion_data) if objecion_data else None
 
-        asesorSerializer = AsesorSerializer(asesor) if asesor else None
-        campaniaSerializer = CampaniaSerializer(campania) if campania else None
-        objecionSerializer = ObjecionSerializer(objecion) if objecion else None
+        lead_data["asesor"] = userSerializer.data if userSerializer else {}
+        lead_data["usuarioCreador"] = userCreadorSerializer.data if userCreadorSerializer else {}
+        lead_data["usuarioActualizador"] = userActualizadorializer.data if userActualizadorializer else {}
+        lead_data["campania"] = campaniaSerializer.data if campaniaSerializer else {}
+        lead_data["objecion"] = objecionSerializer.data if objecionSerializer else {}
 
-        dataJson["asesor"] = asesorSerializer.data if asesorSerializer else {}
-        dataJson["campania"] = campaniaSerializer.data if campaniaSerializer else {}
-        dataJson["objecion"] = objecionSerializer.data if objecionSerializer else {}
-
-        if asesor:
-            user = User.objects.all().filter(id=asesor.user.id).first()
-            userSerializer = UserSerializer(user)
-            user_data_serialized = userSerializer.data
-            dataJson["asesor"]["user"] = {
-                field: user_data_serialized[field] for field in user_fields}
-
-        return Response(dataJson)
+        return Response(lead_data)
 
 
 class LeadCreationConfirmation(APIView):
@@ -184,9 +183,9 @@ class leadConfirmation:
     def check_asesor(self):
         if "asesor" in self.data:
             try:
-                self.data["asesor"] = Asesor.objects.get(
+                self.data["asesor"] = User.objects.get(
                     codigo=self.data["asesor"], estado="A").id
-            except Asesor.DoesNotExist:
+            except User.DoesNotExist:
                 self.errores.append(
                     "El asesor especificado no existe en la base de datos.")
 
@@ -213,7 +212,7 @@ class leadMultipleCreationAutomatic(APIView):
     def post(self, request):
         response = {}
         data = request.data
-        asesores = Asesor.objects.filter(estado='A')
+        asesores = User.objects.filter(estado='A')
 
         asignados = []
         no_asignados = []
@@ -307,7 +306,7 @@ class LeadMultipleAssign(generics.UpdateAPIView):
             if lead_id is not None and asesor_id is not None:
                 try:
                     lead = Lead.objects.get(pk=lead_id)
-                    asesor = Asesor.objects.get(pk=asesor_id)
+                    asesor = User.objects.get(pk=asesor_id)
 
                     if lead.asesor != asesor:
                         if lead.asesor is not None:
@@ -321,7 +320,7 @@ class LeadMultipleAssign(generics.UpdateAPIView):
                         asesor.numeroLeads += 1
                         asesor.save()
 
-                except Asesor.DoesNotExist:
+                except User.DoesNotExist:
                     return Response({'message': f'El Asesor con ID {asesor_id} no existe'}, status=status.HTTP_400_BAD_REQUEST)
                 except Lead.DoesNotExist:
                     return Response({'message': f'El Lead con ID {lead_id} no existe'}, status=status.HTTP_400_BAD_REQUEST)
@@ -339,7 +338,6 @@ class LeadMultipleCreationManual(APIView):
             flag_asignado = True
             flag_campania = True
             error_message = []
-
             try:
                 i["horaRecepcion"] = datetime.strptime(
                 i["horaRecepcion"], "%d/%m/%Y")
@@ -347,9 +345,10 @@ class LeadMultipleCreationManual(APIView):
                 i["horaRecepcion"] = datetime.now()
 
             try:
-                i["asesor"] = Asesor.objects.get(codigo=i["asesor"]).id
+                i["asesor"] = User.objects.get(codigoAsesor=i["asesor"]).id
             except:
                 flag_asignado = False
+                i["asesor"] = None
                 error_message.append("Asesor no existe en la bd")
                 print("Campo de asesor no enviado o asesor no existe en : ", i)
 
@@ -357,12 +356,14 @@ class LeadMultipleCreationManual(APIView):
                 i["campania"] = Campania.objects.get(codigo=i["campania"]).id
             except:
                 flag_campania = False
+                i["campania"] = None
+
                 error_message.append("Campaña no existe en la bd")
                 print("Campo de campania no enviado o no existe en : ", i)
 
             thirty_days_ago = datetime.now() - timedelta(days=31)
             unique_mobiles = list(Lead.objects.filter(
-                horaEntrega__gte=thirty_days_ago).values_list('celular', flat=True).distinct())
+                fecha_creacion__gte=thirty_days_ago).values_list('celular', flat=True).distinct())
             print(unique_mobiles)
 
             data = LeadSerializer(data=i)
@@ -403,21 +404,16 @@ class AsesorAsignacion(APIView):
         idAsesor = request.data["idAsesor"]
         idLeads = request.data["idLead"]
         try:
-            asesor = Asesor.objects.get(id=idAsesor)
+            user = User.objects.get(id=idAsesor)
         except:
             return Response({'message': f'El Asesor con ID {idAsesor} no existe'})
         for i in idLeads:
             try:
                 lead = Lead.objects.get(id=int(i))
-                if asesor.numeroLeads < asesor.maximoLeads or asesor.maximoLeads == -1:
-                    if lead.asesor == None or lead.asesor.pk != asesor.pk:
-                        lead.asesor = asesor
-                        lead.asignado = True
-                        asesor.numeroLeads = asesor.numeroLeads + 1
-                        lead.save() 
-                        asesor.save()                    
-                else : 
-                    error_message.append(f"Lead [{lead.pk}] no asignado porque asesor [{asesor.codigo}] alcanzo su capacidad") 
+                if lead.asesor == None or lead.asesor.pk != user.pk:
+                    lead.asesor = user
+                    lead.asignado = True
+                    lead.save()                   
             except:
                 leadsNoAsigandos.append(i)
 
@@ -425,105 +421,41 @@ class AsesorAsignacion(APIView):
             return Response({'detalle': error_message})
         return Response({'message': f"No se reasignaron los leads : {leadsNoAsigandos} porque no existen" , 'detalle': error_message})
 
-class AsesorList(generics.ListCreateAPIView):
-    serializer_class = AsesorSerializer
-    queryset = Asesor.objects.all()
-
-    def list(self, request):
-        asesor_queryset = self.queryset
-        users = User.objects.all()
-        groupserializer = AsesorSerializer(asesor_queryset, many=True)
-        dataJson = groupserializer.data
-        user_fields = ["id", "username", "first_name", "last_name"]
-        for i in dataJson:
-            user_data = users.get(id=i["user"])
-            userSerializer = UserSerializer(user_data)
-            user_data_serialized = userSerializer.data
-            i["user"] = {field: user_data_serialized[field]
-                         for field in user_fields}
-
-        return Response(dataJson)
 
 
-
-
-class AsesorLeadList(APIView):
-
+class AsesorLead(APIView):
+    permission_classes = [IsAuthenticated]
     def get(self, request):
-        asesor_queryset = Asesor.objects.all()
-        asesorSerializer = AsesorSerializer(asesor_queryset, many=True)
-        dataJson = asesorSerializer.data
-        for i in dataJson:
-            i["leads"] = LeadSerializer(Lead.objects.filter(asesor = i["id"]),many = True).data
-
-        return Response(dataJson)
-
-
-
-class AsesorLeadDetail(APIView):
-    def get(self, request, pk=None):
-
-        try:
-            asesor_queryset = Asesor.objects.get(id = pk)
-        except :
-            return Response({"mesaje": "asesor no existe"})
-        asesorSerializer = AsesorSerializer(asesor_queryset)
-        dataJson = asesorSerializer.data
-        dataJson["leads"] = LeadSerializer(Lead.objects.filter(asesor = asesor_queryset.pk),many = True).data
-
-        return Response(dataJson)
-
-
-
-class AsesorListSinFiltros(AsesorList):
-    def list(self, request):
-        self.queryset = self.queryset.filter()
-        return super().list(request)
+        print(request.user.id) 
+        pk = request.user.pk
+        if "jefe_ventas" == request.user.groups.first().name : 
+            try:
+                asesor_queryset = User.objects.get(id = pk)
+            except :
+                return Response({"mesaje": "asesor no existe"})
+            asesorSerializer = UserSerializer(asesor_queryset,fields=(
+                'id', 'first_name', 'last_name', 'username'))
+            dataJson = asesorSerializer.data
+            dataJson["leads"] = LeadSerializer(Lead.objects.all(),many = True).data
+            return Response(dataJson)
+        elif "asesor" == request.user.groups.first().name :
+            try:
+                asesor_queryset = User.objects.get(id = pk)
+            except :
+                return Response({"mesaje": "asesor no existe"})
+            asesorSerializer = UserSerializer(asesor_queryset,fields=(
+                'id', 'first_name', 'last_name', 'username'))
+            dataJson = asesorSerializer.data
+            dataJson["leads"] = LeadSerializer(Lead.objects.filter(asesor = asesor_queryset.pk),many = True).data
+            return Response(dataJson)
+        
+        return Response({"message" : "Usuario no tiene permimos"}, status=403)
 
 
-class AsesorListActivos(AsesorList):
-    def list(self, request):
-        self.queryset = self.queryset.filter(estado="A")
-        return super().list(request)
 
 
-class AsesorListInactivos(AsesorList):
-    def list(self, request):
-        self.queryset = self.queryset.filter(estado="I")
-        return super().list(request)
 
 
-class AsesorDetail(generics.RetrieveUpdateDestroyAPIView):
-    serializer_class = AsesorSerializer
-    queryset = Asesor.objects.all()
-
-    def retrieve(self, request, pk=None):
-        asesor_queryset = Asesor.objects.all()
-        asesor = get_object_or_404(asesor_queryset, pk=pk)
-        asesorserializer = AsesorSerializer(asesor)
-        dataJson = asesorserializer.data
-        user_fields = ["id", "username", "first_name", "last_name"]
-
-        user = User.objects.all().get(id=dataJson["user"])
-        userSerializer = UserSerializer(user)
-        user_data_serialized = userSerializer.data
-        dataJson["user"] = {field: user_data_serialized[field]
-                            for field in user_fields}
-
-        return Response(dataJson)
-
-    def update(self, request, *args, **kwargs):
-        instance = self.get_object()
-        serializer = self.get_serializer(
-            instance, data=request.data, partial=True)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-
-        leads_asignados = Lead.objects.filter(asesor=instance)
-        for lead in leads_asignados:
-            lead.update_estado()
-
-        return Response(serializer.data)
 
 
 class WhatsAppList(generics.ListCreateAPIView):
@@ -627,13 +559,13 @@ class EstadoLeadInactivos(EstadoLeadList):
 class EventoList(generics.ListCreateAPIView):
     serializer_class = EventoSerializer
     queryset = Evento.objects.all()
-
+    
     def post(self, request):
 
         idUsuario = request.data.pop("idUsuario")
         print("id userr", idUsuario)
         try:
-            request.data["asesor"] = Asesor.objects.get(user = idUsuario).pk
+            request.data["asesor"] = User.objects.get(user = idUsuario).pk
             serializer = EventoSerializer(data=request.data)
         except:
             return Response({"detail":"El asesor no existe"})
@@ -653,7 +585,7 @@ class EventoList(generics.ListCreateAPIView):
         
         if usuarioId:
             try:
-                asesorId = Asesor.objects.get(user = usuarioId).pk
+                asesorId = User.objects.get(user = usuarioId).pk
             except:
                 return Response({"detail":"El asesor no existe"})
 
@@ -663,7 +595,7 @@ class EventoList(generics.ListCreateAPIView):
             evento_queryset = Evento.objects.all()
 
         
-        asesor_queryset = Asesor.objects.all()
+        asesor_queryset = User.objects.all()
         lead_queryset = Lead.objects.all()
         tipoEvento_queryset = TipoEvento.objects.all()
 
@@ -681,7 +613,8 @@ class EventoList(generics.ListCreateAPIView):
                 pass
 
             try : 
-                i["asesor"] = AsesorSerializer(asesor_queryset.get(id = i["asesor"])).data
+                i["asesor"] = UserSerializer(asesor_queryset.get(id = i["asesor"]),fields=(
+                'id', 'first_name', 'last_name', 'username')).data
 
             except :
                 pass
@@ -712,16 +645,26 @@ class EventoDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Evento.objects.all()
 
     def retrieve(self, request, pk=None):
-        evento = Evento.objects.get(id = pk)
-        asesor_queryset = Asesor.objects.all()
-        tipo_queryset = TipoEvento.objects.all()
-        proyecto_queryset = Proyecto.objects.all()
+        try :
+            evento = Evento.objects.get(id = pk)
+        except :
+            return Response({"detail":"El evento no existe"})        
+        
+        asesor = get_or_none(User, id = evento.asesor.pk)
+        tipo = get_or_none(TipoEvento, id = evento.tipo.pk)
+        proyecto = get_or_none(Proyecto, id = evento.proyecto.pk)
 
-        dataJson = EventoSerializer(evento).data
-        dataJson["asesor"] = AsesorSerializer(asesor_queryset.get(id = evento.asesor.pk)).data
-        dataJson["tipo"] = TipoEventoSerializer(tipo_queryset.get(id =  evento.tipo.pk)).data
-        dataJson["proyecto"] = ProyectoSerializer(proyecto_queryset.get(id =  evento.proyecto.pk)).data
-        return Response(dataJson)
+        asesorSerlializer = UserSerializer(asesor,fields=('id', 'first_name', 'last_name', 'username')) if asesor else None
+        tipoSerializer = TipoEventoSerializer(tipo) if tipo else None
+        proyectoSerializer = ProyectoSerializer(proyecto) if proyecto else None
+
+        evento_dataJson = EventoSerializer(evento).data
+        evento_dataJson["asesor"] = asesorSerlializer.data if asesorSerlializer else {}
+        evento_dataJson["tipo"] = tipoSerializer.data if tipoSerializer else {}
+        evento_dataJson["proyecto"] = proyectoSerializer.data if proyectoSerializer else {}
+        
+        
+        return Response(evento_dataJson)
 
 class TipoEventoList(generics.ListCreateAPIView):
     serializer_class = TipoEventoSerializer
@@ -812,14 +755,14 @@ class CotizacionList(generics.ListCreateAPIView):
         cotizacion_queryset = self.queryset
         tipo_queryset = TipoCotizacion.objects.all()
         proyecto_queryset = Proyecto.objects.all()
-        asesor_queryset = Asesor.objects.all()
+        asesor_queryset = User.objects.all()
 
         dataJson = CotizacionSerializer(cotizacion_queryset, many = True).data
 
         for i in dataJson:        
             i["tipo"] = TipoCotizacionSerializer(tipo_queryset.get(id = i["tipo"])).data
             i["proyecto"] = ProyectoSerializer(proyecto_queryset.get(id = i["proyecto"])).data
-            i["asesor"] = AsesorSerializer(asesor_queryset.get(id = i["asesor"])).data
+            i["asesor"] = UserSerializer(asesor_queryset.get(id = i["asesor"])).data
 
         return Response(dataJson)
 
@@ -847,12 +790,20 @@ class CotizacionDetail(generics.RetrieveUpdateDestroyAPIView):
         cotizacion = Cotizacion.objects.get(id = pk)        
         tipo_queryset = TipoCotizacion.objects.all()
         proyecto_queryset = Proyecto.objects.all()
-        asesor_queryset = Asesor.objects.all()
+        asesor_queryset = User.objects.all()
 
         dataJson = CotizacionSerializer(cotizacion).data
         dataJson["tipo"] = TipoCotizacionSerializer(tipo_queryset.get(id =  cotizacion.tipo.pk)).data
         dataJson["proyecto"] = ProyectoSerializer(proyecto_queryset.get(id =  cotizacion.proyecto.pk)).data
-        dataJson["asesor"] = AsesorSerializer(asesor_queryset.get(id =  cotizacion.asesor.pk)).data
+        dataJson["asesor"] = UserSerializer(asesor_queryset.get(id =  cotizacion.asesor.pk)).data
+
+
+
+
+
+
+
+
 
         return Response(dataJson)
 

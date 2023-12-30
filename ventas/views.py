@@ -12,6 +12,8 @@ from datetime import datetime, timedelta
 from django.http import Http404
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.decorators import permission_classes
+from .consts import RolesERP
 
  
 def get_or_none(classmodel, **kwargs):
@@ -428,7 +430,7 @@ class AsesorLead(APIView):
     def get(self, request):
         print(request.user.id) 
         pk = request.user.pk
-        if "jefe_ventas" == request.user.groups.first().name : 
+        if RolesERP.JEFE_VENTAS == request.user.groups.first().name : 
             try:
                 asesor_queryset = User.objects.get(id = pk)
             except :
@@ -438,7 +440,7 @@ class AsesorLead(APIView):
             dataJson = asesorSerializer.data
             dataJson["leads"] = LeadSerializer(Lead.objects.all(),many = True).data
             return Response(dataJson)
-        elif "asesor" == request.user.groups.first().name :
+        elif RolesERP.ASESOR == request.user.groups.first().name :
             try:
                 asesor_queryset = User.objects.get(id = pk)
             except :
@@ -555,13 +557,11 @@ class EstadoLeadInactivos(EstadoLeadList):
         return super().list(request)
 
 
-
+@permission_classes([IsAuthenticated])
 class EventoList(generics.ListCreateAPIView):
     serializer_class = EventoSerializer
     queryset = Evento.objects.all()
-    
     def post(self, request):
-
         idUsuario = request.data.pop("idUsuario")
         print("id userr", idUsuario)
         try:
@@ -569,57 +569,50 @@ class EventoList(generics.ListCreateAPIView):
             serializer = EventoSerializer(data=request.data)
         except:
             return Response({"detail":"El asesor no existe"})
-            print("errrrorrrr")
-
 
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
+    
     def list(self, request):
-        usuarioId = request.query_params.get('usuarioId')
-        print(usuarioId)
+        usuarioId = request.user.pk
 
-        asesorId = -1
-        
-        if usuarioId:
-            try:
-                asesorId = User.objects.get(user = usuarioId).pk
-            except:
-                return Response({"detail":"El asesor no existe"})
-
-        if asesorId != -1:
-            evento_queryset = Evento.objects.filter(asesor=asesorId)
-        else:
+        if RolesERP.ASESOR == request.user.groups.first().name:
+            evento_queryset = Evento.objects.filter(asesor=usuarioId)
+        elif RolesERP.JEFE_VENTAS == request.user.groups.first().name:
             evento_queryset = Evento.objects.all()
-
+        else :
+            return Response({"detail":"El usuario no tiene el rol"})
         
-        asesor_queryset = User.objects.all()
-        lead_queryset = Lead.objects.all()
-        tipoEvento_queryset = TipoEvento.objects.all()
+        evento_data = EventoSerializer(evento_queryset, many = True).data
+        print(evento_data)
+        for eventoIterador in evento_data : 
+            asesor = get_or_none(User, id=eventoIterador["asesor"])
+            tipo = get_or_none(TipoEvento, id=eventoIterador["tipo"])
+            lead = get_or_none(Lead, id=eventoIterador["lead"])
+            proyecto = get_or_none(Proyecto, id=eventoIterador["proyecto"])
+            userCreador = get_or_none(User, id=eventoIterador["usuarioCreador"])
+            userActualizador= get_or_none(User, id=eventoIterador["usuarioActualizador"])
 
-        dataJson = EventoSerializer(evento_queryset, many = True).data
+            userAsesorSerializer = UserSerializer(asesor,fields=(
+            'id', 'first_name', 'last_name', 'username')) if asesor else None
+            tipoSerializer = TipoEventoSerializer(tipo) if tipo else None
+            leadSerializer = LeadSerializer(lead) if lead else None
+            proyectoSerializer = ProyectoSerializer(proyecto) if proyecto else None
+            userCreadorSerializer = UserSerializer(userCreador,fields=(
+            'id', 'first_name', 'last_name', 'username')) if userCreador else None
+            userActualizadorializer = UserSerializer(userActualizador,fields=(
+            'id', 'first_name', 'last_name', 'username')) if userActualizador else None
 
-        for i in dataJson:
-            try :
-                i["tipo"] = TipoEventoSerializer(tipoEvento_queryset.get(id = i["tipo"])).data
-            except :
-                pass
+            eventoIterador["asesor"] = userAsesorSerializer.data if userAsesorSerializer else {}
+            eventoIterador["tipo"] = tipoSerializer.data if tipoSerializer else {}
+            eventoIterador["lead"] = leadSerializer.data if leadSerializer else {}
+            eventoIterador["proyecto"] = proyectoSerializer.data if proyectoSerializer else {}
+            eventoIterador["usuarioCreador"] = userCreadorSerializer.data if userCreadorSerializer else {}
+            eventoIterador["usuarioActualizador"] = userActualizadorializer.data if userActualizadorializer else {}
 
-            try :
-                i["lead"] = LeadSerializer(lead_queryset.get(id = i["lead"])).data
-            except :
-                pass
-
-            try : 
-                i["asesor"] = UserSerializer(asesor_queryset.get(id = i["asesor"]),fields=(
-                'id', 'first_name', 'last_name', 'username')).data
-
-            except :
-                pass
-
-        return Response(dataJson)
+        return Response(evento_data)
 
 
 

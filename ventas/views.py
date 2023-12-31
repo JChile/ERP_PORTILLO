@@ -790,13 +790,6 @@ class CotizacionDetail(generics.RetrieveUpdateDestroyAPIView):
         dataJson["asesor"] = UserSerializer(asesor_queryset.get(id =  cotizacion.asesor.pk)).data
 
 
-
-
-
-
-
-
-
         return Response(dataJson)
 
 class TipoCotizacionList(generics.ListCreateAPIView):

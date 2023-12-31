@@ -66,14 +66,12 @@ class Lead(models.Model):
     def __str__(self):
         return self.nombre
 
-    def update_estado(self):
-        if self.asesor.estado.estado == 'I':
-            self.asesor = None
+    def actualizar_estado_asignado(self):
+        self.asignado = self.asesor is not None
 
-            if self.estadoLead.nombre == 'EP':
-                self.asignado = False
-
-            self.save()
+    def save(self, *args, **kwargs):
+        self.actualizar_estado_asignado()
+        super().save(*args, **kwargs)
 
 
 class WhatsApp(models.Model):

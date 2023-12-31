@@ -8,7 +8,7 @@ import { CustomInputBase } from "../../../components/CustomInputBase";
 import { CustomSelectedTable } from "../components/CustomSelectedTable";
 import { DialogDeleteLead } from "../components/DialogDeleteLead";
 import { HiUserGroup } from "react-icons/hi";
-import { Button } from "@mui/material";
+import { Button, IconButton } from "@mui/material";
 
 const headers = [
   { name: "Acciones", width: 20 },
@@ -155,7 +155,23 @@ export const ListLeads = () => {
               },
             }}
           >
-            <Link to={"/lead/create/sheet"}>Importar</Link>
+            <Link
+              to={"/lead/create/sheet"}
+              sx={{
+                backgroundColor: "#facc15",
+                paddingX: "1rem",
+                paddingY: "0.6rem",
+                borderRadius: "0px",
+                color: "black",
+                textTransform: "capitalize",
+                ": hover": {
+                  backgroundColor: "#eab308",
+                  color: "whitesmoke",
+                },
+              }}
+            >
+              Importar
+            </Link>
           </Button>
         </div>
       </div>

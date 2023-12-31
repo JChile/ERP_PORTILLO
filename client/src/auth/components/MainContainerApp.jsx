@@ -58,7 +58,14 @@ export const MainContainerApp = ({ children }) => {
         </Toolbar>
       </AppBar>
       <Drawer variant="permanent" open={open} sx={{ zIndex: 9 }}>
-        <List sx={{ marginTop: 8, flex: 1 }}>
+        <List
+          sx={{
+            marginTop: 8,
+            flex: 1,
+            backgroundColor: "#9E154A",
+            color: "whitesmoke",
+          }}
+        >
           {permissions.map((item, index) => (
             <NavLink to={item.url} key={item.title}>
               <ListItem disablePadding sx={{ display: "block" }}>
@@ -76,7 +83,11 @@ export const MainContainerApp = ({ children }) => {
                       mr: open ? 2 : "auto",
                     }}
                   >
-                    {index % 2 === 0 ? <FiInbox /> : <MdAllInbox />}
+                    {index % 2 === 0 ? (
+                      <FiInbox color="white" />
+                    ) : (
+                      <MdAllInbox color="white" />
+                    )}
                   </ListItemIcon>
                   <ListItemText
                     primary={item.title}
@@ -97,7 +108,6 @@ export const MainContainerApp = ({ children }) => {
     </Box>
   );
 };
-
 
 /** Style component */
 const openedMixin = (theme) => ({

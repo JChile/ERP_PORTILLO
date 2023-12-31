@@ -95,7 +95,7 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
             token['groupsId'] = str(user.groups.all()[0].id)
             id = user.id
 
-            #token['user'] = (requests.get(
-             #   "http://127.0.0.1:8000/api/user/{}".format(id))).json()
+            token['user'] = (requests.get(
+                "http://127.0.0.1:8000/api/user/{}".format(id))).json()
 
         return token

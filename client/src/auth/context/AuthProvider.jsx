@@ -52,6 +52,7 @@ export const AuthProvider = ({ children }) => {
       // decodificamos la data del payload
       const payloadUser = jwt_decode(data.access);
       // obtenemos el grupo
+      console.log({ payloadUser })
       const { user } = payloadUser;
       const { groups } = user;
       // obtenemos los modulos con permisos
@@ -76,6 +77,8 @@ export const AuthProvider = ({ children }) => {
       setauthTokens(data);
       setCurrentUser(payloadUser);
       setPermissions(permissions_user);
+
+      console.log({ permissions_user })
 
       localStorage.setItem("authTokens", JSON.stringify(data));
       localStorage.setItem("permissions", JSON.stringify(permissions_user));

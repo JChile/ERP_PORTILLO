@@ -64,7 +64,7 @@ class Lead(models.Model):
     fecha_actualizacion = models.DateTimeField(blank = True, null = True)
 
     def __str__(self):
-        return self.nombre
+        return self.nombre +"-"+str(self.celular)
 
     def actualizar_estado_asignado(self):
         self.asignado = self.asesor is not None

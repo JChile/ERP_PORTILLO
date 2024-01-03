@@ -2,6 +2,7 @@
 from django.urls import path
 from django.urls import include, re_path
 from . import views
+from . import cutomViews
 
 urlpatterns = [
     re_path(r'^lead/$', views.LeadListSinFiltros.as_view()),
@@ -11,14 +12,14 @@ urlpatterns = [
     re_path(r'^leadAsignado/$', views.LeadListAsignados.as_view()),
     re_path(r'^leadNoAsignado/$', views.LeadListNoAsignados.as_view()),
 
-    re_path(r'^leadCreationConfirmation/$', views.LeadCreationConfirmation.as_view()),
+    re_path(r'^leadCreationConfirmation/$', cutomViews.LeadCreationConfirmation.as_view()),
 
-    re_path(r'^leadMultipleCreationAutomatic/$', views.leadMultipleCreationAutomatic.as_view()),
-    re_path(r'^leadMultipleAssign/$', views.LeadMultipleAssign.as_view()),
-    re_path(r'^leadMultipleCreationManual/$', views.LeadMultipleCreationManual.as_view()),
+    re_path(r'^leadMultipleCreationAutomatic/$', cutomViews.leadMultipleCreationAutomatic.as_view()),
+    re_path(r'^leadMultipleAssign/$', cutomViews.LeadMultipleAssign.as_view()),
+    re_path(r'^leadMultipleCreationManual/$', cutomViews.LeadMultipleCreationManual.as_view()),
 
-    re_path(r'^asesorLead/$', views.AsesorLead.as_view()),
-    re_path(r'^asesorAsignacion/$', views.AsesorAsignacion.as_view()),
+    re_path(r'^asesorLead/$', cutomViews.AsesorLead.as_view()),
+    re_path(r'^asesorAsignacion/$', cutomViews.AsesorAsignacion.as_view()),
 
 
     re_path(r'^whatsapp/$', views.WhatsAppList.as_view()),
@@ -86,10 +87,10 @@ urlpatterns = [
     re_path(r'^precioActivo/$', views.PrecioListActivos.as_view()),
     re_path(r'^precioInactivo/$', views.PrecioListInactivos.as_view()),
 
-    re_path(r'^proyectoTipoProducto/$', views.ProyectoTipoProductoListSinFiltros.as_view()),
-    re_path(r'^proyectoTipoProducto/(?P<pk>[\w-]+)$', views.ProyectoTipoProductoDetail.as_view()),
+    re_path(r'^proyectoTipoProducto/$', cutomViews.ProyectoTipoProductoListSinFiltros.as_view()),
+    re_path(r'^proyectoTipoProducto/(?P<pk>[\w-]+)$', cutomViews.ProyectoTipoProductoDetail.as_view()),
 
-    re_path(r'^proyectoCotizaciones/(?P<pk>[\w-]+)$', views.ProyectoCotizaciones.as_view()),
+    re_path(r'^proyectoCotizaciones/(?P<pk>[\w-]+)$', cutomViews.ProyectoCotizaciones.as_view()),
 
 
     

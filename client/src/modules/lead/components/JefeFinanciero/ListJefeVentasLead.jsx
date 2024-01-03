@@ -60,6 +60,7 @@ const ListJefeVentasLead = ({ credentials }) => {
   return (
     <React.Fragment>
       <div className="flex flex-col gap-y-5">
+        
         <CustomInputBase
           placeholder="Buscar lead"
           onSearch={handleSearchButton}

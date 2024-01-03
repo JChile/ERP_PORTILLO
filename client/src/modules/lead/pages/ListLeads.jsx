@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { RiFileExcel2Fill } from "react-icons/ri";
 import { deleteLead, getLeadsActivos } from "../helpers";
@@ -9,6 +9,7 @@ import { CustomSelectedTable } from "../components/CustomSelectedTable";
 import { DialogDeleteLead } from "../components/DialogDeleteLead";
 import { HiUserGroup } from "react-icons/hi";
 import { Button } from "@mui/material";
+import { AuthContext } from "../../../auth";
 
 const headers = [
   { name: "Acciones", width: 20 },
@@ -24,6 +25,7 @@ const filters = ["Nombre", "Estado", "Campaña"];
 const headersLead = ["Acciones", "Nombre", "Celular", "Campaña"];
 
 export const ListLeads = () => {
+  const { authTokens } = useContext(AuthContext);
   const [filterLeads, setFilterLeads] = useState([]);
   const [leads, setLeads] = useState([]);
   const [visibleProgress, setVisibleProgress] = useState(true);
@@ -57,7 +59,7 @@ export const ListLeads = () => {
   };
 
   const loadLeads = async () => {
-    const data = await getLeadsActivos();
+    const data = await getLeadsActivos(authTokens.access);
     setLeads(data);
     setFilterLeads(data);
   };
@@ -162,8 +164,6 @@ export const ListLeads = () => {
 
       <div className="px-7 mt-8 mb-8 flex justify-between items-center">
         <CustomInputBase
-          filters={filters}
-          defaultFilter={filters[0]}
           onSearch={handleSearchButton}
           placeholder="Buscar lead..."
         />

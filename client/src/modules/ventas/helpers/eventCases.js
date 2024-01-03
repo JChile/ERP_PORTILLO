@@ -3,8 +3,8 @@ import axios from "axios";
 //const DOMAIN = import.meta.env.VITE_BACKEND_URL;
 const DOMAIN = "http://127.0.0.1:8000";
 
-const getEvents = async (userId, token) => {
-  const URL = `${DOMAIN}/api/evento/?usuarioId=${userId}`;
+const getEvents = async (token) => {
+  const URL = `${DOMAIN}/api/evento/`;
   const config = {
     headers: {
       Authorization: `Bearer ${token}`,

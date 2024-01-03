@@ -167,23 +167,28 @@ export const DetailLead = () => {
             <Button
               variant="contained"
               color="success"
-              sx={{ textTransform: "capitalize" }}
+              sx={{ textTransform: "capitalize", borderRadius: 0 }}
               onClick={() => setShowDialog(true)}
             >
               Crear Evento
             </Button>
-            <Button variant="contained" sx={{ textTransform: "capitalize" }}>
+            <Button
+              variant="contained"
+              color="info"
+              sx={{ textTransform: "capitalize", borderRadius: 0 }}
+            >
               <Link to={"cotizacion/"}>Generar Cotización</Link>
             </Button>
           </div>
 
           <div className="flex justify-center">
-            <button
-              className="bg-gray-500 hover:bg-gray-600 text-white py-2 px-4 rounded"
+            <Button
+              variant="contained"
+              sx={{ borderRadius: 0, backgroundColor: "gray" }}
               onClick={onNavigateBack}
             >
               Volver
-            </button>
+            </Button>
           </div>
         </div>
       </div>

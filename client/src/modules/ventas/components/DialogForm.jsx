@@ -225,6 +225,7 @@ export const DialogForm = ({ isOpen, onClose }) => {
             onClick={onClose}
             sx={{
               textTransform: "capitalize",
+              borderRadius: 0
             }}
           >
             Cerrar
@@ -234,6 +235,7 @@ export const DialogForm = ({ isOpen, onClose }) => {
             color="info"
             sx={{
               textTransform: "capitalize",
+              borderRadius: 0
             }}
             onClick={() => handleSubmit(handleSave)}
           >

@@ -75,7 +75,7 @@ const initialState = {
 };
 
 export const CalendarView = () => {
-  const { currentUser, authTokens } = useContext(AuthContext);
+  const { authTokens } = useContext(AuthContext);
   const [state, dispatch] = useReducer(reducer, initialState);
   const [flagLoader, setFlagLoader] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState(null);
@@ -96,7 +96,6 @@ export const CalendarView = () => {
     setTempFilters(updatedFilters);
   };
 
-  console.log({ currentUser });
 
   const applyFilters = () => {
     const filtered = originalEvents.filter(
@@ -106,9 +105,9 @@ export const CalendarView = () => {
     setSelectedFilters(tempFilters);
   };
 
-  const getCalendarData = async (userId, authTokens) => {
+  const getCalendarData = async (authTokens) => {
     try {
-      const events = await getEvents(userId, authTokens);
+      const events = await getEvents(authTokens);
       const typeEvents = await getTipoEventos();
 
 
@@ -140,7 +139,7 @@ export const CalendarView = () => {
 
   useEffect(() => {
     const controller = new AbortController();
-    getCalendarData(currentUser.user_id, authTokens.access);
+    getCalendarData(authTokens.access);
     return () => controller.abort();
   }, [flagLoader]);
 

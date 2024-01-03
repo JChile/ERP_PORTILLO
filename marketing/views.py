@@ -8,18 +8,64 @@ from rest_framework.permissions import IsAuthenticated
 from django.shortcuts import get_object_or_404
 from rest_framework.views import APIView
 from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework.decorators import permission_classes
+from ventas.consts import RolesERP
+from ventas.models import Lead
+from ventas.serializers import LeadSerializer
+
+def get_or_none(classmodel, **kwargs):
+    try:
+        return classmodel.objects.get(**kwargs)
+    except classmodel.DoesNotExist:
+        return None
 
 
+
+@permission_classes([IsAuthenticated])
 class ProyectoList(generics.ListCreateAPIView):
     serializer_class = ProyectoSerializer
     queryset = Proyecto.objects.all()
 
 
-
+@permission_classes([IsAuthenticated])
 class ProyectoDetail(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = ProyectoSerializer
     queryset = Proyecto.objects.all()
+    def retrieve(self, request, pk=None):
+        #para asesor y jefe de ventas whatsapps, llamadas y eventos
+        usuario = request.user
 
+        proyecto = get_or_none(Proyecto, id = pk)
+        if proyecto == None :
+            return Response({"message" : "No existe proyecto o no tiene permisos el usuario"}, status=404)
+
+
+        proyectoSerializer = ProyectoSerializer(proyecto)
+        proyecto_data = proyectoSerializer.data
+
+        userCreador_data = get_or_none(User, id=proyecto_data["usuarioCreador"])
+        userActualizador_data = get_or_none(User, id=proyecto_data["usuarioActualizador"])
+        asesor_queryset = User.objects.filter(proyecto = proyecto.pk)
+
+        userCreadorSerializer = UserSerializer(userCreador_data,fields=(
+        'id', 'first_name', 'last_name', 'username')) if userCreador_data else None
+        userActualizadorializer = UserSerializer(userActualizador_data,fields=(
+        'id', 'first_name', 'last_name', 'username')) if userActualizador_data else None
+        asesor_data = UserSerializer(asesor_queryset,fields=(
+        'id', 'first_name', 'last_name', 'username'), many = True).data
+
+        proyecto_data["usuarioCreador"] = userCreadorSerializer.data if userCreadorSerializer else {}
+        proyecto_data["usuarioActualizador"] = userActualizadorializer.data if userActualizadorializer else {}
+        
+
+        if RolesERP.JEFE_VENTAS == usuario.groups.first().name:
+            for i in asesor_data:
+                i["lead"] = LeadSerializer(Lead.objects.filter(asesor = i["id"]), many = True).data
+            proyecto_data["asesor"] = asesor_data if asesor_data else []
+        
+
+        
+        return Response(proyecto_data)
 
 class CategoriaList(generics.ListCreateAPIView):
     serializer_class = CategoriaSerializer

@@ -35,6 +35,12 @@ class ProyectoDetail(generics.RetrieveUpdateDestroyAPIView):
         #para asesor y jefe de ventas whatsapps, llamadas y eventos
         usuario = request.user
 
+        if not (bool(request.user.groups.first().permissions.filter(codename = PermissionProyecto.CAN_VIEW) or request.user.is_superuser)) :
+            return Response({"message" : "Usuario no tiene permisos para ver proyecto"}, status=403)
+        
+
+
+
         proyecto = get_or_none(Proyecto, id = pk)
         if proyecto == None :
             return Response({"message" : "No existe proyecto o no tiene permisos el usuario"}, status=404)

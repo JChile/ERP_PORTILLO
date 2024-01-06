@@ -28,3 +28,11 @@ class PermissionCampania:
     CAN_ADD = "add_campania"
     CAN_CHANGE= "change_campania"
     CAN_DELETE = "delete_campania"
+
+
+
+class PermissionProyecto:
+    CAN_VIEW = "view_proyecto"
+    CAN_ADD = "add_proyecto"
+    CAN_CHANGE= "change_proyecto"
+    CAN_DELETE = "delete_proyecto"

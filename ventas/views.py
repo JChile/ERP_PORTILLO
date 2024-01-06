@@ -413,7 +413,7 @@ class ProductoDetail(generics.RetrieveUpdateDestroyAPIView):
         dataJson = ProductoSerializer(producto).data
         dataJson["tipo"] = TipoProductoSerializer(tipo_queryset.get(id =  producto.tipo.pk)).data
 
-        dataJson["proyecto"] = ProyectoSerializer(tipo_queryset.get(id =  producto.proyecto.pk)).data
+        dataJson["proyecto"] = ProyectoSerializer(Proyecto.objects.get(id =  producto.proyecto.pk)).data
 
 
         return Response(dataJson)

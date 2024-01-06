@@ -1,6 +1,7 @@
 import axios from "axios";
 
-const DOMAIN = import.meta.env.VITE_BACKEND_URL;
+//const DOMAIN = import.meta.env.VITE_BACKEND_URL;
+const DOMAIN = "http://127.0.0.1:8000";
 
 const getEvents = async (user_id) => {
   const URL = `${DOMAIN}/api/evento/?usuarioId=${user_id}`;

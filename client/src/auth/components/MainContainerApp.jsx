@@ -60,8 +60,17 @@ export const MainContainerApp = ({ children }) => {
       <Drawer variant="permanent" open={open} sx={{ zIndex: 9 }}>
         <List sx={{ marginTop: 8, flex: 1 }}>
           {permissions.map((item, index) => (
-            <NavLink to={item.url} key={item.title}>
-              <ListItem disablePadding sx={{ display: "block" }}>
+            <NavLink
+              to={item.url}
+              key={item.title}
+              className={({ isActive }) =>
+                isActive ? "bg-slate-200" : "bg-transparent"
+              }
+            >
+              <ListItem
+                disablePadding
+                sx={{ display: "block", backgroundColor: "inherit" }}
+              >
                 <ListItemButton
                   sx={{
                     minHeight: 48,
@@ -97,7 +106,6 @@ export const MainContainerApp = ({ children }) => {
     </Box>
   );
 };
-
 
 /** Style component */
 const openedMixin = (theme) => ({

@@ -11,6 +11,7 @@ import { NotPublicPage } from "../components/NotPublicPage";
 import { VentasRouter } from "../modules/ventas/router/VentasRouter";
 import CotizacionRouter from "../modules/cotizaciones/router/CotizacionRouter";
 import { ProyectoRoutes } from "../modules/proyectos/router/ProyectoRoutes";
+import { ProductoRoutes } from "../modules/productos/router/ProductoRoutes";
 
 export const AppRouter = () => {
   return (
@@ -40,6 +41,7 @@ export const AppRouter = () => {
                   <Route path="evento/*" element={<VentasRouter />} />
                   <Route path="cotizaciones/*" element={<CotizacionRouter />} />
                   <Route path="proyecto/*" element={<ProyectoRoutes />} />
+                  <Route path="producto/*" element={<ProductoRoutes />} />
                 </Routes>
               </MainContainerApp>
             }

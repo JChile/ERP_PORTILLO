@@ -6,8 +6,6 @@ from django.utils import timezone
 
 
 
-
-
 class TipoEvento(models.Model):
     nombre = models.CharField(max_length=100, null=True)
     estado = models.ForeignKey(

@@ -13,7 +13,8 @@ from django.http import Http404
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import permission_classes
-from .consts import RolesERP
+from .consts import *
+
 
  
 def get_or_none(classmodel, **kwargs):
@@ -99,18 +100,19 @@ class LeadDetail(generics.RetrieveUpdateDestroyAPIView):
         #para asesor y jefe de ventas whatsapps, llamadas y eventos
         usuario = request.user
 
-        if RolesERP.ASESOR  == usuario.groups.first().name:
-            lead = Lead.objects.filter(id = pk, asesor = usuario.pk).first()
-            if lead ==None :
-                return Response({"message" : "No existe lead o no tiene permisos el usuario"}, status=404)
+        if not (bool(request.user.groups.first().permissions.filter(codename = PermissionLead.CAN_VIEW) or request.user.is_superuser)) :
+            return Response({"message" : "Usuario no tiene permisos para ver leads"}, status=403)
+        
 
-        elif RolesERP.JEFE_VENTAS == usuario.groups.first().name:
+        if request.user.isAdmin == True  :
             lead = get_or_none(Lead, id = pk)
             if lead == None:
                 return Response({"message" : "No existe lead"}, status=404)
         else :
-            return Response({"message" : "Usuario no tiene el rol"}, status=403)
-
+            lead = Lead.objects.filter(id = pk, asesor = usuario.pk).first()
+            if lead ==None :
+                return Response({"message" : "No existe lead o lead no pertenece al usario"}, status=404)
+        
         leadSerializer = LeadSerializer(lead)
         lead_data = leadSerializer.data
 
@@ -258,12 +260,18 @@ class EventoList(generics.ListCreateAPIView):
     
     def list(self, request):
         usuarioId = request.user.pk
-        if RolesERP.ASESOR == request.user.groups.first().name:
+        #Hola
+
+        if not (bool(request.user.groups.first().permissions.filter(codename = PermissionEvento.CAN_VIEW) or request.user.is_superuser)) :
+            return Response({"message" : "Usuario no tiene permisos para ver eventos"}, status=403)
+        
+        if request.user.isAdmin == False:
             evento_queryset = Evento.objects.filter(asesor=usuarioId)
-        elif RolesERP.JEFE_VENTAS == request.user.groups.first().name:
+        elif request.user.isAdmin == True:
             evento_queryset = Evento.objects.all()
-        else :
-            return Response({"message" : "Usuario no tiene el rol"}, status=403)
+        
+        if len(evento_queryset) == 0:
+            return Response({"message" : "No existen eventos"}, status=404)
         
         evento_data = EventoSerializer(evento_queryset, many = True).data
         print(evento_data)
@@ -318,11 +326,18 @@ class EventoDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Evento.objects.all()
 
     def retrieve(self, request, pk=None):
+        
+
+        if not (bool(request.user.groups.first().permissions.filter(codename = PermissionEvento.CAN_VIEW) or request.user.is_superuser)) :
+            return Response({"message" : "Usuario no tiene permisos para ver eventos"}, status=403)
+        
         try :
             evento = Evento.objects.get(id = pk)
         except :
             return Response({"detail":"El evento no existe"})        
         
+
+
         asesor = get_or_none(User, id = evento.asesor.pk)
         tipo = get_or_none(TipoEvento, id = evento.tipo.pk)
         proyecto = get_or_none(Proyecto, id = evento.proyecto.pk)

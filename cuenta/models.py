@@ -20,7 +20,6 @@ class User(AbstractUser):
     codigoAsesor = models.CharField(max_length=100, null=True, default=None, blank = False, unique = True)
     estado = models.ForeignKey(
         EstadoRegistro, on_delete=models.SET_NULL, default='A', null=True)
-    proyecto = models.ForeignKey('marketing.Proyecto', on_delete=models.SET_NULL, null=True, blank = True)
     isAdmin = models.BooleanField(default=False)
     def __str__(self):
         return self.username

@@ -9,7 +9,7 @@ from django.shortcuts import get_object_or_404
 from rest_framework.views import APIView
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.decorators import permission_classes
-from ventas.consts import RolesERP
+from ventas.consts import *
 from ventas.models import Lead
 from ventas.serializers import LeadSerializer
 
@@ -45,7 +45,13 @@ class ProyectoDetail(generics.RetrieveUpdateDestroyAPIView):
 
         userCreador_data = get_or_none(User, id=proyecto_data["usuarioCreador"])
         userActualizador_data = get_or_none(User, id=proyecto_data["usuarioActualizador"])
-        asesor_queryset = User.objects.filter(proyecto = proyecto.pk)
+
+        campania_queryset = Campania.objects.filter(proyecto = proyecto.pk)
+        campania_id_list = [int(campania.pk) for campania in campania_queryset]
+        lead_queryset = Lead.objects.filter(campania__in=campania_id_list)
+        lead_asesor_list =  [int(lead.asesor.pk) for lead in lead_queryset]
+        
+        asesor_queryset = User.objects.filter(id__in = lead_asesor_list)
 
         userCreadorSerializer = UserSerializer(userCreador_data,fields=(
         'id', 'first_name', 'last_name', 'username')) if userCreador_data else None
@@ -58,7 +64,7 @@ class ProyectoDetail(generics.RetrieveUpdateDestroyAPIView):
         proyecto_data["usuarioActualizador"] = userActualizadorializer.data if userActualizadorializer else {}
         
 
-        if RolesERP.JEFE_VENTAS == usuario.groups.first().name:
+        if request.user.isAdmin == True :
             for i in asesor_data:
                 i["lead"] = LeadSerializer(Lead.objects.filter(asesor = i["id"]), many = True).data
             proyecto_data["asesor"] = asesor_data if asesor_data else []

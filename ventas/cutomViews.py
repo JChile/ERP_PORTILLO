@@ -13,7 +13,7 @@ from django.http import Http404
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import permission_classes
-from .consts import RolesERP
+from .consts import *
 
 
 
@@ -323,9 +323,13 @@ class AsesorAsignacion(APIView):
 class AsesorLead(APIView):
     permission_classes = [IsAuthenticated]
     def get(self, request):
-        print(request.user.id) 
+        print(bool(request.user.groups.first().permissions.filter(codename = PermissionLead.CAN_VIEW))) 
+        print(request.user.groups.first())
+        if not (bool(request.user.groups.first().permissions.filter(codename = PermissionLead.CAN_VIEW) or request.user.is_superuser)) :
+            return Response({"message" : "Usuario no tiene permisos para ver leads"}, status=403)
+        
         pk = request.user.pk
-        if RolesERP.JEFE_VENTAS == request.user.groups.first().name : 
+        if request.user.isAdmin == True : 
             try:
                 asesor_queryset = User.objects.get(id = pk)
             except :
@@ -335,7 +339,7 @@ class AsesorLead(APIView):
             dataJson = asesorSerializer.data
             dataJson["leads"] = LeadSerializer(Lead.objects.all(),many = True).data
             return Response(dataJson)
-        elif RolesERP.ASESOR == request.user.groups.first().name :
+        else:
             try:
                 asesor_queryset = User.objects.get(id = pk)
             except :
@@ -345,11 +349,7 @@ class AsesorLead(APIView):
             dataJson = asesorSerializer.data
             dataJson["leads"] = LeadSerializer(Lead.objects.filter(asesor = asesor_queryset.pk),many = True).data
             return Response(dataJson)
-        
-        return Response({"message" : "Usuario no tiene el rol"}, status=403)
-
-
-
+    
 
 class ProyectoTipoProductoList(generics.ListCreateAPIView):
     serializer_class = ProyectoTipoProductoSerializer

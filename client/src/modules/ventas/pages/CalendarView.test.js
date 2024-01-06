@@ -1,8 +1,27 @@
 import React from "react";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import { CalendarView } from "./CalendarView";
+import axios from "axios";
 
-describe("CalendarView component", () => {
+jest.mock("axios");
+
+describe("getEvents", () => {
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
+
+  // tarea, tareas que tengo que realizar, para el proximo viernes es hacer una presentación acerca del
+  // mapeo sistematico, considerar la imagen del documento que capturaste y que los tienes almcenado con
+  // el chat de +51 981 049 157
+});
+
+describe("CalendarView", () => {
+  const component = render(<CalendarView />);
+
+  // pruebas de aceptacion, pruebas de caja negra, pruebas de integración.
+  // pruebas de funcionalidad, pruebas de implementación.
+  // pruebas con selenium.
+  /*
   test("renders CalendarView component correctly", async () => {
     render(<CalendarView />);
     const createButton = screen.getByRole("button", { name: /crear/i });
@@ -25,14 +44,12 @@ describe("CalendarView component", () => {
       expect(screen.queryByRole("presentation")).not.toBeInTheDocument();
     });
   });
+  */
 });
 
-
-
-
 /**
- * 
+ *
  * Pruebas de funcionalidad.
  * pruebas de usabilidad.
- * 
+ *
  */

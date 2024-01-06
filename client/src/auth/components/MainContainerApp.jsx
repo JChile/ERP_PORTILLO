@@ -67,8 +67,17 @@ export const MainContainerApp = ({ children }) => {
           }}
         >
           {permissions.map((item, index) => (
-            <NavLink to={item.url} key={item.title}>
-              <ListItem disablePadding sx={{ display: "block" }}>
+            <NavLink
+              to={item.url}
+              key={item.title}
+              className={({ isActive }) =>
+                isActive ? "bg-slate-200" : "bg-transparent"
+              }
+            >
+              <ListItem
+                disablePadding
+                sx={{ display: "block", backgroundColor: "inherit" }}
+              >
                 <ListItemButton
                   sx={{
                     minHeight: 48,

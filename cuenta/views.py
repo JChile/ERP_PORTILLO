@@ -11,10 +11,6 @@ from django.shortcuts import get_object_or_404
 from rest_framework.views import APIView
 
 
-def index(request):
-    return HttpResponse("Vista de inicio de sesion ")
-
-
 class GroupList(generics.ListCreateAPIView):
     serializer_class = GruopSerializer
     queryset = Group.objects.all()
@@ -62,7 +58,7 @@ class PermissionDetail(generics.RetrieveUpdateDestroyAPIView):
 class UserList(generics.ListCreateAPIView):
     serializer_class = UserSerializer
     queryset = User.objects.all()
-
+      
     def list(self, request):
         user_queryset = User.objects.all()
         userSerializer = UserSerializer(user_queryset, many=True)
@@ -190,25 +186,6 @@ class UserDetail(generics.RetrieveUpdateDestroyAPIView):
         return Response(dataJson)
 
 
-class UserProfileList(generics.ListCreateAPIView):
-    serializer_class = UserProfileSerializer
-    queryset = User.objects.all()
-
-
-class UserProfileDetail(generics.RetrieveUpdateDestroyAPIView):
-    # permission_classes = [IsAuthenticated]
-    queryset = User.objects.all()
-    serializer_class = UserProfileSerializer
-
-
-class ProfileList(generics.ListCreateAPIView):
-    serializer_class = ProfileSerializer
-    queryset = Profile.objects.all()
-
-
-class ProfileDetail(generics.RetrieveUpdateDestroyAPIView):
-    queryset = Profile.objects.all()
-    serializer_class = ProfileSerializer
 
 
 class ModuloList(generics.ListCreateAPIView):

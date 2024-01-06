@@ -12,9 +12,6 @@ import { CustomCircularProgress } from "../../../components";
 import {
   Button,
   Checkbox,
-  Dialog,
-  DialogContent,
-  DialogTitle,
   Drawer,
   List,
   ListItem,
@@ -22,9 +19,6 @@ import {
   ListItemText,
 } from "@mui/material";
 import { transformToEvent } from "../utils/util";
-import { PDFViewer } from "@react-pdf/renderer";
-import { PdfDocument } from "../../cotizaciones/PdfDocument";
-import { CustomPdfViewer } from "../../cotizaciones/CustomPdfViewer";
 import { AuthContext } from "../../../auth";
 
 const localizer = momentLocalizer(moment);
@@ -115,7 +109,6 @@ export const CalendarView = () => {
       const events = await getEvents(user_id);
       const typeEvents = await getTipoEventos();
 
-
       if (Object.keys(selectedFilters).length === 0) {
         const initialFilters = {};
         typeEvents.forEach((typeEvent) => {
@@ -142,13 +135,11 @@ export const CalendarView = () => {
     }
   };
 
-
   useEffect(() => {
     const controller = new AbortController();
     getCalendarData(currentUser.user_id);
     return () => controller.abort();
   }, [flagLoader]);
-
 
   return (
     <React.Fragment>

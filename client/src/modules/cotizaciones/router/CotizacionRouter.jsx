@@ -15,7 +15,10 @@ const CotizacionRouter = () => {
       {/* Crear cotización, formulario, tabs plantilla. */}
       <Route path="/list-lead/create/" element={<CreateCotizaciones />} />
       {/* vista creación plantilla */}
-      <Route path="/list-lead/create/plantilla/" element={<CreatePlantilla />} />
+      <Route
+        path="/list-lead/create/plantilla/"
+        element={<CreatePlantilla />}
+      />
     </Routes>
   );
 };

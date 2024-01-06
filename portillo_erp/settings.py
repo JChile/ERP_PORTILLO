@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django_filters',
     'cuenta.apps.CuentaConfig',
     'marketing.apps.MarketingConfig',
     'ventas.apps.VentasConfig',
@@ -100,8 +101,8 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'portillo_erp',
         'USER': 'postgres',
-        #'PASSWORD': 'admin',
         'PASSWORD': '123',
+        #'PASSWORD': '123',
         'HOST': 'localhost',
         'PORT': '',
     }
@@ -109,7 +110,7 @@ DATABASES = {
 
 
 SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=1000),
+    "ACCESS_TOKEN_LIFETIME": timedelta(days=1),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=90),
     "ROTATE_REFRESH_TOKENS": True,
     "BLACKLIST_AFTER_ROTATION": True,
@@ -136,7 +137,7 @@ SIMPLE_JWT = {
     "JTI_CLAIM": "jti",
 
     "SLIDING_TOKEN_REFRESH_EXP_CLAIM": "refresh_exp",
-    "SLIDING_TOKEN_LIFETIME": timedelta(minutes=5),
+    "SLIDING_TOKEN_LIFETIME": timedelta(days=1),
     "SLIDING_TOKEN_REFRESH_LIFETIME": timedelta(days=1),
 
     "TOKEN_OBTAIN_SERIALIZER": "rest_framework_simplejwt.serializers.TokenObtainPairSerializer",
@@ -179,9 +180,15 @@ LANGUAGE_CODE = 'es'
 
 TIME_ZONE = 'America/Lima'
 
-USE_I18N = True
+
+
+
 
 USE_TZ = True
+
+USE_I18N = True
+
+
 
 
 # Static files (CSS, JavaScript, Images)

@@ -15,6 +15,7 @@ import {
 import { CustomTablePagination } from "../../../components";
 import { FilterAsesor } from "../../../components/filters/asesor/FilterAsesor";
 import { useAlertMUI } from "../../../hooks";
+import { getAsesorById } from "../../asesor/helpers/getAsesorById";
 
 
 const filters = ["Nombre", "Estado", "Campaña"];
@@ -100,7 +101,31 @@ export const AsignLeads = () => {
         // else mostrar alerta
         // 1 cuando no elige un asesor
         // 2 cuando no hay seleccionado ninguno: filterDataSaelected.length === 0
+        const auxAsesor = await getAsesorById(asesor);
+        const numLeads = auxAsesor.numeroLeads
+        const maxLeads = auxAsesor.maximoLeads
+        console.log(numLeads)
+        console.log(maxLeads)
         if ((asesor != 0 && asesor != null) && (filterDataSelected.length != 0)) {
+            /* if (maxLeads > numLeads) {
+                const idsArray = filterDataSelected.map((item) => item.id);
+                const dataToBackend = {
+                    idAsesor: asesor, // declarar variable asesor
+                    idLead: idsArray,
+                }
+                setVisibleProgress(true);
+                console.log("-data-", dataToBackend);
+                const result = await multipleAsingAsesor(dataToBackend);
+                setVisibleProgress(false);
+                traerDataNoasginados();
+            }
+            else {
+                setFeedbackMessages({
+                    style_message: "warning",
+                    feedback_description_error: "El asesor no llegó al limite de numero de Leads",
+                });
+                handleClickFeedback();
+            } */
             const idsArray = filterDataSelected.map((item) => item.id);
             const dataToBackend = {
                 idAsesor: asesor, // declarar variable asesor

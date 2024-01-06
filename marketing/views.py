@@ -46,12 +46,17 @@ class ProyectoDetail(generics.RetrieveUpdateDestroyAPIView):
         userCreador_data = get_or_none(User, id=proyecto_data["usuarioCreador"])
         userActualizador_data = get_or_none(User, id=proyecto_data["usuarioActualizador"])
 
-        campania_queryset = Campania.objects.filter(proyecto = proyecto.pk)
-        campania_id_list = [int(campania.pk) for campania in campania_queryset]
-        lead_queryset = Lead.objects.filter(campania__in=campania_id_list)
-        lead_asesor_list =  [int(lead.asesor.pk) for lead in lead_queryset]
-        
-        asesor_queryset = User.objects.filter(id__in = lead_asesor_list)
+        try : 
+            campania_queryset = Campania.objects.filter(proyecto = proyecto.pk)
+            campania_id_list = [int(campania.pk) for campania in campania_queryset]
+            lead_queryset = Lead.objects.filter(campania__in=campania_id_list)
+            lead_asesor_list =  [int(lead.asesor.pk) for lead in lead_queryset]
+            asesor_queryset = User.objects.filter(id__in = lead_asesor_list)
+
+        except :
+            asesor_queryset = User.objects.filter(id= 0)
+
+            pass
 
         userCreadorSerializer = UserSerializer(userCreador_data,fields=(
         'id', 'first_name', 'last_name', 'username')) if userCreador_data else None

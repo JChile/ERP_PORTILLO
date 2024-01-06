@@ -67,5 +67,5 @@ export const CustomSelectedTable = ({ headerData, rowData }) => {
         onRowsPerPageChange={handleChangeRowsPerPage}
       /> */}
     </Paper>
-  );
+  );  
 };

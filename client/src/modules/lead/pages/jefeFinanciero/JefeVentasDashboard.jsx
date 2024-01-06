@@ -3,13 +3,13 @@ import React, { useEffect, useState } from "react";
 import { getProyectos } from "../../../proyectos/helpers";
 import CustomCard from "../../components/CustomCard";
 
-const JefeVentasDashboard = () => {
+const JefeVentasDashboard = ({token}) => {
   const [projects, setProjects] = useState([]);
   const [error, setError] = useState(false);
 
   const fetchCampania = async () => {
     try {
-      const data = await getProyectos();
+      const data = await getProyectos(token);
       setProjects(data);
     } catch (error) {
       setError(true);

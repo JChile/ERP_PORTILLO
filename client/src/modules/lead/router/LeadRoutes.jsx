@@ -31,7 +31,7 @@ export const LeadRoutes = () => {
         element={<CreatePlantilla />}
       />
 
-      <Route path="proyecto/:idProject" element={<ListLeadController />} />
+      <Route path="proyecto/:projectId" element={<ListLeadController />} />
 
     </Routes>
   );

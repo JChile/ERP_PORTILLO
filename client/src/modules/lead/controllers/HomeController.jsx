@@ -5,14 +5,14 @@ import JefeVentasDashboard from "../pages/jefeFinanciero/JefeVentasDashboard";
 import AsesorLeadDashboard from "../pages/asesor/AsesorLeadDashboard";
 
 const HomeController = () => {
-  const { currentUser } = useContext(AuthContext);
+  const { currentUser, authTokens } = useContext(AuthContext);
 
   switch (currentUser.groups) {
     case "asesor": {
-      return <AsesorLeadDashboard />;
+      return <AsesorLeadDashboard token={authTokens.access} />;
     }
     case "jefe_ventas": {
-      return <JefeVentasDashboard />;
+      return <JefeVentasDashboard token={authTokens.access} />;
     }
   }
 };

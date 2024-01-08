@@ -245,7 +245,7 @@ class EventoList(generics.ListCreateAPIView):
     serializer_class = EventoSerializer
     queryset = Evento.objects.all()
     def post(self, request):
-        idUsuario = request.data.pop("idUsuario")
+        idUsuario = request.user.pk
         print("id userr", idUsuario)
         try:
             request.data["asesor"] = User.objects.get(user = idUsuario).pk
@@ -412,6 +412,10 @@ class ProductoDetail(generics.RetrieveUpdateDestroyAPIView):
         tipo_queryset = TipoProducto.objects.all()
         dataJson = ProductoSerializer(producto).data
         dataJson["tipo"] = TipoProductoSerializer(tipo_queryset.get(id =  producto.tipo.pk)).data
+
+        dataJson["proyecto"] = ProyectoSerializer(Proyecto.objects.get(id =  producto.proyecto.pk)).data
+
+
         return Response(dataJson)
 
 

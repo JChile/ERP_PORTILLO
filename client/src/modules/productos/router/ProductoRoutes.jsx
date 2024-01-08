@@ -1,8 +1,7 @@
 import React from "react";
 import { Route, Routes } from "react-router-dom";
 import { CreateProducto } from "../pages/CreateProducto";
-import { UpdateProducto } from "../pages/UpdateProducto";
-import { DetailProducto, ListProductos } from "../pages";
+import { DetailProducto, ListProductos, UpdateProducto } from "../pages";
 
 export const ProductoRoutes = () => {
   return (

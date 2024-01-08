@@ -105,6 +105,7 @@ export const UpdateProducto = () => {
 
   useEffect(() => {
     const controller = new AbortController();
+    console.log(idProduct);
     obtenerProducto(idProduct);
     return () => controller.abort();
   }, []);

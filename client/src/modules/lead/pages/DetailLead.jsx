@@ -1,11 +1,15 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { getLead } from "../helpers";
 import { Button, Checkbox } from "@mui/material";
 import { DialogForm } from "../../ventas/components/DialogForm";
+import { ComponentLlamadas, ComponentWhatsapp } from "../components";
+import { AuthContext } from "../../../auth";
 
 export const DetailLead = () => {
   const { idLead } = useParams();
+  const { currentUser } = useContext(AuthContext);
+  const isAdmin = true;
   const [showDialog, setShowDialog] = useState(false);
   const [lead, setLead] = useState({
     nombre: "",
@@ -27,6 +31,9 @@ export const DetailLead = () => {
     campania: {
       nombre: "",
     },
+    registroLlamadas: [],
+    registroWhatsapps: [],
+    registroEventos: [],
   });
 
   const {
@@ -41,11 +48,40 @@ export const DetailLead = () => {
     estadoLead,
     objecion,
     campania,
+    registroLlamadas,
+    registroWhatsapps,
+    registroEventos,
   } = lead;
 
   const obtenerLead = async (idLead) => {
     const auxLead = await getLead(idLead);
-    setLead(auxLead);
+    setLead({
+      ...auxLead,
+      registroLlamadas: [
+        {
+          id: 1,
+          detalle: "No respondio la llamada",
+          fechaCreacion: "2023-08-07 14:05:55",
+        },
+        {
+          id: 2,
+          detalle: "Indico que la llamen en otro momento del día",
+          fechaCreacion: "2023-04-07 11:30:05",
+        },
+      ],
+      registroWhatsapps: [
+        {
+          id: 1,
+          detalle: "No respondio el mensaje",
+          fechaCreacion: "2023-08-07 14:05:55",
+        },
+        {
+          id: 2,
+          detalle: "Desea un catalogo de departamentos",
+          fechaCreacion: "2023-04-07 11:30:05",
+        },
+      ],
+    });
   };
 
   const navigate = useNavigate();
@@ -163,19 +199,25 @@ export const DetailLead = () => {
             </div>
           </div>
 
-          <div className="flex gap-2">
-            <Button
-              variant="contained"
-              color="success"
-              sx={{ textTransform: "capitalize" }}
-              onClick={() => setShowDialog(true)}
-            >
-              Crear Evento
-            </Button>
-            <Button variant="contained" sx={{ textTransform: "capitalize" }}>
-              <Link to={"cotizacion/"}>Generar Cotización</Link>
-            </Button>
-          </div>
+          {/* SECCION DE ACCIONES SOBRE LEADS */}
+
+          {isAdmin && (
+            <>
+              <div className="flex justify-center">
+                {/* Columna 1 */}
+                <ComponentWhatsapp
+                  usuario={currentUser}
+                  dataWhatsapp={registroWhatsapps}
+                />
+
+                {/* Columna 2 */}
+                <ComponentLlamadas
+                  usuario={currentUser}
+                  dataLlamadas={registroLlamadas}
+                />
+              </div>
+            </>
+          )}
 
           <div className="flex justify-center">
             <button

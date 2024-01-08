@@ -18,6 +18,7 @@ import { MuiTelInput } from "mui-tel-input";
 export const UpdateLead = () => {
   const { idLead } = useParams();
   const { authTokens } = useContext(AuthContext);
+  const isAdmin = true;
   /* obtenemos los datos de la sesión para enviarlo. */
   const [currentUser, setCurrentUser] = useState(() =>
     jwtDecode(authTokens.refresh)

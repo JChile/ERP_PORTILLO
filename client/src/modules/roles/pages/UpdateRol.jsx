@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { styled } from "@mui/material/styles";
 import Table from "@mui/material/Table";
@@ -13,6 +13,7 @@ import { RowItemPermission } from "../components";
 import { CustomAlert, CustomCircularProgress } from "../../../components";
 import { combinarErrores, validIdURL } from "../../../utils";
 import { useAlertMUI } from "../../../hooks";
+import { AuthContext } from "../../../auth";
 
 // definimos el estilo del head
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
@@ -27,6 +28,7 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
 
 export const UpdateRol = () => {
   const { idRol } = useParams();
+  const { logoutUser } = useContext(AuthContext);
   const numericId = parseInt(idRol);
   const [rolData, setRolData] = useState({
     id: 0,
@@ -150,7 +152,8 @@ export const UpdateRol = () => {
         const result = await updateRol(idRol, newRole);
         setVisibleProgress(false);
         // navegamos a la anterior vista
-        onNavigateBack();
+        // onNavigateBack();
+        logoutUser();
       } catch (error) {
         setVisibleProgress(false);
         const pilaError = combinarErrores(error);

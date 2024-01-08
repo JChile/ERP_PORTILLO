@@ -19,8 +19,6 @@ def get_or_none(classmodel, **kwargs):
     except classmodel.DoesNotExist:
         return None
 
-
-
 @permission_classes([IsAuthenticated])
 class ProyectoList(generics.ListCreateAPIView):
     serializer_class = ProyectoSerializer
@@ -38,9 +36,6 @@ class ProyectoDetail(generics.RetrieveUpdateDestroyAPIView):
         if not (bool(request.user.groups.first().permissions.filter(codename = PermissionProyecto.CAN_VIEW) or request.user.is_superuser)) :
             return Response({"message" : "Usuario no tiene permisos para ver proyecto"}, status=403)
         
-
-
-
         proyecto = get_or_none(Proyecto, id = pk)
         if proyecto == None :
             return Response({"message" : "No existe proyecto o no tiene permisos el usuario"}, status=404)
@@ -62,7 +57,6 @@ class ProyectoDetail(generics.RetrieveUpdateDestroyAPIView):
         except :
             asesor_queryset = User.objects.filter(id= 0)
 
-            pass
 
         userCreadorSerializer = UserSerializer(userCreador_data,fields=(
         'id', 'first_name', 'last_name', 'username')) if userCreador_data else None
@@ -79,8 +73,6 @@ class ProyectoDetail(generics.RetrieveUpdateDestroyAPIView):
             for i in asesor_data:
                 i["lead"] = LeadSerializer(Lead.objects.filter(asesor = i["id"]), many = True).data
             proyecto_data["asesor"] = asesor_data if asesor_data else []
-        
-
         
         return Response(proyecto_data)
 

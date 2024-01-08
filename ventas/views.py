@@ -245,7 +245,7 @@ class EventoList(generics.ListCreateAPIView):
     serializer_class = EventoSerializer
     queryset = Evento.objects.all()
     def post(self, request):
-        idUsuario = request.data.pop("idUsuario")
+        idUsuario = request.user.pk
         print("id userr", idUsuario)
         try:
             request.data["asesor"] = User.objects.get(user = idUsuario).pk

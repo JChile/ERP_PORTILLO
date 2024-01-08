@@ -4,7 +4,10 @@ export const combinarErrores = (errors) => {
   const { data } = response;
   for (const key in data) {
     if (data.hasOwnProperty(key)) {
-      errorMessages.push(...data[key]);
+      const propiedadMessage = `${key}: ${
+        typeof data[key] === "object" ? JSON.stringify(data[key]) : data[key]
+      }`;
+      errorMessages.push(propiedadMessage);
     }
   }
 

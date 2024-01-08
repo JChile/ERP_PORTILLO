@@ -266,7 +266,7 @@ class EventoList(generics.ListCreateAPIView):
         idUsuario = request.user.pk
         print("id userr", idUsuario)
         try:
-            request.data["asesor"] = User.objects.get(user = idUsuario).pk
+            request.data["asesor"] = idUsuario
             serializer = EventoSerializer(data=request.data)
         except:
             return Response({"message":"El asesor no existe"})

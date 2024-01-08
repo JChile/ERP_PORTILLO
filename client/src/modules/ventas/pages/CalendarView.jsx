@@ -151,15 +151,6 @@ export const CalendarView = () => {
             variant="contained"
             color="inherit"
             sx={{ textTransform: "capitalize", borderRadius: "0px" }}
-            onClick={() => dispatch({ type: "create_state" })}
-          >
-            Crear
-          </Button>
-
-          <Button
-            variant="contained"
-            color="inherit"
-            sx={{ textTransform: "capitalize", borderRadius: "0px" }}
             onClick={() => {
               setTempFilters({ ...selectedFilters });
               dispatch({ type: "filter_state" });

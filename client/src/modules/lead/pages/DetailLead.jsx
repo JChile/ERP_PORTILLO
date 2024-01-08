@@ -1,12 +1,14 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { getLead } from "../helpers";
 import { Button, Checkbox } from "@mui/material";
 import { DialogForm } from "../../ventas/components/DialogForm";
+import { AuthContext } from "../../../auth";
 
 export const DetailLead = () => {
   const { idLead } = useParams();
   const [showDialog, setShowDialog] = useState(false);
+  const { authTokens, } = useContext(AuthContext)
   const [lead, setLead] = useState({
     nombre: "",
     apellido: "",
@@ -44,7 +46,7 @@ export const DetailLead = () => {
   } = lead;
 
   const obtenerLead = async (idLead) => {
-    const auxLead = await getLead(idLead);
+    const auxLead = await getLead(idLead,authTokens.access);
     setLead(auxLead);
   };
 
@@ -63,9 +65,10 @@ export const DetailLead = () => {
     <>
       {showDialog ? (
         <DialogForm
-          leadId={idLead}
+          lead={idLead}
           isOpen={showDialog}
           onClose={() => setShowDialog(false)}
+          token={authTokens.access}
         />
       ) : null}
 

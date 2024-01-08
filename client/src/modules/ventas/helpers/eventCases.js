@@ -14,9 +14,14 @@ const getEvents = async (token) => {
   return data;
 };
 
-const createEvent = async (body) => {
+const createEvent = async (body, token) => {
   const URL = `${DOMAIN}/api/evento/`;
-  const { data } = await axios.post(URL, { ...body });
+  const config = {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  };
+  const { data } = await axios.post(URL, { ...body }, config);
   return data;
 };
 

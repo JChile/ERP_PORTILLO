@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { getProyectos } from "./getProyectos";
 import { Autocomplete, TextField } from "@mui/material";
+import { getProyectos } from "../../../modules/proyectos/helpers";
 
 const defaultOption = {
   value: 0,
@@ -8,12 +8,18 @@ const defaultOption = {
   id: 0,
 };
 
-export const FilterProyectos = ({ defaultValue = null, onNewInput, label = "" }) => {
+/**
+ * 
+ * @param {*} param0
+ * @param {token} String Token del usuario registrado. 
+ * @returns 
+ */
+export const FilterProyectos = ({ defaultValue = null, onNewInput, label = "", token }) => {
   const [options, setOptions] = useState([defaultOption]);
   const [value, setValue] = useState(defaultOption);
 
   const obtenerProyectos = async () => {
-    const result = await getProyectos();
+    const result = await getProyectos(token);
     const formatSelect = [
       defaultOption,
       ...result.map((element) => {

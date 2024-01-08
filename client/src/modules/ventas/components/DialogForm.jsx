@@ -17,33 +17,22 @@ import { FilterProyectos } from "../../../components";
 import { FilterTipoEvento } from "../../../components/filters/tipoEvento/FilterTipoEvento";
 import { FilterLeads } from "../../../components/filters/lead/FilterLead";
 
-export const DialogForm = ({ isOpen, onClose }) => {
-  const { currentUser } = useContext(AuthContext);
-
+export const DialogForm = ({ isOpen, onClose, lead, token, asesor }) => {
+  const { currentUser, authTokens } = useContext(AuthContext);
+  console.log(authTokens.access)
   const { form, handleChangeForm, handleSubmit } = useForm({
     titulo: "",
     duracion: 1,
     fecha: "",
-    ubicacion: "",
     descripcion: "",
     tipo: null,
     proyecto: null,
     horaInicio: "",
-    lead: null,
   });
   const [formErrors, setFormErrors] = useState({});
 
-  const {
-    titulo,
-    ubicacion,
-    proyecto,
-    tipo,
-    descripcion,
-    fecha,
-    horaInicio,
-    duracion,
-    lead,
-  } = form;
+  const { titulo, proyecto, tipo, descripcion, fecha, horaInicio, duracion } =
+    form;
 
   const handleSave = async () => {
     const errors = checkInputForm();
@@ -54,20 +43,19 @@ export const DialogForm = ({ isOpen, onClose }) => {
         titulo: titulo,
         duracion: duracion,
         fecha_visita: dateToSave.toISOString(),
-        ubicacion: ubicacion,
         descripcion: descripcion,
         idUsuario: currentUser.user.id,
-      
         tipo: tipo,
         proyecto: proyecto,
         estado: "A",
         lead: lead,
+        asesor: asesor
       };
-      const result = await createEvent(eventSave);
+      console.log({ eventSave });
+      const result = await createEvent(eventSave, token);
       console.log(result);
       onClose();
     } else {
-      // Hay errores en el formulario, actualiza el estado con los errores
       setFormErrors(errors);
     }
   };
@@ -159,6 +147,7 @@ export const DialogForm = ({ isOpen, onClose }) => {
                   label="Proyectos"
                   onNewInput={onAddProyecto}
                   defaultValue={null}
+                  token={token}
                 />
               </div>
 
@@ -196,18 +185,6 @@ export const DialogForm = ({ isOpen, onClose }) => {
                   name="duracion"
                   size="small"
                 />
-
-                <TextField
-                  type="text"
-                  label="Ubicación"
-                  placeholder="Ubicación"
-                  value={ubicacion}
-                  onChange={handleChangeForm}
-                  name="ubicacion"
-                  size="small"
-                />
-
-                <FilterLeads defaultValue={null} onNewInput={onAddLead} label="Lead"/>
               </div>
             </div>
           </FormControl>
@@ -225,7 +202,7 @@ export const DialogForm = ({ isOpen, onClose }) => {
             onClick={onClose}
             sx={{
               textTransform: "capitalize",
-              borderRadius: 0
+              borderRadius: 0,
             }}
           >
             Cerrar
@@ -235,7 +212,7 @@ export const DialogForm = ({ isOpen, onClose }) => {
             color="info"
             sx={{
               textTransform: "capitalize",
-              borderRadius: 0
+              borderRadius: 0,
             }}
             onClick={() => handleSubmit(handleSave)}
           >

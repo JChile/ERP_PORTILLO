@@ -3,7 +3,14 @@ import { getAsesorLeads, getProyectoAsesor } from "../../helpers";
 import { CustomCircularProgress } from "../../../../components";
 import { CustomTable } from "../../../../components/CustomLeadTable";
 import { CustomInputBase } from "../../../../components/CustomInputBase";
-import { Tab, Tabs } from "@mui/material";
+import {
+  Accordion,
+  AccordionDetails,
+  AccordionSummary,
+  Box,
+  Tab,
+  Tabs,
+} from "@mui/material";
 
 const headers = [
   { name: "Acciones", width: 20 },
@@ -16,11 +23,11 @@ const headers = [
 
 const ListJefeVentasLead = ({ credentials, projectId }) => {
   const [leads, setLeads] = useState([]);
-  const [filteredLeads, setFilteredLeads] = useState([]);
   const [visibleProgress, setVisibleProgress] = useState(true);
   const [error, setError] = useState(false);
-  const [adminData, setAdminData] = useState(null);
   const [value, setValue] = useState(0);
+  const [adminData, setAdminData] = useState(null);
+  const [filteredLeads, setFilteredLeads] = useState([]);
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
@@ -85,34 +92,71 @@ const ListJefeVentasLead = ({ credentials, projectId }) => {
       </div>
 
       <div className="flex flex-col gap-y-5">
-        <Tabs aria-label="basic tabs" value={value} onChange={handleChange}>
-          <Tab sx={{ textTransform: "capitalize" }} label="Asesores" />
-          <Tab sx={{ textTransform: "capitalize" }} label="Leads" />
-        </Tabs>
+        <Box sx={{ width: "100%" }}>
+          <Tabs aria-label="basic tabs" value={value} onChange={handleChange}>
+            <Tab sx={{ textTransform: "capitalize" }} label="Asesores" />
+            <Tab sx={{ textTransform: "capitalize" }} label="Leads" />
+          </Tabs>
+        </Box>
 
-        <CustomInputBase
-          placeholder="Buscar lead"
-          onSearch={handleSearchButton}
-        />
-        <p>Como estas</p>
-        {showContent}
+        <CustomTabPanel value={value} index={0}>
+          {adminData !== null ? (
+            adminData.asesor.map((item, index) => {
+              return (
+                <Accordion key={index}>
+                  <AccordionSummary>
+                    {item.first_name} - {item.last_name}
+                  </AccordionSummary>
+                  <AccordionDetails>
+                    <ul>
+                      {
+                      item.lead.map((item, index) => {
+                        return (
+                          <li key={index} className="capitalize">
+                            {item.celular} - {item.nombre} {item.apellido} - {item.estadoLead}
+                          </li>
+                        );
+                      })
+                      }
+                    </ul>
+                  </AccordionDetails>
+                </Accordion>
+              );
+            })
+          ) : (
+            <p>Loading</p>
+          )}
+        </CustomTabPanel>
+        <CustomTabPanel value={value} index={1}>
+          <CustomInputBase
+            placeholder="Buscar lead"
+            onSearch={handleSearchButton}
+          />
+          {showContent}
+        </CustomTabPanel>
       </div>
       {visibleProgress && <CustomCircularProgress />}
     </React.Fragment>
   );
 };
 
-const CustomPanel = (props) => {
+/**
+ * Custom tab panel to use as tab wrapper.
+ * @param {*} props
+ * @returns
+ */
+const CustomTabPanel = (props) => {
   const { children, value, index, ...other } = props;
   return (
-    <div>
-      { value === index && (
-        <Box sx={{ p: 3}}>
-
-        </Box>
-      )}
+    <div
+      role="tabpanel"
+      hidden={value !== index}
+      id={`simple-tabpanel-${index}`}
+      {...other}
+    >
+      {value === index && <div>{children}</div>}
     </div>
-  )
+  );
 };
 
 export default ListJefeVentasLead;
@@ -135,3 +179,7 @@ export default ListJefeVentasLead;
     ],
   },
 ];
+
+/*
+            
+            */

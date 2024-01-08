@@ -6,19 +6,14 @@ export const DetailCampania = () => {
   const { idCampania } = useParams();
   const [campania, setCampania] = useState({
     nombre: "",
+    codigo: "",
     fecha_estimada: "",
     fecha_cierre: "",
     coste_estimado: 0,
     coste_real: 0,
     descripcion: "",
     estado: "",
-    user: {
-      first_name: "",
-    },
     proyecto: {
-      nombre: "",
-    },
-    subCategoria: {
       nombre: "",
     },
     categoria: {
@@ -28,15 +23,14 @@ export const DetailCampania = () => {
 
   const {
     nombre,
+    codigo,
     fecha_estimada,
     fecha_cierre,
     coste_estimado,
     coste_real,
     descripcion,
     estado,
-    user,
     proyecto,
-    subCategoria,
     categoria,
   } = campania;
 
@@ -61,7 +55,7 @@ export const DetailCampania = () => {
       <div className="flex flex-col gap-y-4">
         <div className="p-3 border-[1px] flex flex-col gap-x-5">
           <h1 className="text-lg font-bold">Campaña de Marketing</h1>
-          <h3 className="text-sm">Proyecto: {proyecto.nombre}</h3>
+          <h3 className="text-sm">Proyecto: {nombre}</h3>
         </div>
         <div className="p-3 border-[1px] flex flex-col gap-y-4">
           <div className="flex flex-col md:flex-row min-w-[242px] gap-x-2 gap-y-3">
@@ -93,16 +87,15 @@ export const DetailCampania = () => {
                 </span>
                 <span className="block text-sm">{categoria.nombre}</span>
               </label>
-
-              <label className="block flex gap-y-1 ">
-                <span className="block text-sm font-medium min-w-[10rem] text-zinc-500">
-                  Creador:
-                </span>
-                <span className="block text-sm">{user.first_name}</span>
-              </label>
             </div>
 
             <div className="w-full flex flex-col gap-y-3">
+              <label className="block flex gap-y-1 ">
+                <span className="block text-sm font-medium min-w-[10rem] text-zinc-500">
+                  Codigo:
+                </span>
+                <span className="block text-sm">{codigo}</span>
+              </label>
               <label className="block flex gap-y-1 ">
                 <span className="block text-sm font-medium min-w-[10rem] text-zinc-500">
                   Proyecto:
@@ -122,13 +115,6 @@ export const DetailCampania = () => {
                   Coste real:
                 </span>
                 <span className="block text-sm">s./ {coste_real}</span>
-              </label>
-
-              <label className="block flex gap-y-1 ">
-                <span className="block text-sm font-medium min-w-[10rem] text-zinc-500">
-                  Subcategoria:
-                </span>
-                <span className="block text-sm">{subCategoria.nombre}</span>
               </label>
 
               <label className="block flex gap-y-1 ">

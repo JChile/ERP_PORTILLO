@@ -1,21 +1,15 @@
 import React, { useEffect, useState } from "react";
 import { getCampanias, deleteCampania } from "../helpers";
 import { Link } from "react-router-dom";
-import { RiAddBoxFill } from "react-icons/ri";
-import {
-  Paper,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Table,
-  TableCell,
-  TableBody,
-} from "@mui/material";
 import { DialogDeleteCampania, RowItemCampania } from "../components";
 import {
   CustomCircularProgress,
   CustomTablePagination,
 } from "../../../components";
+import { CustomInputBase } from "../../../components/CustomInputBase";
+import { CustomTableCampanias } from "../../../components/CustomTableCampanias";
+import { Button } from "@mui/material";
+import { MdAdd, MdHdrPlus, MdPlusOne } from "react-icons/md";
 
 export const ListCampanias = () => {
   // Informaciion de las campanias.
@@ -50,45 +44,46 @@ export const ListCampanias = () => {
     setActiveButton(buttonState);
   };
 
-  const filtrar = (nameFilter, value) => {
-    let resultFilter = [];
-    switch (nameFilter) {
-      case "filter_active_campaign": {
-        resultFilter = campanias.filter((element) => {
-          return element.estado === "A";
-        });
-        setCampaniasTemporal(resultFilter);
-        break;
-      }
-      case "filter_inactive_campaign": {
-        resultFilter = campanias.filter((element) => {
-          return element.estado === "I";
-        });
-        setCampaniasTemporal(resultFilter);
-        break;
-      }
-      default:
-        break;
+  // OBTENEMOS LAS CAMPAÑAS
+  const obtenerCampanias = async () => {
+    let result = [];
+    if (activeButton) {
+      result = await getCampanias("estado=A");
+    } else {
+      result = await getCampanias("estado=I");
+    }
+    setCampanias(result);
+    setCampaniasTemporal(result);
+  };
+
+  const onDeleteItemSelected = async (item) => {
+    const { id, proyecto, categoria } = item;
+    const body = {
+      estado: "I",
+      proyecto: proyecto.id,
+      categoria: categoria.id,
+    };
+    try {
+      const result = await deleteCampania(id, body);
+      obtenerCampanias();
+      onCloseDeleteDialog();
+    } catch (error) {
+      // handled error.
     }
   };
 
-  // OBTENEMOS LAS CAMPAÑAS
-  const obtenerCampanias = async () => {
-    const result = await getCampanias();
-    setCampanias(result);
-    /*Mostramos las campañas, que se encuentran activas*/
-    setCampaniasTemporal(
-      result.filter((item) => (item.estado === "A" ? true : false))
-    );
-  };
+  const handleSearchButton = (pattern) => {
+    const filteredData = campanias.filter((item) => {
+      const { nombre, proyecto } = item;
+      const projectName = proyecto.nombre.toLowerCase();
+      const searchPattern = pattern.toLowerCase();
 
-  const onDeleteItemSelected = async (idItem) => {
-    const body = {
-      estado: "E",
-    };
-    const result = await deleteCampania(idItem, body);
-    obtenerCampanias();
-    onCloseDeleteDialog();
+      return (
+        nombre.toLowerCase().includes(searchPattern) ||
+        projectName.includes(searchPattern)
+      );
+    });
+    setCampaniasTemporal(filteredData);
   };
 
   useEffect(() => {
@@ -99,100 +94,73 @@ export const ListCampanias = () => {
     obtenerCampanias();
     setVisibleProgress(false);
     return () => controller.abort();
-  }, []);
+  }, [activeButton]);
+
+  const filters = ["Nombre", "Proyecto"];
 
   return (
     <>
-      <div className="p-3 flex flex-col gap-x-5 mb">
-        <h1 className="text-lg font-bold">Campañas de marketing</h1>
-      </div>
-      <div className="flex items-center justify-center">
-        <Link
-          to={"/campania/create/"}
-          className="bg-transparent hover:bg-blue-500 text-blue-500 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded flex items-center"
-        >
-          <RiAddBoxFill className="mr-2" />
-          Crear campaña
-        </Link>
-      </div>
-      <Paper>
-        <div className="flex justify-center mt-4 mb-4">
-          <button
-            onClick={() => {
-              handleButtonState(true);
-              filtrar("filter_active_campaign");
-            }}
-            className={`px-4 py-2 mr-2 rounded ${
-              activeButton ? "bg-blue-500 text-white" : "bg-gray-300"
-            }`}
-          >
-            Campañas activas
-          </button>
-          <button
-            onClick={() => {
-              handleButtonState(false);
-              filtrar("filter_inactive_campaign");
-            }}
-            className={`px-4 py-2 mr-2 rounded ${
-              !activeButton ? "bg-blue-500 text-white" : "bg-gray-300"
-            }`}
-          >
-            Campañas inactivas
-          </button>
+      <div className="flex items-center justify-between gap-x-4 mb-9">
+        <div className="flex flex-col gap-y-1 align-middle">
+          <CustomInputBase
+            onSearch={handleSearchButton}
+            placeholder="Buscar campania..."
+          />
         </div>
-        <TableContainer
-          sx={{ minWidth: 700 }}
-          arial-aria-labelledby="customized table"
-        >
-          <Table>
-            <TableHead>
-              <TableRow
-                sx={{
-                  "& th": {
-                    color: "rgba(96,96,96)",
-                    backgroundColor: "#f5f5f5",
-                  },
-                }}
+
+        <div className="flex flex-col gap-y-1 align-middle">
+          <div className="flex justify-center gap-x-3">
+            <Button
+              variant="contained"
+              sx={{
+                borderRadius: "0px",
+                textTransform: "capitalize",
+                backgroundColor: activeButton ? "#1976d2" : "#d1d5db",
+                color: activeButton ? "white" : "black",
+              }}
+              onClick={() => handleButtonState(true)}
+            >
+              Activas
+            </Button>
+            <Button
+              variant="contained"
+              sx={{
+                borderRadius: "0px",
+                textTransform: "capitalize",
+                backgroundColor: !activeButton ? "#1976d2" : "#d1d5db",
+                color: !activeButton ? "white" : "black",
+              }}
+              onClick={() => handleButtonState(false)}
+            >
+              Inactivas
+            </Button>
+            <Link to={"/campania/create/"}>
+              <Button
+                endIcon={<MdAdd />}
+                color="inherit"
+                variant="contained"
+                sx={{ borderRadius: "0px", textTransform: "capitalize" }}
               >
-                <TableCell align="left" width={30}>
-                  <b>Acciones</b>
-                </TableCell>
-                <TableCell align="left" width={220}>
-                  <b>Nombre</b>
-                </TableCell>
-                <TableCell align="left" width={140}>
-                  <b>Fecha estimada</b>
-                </TableCell>
-                <TableCell align="left" width={140}>
-                  <b>Fecha cierre</b>
-                </TableCell>
-                <TableCell align="left" width={160}>
-                  <b>Coste estimado</b>
-                </TableCell>
-                <TableCell align="left" width={160}>
-                  <b>Proyecto</b>
-                </TableCell>
-                <TableCell align="left" width={160}>
-                  <b>Subcategoria</b>
-                </TableCell>
-                <TableCell align="left" width={160}>
-                  <b>Categoria</b>
-                </TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {campaniasTemporal.map((item) => (
-                <RowItemCampania
-                  key={item.id}
-                  item={item}
-                  onShowDeleteDialog={onShowDeleteDialog}
-                />
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
-        <CustomTablePagination count={campaniasTemporal.length} />
-      </Paper>
+                Crear
+              </Button>
+            </Link>
+          </div>
+        </div>
+      </div>
+
+      <CustomTableCampanias
+        headerData={[
+          { name: "Acciones", width: 20 },
+          { name: "Nombre", width: 140 },
+          { name: "Codigo", width: 70 },
+          { name: "Fecha inicio", width: 80 },
+          { name: "Proyecto", width: 100 },
+          { name: "Categoria", width: 70 },
+        ]}
+        rowData={campaniasTemporal}
+        onShowDeleteDialog={onShowDeleteDialog}
+      />
+
       {showDialog && (
         <DialogDeleteCampania
           item={itemSeleccionado}

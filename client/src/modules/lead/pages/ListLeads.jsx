@@ -1,29 +1,114 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { RiAddBoxFill } from "react-icons/ri";
-import {
-  Paper,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Table,
-  TableCell,
-  TableBody,
-} from "@mui/material";
-import { getLeads } from "../helpers";
-import { RowItemLead } from "../components";
-import {
-  CustomCircularProgress,
-  CustomTablePagination,
-} from "../../../components";
+import { RiFileExcel2Fill } from "react-icons/ri";
+import { deleteLead, getLeadsActivos } from "../helpers";
+import { CustomCircularProgress } from "../../../components";
+import { CustomTable } from "../../../components/CustomLeadTable";
+import { CustomInputBase } from "../../../components/CustomInputBase";
+import { CustomSelectedTable } from "../components/CustomSelectedTable";
+import { DialogDeleteLead } from "../components/DialogDeleteLead";
+import { HiUserGroup } from "react-icons/hi";
+import { Button, IconButton } from "@mui/material";
+
+const headers = [
+  { name: "Acciones", width: 20 },
+  { name: "Nombre", width: 120 },
+  { name: "Celular", width: 100 },
+  { name: "Estado", width: 40 },
+  { name: "Campaña", width: 120 },
+  { name: "Entrega", width: 50 },
+];
+
+const filters = ["Nombre", "Estado", "Campaña"];
+
+const headersLead = ["Acciones", "Nombre", "Celular", "Campaña"];
 
 export const ListLeads = () => {
+  const [filterLeads, setFilterLeads] = useState([]);
   const [leads, setLeads] = useState([]);
   const [visibleProgress, setVisibleProgress] = useState(true);
+  const [unassigendLeadsTable, setUnassignedLeadsTable] = useState(false);
+
+  const [showDialog, setShowDialog] = useState(false);
+  const [itemSeleccionado, setItemSeleccionado] = useState(null);
+
+  const onCloseDeleteDialog = () => {
+    // ocultamos el modal
+    setShowDialog(false);
+    // dejamos el null la data del detalle
+    setItemSeleccionado(null);
+  };
+  const onShowDeleteDialog = (item) => {
+    setItemSeleccionado(item);
+    setShowDialog(true);
+  };
+
+  const onDeleteItemSelected = async (item) => {
+    const { id, celular } = item;
+    const body = {
+      estado: "I",
+      celular: celular,
+    };
+    console.log(body);
+    const result = await deleteLead(id, body);
+    console.log(result);
+    loadLeads();
+    onCloseDeleteDialog();
+  };
 
   const loadLeads = async () => {
-    const data = await getLeads();
+    const data = await getLeadsActivos();
     setLeads(data);
+    setFilterLeads(data);
+  };
+
+  const handleSearchButton = (filter, pattern) => {
+    const filterValue = filters.find((element) => element === filter);
+
+    if (!filterValue) return;
+
+    switch (filterValue) {
+      case "Nombre": {
+        const filteredData = leads.filter((item) => {
+          const { nombre, apellido } = item;
+          const joinName = `${nombre}${apellido}`;
+          return joinName.toLowerCase().includes(pattern.toLowerCase());
+        });
+        setFilterLeads(filteredData);
+        break;
+      }
+      case "Estado": {
+        const filteredData = leads.filter((item) => {
+          const { estado } = item;
+          const { nombre } = estado;
+          return nombre.toLowerCase().includes(pattern.toLowerCase());
+        });
+        setFilterLeads(filteredData);
+        break;
+      }
+      case "Campaña": {
+        const filteredData = leads.filter((item) => {
+          const { campania } = item;
+          const { nombre } = campania;
+          return nombre.toLowerCase().includes(pattern.toLowerCase());
+        });
+        setFilterLeads(filteredData);
+        break;
+      }
+    }
+  };
+
+  const toogleStateLeads = () => {
+    let toggleStateLeads = [];
+    /** mostrar lista de leads sin asignar */
+    if (!unassigendLeadsTable) {
+      toggleStateLeads = leads.filter((item) => item.activo);
+    } else {
+      /** mostrar lista de leads los cuales son  */
+      toggleStateLeads = leads.filter((item) => !item.activo);
+    }
+    setFilterLeads(toggleStateLeads);
+    setUnassignedLeadsTable((prev) => !prev);
   };
 
   useEffect(() => {
@@ -36,104 +121,106 @@ export const ListLeads = () => {
 
   return (
     <>
-      <div className="p-3 flex flex-col gap-x-5 mb">
-        <h1 className="text-lg font-bold">Leads</h1>
-      </div>
-
-      <div className="flex gap-x-6 items-center my-6 justify-center">
-        <Link
-          to={"/lead/create"}
-          className="bg-transparent hover:bg-blue-500 text-blue-500 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded flex items-center"
-        >
-          <RiAddBoxFill className="mr-2" />
-          Agregar manualmente
-        </Link>
-
-        <Link
-          to={"/lead/create/sheet"}
-          className="bg-transparent hover:bg-blue-500 text-blue-500 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded flex items-center"
-        >
-          <RiAddBoxFill className="mr-2" />
-          Agregar automaticamente
-        </Link>
-      </div>
-
-      <Paper>
-        {/*
-        <div className="flex justify-center mt-4 mb-4">
-          <button
-            onClick={() => {
-              handleButtonState(true);
-              filtrar("filter_active_campaign");
+      <div className="flex flex-col gap-y-1 items-end">
+        <div className="flex gap-x-2">
+          <Button
+            startIcon={<HiUserGroup />}
+            sx={{
+              backgroundColor: "#a3e635",
+              paddingX: "1rem",
+              paddingY: "0.6rem",
+              borderRadius: "0px",
+              textTransform: "capitalize",
+              color: "black",
+              ":hover": {
+                backgroundColor: "#65a30d",
+                color: "whitesmoke",
+              },
             }}
-            className={`px-4 py-2 mr-2 rounded ${
-              activeButton ? "bg-blue-500 text-white" : "bg-gray-300"
-            }`}
           >
-            Campañas activas
-          </button>
-          <button
-            onClick={() => {
-              handleButtonState(false);
-              filtrar("filter_inactive_campaign");
+            <Link to={"/lead/create"}>Añadir Manual</Link>
+          </Button>
+          <Button
+            startIcon={<RiFileExcel2Fill />}
+            sx={{
+              backgroundColor: "#facc15",
+              paddingX: "1rem",
+              paddingY: "0.6rem",
+              borderRadius: "0px",
+              color: "black",
+              textTransform: "capitalize",
+              ": hover": {
+                backgroundColor: "#eab308",
+                color: "whitesmoke",
+              },
             }}
-            className={`px-4 py-2 mr-2 rounded ${
-              !activeButton ? "bg-blue-500 text-white" : "bg-gray-300"
-            }`}
           >
-            Campañas inactivas
-          </button>
+            <Link
+              to={"/lead/create/sheet"}
+              sx={{
+                backgroundColor: "#facc15",
+                paddingX: "1rem",
+                paddingY: "0.6rem",
+                borderRadius: "0px",
+                color: "black",
+                textTransform: "capitalize",
+                ": hover": {
+                  backgroundColor: "#eab308",
+                  color: "whitesmoke",
+                },
+              }}
+            >
+              Importar
+            </Link>
+          </Button>
         </div>
-              */}
-        <TableContainer
-          sx={{ minWidth: 700 }}
-          arial-aria-labelledby="customized table"
+      </div>
+
+      <div className="px-7 mt-8 mb-8 flex justify-between items-center">
+        <CustomInputBase
+          filters={filters}
+          defaultFilter={filters[0]}
+          onSearch={handleSearchButton}
+          placeholder="Buscar lead..."
+        />
+
+        <Button
+          sx={{
+            textTransform: "capitalize",
+            borderRadius: "0px",
+            paddingX: "1rem",
+            paddingY: "0.6rem",
+            ":hover": {
+              backgroundColor: "#1976d2",
+              color: "white",
+            },
+          }}
+          variant="outlined"
         >
-          <Table>
-            <TableHead>
-              <TableRow
-                sx={{
-                  "& th": {
-                    color: "rgba(96,96,96)",
-                    backgroundColor: "#f5f5f5",
-                  },
-                }}
-              >
-                <TableCell align="left" width={30}>
-                  <b>Acciones</b>
-                </TableCell>
-                <TableCell align="left" width={220}>
-                  <b>Nombre</b>
-                </TableCell>
-                <TableCell align="left" width={50}>
-                  <b>Celular</b>
-                </TableCell>
-                <TableCell align="left" width={140}>
-                  <b>Estado</b>
-                </TableCell>
-                <TableCell align="left" width={160}>
-                  <b>Objeciones</b>
-                </TableCell>
-                <TableCell align="left" width={160}>
-                  <b>Campaña</b>
-                </TableCell>
-                <TableCell align="left" width={140}>
-                  <b>Comentario</b>
-                </TableCell>
-                <TableCell align="left" width={160}>
-                  <b>Hora de entrega</b>
-                </TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {leads.map((item) => {
-                return <RowItemLead key={item.id} item={item} />;
-              })}
-            </TableBody>
-          </Table>
-        </TableContainer>
-        <CustomTablePagination count={leads.length} />
-      </Paper>
+          <Link to={"/lead/asign"}>Asignación masiva</Link>
+        </Button>
+      </div>
+
+      <div className="px-7">
+        {!unassigendLeadsTable ? (
+          <CustomTable
+            headerData={headers}
+            rowData={filterLeads}
+            onShowDeleteDialog={onShowDeleteDialog}
+          />
+        ) : (
+          <CustomSelectedTable headerData={headersLead} rowData={filterLeads} />
+        )}
+      </div>
+
+      {showDialog && (
+        <DialogDeleteLead
+          item={itemSeleccionado}
+          showDialog={showDialog}
+          onDeleteItemSelected={onDeleteItemSelected}
+          onCloseDeleteDialog={onCloseDeleteDialog}
+        />
+      )}
 
       {visibleProgress && <CustomCircularProgress />}
     </>

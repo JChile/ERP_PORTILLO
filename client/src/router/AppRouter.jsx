@@ -1,19 +1,17 @@
 import React from "react";
-import { AuthProvider, Login, SideBarApp } from "../auth";
+import { AuthProvider, Login, MainContainerApp } from "../auth";
 import { Route, Routes } from "react-router-dom";
-// import { RRHHRoutes } from "../modules/rrhh";
-// import { MarketingRoutes } from "../modules/marketing";
-// import { PrivateRouterRRHH } from "./PrivateRouterRRHH";
-// import { PrivateRouterMarketing } from "./PrivateRouterMarketing";
 import { RolRoutes } from "../modules/roles";
 import { UsuarioRoutes } from "../modules/usuario";
 import { CampaniaRoutes } from "../modules/campania";
 import { LeadRoutes } from "../modules/lead";
 import { AsesorRoutes } from "../modules/asesor";
 import { NotFoundPage } from "../components";
-import { PrivateModuleRouter } from "./PrivateModuleRouter";
-import { PublicRoutes } from "./PublicRoutes";
 import { NotPublicPage } from "../components/NotPublicPage";
+import { VentasRouter } from "../modules/ventas/router/VentasRouter";
+import CotizacionRouter from "../modules/cotizaciones/router/CotizacionRouter";
+import { ProyectoRoutes } from "../modules/proyectos/router/ProyectoRoutes";
+import { ProductoRoutes } from "../modules/productos/router/ProductoRoutes";
 
 export const AppRouter = () => {
   return (
@@ -23,11 +21,9 @@ export const AppRouter = () => {
           <Route
             path="login/*"
             element={
-              <PublicRoutes>
-                <Routes>
-                  <Route path="/*" element={<Login />} />
-                </Routes>
-              </PublicRoutes>
+              <Routes>
+                <Route path="/*" element={<Login />} />
+              </Routes>
             }
           />
           <Route path="no-access-page" element={<NotFoundPage />} />
@@ -35,20 +31,19 @@ export const AppRouter = () => {
           <Route
             path="/*"
             element={
-              <PrivateModuleRouter>
-                <SideBarApp>
-                  <Routes>
-                    <Route path="user/*" element={<UsuarioRoutes />}></Route>
-                    <Route path="group/*" element={<RolRoutes />}></Route>
-                    <Route
-                      path="campania/*"
-                      element={<CampaniaRoutes />}
-                    ></Route>
-                    <Route path="lead/*" element={<LeadRoutes />}></Route>
-                    <Route path="asesor/*" element={<AsesorRoutes />} />
-                  </Routes>
-                </SideBarApp>
-              </PrivateModuleRouter>
+              <MainContainerApp>
+                <Routes>
+                  <Route path="usuario/*" element={<UsuarioRoutes />}></Route>
+                  <Route path="rol/*" element={<RolRoutes />}></Route>
+                  <Route path="campania/*" element={<CampaniaRoutes />}></Route>
+                  <Route path="lead/*" element={<LeadRoutes />}></Route>
+                  <Route path="asesor/*" element={<AsesorRoutes />} />
+                  <Route path="evento/*" element={<VentasRouter />} />
+                  <Route path="cotizaciones/*" element={<CotizacionRouter />} />
+                  <Route path="proyecto/*" element={<ProyectoRoutes />} />
+                  <Route path="producto/*" element={<ProductoRoutes />} />
+                </Routes>
+              </MainContainerApp>
             }
           />
         </Routes>

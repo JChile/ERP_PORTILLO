@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Checkbox } from "@mui/material";
 import { createUsuario } from "../helpers";
@@ -7,10 +7,14 @@ import {
   CustomCircularProgress,
   FilterRol,
   CustomAlert,
+  DynamicCustomerDialog,
 } from "../../../components";
 import { useAlertMUI } from "../../../hooks";
+import { combinarErrores } from "../../../utils";
+import { AuthContext } from "../../../auth";
 
 export const CreateUsuarios = () => {
+  const { authTokens } = useContext(AuthContext);
   const [usuario, setUsuario] = useState({
     username: "",
     password: "",
@@ -18,9 +22,10 @@ export const CreateUsuarios = () => {
     first_name: "",
     last_name: "",
     email: "",
-    groups: [0],
+    groups: { id: 0 },
     is_active: true,
-    perfil: {},
+    isAdmin: true,
+    codigoAsesor: null,
   });
 
   const {
@@ -32,6 +37,8 @@ export const CreateUsuarios = () => {
     confirm_password,
     groups,
     is_active,
+    isAdmin,
+    codigoAsesor,
   } = usuario;
 
   // hook alert
@@ -52,14 +59,28 @@ export const CreateUsuarios = () => {
     navigate(-1);
   };
 
+  // estado para el dialogo
+  const [dialogOpen, setDialogOpen] = useState(false);
+
+  const handleOpenDialog = () => {
+    setDialogOpen(true);
+  };
+
+  const handleCloseDialog = () => {
+    setDialogOpen(false);
+  };
+
   // INPUT CODIGO MATERIA PRIMA
   const onAddGroup = ({ id }) => {
-    setUsuario({ ...usuario, groups: [id] });
+    const valorCodigoAsesor = id === 1 ? codigoAsesor : null;
+    setUsuario({ ...usuario, groups: { id }, codigoAsesor: valorCodigoAsesor });
   };
 
   // INPUT CHECK ACTIVATE
-  const onAddCheckInput = (event) => {
-    setUsuario({ ...usuario, is_active: !is_active });
+  const onAddCheckInput = ({ target }) => {
+    const { name, checked } = target;
+
+    setUsuario({ ...usuario, [name]: checked });
   };
 
   // HANDLED FORM
@@ -78,7 +99,8 @@ export const CreateUsuarios = () => {
     username,
     password,
     confirm_password,
-    groups
+    groups,
+    codigoAsesor
   ) => {
     var messages_error = "";
     const emailPattern = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i;
@@ -106,14 +128,48 @@ export const CreateUsuarios = () => {
         messages_error += "Las constraseñas no coinciden\n";
       }
     }
-    if (groups[0] === 0) {
+    if (groups["id"] === 0) {
       messages_error += "No proporciono ningun rol\n";
+    }
+
+    if (codigoAsesor === null) {
+      if (groups["id"] === 1) {
+        messages_error +=
+          "Si el rol es asesor, debes ingresar un código de asesor\n";
+      }
+    } else {
+      if (codigoAsesor.length === 0) {
+        messages_error +=
+          "Si el rol es asesor, debes ingresar un código de asesor\n";
+      }
     }
     return messages_error;
   };
 
   // CREAR USUARIO
   const crearUsuario = async () => {
+    setVisibleProgress(true);
+    const usuarioJSON = { ...usuario, groups: [groups["id"]] };
+    delete usuarioJSON.confirm_password;
+    try {
+      const result = await createUsuario(usuarioJSON, authTokens["access"]);
+      // comprobar si se realizo con exito la creación del usuario
+      setVisibleProgress(false);
+      // navegamos atras
+      onNavigateBack();
+    } catch (error) {
+      setVisibleProgress(false);
+      const pilaError = combinarErrores(error);
+      // mostramos feedback de error
+      setFeedbackMessages({
+        style_message: "error",
+        feedback_description_error: pilaError,
+      });
+      handleClickFeedback();
+    }
+  };
+
+  const handledCrearUsuario = () => {
     const validate = validarDatosUsuario(
       first_name,
       last_name,
@@ -121,18 +177,15 @@ export const CreateUsuarios = () => {
       username,
       password,
       confirm_password,
-      groups
+      groups,
+      codigoAsesor
     );
     if (validate.length === 0) {
-      setVisibleProgress(true);
-      const usuarioJSON = { ...usuario };
-      delete usuarioJSON.confirm_password;
-      console.log(usuarioJSON);
-      const result = await createUsuario(usuarioJSON);
-      // comprobar si se realizo con exito la creación del usuario
-      setVisibleProgress(false);
-      // navegamos atras
-      onNavigateBack();
+      if (is_active === false) {
+        handleOpenDialog();
+      } else {
+        crearUsuario();
+      }
     } else {
       // mostramos feedback
       setFeedbackMessages({
@@ -152,7 +205,7 @@ export const CreateUsuarios = () => {
           <div className="w-6/12 flex flex-col gap-y-5">
             <label className="block flex flex-col gap-y-1 ">
               <span className="after:content-['*'] after:ml-0.5 after:text-yellow-500 block text-sm font-medium">
-                Nombre Usuario
+                Usuario
               </span>
               <input
                 type="text"
@@ -194,6 +247,18 @@ export const CreateUsuarios = () => {
               </span>
               <Checkbox
                 checked={is_active}
+                name="is_active"
+                onChange={onAddCheckInput}
+                inputProps={{ "aria-label": "controlled" }}
+              />
+            </label>
+            <label className="block flex flex-row gap-y-1">
+              <span className="after:content-['*'] after:ml-0.5 after:text-yellow-500 block text-sm font-medium flex items-center me-2">
+                Es administrador
+              </span>
+              <Checkbox
+                checked={isAdmin}
+                name="isAdmin"
                 onChange={onAddCheckInput}
                 inputProps={{ "aria-label": "controlled" }}
               />
@@ -243,15 +308,30 @@ export const CreateUsuarios = () => {
               <span className="after:content-['*'] after:ml-0.5 after:text-yellow-500 block text-sm font-medium">
                 Rol
               </span>
-              <FilterRol onNewInput={onAddGroup} />
+              <FilterRol onNewInput={onAddGroup} defaultValue={groups["id"]} />
             </label>
+
+            {groups["id"] === 1 && (
+              <label className="block flex flex-col gap-y-1">
+                <span className="after:content-['*'] after:ml-0.5 after:text-yellow-500 block text-sm font-medium">
+                  Código asesor
+                </span>
+                <input
+                  type="text"
+                  name="codigoAsesor"
+                  className="mt-1 px-3 py-2 bg-white border shadow-sm border-slate-300 placeholder-slate-400 focus:outline-none focus:border-sky-500 focus:ring-sky-500 block w-full rounded-md sm:text-sm focus:ring-1"
+                  value={codigoAsesor === null ? "" : codigoAsesor}
+                  onChange={handledForm}
+                />
+              </label>
+            )}
           </div>
         </form>
       </div>
       <div className="flex justify-center mt-4">
         <button
           className="bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded mr-2"
-          onClick={crearUsuario}
+          onClick={handledCrearUsuario}
         >
           Guardar
         </button>
@@ -267,6 +347,14 @@ export const CreateUsuarios = () => {
         feedbackCreate={feedbackCreate}
         feedbackMessages={feedbackMessages}
         handleCloseFeedback={handleCloseFeedback}
+      />
+      {/* DIALOGO */}
+      <DynamicCustomerDialog
+        open={dialogOpen}
+        title={"Alerta usuario inactivo"}
+        description={`Se ha indicado que el usuario estará inactivo. ¿Deseas confirmar la operación?`}
+        onClose={handleCloseDialog}
+        onConfirm={crearUsuario}
       />
       {/* CIRCULAR PROGRESS */}
       {visibleProgress && <CustomCircularProgress />}

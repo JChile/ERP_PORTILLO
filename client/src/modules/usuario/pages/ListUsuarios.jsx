@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { Link } from "react-router-dom";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
@@ -13,9 +13,14 @@ import { RowItemUsuario, DialogDeleteUsuario } from "../components";
 import {
   CustomTablePagination,
   CustomCircularProgress,
+  CustomAlert,
 } from "../../../components";
+import { AuthContext } from "../../../auth";
+import { combinarErrores } from "../../../utils";
+import { useAlertMUI } from "../../../hooks";
 
 export const ListUsuarios = () => {
+  const { authTokens } = useContext(AuthContext);
   const [usuarios, setusuarios] = useState([]);
   const [usuariosTemporal, setUsuariosTemporal] = useState([]);
 
@@ -29,6 +34,15 @@ export const ListUsuarios = () => {
   const handleButtonClick = (buttonName) => {
     setActiveButton(buttonName);
   };
+
+  // hook alert
+  const {
+    feedbackCreate,
+    feedbackMessages,
+    setFeedbackMessages,
+    handleCloseFeedback,
+    handleClickFeedback,
+  } = useAlertMUI();
 
   // estado de progress
   const [visibleProgress, setVisibleProgress] = useState(false);
@@ -78,24 +92,35 @@ export const ListUsuarios = () => {
   };
 
   const obtenerUsuarios = async () => {
-    const result = await getUsuarios();
-    setusuarios(result);
-    // mostramos en primer lugar los activos
-    setUsuariosTemporal(
-      result.filter((element) => {
-        if (element.is_active === true) {
-          return true;
-        } else {
-          return false;
-        }
-      })
-    );
+    setVisibleProgress(true);
+    try {
+      const result = await getUsuarios({ authToken: authTokens["access"] });
+      setusuarios(result);
+      // mostramos en primer lugar los activos
+      setUsuariosTemporal(
+        result.filter((element) => {
+          if (element.is_active === true) {
+            return true;
+          } else {
+            return false;
+          }
+        })
+      );
+      setVisibleProgress(false);
+    } catch (error) {
+      setVisibleProgress(false);
+      const pilaError = combinarErrores(error);
+      // mostramos feedback de error
+      setFeedbackMessages({
+        style_message: "error",
+        feedback_description_error: pilaError,
+      });
+      handleClickFeedback();
+    }
   };
 
   useEffect(() => {
-    setVisibleProgress(true);
     obtenerUsuarios();
-    setVisibleProgress(false);
   }, []);
 
   return (
@@ -103,45 +128,47 @@ export const ListUsuarios = () => {
       <div className="flex items-center justify-end bg-gray-100 p-4">
         {/* Botón de "Agregar usuario" en el extremo derecho */}
         <Link
-          to={"/user/create"}
+          to={"/usuario/create"}
           className="bg-transparent hover:bg-blue-500 text-blue-500 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded flex items-center"
         >
           <RiUserAddLine className="mr-2" /> Añadir usuario
         </Link>
       </div>
+
+      <div className="flex justify-center mt-4 mb-4">
+        <button
+          onClick={() => {
+            handleButtonClick(true);
+            filtrar("filterActivateUsuario", true);
+          }}
+          className={`px-4 py-2 mr-2 rounded ${
+            activeButton === true ? "bg-blue-500 text-white" : "bg-gray-300"
+          }`}
+        >
+          Usuarios Activos
+        </button>
+        <button
+          onClick={() => {
+            handleButtonClick(false);
+            filtrar("filterActivateUsuario", false);
+          }}
+          className={`px-4 py-2 rounded ${
+            activeButton === false ? "bg-blue-500 text-white" : "bg-gray-300"
+          }`}
+        >
+          Usuarios Inactivos
+        </button>
+      </div>
+
       <Paper>
-        <div className="flex justify-center mt-4 mb-4">
-          <button
-            onClick={() => {
-              handleButtonClick(true);
-              filtrar("filterActivateUsuario", true);
-            }}
-            className={`px-4 py-2 mr-2 rounded ${
-              activeButton === true ? "bg-blue-500 text-white" : "bg-gray-300"
-            }`}
-          >
-            Usuarios Activos
-          </button>
-          <button
-            onClick={() => {
-              handleButtonClick(false);
-              filtrar("filterActivateUsuario", false);
-            }}
-            className={`px-4 py-2 rounded ${
-              activeButton === false ? "bg-blue-500 text-white" : "bg-gray-300"
-            }`}
-          >
-            Usuarios Inactivos
-          </button>
-        </div>
         <TableContainer>
           <Table sx={{ minWidth: 700 }} aria-label="customized table">
             <TableHead>
               <TableRow
                 sx={{
                   "& th": {
-                    color: "rgba(96, 96, 96)",
-                    backgroundColor: "#f5f5f5",
+                    color: "rgba(200,200,200)",
+                    backgroundColor: "#404040",
                   },
                 }}
               >
@@ -185,6 +212,13 @@ export const ListUsuarios = () => {
           onCloseDeleteDialog={onCloseDeleteDialog}
         />
       )}
+
+      {/* COMPONENTE ALERTA */}
+      <CustomAlert
+        feedbackCreate={feedbackCreate}
+        feedbackMessages={feedbackMessages}
+        handleCloseFeedback={handleCloseFeedback}
+      />
 
       {/* CIRCULAR PROGRESS */}
       {visibleProgress && <CustomCircularProgress />}

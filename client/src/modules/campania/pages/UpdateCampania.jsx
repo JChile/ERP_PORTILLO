@@ -30,7 +30,6 @@ export const UpdateCampania = () => {
     estado: "",
     user: currentUser.user_id,
     proyecto: 0,
-    subCategoria: 0,
     categoria: 0,
   });
 
@@ -44,7 +43,7 @@ export const UpdateCampania = () => {
     estado,
     user,
     proyecto,
-    subCategoria,
+    categoria,
   } = campaign;
 
   const {
@@ -59,12 +58,11 @@ export const UpdateCampania = () => {
 
   const obtenerCampania = async (idCampania) => {
     const result = await getCampania(idCampania);
-    delete result?.categoria;
     setCampaign({
       ...result,
       user: currentUser.user_id,
       proyecto: result.proyecto.id,
-      subCategoria: result.subCategoria.id,
+      categoria: result.categoria.id,
     });
   };
 
@@ -88,11 +86,10 @@ export const UpdateCampania = () => {
     fecha_cierre,
     coste_estimado,
     coste_real,
-    descripcion,
     estado,
     user,
     proyecto,
-    subCategoria
+    categoria
   ) => {
     const errors = [];
 
@@ -111,9 +108,6 @@ export const UpdateCampania = () => {
     if (!coste_real) {
       errors.push("- El costo real es obligatorio.");
     }
-    if (!descripcion) {
-      errors.push("- La descripción es obligatoria.");
-    }
     if (!estado) {
       errors.push("- El estado es obligatorio.");
     }
@@ -123,7 +117,7 @@ export const UpdateCampania = () => {
     if (!proyecto) {
       errors.push("- El proyecto es obligatorio.");
     }
-    if (!subCategoria) {
+    if (!categoria) {
       errors.push("- La subcategoría es obligatoria.");
     }
 
@@ -142,11 +136,10 @@ export const UpdateCampania = () => {
       fecha_cierre,
       coste_estimado,
       coste_real,
-      descripcion,
       estado,
       user,
       proyecto,
-      subCategoria
+      categoria
     );
 
     if (validationMessage) {
@@ -300,7 +293,7 @@ export const UpdateCampania = () => {
                   Subcategoria
                 </span>
                 <FilterSubcategoria
-                  defaultValue={subCategoria}
+                  defaultValue={categoria}
                   onNewInput={onAddCategory}
                 />
               </label>

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { styled } from "@mui/material/styles";
 import Table from "@mui/material/Table";
@@ -10,7 +10,10 @@ import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import { getRolById, updateRol } from "../helpers";
 import { RowItemPermission } from "../components";
-import { CustomCircularProgress } from "../../../components";
+import { CustomAlert, CustomCircularProgress } from "../../../components";
+import { combinarErrores, validIdURL } from "../../../utils";
+import { useAlertMUI } from "../../../hooks";
+import { AuthContext } from "../../../auth";
 
 // definimos el estilo del head
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
@@ -25,6 +28,7 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
 
 export const UpdateRol = () => {
   const { idRol } = useParams();
+  const { logoutUser } = useContext(AuthContext);
   const numericId = parseInt(idRol);
   const [rolData, setRolData] = useState({
     id: 0,
@@ -33,6 +37,15 @@ export const UpdateRol = () => {
   });
 
   const { name, modulos } = rolData;
+
+  // hook alert
+  const {
+    feedbackCreate,
+    feedbackMessages,
+    setFeedbackMessages,
+    handleCloseFeedback,
+    handleClickFeedback,
+  } = useAlertMUI();
 
   // estado de progress
   const [visibleProgress, setVisibleProgress] = useState(false);
@@ -85,17 +98,18 @@ export const UpdateRol = () => {
 
   const traerDataDetalleRol = async () => {
     // verificamos si el id pasado por parametro es numerico
-    if (!isNaN(numericId) && Number.isInteger(numericId)) {
+    if (validIdURL(numericId)) {
       setVisibleProgress(true);
       try {
         const resultDetalleRol = await getRolById(idRol);
         setRolData(resultDetalleRol);
+        setVisibleProgress(false);
       } catch (error) {
-        console.error("Ocurrio un error:", error.message);
+        setVisibleProgress(false);
+        onNavigateBack();
       }
-      setVisibleProgress(false);
     } else {
-      console.log("INVALIDO ID ROL");
+      onNavigateBack();
     }
   };
 
@@ -111,9 +125,20 @@ export const UpdateRol = () => {
     });
 
     if (auxPermissions.length === 0 || name.trim().length === 0) {
-      console.log(
-        "no asignaste ningun permiso o el nombre no fue proporcionado"
-      );
+      if (auxPermissions.length === 0) {
+        setFeedbackMessages({
+          style_message: "warning",
+          feedback_description_error: "No asignaste ningun permiso",
+        });
+        handleClickFeedback();
+      }
+      if (name.trim().length === 0) {
+        setFeedbackMessages({
+          style_message: "warning",
+          feedback_description_error: "No asignaste un nombre de rol",
+        });
+        handleClickFeedback();
+      }
     } else {
       const newRole = {
         id: rolData.id,
@@ -121,17 +146,22 @@ export const UpdateRol = () => {
         permissions: auxPermissions,
       };
 
+      setVisibleProgress(true);
       try {
-        setVisibleProgress(true);
         // realizamos la llamada API
         const result = await updateRol(idRol, newRole);
-        console.log("rol actualizado exitosamente", result);
         setVisibleProgress(false);
         // navegamos a la anterior vista
-        onNavigateBack();
+        // onNavigateBack();
+        logoutUser();
       } catch (error) {
-        // mostramos el error por medio de un alert
-        console.error("Error al crear el rol:", error.message);
+        setVisibleProgress(false);
+        const pilaError = combinarErrores(error);
+        setFeedbackMessages({
+          style_message: "error",
+          feedback_description_error: pilaError,
+        });
+        handleClickFeedback();
       }
     }
   };
@@ -143,7 +173,7 @@ export const UpdateRol = () => {
   return (
     <>
       <div className="relative border-2 rounded-md border-inherit p-5 flex justify-between items-center">
-        <h1 className="text-2xl my-1">Crear rol</h1>
+        <h1 className="text-2xl my-1">Actualizar rol</h1>
         <div className="flex justify-center mt-4">
           <button
             className="bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded mr-2"
@@ -210,6 +240,12 @@ export const UpdateRol = () => {
           </Table>
         </TableContainer>
       </div>
+      {/* COMPONENTE ALERTA */}
+      <CustomAlert
+        feedbackCreate={feedbackCreate}
+        feedbackMessages={feedbackMessages}
+        handleCloseFeedback={handleCloseFeedback}
+      />
       {/* CIRCULAR PROGRESS */}
       {visibleProgress && <CustomCircularProgress />}
     </>

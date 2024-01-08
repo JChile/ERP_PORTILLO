@@ -37,26 +37,26 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-
+    'django_filters',
     'cuenta.apps.CuentaConfig',
     'marketing.apps.MarketingConfig',
     'ventas.apps.VentasConfig',
-
     'rest_framework',
     'corsheaders',
     'rest_framework_simplejwt.token_blacklist',
-    
-    
-
 ]
 
 
 AUTH_USER_MODEL = 'cuenta.User'
 REST_FRAMEWORK = {
 
+    'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend'],
+
+
     'DEFAULT_AUTHENTICATION_CLASSES': (
 
         'rest_framework_simplejwt.authentication.JWTAuthentication',
+
     )
 }
 
@@ -102,6 +102,7 @@ DATABASES = {
         'NAME': 'portillo_erp',
         'USER': 'postgres',
         'PASSWORD': '123',
+        #'PASSWORD': '123',
         'HOST': 'localhost',
         'PORT': '',
     }
@@ -109,7 +110,7 @@ DATABASES = {
 
 
 SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=5),
+    "ACCESS_TOKEN_LIFETIME": timedelta(days=1),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=90),
     "ROTATE_REFRESH_TOKENS": True,
     "BLACKLIST_AFTER_ROTATION": True,
@@ -136,7 +137,7 @@ SIMPLE_JWT = {
     "JTI_CLAIM": "jti",
 
     "SLIDING_TOKEN_REFRESH_EXP_CLAIM": "refresh_exp",
-    "SLIDING_TOKEN_LIFETIME": timedelta(minutes=5),
+    "SLIDING_TOKEN_LIFETIME": timedelta(days=1),
     "SLIDING_TOKEN_REFRESH_LIFETIME": timedelta(days=1),
 
     "TOKEN_OBTAIN_SERIALIZER": "rest_framework_simplejwt.serializers.TokenObtainPairSerializer",
@@ -148,9 +149,9 @@ SIMPLE_JWT = {
 }
 
 SIMPLE_JWT = {
-  # It will work instead of the default serializer(TokenObtainPairSerializer).
-  "TOKEN_OBTAIN_SERIALIZER": "my_app.serializers.MyTokenObtainPairSerializer",
-  # ...
+    # It will work instead of the default serializer(TokenObtainPairSerializer).
+    "TOKEN_OBTAIN_SERIALIZER": "my_app.serializers.MyTokenObtainPairSerializer",
+    # ...
 }
 
 # Password validation
@@ -179,9 +180,14 @@ LANGUAGE_CODE = 'es'
 
 TIME_ZONE = 'America/Lima'
 
-USE_I18N = True
+
+
+
 
 USE_TZ = True
+
+USE_I18N = True
+
 
 
 
@@ -198,5 +204,3 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 CORS_ALLOWED_ORIGINS = [
     'http://localhost:5173'
 ]
-
-

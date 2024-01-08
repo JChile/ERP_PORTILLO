@@ -15,7 +15,7 @@ export const AuthProvider = ({ children }) => {
   );
 
   // estado de la informacion del usuario
-  const [user, setuser] = useState(() =>
+  const [currentUser, setCurrentUser] = useState(() =>
     localStorage.getItem("authTokens")
       ? jwt_decode(localStorage.getItem("authTokens"))
       : null
@@ -31,8 +31,7 @@ export const AuthProvider = ({ children }) => {
   // funcion para logearse
   const loginUser = async (username, password) => {
     const permissions_user = [];
-    const DOMAIN = import.meta.env.VITE_BACKEND_URL;
-    // ENDOINT AUTENTICACION
+    const DOMAIN = process.env.VITE_BACKEND_URL; //"http://127.0.0.1:8000"  import.meta.env.VITE_BACKEND_URL || "http://127.0.0.1:8000";    // ENDOINT AUTENTICACION
 
     const ENDPOINT = `${DOMAIN}/api/token/`;
     const response = await fetch(ENDPOINT, {
@@ -58,7 +57,7 @@ export const AuthProvider = ({ children }) => {
         if (item["can_view"][0]) {
           permissions_user.push({
             title: item["nombre"],
-            url: item["model"],
+            url: item["url"],
             permissions: {
               can_add: item["can_add"][0],
               can_change: item["can_change"][0],
@@ -70,7 +69,7 @@ export const AuthProvider = ({ children }) => {
       });
       // seteamos los estados
       setauthTokens(data);
-      setuser(payloadUser);
+      setCurrentUser(payloadUser);
       setPermissions(permissions_user);
 
       localStorage.setItem("authTokens", JSON.stringify(data));
@@ -84,7 +83,7 @@ export const AuthProvider = ({ children }) => {
 
   const logoutUser = () => {
     setauthTokens(null);
-    setuser(null);
+    setCurrentUser(null);
     setPermissions(null);
     localStorage.removeItem("authTokens");
     localStorage.removeItem("permissions");
@@ -92,7 +91,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   const contextData = {
-    user,
+    currentUser,
     permissions,
     authTokens,
     loginUser,

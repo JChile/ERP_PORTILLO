@@ -7,6 +7,7 @@ export * from "./CustomPasswordField";
 export * from "./CustomTablePagination";
 export * from "./CustomTextField";
 export * from "./DynamicIcon";
-export * from "./CustomSideBar";
 export * from "./filters/index";
 export * from "./NotFoundPage";
+export * from "./MenuSimple";
+export * from "./DynamicCustomerDialog";

@@ -1,36 +1,46 @@
-import React from "react";
+import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { TableCell, TableRow } from "@mui/material";
 import { HiPhoneIncoming } from "react-icons/hi";
 import { HiPhoneMissedCall } from "react-icons/hi";
 import { CustomMoreVerticalActions } from "../../../components";
+import { deleteLead } from "../helpers";
+import { formatDate_ISO861_to_formatdate } from "../../../utils/formatDate";
 
-export const RowItemLead = ({ item }) => {
+export const RowItemLead = ({ item, onShowDeleteDialog }) => {
   const {
     id,
     nombre,
     apellido,
     celular,
-    comentario,
     horaEntrega,
-    mensajeMarketing,
     llamar,
-    estado,
-    objeciones,
-    asesor,
+    estadoLead,
     campania,
   } = item;
 
   const navigate = useNavigate();
 
+  const onEditItemSelected = () => {
+    navigate(`/lead/update/${id}`);
+  };
+
+  const getMessageWhatsapp = () => {
+    let text = `Saludos coordiales señor ${nombre} ${apellido}, ...`;
+    return text;
+  };
+
   return (
     <TableRow sx={{ "&:last-child td, &:last-child th": { border: 0 } }}>
       <TableCell>
-        <CustomMoreVerticalActions />
+        <CustomMoreVerticalActions
+          onDelete={() => onShowDeleteDialog(item)}
+          onEdit={onEditItemSelected}
+        />
       </TableCell>
       <TableCell>
         <Link
-          to={`#`}
+          to={`/lead/detail/${id}`}
           style={{
             textDecoration: "none",
             color: "black",
@@ -49,8 +59,6 @@ export const RowItemLead = ({ item }) => {
               <br />
               {apellido}
             </span>
-            <hr />
-            <span className="italic">Asesor: {asesor}</span>
           </div>
         </Link>
       </TableCell>
@@ -78,14 +86,19 @@ export const RowItemLead = ({ item }) => {
               }}
             />
           )}
-          {celular}
+          <a
+            href={`whatsapp://send?phone=${celular.replace(
+              /\s+/g,
+              ""
+            )}&text=${getMessageWhatsapp()}`}
+          >
+            {celular}
+          </a>
         </div>
       </TableCell>
-      <TableCell>{estado}</TableCell>
-      <TableCell>{objeciones}</TableCell>
-      <TableCell>{campania}</TableCell>
-      <TableCell>{comentario}</TableCell>
-      <TableCell>{horaEntrega}</TableCell>
+      <TableCell>{estadoLead}</TableCell>
+      <TableCell>{campania.nombre}</TableCell>
+      <TableCell>{formatDate_ISO861_to_formatdate(horaEntrega)}</TableCell>
     </TableRow>
   );
 };

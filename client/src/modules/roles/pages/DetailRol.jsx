@@ -11,6 +11,7 @@ import Paper from "@mui/material/Paper";
 import { RowItemDetailPermission } from "../components";
 import { getRolById } from "../helpers";
 import { CustomCircularProgress } from "../../../components";
+import { validIdURL } from "../../../utils";
 
 // definimos el estilo del head
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
@@ -43,17 +44,18 @@ export const DetailRol = () => {
 
   const traerDataDetalleRol = async () => {
     // verificamos si el id pasado por parametro es numerico
-    if (!isNaN(numericId) && Number.isInteger(numericId)) {
+    if (validIdURL(numericId)) {
       setVisibleProgress(true);
       try {
         const resultDetalleRol = await getRolById(idRol);
         setRolData(resultDetalleRol);
+        setVisibleProgress(false);
       } catch (error) {
-        console.error("Ocurrio un error:", error.message);
+        setVisibleProgress(false);
+        onNavigateBack();
       }
-      setVisibleProgress(false);
     } else {
-      console.log("INVALIDO ID ROL");
+      onNavigateBack();
     }
   };
 
@@ -68,7 +70,7 @@ export const DetailRol = () => {
         <div className="flex justify-center mt-4">
           <Link
             className="bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded mr-2"
-            to={`/group/update/${idRol}`}
+            to={`/rol/update/${idRol}`}
           >
             Editar
           </Link>
@@ -97,9 +99,7 @@ export const DetailRol = () => {
       <div className="mt-5">
         <div className="w-6/12 flex flex-col gap-y-5 mb-2">
           <label className="block flex flex-col gap-y-1 ">
-            <span className="after:content-['*'] after:ml-0.5 after:text-yellow-500 block text-sm font-medium">
-              Permisos
-            </span>
+            <span className="block text-sm font-medium">Permisos</span>
           </label>
         </div>
         <TableContainer component={Paper}>

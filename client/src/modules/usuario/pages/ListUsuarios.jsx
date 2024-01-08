@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { Link } from "react-router-dom";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
@@ -13,9 +13,14 @@ import { RowItemUsuario, DialogDeleteUsuario } from "../components";
 import {
   CustomTablePagination,
   CustomCircularProgress,
+  CustomAlert,
 } from "../../../components";
+import { AuthContext } from "../../../auth";
+import { combinarErrores } from "../../../utils";
+import { useAlertMUI } from "../../../hooks";
 
 export const ListUsuarios = () => {
+  const { authTokens } = useContext(AuthContext);
   const [usuarios, setusuarios] = useState([]);
   const [usuariosTemporal, setUsuariosTemporal] = useState([]);
 
@@ -29,6 +34,15 @@ export const ListUsuarios = () => {
   const handleButtonClick = (buttonName) => {
     setActiveButton(buttonName);
   };
+
+  // hook alert
+  const {
+    feedbackCreate,
+    feedbackMessages,
+    setFeedbackMessages,
+    handleCloseFeedback,
+    handleClickFeedback,
+  } = useAlertMUI();
 
   // estado de progress
   const [visibleProgress, setVisibleProgress] = useState(false);
@@ -78,24 +92,35 @@ export const ListUsuarios = () => {
   };
 
   const obtenerUsuarios = async () => {
-    const result = await getUsuarios();
-    setusuarios(result);
-    // mostramos en primer lugar los activos
-    setUsuariosTemporal(
-      result.filter((element) => {
-        if (element.is_active === true) {
-          return true;
-        } else {
-          return false;
-        }
-      })
-    );
+    setVisibleProgress(true);
+    try {
+      const result = await getUsuarios({ authToken: authTokens["access"] });
+      setusuarios(result);
+      // mostramos en primer lugar los activos
+      setUsuariosTemporal(
+        result.filter((element) => {
+          if (element.is_active === true) {
+            return true;
+          } else {
+            return false;
+          }
+        })
+      );
+      setVisibleProgress(false);
+    } catch (error) {
+      setVisibleProgress(false);
+      const pilaError = combinarErrores(error);
+      // mostramos feedback de error
+      setFeedbackMessages({
+        style_message: "error",
+        feedback_description_error: pilaError,
+      });
+      handleClickFeedback();
+    }
   };
 
   useEffect(() => {
-    setVisibleProgress(true);
     obtenerUsuarios();
-    setVisibleProgress(false);
   }, []);
 
   return (
@@ -187,6 +212,13 @@ export const ListUsuarios = () => {
           onCloseDeleteDialog={onCloseDeleteDialog}
         />
       )}
+
+      {/* COMPONENTE ALERTA */}
+      <CustomAlert
+        feedbackCreate={feedbackCreate}
+        feedbackMessages={feedbackMessages}
+        handleCloseFeedback={handleCloseFeedback}
+      />
 
       {/* CIRCULAR PROGRESS */}
       {visibleProgress && <CustomCircularProgress />}

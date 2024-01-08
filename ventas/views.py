@@ -30,11 +30,12 @@ class LeadList(generics.ListCreateAPIView):
     queryset = Lead.objects.all()
 
     def list(self, request):
+        if not (bool(request.user.groups.first().permissions.filter(codename = PermissionLead.CAN_VIEW) or request.user.is_superuser)) :
+            return Response({"message" : "Usuario no tiene permisos para ver leads"}, status=403)
+        
         lead_queryset = self.queryset
         leadSerializer = LeadSerializer(lead_queryset, many=True)
         leadData = leadSerializer.data
-     
-
         for i in leadData:
             user_data = get_or_none(User, id=i["asesor"])
             userCreador_data = get_or_none(User, id=i["usuarioCreador"])
@@ -60,33 +61,48 @@ class LeadList(generics.ListCreateAPIView):
 
         return Response(leadData)
 
-
+@permission_classes([IsAuthenticated])
 class LeadListSinFiltros(LeadList):
     def list(self, request):
+        if not (bool(request.user.groups.first().permissions.filter(codename = PermissionLead.CAN_VIEW) or request.user.is_superuser)) :
+            return Response({"message" : "Usuario no tiene permisos para ver leads"}, status=403)
+        
         self.queryset = self.queryset.filter()
         return super().list(request)
 
-
+@permission_classes([IsAuthenticated])
 class LeadListAsignados(LeadList):
     def list(self, request):
+        if not (bool(request.user.groups.first().permissions.filter(codename = PermissionLead.CAN_VIEW) or request.user.is_superuser)) :
+            return Response({"message" : "Usuario no tiene permisos para ver leads"}, status=403)
+        
         self.queryset = self.queryset.filter(estado="A", asignado=True)
         return super().list(request)
 
-
+@permission_classes([IsAuthenticated])
 class LeadListNoAsignados(LeadList):
     def list(self, request):
+        if not (bool(request.user.groups.first().permissions.filter(codename = PermissionLead.CAN_VIEW) or request.user.is_superuser)) :
+            return Response({"message" : "Usuario no tiene permisos para ver leads"}, status=403)
+        
         self.queryset = self.queryset.filter(estado="A", asignado=False)
         return super().list(request)
 
-
+@permission_classes([IsAuthenticated])
 class LeadListActivos(LeadList):
     def list(self, request):
+        if not (bool(request.user.groups.first().permissions.filter(codename = PermissionLead.CAN_VIEW) or request.user.is_superuser)) :
+            return Response({"message" : "Usuario no tiene permisos para ver leads"}, status=403)
+        
         self.queryset = self.queryset.filter(estado="A")
         return super().list(request)
 
-
+@permission_classes([IsAuthenticated])
 class LeadListInactivos(LeadList):
     def list(self, request):
+        if not (bool(request.user.groups.first().permissions.filter(codename = PermissionLead.CAN_VIEW) or request.user.is_superuser)) :
+            return Response({"message" : "Usuario no tiene permisos para ver leads"}, status=403)
+        
         self.queryset = self.queryset.filter(estado="I")
         return super().list(request)
 
@@ -142,78 +158,78 @@ class LeadDetail(generics.RetrieveUpdateDestroyAPIView):
 
         return Response(lead_data)
 
-
+@permission_classes([IsAuthenticated])
 class WhatsAppList(generics.ListCreateAPIView):
     serializer_class = WhatsAppSerializer
     queryset = WhatsApp.objects.all()
 
-
+@permission_classes([IsAuthenticated])
 class whatsappActivos(WhatsAppList):
     def list(self, request):
         self.queryset = self.queryset.filter(estado="A")
         return super().list(request)
 
-
+@permission_classes([IsAuthenticated])
 class whatsappInactivos(WhatsAppList):
     def list(self, request):
         self.queryset = self.queryset.filter(estado="I")
         return super().list(request)
 
-
+@permission_classes([IsAuthenticated])
 class WhatsAppDetail(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = WhatsAppSerializer
     queryset = WhatsApp.objects.all()
 
-
+@permission_classes([IsAuthenticated])
 class LlamadaList(generics.ListCreateAPIView):
     serializer_class = LlamadaSerializer
     queryset = Llamada.objects.all()
 
-
+@permission_classes([IsAuthenticated])
 class LlamadaActivos(LlamadaList):
     def list(self, request):
         self.queryset = self.queryset.filter(estado="A")
         return super().list(request)
 
-
+@permission_classes([IsAuthenticated])
 class LlamadaInactivos(LlamadaList):
     def list(self, request):
         self.queryset = self.queryset.filter(estado="I")
         return super().list(request)
 
-
+@permission_classes([IsAuthenticated])
 class LlamadaDetail(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = LlamadaSerializer
     queryset = Llamada.objects.all()
 
-
+@permission_classes([IsAuthenticated])
 class ObjecionList(generics.ListCreateAPIView):
     serializer_class = ObjecionSerializer
     queryset = Objecion.objects.all()
 
-
+@permission_classes([IsAuthenticated])
 class ObjecionActivos(ObjecionList):
     def list(self, request):
         self.queryset = self.queryset.filter(estado="A")
         return super().list(request)
 
-
+@permission_classes([IsAuthenticated])
 class ObjecionInactivos(ObjecionList):
     def list(self, request):
         self.queryset = self.queryset.filter(estado="I")
         return super().list(request)
 
-
+@permission_classes([IsAuthenticated])
 class ObjecionDetail(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = ObjecionSerializer
     queryset = Objecion.objects.all()
 
-
+@permission_classes([IsAuthenticated])
 class EstadoLeadList(generics.ListCreateAPIView):
     serializer_class = EstadoLeadSerializer
     queryset = EstadoLead.objects.all()
 
-
+@permission_classes([IsAuthenticated])
 class EstadoLeadDetail(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = EstadoLeadSerializer
     queryset = EstadoLead.objects.all()
@@ -227,13 +243,13 @@ class EstadoLeadDetail(generics.RetrieveUpdateDestroyAPIView):
 
         return estado_lead
 
-
+@permission_classes([IsAuthenticated])
 class EstadoLeadActivos(EstadoLeadList):
     def list(self, request):
         self.queryset = self.queryset.filter(estado="A")
         return super().list(request)
 
-
+@permission_classes([IsAuthenticated])
 class EstadoLeadInactivos(EstadoLeadList):
     def list(self, request):
         self.queryset = self.queryset.filter(estado="I")
@@ -245,7 +261,9 @@ class EventoList(generics.ListCreateAPIView):
     serializer_class = EventoSerializer
     queryset = Evento.objects.all()
     def post(self, request):
-        idUsuario = request.data.pop("idUsuario")
+        if not (bool(request.user.groups.first().permissions.filter(codename = PermissionEvento.CAN_ADD) or request.user.is_superuser)) :
+            return Response({"message" : "Usuario no tiene permisos para crear eventos"}, status=403)
+        idUsuario = request.user.pk
         print("id userr", idUsuario)
         try:
             request.data["asesor"] = User.objects.get(user = idUsuario).pk
@@ -304,37 +322,38 @@ class EventoList(generics.ListCreateAPIView):
 
 
 
-
+@permission_classes([IsAuthenticated])
 class EventoListSinFiltros(EventoList):
     def list(self, request):
         self.queryset = self.queryset.filter()
         return super().list(request)
 
+
+@permission_classes([IsAuthenticated])
 class EventoListActivos(EventoList):
     def list(self, request):
         self.queryset = self.queryset.filter(estado="A")
         return super().list(request)
 
+
+@permission_classes([IsAuthenticated])
 class EventoListInactivos(EventoList):
     def list(self, request):
         self.queryset = self.queryset.filter(estado="I")
         return super().list(request)
 
-
+@permission_classes([IsAuthenticated])
 class EventoDetail(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = EventoSerializer
     queryset = Evento.objects.all()
 
     def retrieve(self, request, pk=None):
-        
-
         if not (bool(request.user.groups.first().permissions.filter(codename = PermissionEvento.CAN_VIEW) or request.user.is_superuser)) :
             return Response({"message" : "Usuario no tiene permisos para ver eventos"}, status=403)
-        
         try :
             evento = Evento.objects.get(id = pk)
         except :
-            return Response({"detail":"El evento no existe"})        
+            return Response({"message":"El evento no existe"}, status=404)        
         
 
 
@@ -353,6 +372,7 @@ class EventoDetail(generics.RetrieveUpdateDestroyAPIView):
         
         
         return Response(evento_dataJson)
+
 
 class TipoEventoList(generics.ListCreateAPIView):
     serializer_class = TipoEventoSerializer
@@ -374,32 +394,65 @@ class TipoEventoDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = TipoEvento.objects.all()
 
 
+
+@permission_classes([IsAuthenticated])
 class ProductoList(generics.ListCreateAPIView):
     serializer_class = ProductoSerializer
     queryset = Producto.objects.all()
 
     def list(self, request):
-        producto_queryset = self.queryset
-        tipo_queryset = TipoProducto.objects.all()
-        dataJson = ProductoSerializer(producto_queryset, many = True).data
 
-        for i in dataJson:        
-            i["tipo"] = TipoEventoSerializer(tipo_queryset.get(id = i["tipo"])).data
+        if not (bool(request.user.groups.first().permissions.filter(codename = PermissionProducto.CAN_VIEW) or request.user.is_superuser)) :
+            return Response({"message" : "Usuario no tiene permisos para ver productos"}, status=403)
+        
+        try:
+            producto_queryset = Producto.objects.all()        
+            producto_datajson = ProductoSerializer(producto_queryset, many = True).data
+        except:
+            return Response({"message":"El producto no existe"},status=404)
+        
 
-        return Response(dataJson)
+        for i in producto_datajson : 
+            tipoProducto = get_or_none(TipoProducto, id = i["tipo"])
+            proyecto = get_or_none(Proyecto, id = i["proyecto"])
+            userCreador = get_or_none(User, id=i["usuarioCreador"])
+            userActualizador= get_or_none(User, id=i["usuarioActualizador"])
+
+            tipoProductoSerializer = ProyectoSerializer(tipoProducto) if tipoProducto else None
+            proyectoSerializer = ProyectoSerializer(proyecto) if proyecto else None
+            userCreadorSerializer = UserSerializer(userCreador,fields=(
+                'id', 'first_name', 'last_name', 'username')) if userCreador else None
+            userActualizadorializer = UserSerializer(userActualizador,fields=(
+                'id', 'first_name', 'last_name', 'username')) if userActualizador else None
+
+            i["tipo"] = tipoProductoSerializer.data if tipoProductoSerializer else {}
+            i["proyecto"] = proyectoSerializer.data if proyectoSerializer else {}
+            i["usuarioCreador"] = userCreadorSerializer.data if userCreadorSerializer else {}
+            i["usuarioActualizador"] = userActualizadorializer.data if userActualizadorializer else {}
+
+        return Response(producto_datajson)
 
 class ProductoListSinFiltros(ProductoList):
     def list(self, request):
+        if not (bool(request.user.groups.first().permissions.filter(codename = PermissionProducto.CAN_VIEW) or request.user.is_superuser)) :
+            return Response({"message" : "Usuario no tiene permisos para ver productos"}, status=403)
+        
         self.queryset = self.queryset.filter()
         return super().list(request)
 
 class ProductoListActivos(ProductoList):
     def list(self, request):
+        if not (bool(request.user.groups.first().permissions.filter(codename = PermissionProducto.CAN_VIEW) or request.user.is_superuser)) :
+            return Response({"message" : "Usuario no tiene permisos para ver productos"}, status=403)
+        
         self.queryset = self.queryset.filter(estado="A")
         return super().list(request)
 
 class ProductoListInactivos(ProductoList):
     def list(self, request):
+        if not (bool(request.user.groups.first().permissions.filter(codename = PermissionProducto.CAN_VIEW) or request.user.is_superuser)) :
+            return Response({"message" : "Usuario no tiene permisos para ver productos"}, status=403)
+        
         self.queryset = self.queryset.filter(estado="I")
         return super().list(request)
 
@@ -408,11 +461,35 @@ class ProductoDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Producto.objects.all()
 
     def retrieve(self, request, pk=None):
-        producto = Producto.objects.get(id = pk)        
-        tipo_queryset = TipoProducto.objects.all()
-        dataJson = ProductoSerializer(producto).data
-        dataJson["tipo"] = TipoProductoSerializer(tipo_queryset.get(id =  producto.tipo.pk)).data
-        return Response(dataJson)
+        if not (bool(request.user.groups.first().permissions.filter(codename = PermissionProducto.CAN_VIEW) or request.user.is_superuser)) :
+            return Response({"message" : "Usuario no tiene permisos para ver productos"}, status=403)
+        
+        try:
+            producto = Producto.objects.get(id = pk)        
+            producto_datajson = ProductoSerializer(producto).data
+        except:
+            return Response({"message":"El producto no existe"},status=404)
+        
+
+        tipoProducto = get_or_none(TipoProducto, id = producto.tipo.pk)
+        proyecto = get_or_none(Proyecto, id = producto.proyecto.pk)
+        userCreador = get_or_none(User, id=producto.usuarioCreador.pk)
+        userActualizador= get_or_none(User, id=producto.usuarioActualizador.pk)
+
+        tipoProductoSerializer = ProyectoSerializer(tipoProducto) if tipoProducto else None
+        proyectoSerializer = ProyectoSerializer(proyecto) if proyecto else None
+        userCreadorSerializer = UserSerializer(userCreador,fields=(
+            'id', 'first_name', 'last_name', 'username')) if userCreador else None
+        userActualizadorializer = UserSerializer(userActualizador,fields=(
+            'id', 'first_name', 'last_name', 'username')) if userActualizador else None
+
+        producto_datajson["tipo"] = tipoProductoSerializer.data if tipoProductoSerializer else {}
+        producto_datajson["proyecto"] = proyectoSerializer.data if proyectoSerializer else {}
+        producto_datajson["usuarioCreador"] = userCreadorSerializer.data if userCreadorSerializer else {}
+        producto_datajson["usuarioActualizador"] = userActualizadorializer.data if userActualizadorializer else {}
+       
+
+        return Response(producto_datajson)
 
 
 class TipoProductoList(generics.ListCreateAPIView):

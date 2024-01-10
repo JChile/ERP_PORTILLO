@@ -28,6 +28,7 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
 
 export const UpdateRol = () => {
   const { idRol } = useParams();
+  const { authTokens, currentUser } = useContext(AuthContext);
   const { logoutUser } = useContext(AuthContext);
   const numericId = parseInt(idRol);
   const [rolData, setRolData] = useState({
@@ -101,7 +102,7 @@ export const UpdateRol = () => {
     if (validIdURL(numericId)) {
       setVisibleProgress(true);
       try {
-        const resultDetalleRol = await getRolById(idRol);
+        const resultDetalleRol = await getRolById(idRol, authTokens["access"]);
         setRolData(resultDetalleRol);
         setVisibleProgress(false);
       } catch (error) {
@@ -149,11 +150,16 @@ export const UpdateRol = () => {
       setVisibleProgress(true);
       try {
         // realizamos la llamada API
-        const result = await updateRol(idRol, newRole);
+        const result = await updateRol(idRol, newRole, authTokens["access"]);
         setVisibleProgress(false);
-        // navegamos a la anterior vista
-        // onNavigateBack();
-        logoutUser();
+        // si el usuario tiene asignado el mismo rol
+        if (parseInt(currentUser["groupsId"]) === rolData["id"]) {
+          // deslogueamos
+          logoutUser();
+        } else {
+          // retrocedemos a la anterior vista
+          onNavigateBack();
+        }
       } catch (error) {
         setVisibleProgress(false);
         const pilaError = combinarErrores(error);

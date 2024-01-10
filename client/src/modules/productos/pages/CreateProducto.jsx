@@ -1,25 +1,15 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { createProducto } from "../helpers";
 import { useAlertMUI } from "../../../hooks";
 import { CustomAlert, CustomCircularProgress } from "../../../components";
 import { FilterProyectos } from "../../../components";
 import { FilterTipoProducto } from "../../../components";
-/*  {
-        "id": 5,
-        "nombre": "Depósito 1",
-        "codigo": "SDE000001",
-        "numero": 1,
-        "area": 4.55,
-        "tipo": {
-            "id": 3,
-            "nombre": "Depósito",
-            "estado": "A"
-        },
-        "proyecto": 1,
-        "estado": "A"
-    }, */
+import { combinarErrores } from "../../../utils";
+import { AuthContext } from "../../../auth";
+
 export const CreateProducto = () => {
+  const { authTokens } = useContext(AuthContext);
   const [product, setProduct] = useState({
     nombre: "",
     numero: 0.0,
@@ -99,17 +89,28 @@ export const CreateProducto = () => {
       handleClickFeedback();
     } else {
       setVisibleProgress(true);
-      const result = await createProducto(product);
-      console.log(product);
-      setVisibleProgress(false);
-      onNavigateBack();
+      try {
+        const result = await createProducto(product, authTokens["access"]);
+        console.log(product);
+        setVisibleProgress(false);
+        onNavigateBack();
+      } catch (error) {
+        setVisibleProgress(false);
+        const pilaError = combinarErrores(error);
+        // mostramos feedback de error
+        setFeedbackMessages({
+          style_message: "error",
+          feedback_description_error: pilaError,
+        });
+        handleClickFeedback();
+      }
     }
   };
 
   return (
     <>
       <div className="relative p-5">
-        <h1 className="text-lg font-bold">Crear Proyecto</h1>
+        <h1 className="text-lg font-bold">Crear Producto</h1>
         <hr className="my-4"></hr>
         <form
           method="post"

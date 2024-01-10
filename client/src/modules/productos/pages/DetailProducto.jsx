@@ -1,9 +1,15 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { getProducto } from "../helpers";
+import { combinarErrores, validIdURL } from "../../../utils";
+import { CustomAlert } from "../../../components";
+import { AuthContext } from "../../../auth";
+import { useAlertMUI } from "../../../hooks";
 
 export const DetailProducto = () => {
+  const { authTokens } = useContext(AuthContext);
   const { idProducto } = useParams();
+  const numericId = parseInt(idProducto);
   const [producto, setProducto] = useState({
     nombre: "",
     codigo: "",
@@ -20,9 +26,31 @@ export const DetailProducto = () => {
 
   const { nombre, codigo, numero, area, tipo, proyecto, estado } = producto;
 
-  const obtenerProducto = async (idProducto) => {
-    const auxProducto = await getProducto(idProducto);
-    setProducto(auxProducto);
+  const {
+    feedbackCreate,
+    feedbackMessages,
+    setFeedbackMessages,
+    handleCloseFeedback,
+    handleClickFeedback,
+  } = useAlertMUI();
+
+  const obtenerProducto = async () => {
+    if (validIdURL(numericId)) {
+      try {
+        const auxProducto = await getProducto(idProducto, authTokens["access"]);
+        setProducto(auxProducto);
+      } catch (error) {
+        const pilaError = combinarErrores(error);
+        // mostramos feedback de error
+        setFeedbackMessages({
+          style_message: "error",
+          feedback_description_error: pilaError,
+        });
+        handleClickFeedback();
+      }
+    } else {
+      onNavigateBack();
+    }
   };
 
   const navigate = useNavigate();
@@ -50,21 +78,21 @@ export const DetailProducto = () => {
                 <span className="block text-sm font-medium min-w-[10rem] text-zinc-500">
                   Codigo:
                 </span>
-                <span className="block text-sm">{codigo}</span>
+                <span className="block text-sm">{codigo || "-"}</span>
               </label>
 
               <label className="block flex gap-y-1 ">
                 <span className="block text-sm font-medium min-w-[10rem] text-zinc-500">
                   Numero:
                 </span>
-                <span className="block text-sm">{numero}</span>
+                <span className="block text-sm">{numero || "-"}</span>
               </label>
 
               <label className="block flex gap-y-1 ">
                 <span className="block text-sm font-medium min-w-[10rem] text-zinc-500">
                   Area:
                 </span>
-                <span className="block text-sm">{area}m2</span>
+                <span className="block text-sm">{area || "-"}m2</span>
               </label>
             </div>
 
@@ -73,13 +101,13 @@ export const DetailProducto = () => {
                 <span className="block text-sm font-medium min-w-[10rem] text-zinc-500">
                   Tipo:
                 </span>
-                <span className="block text-sm">{tipo.nombre}</span>
+                <span className="block text-sm">{tipo.nombre || "-"}</span>
               </label>
               <label className="block flex gap-y-1 ">
                 <span className="block text-sm font-medium min-w-[10rem] text-zinc-500">
                   Proyecto:
                 </span>
-                <span className="block text-sm">{proyecto.nombre}</span>
+                <span className="block text-sm">{proyecto.nombre || "-"}</span>
               </label>
               <label className="block flex gap-y-1 ">
                 <span className="block text-sm font-medium min-w-[10rem] text-zinc-500">
@@ -101,6 +129,11 @@ export const DetailProducto = () => {
           </div>
         </div>
       </div>
+      <CustomAlert
+        feedbackCreate={feedbackCreate}
+        feedbackMessages={feedbackMessages}
+        handleCloseFeedback={handleCloseFeedback}
+      />
     </>
   );
 };

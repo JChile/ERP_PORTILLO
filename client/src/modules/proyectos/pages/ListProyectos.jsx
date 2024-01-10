@@ -65,7 +65,9 @@ const ListProyectos = () => {
       estado: "I",
     };
     try {
-      const result = await deleteProyecto(id, body);
+      const result = await deleteProyecto(id, body, {
+        authToken: authTokens["access"],
+      });
       obtenerProyectos();
       onCloseDeleteDialog();
     } catch (error) {

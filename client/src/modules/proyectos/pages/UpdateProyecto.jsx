@@ -8,7 +8,7 @@ import { combinarErrores, validIdURL } from "../../../utils";
 import { AuthContext } from "../../../auth";
 
 export const UpdateProyecto = () => {
-  const { authTokens } = useContext(AuthContext);
+  const { authTokens, currentUser } = useContext(AuthContext);
   const { idProyecto } = useParams();
   const numericId = parseInt(idProyecto);
   const [project, setProject] = useState({
@@ -92,15 +92,35 @@ export const UpdateProyecto = () => {
       handleClickFeedback();
     } else {
       setVisibleProgress(true);
-      const result = await updateProyecto(idProyecto, project);
-      console.log(result);
-      setVisibleProgress(false);
-      onNavigateBack();
+      try {
+        const formatProject = {
+          ...project,
+          usuarioActualizador: currentUser["user_id"],
+          usuarioCreador: currentUser["user_id"],
+        };
+        console.log(formatProject);
+        const result = await updateProyecto(
+          idProyecto,
+          formatProject,
+          authTokens["access"]
+        );
+        console.log(result);
+        setVisibleProgress(false);
+        onNavigateBack();
+      } catch (error) {
+        setVisibleProgress(false);
+        const pilaError = combinarErrores(error);
+        // mostramos feedback de error
+        setFeedbackMessages({
+          style_message: "error",
+          feedback_description_error: pilaError,
+        });
+        handleClickFeedback();
+      }
     }
   };
   useEffect(() => {
     const controller = new AbortController();
-    console.log(idProyecto);
     obtenerProyecto();
     return () => controller.abort();
   }, []);

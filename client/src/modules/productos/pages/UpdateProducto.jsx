@@ -1,13 +1,18 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { getProducto, updateProducto } from "../helpers";
 import { useAlertMUI } from "../../../hooks";
 import { CustomAlert, CustomCircularProgress } from "../../../components";
 import { FilterProyectos } from "../../../components";
 import { FilterTipoProducto } from "../../../components";
+import { combinarErrores, validIdURL } from "../../../utils";
+import { AuthContext } from "../../../auth";
 
 export const UpdateProducto = () => {
+  const { authTokens } = useContext(AuthContext);
   const { idProduct } = useParams();
+  const numericId = parseInt(idProduct);
+  console.log(numericId);
   const [product, setProduct] = useState({
     nombre: "",
     numero: 0.0,
@@ -29,13 +34,28 @@ export const UpdateProducto = () => {
 
   const [visibleProgress, setVisibleProgress] = useState(false);
 
-  const obtenerProducto = async (idProduct) => {
-    const result = await getProducto(idProduct);
-    setProduct({
-      ...result,
-      tipo: result.tipo.id,
-      proyecto: result.proyecto.id,
-    });
+  const obtenerProducto = async () => {
+    if (validIdURL(numericId)) {
+      try {
+        const result = await getProducto(idProduct, authTokens["access"]);
+        setProduct({
+          ...result,
+          tipo: result.tipo.id,
+          proyecto: result.proyecto.id,
+        });
+      } catch (error) {
+        setVisibleProgress(false);
+        const pilaError = combinarErrores(error);
+        // mostramos feedback de error
+        setFeedbackMessages({
+          style_message: "error",
+          feedback_description_error: pilaError,
+        });
+        handleClickFeedback();
+      }
+    } else {
+      onNavigateBack();
+    }
   };
 
   const handledForm = (event) => {
@@ -96,17 +116,30 @@ export const UpdateProducto = () => {
       handleClickFeedback();
     } else {
       setVisibleProgress(true);
-      const result = await updateProducto(idProduct, product);
-      console.log(product);
-      setVisibleProgress(false);
-      onNavigateBack();
+      try {
+        const result = await updateProducto(
+          idProduct,
+          product,
+          authTokens["access"]
+        );
+        setVisibleProgress(false);
+        onNavigateBack();
+      } catch (error) {
+        setVisibleProgress(false);
+        const pilaError = combinarErrores(error);
+        // mostramos feedback de error
+        setFeedbackMessages({
+          style_message: "error",
+          feedback_description_error: pilaError,
+        });
+        handleClickFeedback();
+      }
     }
   };
 
   useEffect(() => {
     const controller = new AbortController();
-    console.log(idProduct);
-    obtenerProducto(idProduct);
+    obtenerProducto();
     return () => controller.abort();
   }, []);
 

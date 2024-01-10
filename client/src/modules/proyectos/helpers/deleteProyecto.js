@@ -1,23 +1,18 @@
 import axios from "axios";
 
-export const deleteProyecto = async (idProyecto, updateProyecto, authToken) => {
+export const deleteProyecto = async (idProyecto, body, authToken) => {
   const DOMAIN = import.meta.env.VITE_BACKEND_URL;
-  try {
-    const URL = `${DOMAIN}/api/proyecto/${idProyecto}`;
-    const { data } = await axios.put(
-      URL, 
-      {...updateProyecto},
-      {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${authToken}`,
-        },
-      }
-      );
-    console.log(data)
-    return data;
-  }
-  catch (error) {
-    throw error
-  }
+  const URL = `${DOMAIN}/api/proyecto/${idProyecto}`;
+  const { data } = await axios.put(
+    URL, 
+    {...body},
+    {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${authToken}`,
+      },
+    }
+  );
+  console.log(data)
+  return data;
 };

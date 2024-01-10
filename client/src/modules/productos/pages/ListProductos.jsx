@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import {
   deleteProducto,
   getProductosActivos,
@@ -10,12 +10,14 @@ import {
   CustomCircularProgress,
   CustomTablePagination,
 } from "../../../components";
+import { AuthContext } from "../../../auth";
 import { CustomInputBase } from "../../../components/CustomInputBase";
 import { Button } from "@mui/material";
 import { MdAdd, MdHdrPlus, MdPlusOne } from "react-icons/md";
 import { CustomTableProducto } from "../../../components/CustomTableProducto";
 
 export const ListProductos = () => {
+  const { authTokens } = useContext(AuthContext);
   const [productos, setProductos] = useState([]);
   const [productosTemporal, setProductosTemporal] = useState([]);
 
@@ -48,14 +50,29 @@ export const ListProductos = () => {
   };
 
   const obtenerProductos = async () => {
-    let result = [];
-    if (activeButton) {
-      result = await getProductosActivos();
-    } else {
-      result = await getProductosInactivos();
+    setVisibleProgress(true);
+    try {
+      let result = [];
+      if (activeButton) {
+        result = await getProductosActivos({ authToken: authTokens["access"] });
+      } else {
+        result = await getProductosInactivos({
+          authToken: authTokens["access"],
+        });
+      }
+      setProductos(result);
+      setProductosTemporal(result);
+      setVisibleProgress(false);
+    } catch (error) {
+      setVisibleProgress(false);
+      const pilaError = combinarErrores(error);
+      // mostramos feedback de error
+      setFeedbackMessages({
+        style_message: "error",
+        feedback_description_error: pilaError,
+      });
+      handleClickFeedback();
     }
-    setProductos(result);
-    setProductosTemporal(result);
   };
 
   const onDeleteItemSelected = async (item) => {
@@ -89,8 +106,6 @@ export const ListProductos = () => {
   };
 
   useEffect(() => {
-    // Necesitamos controllar el retorno, cancelar la solicitud
-    // cuando se quita el componente.
     setVisibleProgress(true);
     const controller = new AbortController();
     obtenerProductos();

@@ -1,12 +1,12 @@
 import axios from "axios";
 
-export const updateProyecto = async (idProyecto, updatedProyecto, authToken) => {
+export const updateProyecto = async (idProyecto, body, authToken) => {
   const DOMAIN = import.meta.env.VITE_BACKEND_URL;
   const URL = `${DOMAIN}/api/proyecto/${idProyecto}`;
-  console.log(updateProyecto);
+  console.log(URL);
   const { data } = await axios.put(
     URL, 
-    {...updatedProyecto,},
+    {...body,},
     {
       headers: {
         "Content-Type": "application/json",

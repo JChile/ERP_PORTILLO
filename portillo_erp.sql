@@ -22,8 +22,8 @@ SET row_security = off;
 
 COPY public.auth_group (id, name) FROM stdin;
 2	marketing
-3	recursos_humanos
 1	asesor
+3	recursos_humanos
 4	jefe_ventas
 \.
 
@@ -194,10 +194,6 @@ COPY public.auth_permission (id, name, content_type_id, codename) FROM stdin;
 --
 
 COPY public.auth_group_permissions (id, group_id, permission_id) FROM stdin;
-5	4	57
-6	4	58
-7	4	59
-8	4	60
 9	3	32
 10	3	29
 11	3	30
@@ -226,9 +222,27 @@ COPY public.auth_group_permissions (id, group_id, permission_id) FROM stdin;
 42	3	58
 43	3	59
 44	3	60
-49	4	56
 50	1	56
-51	4	104
+53	4	32
+54	4	41
+55	4	42
+56	4	43
+57	4	44
+58	4	9
+59	4	10
+60	4	11
+61	4	12
+66	4	29
+67	4	30
+68	4	31
+73	4	56
+74	4	53
+75	4	54
+76	4	55
+77	4	104
+78	4	101
+79	4	102
+80	4	103
 \.
 
 
@@ -247,11 +261,11 @@ I	Inactivo
 --
 
 COPY public.cuenta_modulo (id, nombre, url, "contentType_id", estado_id) FROM stdin;
-7	Gestión de leads	lead	15	A
-2	Gestion de campañas	campania	11	A
-3	Gestion de roles	rol	3	A
+7	Gestión de leads	lead	14	A
+6	Gestion de eventos	evento	26	A
 5	Gestion de usuarios	usuario	8	A
-6	Gestion de eventos	evento	27	A
+3	Gestion de roles	rol	3	A
+2	Gestion de campañas	campania	11	A
 \.
 
 
@@ -259,10 +273,10 @@ COPY public.cuenta_modulo (id, nombre, url, "contentType_id", estado_id) FROM st
 -- Data for Name: cuenta_user; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public.cuenta_user (id, password, last_login, is_superuser, username, first_name, last_name, email, is_staff, is_active, date_joined, "codigoAsesor", estado_id, "isAdmin") FROM stdin;
-1	pbkdf2_sha256$600000$BMJ8LF8DGDtK75g1jlAJbH$pvS/k25Y+f0BUQQBOycCYkIImuQJm/vZkxb3UI3Qpzg=	2024-01-05 12:53:39.631364-05	t	andrew				t	t	2023-12-29 14:19:22-05	asesor_a	A	f
-3	pbkdf2_sha256$600000$klVf2T6ADjhRpycBvEt8mp$AqHTHE0zXd/LS2/HgIt5bp7hsUGFWm0qJuRp7xPbz9A=	\N	f	jesus	Jesus	begazo		t	t	2024-01-05 14:56:34.558953-05	\N	\N	f
-2	pbkdf2_sha256$600000$Ntgg4ISllhxBbS1dKBkaxF$NDEQuIj95L9YZlaRkumq6mh4nhjUnNnndDsjMahaQj8=	2023-12-30 10:59:21-05	t	qwerty	BRIAN	VELASCO		t	t	2023-12-29 14:19:38-05	04014	A	t
+COPY public.cuenta_user (id, password, last_login, is_superuser, username, first_name, last_name, email, is_staff, is_active, date_joined, "codigoAsesor", "isAdmin", estado_id) FROM stdin;
+3	pbkdf2_sha256$600000$klVf2T6ADjhRpycBvEt8mp$AqHTHE0zXd/LS2/HgIt5bp7hsUGFWm0qJuRp7xPbz9A=	\N	f	jesus	Jesus	begazo		t	t	2024-01-05 14:56:34-05	\N	f	A
+2	pbkdf2_sha256$600000$Ntgg4ISllhxBbS1dKBkaxF$NDEQuIj95L9YZlaRkumq6mh4nhjUnNnndDsjMahaQj8=	2023-12-30 10:59:21-05	t	qwerty	BRIAN	VELASCO		t	t	2023-12-29 14:19:38-05	\N	t	A
+1	pbkdf2_sha256$600000$BMJ8LF8DGDtK75g1jlAJbH$pvS/k25Y+f0BUQQBOycCYkIImuQJm/vZkxb3UI3Qpzg=	2024-01-05 12:53:39-05	t	andrew				t	t	2023-12-29 14:19:22-05	asesor_a	t	A
 \.
 
 
@@ -271,9 +285,9 @@ COPY public.cuenta_user (id, password, last_login, is_superuser, username, first
 --
 
 COPY public.cuenta_user_groups (id, user_id, group_id) FROM stdin;
-4	1	1
 10	3	3
 11	2	4
+12	1	4
 \.
 
 
@@ -389,6 +403,26 @@ COPY public.django_admin_log (id, action_time, object_id, object_repr, action_fl
 96	2024-01-05 14:58:53.216346-05	4	jefe_ventas	2	[{"changed": {"fields": ["Permissions"]}}]	3	1
 97	2024-01-05 14:59:23.221808-05	2	qwerty	2	[{"changed": {"fields": ["IsAdmin"]}}]	8	1
 98	2024-01-05 15:02:09.640605-05	2	qwerty	2	[{"changed": {"fields": ["Superuser status", "IsAdmin"]}}]	8	1
+99	2024-01-05 23:01:43.932013-05	2	qwerty	2	[{"changed": {"fields": ["IsAdmin"]}}]	8	1
+100	2024-01-05 23:02:14.517595-05	2	qwerty	2	[{"changed": {"fields": ["Superuser status"]}}]	8	1
+101	2024-01-05 23:02:30.455227-05	2	qwerty	2	[{"changed": {"fields": ["Superuser status", "IsAdmin"]}}]	8	1
+102	2024-01-07 23:30:21.428962-05	3	jesus	2	[{"changed": {"fields": ["Superuser status", "CodigoAsesor", "Estado"]}}]	8	1
+103	2024-01-07 23:30:35.688826-05	3	jesus	2	[{"changed": {"fields": ["Superuser status"]}}]	8	1
+104	2024-01-07 23:31:31.394232-05	3	recursos_humanos	2	[{"changed": {"fields": ["Permissions"]}}]	3	1
+105	2024-01-07 23:33:06.844132-05	3	recursos_humanos	2	[{"changed": {"fields": ["Permissions"]}}]	3	1
+106	2024-01-07 23:35:40.727241-05	3	jesus	2	[{"changed": {"fields": ["CodigoAsesor"]}}]	8	1
+107	2024-01-07 23:35:47.051551-05	3	jesus	2	[]	8	1
+108	2024-01-07 23:35:53.658531-05	2	qwerty	2	[{"changed": {"fields": ["CodigoAsesor"]}}]	8	1
+109	2024-01-08 22:49:51.222861-05	1	andrew	2	[{"changed": {"fields": ["Groups", "IsAdmin"]}}]	8	1
+110	2024-01-08 22:54:34.473098-05	4	jefe_ventas	2	[{"changed": {"fields": ["Permissions"]}}]	3	1
+111	2024-01-08 22:56:56.274476-05	7	Gestión de leads	2	[{"changed": {"fields": ["ContentType"]}}]	7	1
+112	2024-01-09 20:29:18.426102-05	6	Gestion de eventos	2	[{"changed": {"fields": ["ContentType"]}}]	7	1
+113	2024-01-09 20:29:21.665968-05	5	Gestion de usuarios	2	[]	7	1
+114	2024-01-09 20:29:49.296579-05	3	Gestion de roles	2	[]	7	1
+115	2024-01-09 20:29:53.609334-05	2	Gestion de campañas	2	[]	7	1
+116	2024-01-09 20:39:08.315155-05	9	Jesus-958742315	2	[{"changed": {"fields": ["Estado"]}}]	14	1
+117	2024-01-09 20:48:33.506977-05	1	Firma del contrato de socabaya	2	[{"changed": {"fields": ["Estado"]}}]	26	1
+118	2024-01-09 20:48:42.918603-05	1	Firma del contrato de socabaya	2	[{"changed": {"fields": ["Estado"]}}]	26	1
 \.
 
 
@@ -397,43 +431,38 @@ COPY public.django_admin_log (id, action_time, object_id, object_repr, action_fl
 --
 
 COPY public.django_migrations (id, app, name, applied) FROM stdin;
-1	contenttypes	0001_initial	2024-01-02 22:42:34.368577-05
-2	contenttypes	0002_remove_content_type_name	2024-01-02 22:42:34.37881-05
-3	auth	0001_initial	2024-01-02 22:42:34.426085-05
-4	auth	0002_alter_permission_name_max_length	2024-01-02 22:42:34.433533-05
-5	auth	0003_alter_user_email_max_length	2024-01-02 22:42:34.442178-05
-6	auth	0004_alter_user_username_opts	2024-01-02 22:42:34.453744-05
-7	auth	0005_alter_user_last_login_null	2024-01-02 22:42:34.470232-05
-8	auth	0006_require_contenttypes_0002	2024-01-02 22:42:34.47324-05
-9	auth	0007_alter_validators_add_error_messages	2024-01-02 22:42:34.499741-05
-10	auth	0008_alter_user_username_max_length	2024-01-02 22:42:34.510594-05
-11	auth	0009_alter_user_last_name_max_length	2024-01-02 22:42:34.521811-05
-12	auth	0010_alter_group_name_max_length	2024-01-02 22:42:34.529435-05
-13	auth	0011_update_proxy_permissions	2024-01-02 22:42:34.538117-05
-14	auth	0012_alter_user_first_name_max_length	2024-01-02 22:42:34.549424-05
-15	cuenta	0001_initial	2024-01-02 22:42:34.641032-05
-16	admin	0001_initial	2024-01-02 22:42:34.687527-05
-17	admin	0002_logentry_remove_auto_add	2024-01-02 22:42:34.705988-05
-18	admin	0003_logentry_add_action_flag_choices	2024-01-02 22:42:34.730565-05
-19	marketing	0001_initial	2024-01-02 22:42:34.859062-05
-20	sessions	0001_initial	2024-01-02 22:42:34.881107-05
-21	token_blacklist	0001_initial	2024-01-02 22:42:34.967394-05
-22	token_blacklist	0002_outstandingtoken_jti_hex	2024-01-02 22:42:34.991734-05
-23	token_blacklist	0003_auto_20171017_2007	2024-01-02 22:42:35.022249-05
-24	token_blacklist	0004_auto_20171017_2013	2024-01-02 22:42:35.06062-05
-25	token_blacklist	0005_remove_outstandingtoken_jti	2024-01-02 22:42:35.085555-05
-26	token_blacklist	0006_auto_20171017_2113	2024-01-02 22:42:35.108082-05
-27	token_blacklist	0007_auto_20171017_2214	2024-01-02 22:42:35.174396-05
-28	token_blacklist	0008_migrate_to_bigautofield	2024-01-02 22:42:35.277299-05
-29	token_blacklist	0010_fix_migrate_to_bigautofield	2024-01-02 22:42:35.307366-05
-30	token_blacklist	0011_linearizes_history	2024-01-02 22:42:35.310173-05
-31	token_blacklist	0012_alter_outstandingtoken_user	2024-01-02 22:42:35.389299-05
-32	ventas	0001_initial	2024-01-02 22:42:36.238101-05
-36	cuenta	0002_user_proyecto	2024-01-02 22:45:56.177684-05
-37	cuenta	0002_initial	2024-01-02 23:58:55.403757-05
-38	cuenta	0003_user_proyecto_user_user_permissions	2024-01-05 12:06:59.977628-05
-39	cuenta	0004_auto_20240105_1207	2024-01-05 12:08:36.334284-05
-40	cuenta	0005_remove_user_proyecto	2024-01-05 22:00:20.06556-05
+1	contenttypes	0001_initial	2024-01-08 22:44:48.815258-05
+2	contenttypes	0002_remove_content_type_name	2024-01-08 22:44:48.823537-05
+3	auth	0001_initial	2024-01-08 22:44:48.869141-05
+4	auth	0002_alter_permission_name_max_length	2024-01-08 22:44:48.874951-05
+5	auth	0003_alter_user_email_max_length	2024-01-08 22:44:48.882534-05
+6	auth	0004_alter_user_username_opts	2024-01-08 22:44:48.891459-05
+7	auth	0005_alter_user_last_login_null	2024-01-08 22:44:48.902481-05
+8	auth	0006_require_contenttypes_0002	2024-01-08 22:44:48.907161-05
+9	auth	0007_alter_validators_add_error_messages	2024-01-08 22:44:48.919712-05
+10	auth	0008_alter_user_username_max_length	2024-01-08 22:44:48.931174-05
+11	auth	0009_alter_user_last_name_max_length	2024-01-08 22:44:48.941316-05
+12	auth	0010_alter_group_name_max_length	2024-01-08 22:44:48.950474-05
+13	auth	0011_update_proxy_permissions	2024-01-08 22:44:48.961423-05
+14	auth	0012_alter_user_first_name_max_length	2024-01-08 22:44:48.972618-05
+15	cuenta	0001_initial	2024-01-08 22:44:49.071562-05
+16	admin	0001_initial	2024-01-08 22:44:49.110841-05
+17	admin	0002_logentry_remove_auto_add	2024-01-08 22:44:49.128538-05
+18	admin	0003_logentry_add_action_flag_choices	2024-01-08 22:44:49.156163-05
+19	marketing	0001_initial	2024-01-08 22:44:49.284164-05
+20	sessions	0001_initial	2024-01-08 22:44:49.304465-05
+21	token_blacklist	0001_initial	2024-01-08 22:44:49.37415-05
+22	token_blacklist	0002_outstandingtoken_jti_hex	2024-01-08 22:44:49.397314-05
+23	token_blacklist	0003_auto_20171017_2007	2024-01-08 22:44:49.434732-05
+24	token_blacklist	0004_auto_20171017_2013	2024-01-08 22:44:49.467516-05
+25	token_blacklist	0005_remove_outstandingtoken_jti	2024-01-08 22:44:49.492548-05
+26	token_blacklist	0006_auto_20171017_2113	2024-01-08 22:44:49.514575-05
+27	token_blacklist	0007_auto_20171017_2214	2024-01-08 22:44:49.561267-05
+28	token_blacklist	0008_migrate_to_bigautofield	2024-01-08 22:44:49.637554-05
+29	token_blacklist	0010_fix_migrate_to_bigautofield	2024-01-08 22:44:49.676807-05
+30	token_blacklist	0011_linearizes_history	2024-01-08 22:44:49.681568-05
+31	token_blacklist	0012_alter_outstandingtoken_user	2024-01-08 22:44:49.712454-05
+32	ventas	0001_initial	2024-01-08 22:44:50.704467-05
 \.
 
 
@@ -534,6 +563,35 @@ COPY public.token_blacklist_outstandingtoken (id, token, created_at, expires_at,
 50	eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTcwNDU3MTAzMywiaWF0IjoxNzA0NDg0NjMzLCJqdGkiOiI0OTdiZjJmMWMyZjY0Y2IzYjMyZDNiMjY2ZTk3ZjU0YyIsInVzZXJfaWQiOjJ9.GKqh1ZRSdxr6tt-MDciSMlRRcz-ACWaryCO19u2I290	2024-01-05 14:57:13.262733-05	2024-01-06 14:57:13-05	2	497bf2f1c2f64cb3b32d3b266e97f54c
 51	eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTcwNDU3MTIzOSwiaWF0IjoxNzA0NDg0ODM5LCJqdGkiOiIxMzI0YTVlOTM1MmQ0ZjZkYjgwNzI4NDE1Y2FjOGVlNSIsInVzZXJfaWQiOjJ9.JiE8lyYMsXGQnz8u7GNenF5Z7eV-zFV8jnFIcmK8r24	2024-01-05 15:00:39.962832-05	2024-01-06 15:00:39-05	2	1324a5e9352d4f6db80728415cac8ee5
 52	eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTcwNDU5ODI4NiwiaWF0IjoxNzA0NTExODg2LCJqdGkiOiJmNWRjMjgxYWRhOTE0MzNiYTBjY2EwN2ZmNWI0ODBjOSIsInVzZXJfaWQiOjJ9.1blTdeHigMeE317ZRdfmwRfLnxEwzba88TXgCVv8XkA	2024-01-05 22:31:26.386921-05	2024-01-06 22:31:26-05	2	f5dc281ada91433ba0cca07ff5b480c9
+53	eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTcwNDU5OTg2NCwiaWF0IjoxNzA0NTEzNDY0LCJqdGkiOiIxYWU1ZmJiMjQ4OTU0Y2Y3YjkyODYxYmY0NWFjNmMyOCIsInVzZXJfaWQiOjJ9.Rr_VER_KpGlxgyuhVRhAOr9vc-XIWr4R1g4JSPWlRaQ	2024-01-05 22:57:44.859728-05	2024-01-06 22:57:44-05	2	1ae5fbb248954cf7b92861bf45ac6c28
+54	eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTcwNDc3NDA0NCwiaWF0IjoxNzA0Njg3NjQ0LCJqdGkiOiI1YWU4NGUzOTQ5NjM0MjlhYmY5MDhkYjcyMzYyNDAyNyIsInVzZXJfaWQiOjJ9.ryGPIgSZBRB1f9ESAH50Sz_tkNQHkvxOK7k1Kue2fWg	2024-01-07 23:20:44.486488-05	2024-01-08 23:20:44-05	2	5ae84e394963429abf908db723624027
+55	eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTcwNDc3NDU0MSwiaWF0IjoxNzA0Njg4MTQxLCJqdGkiOiJkMjFmNzAyNGEyNDA0MWYxYjllNzdkODJlZjM0NzMwOCIsInVzZXJfaWQiOjJ9.ax8KHzic__cu2E4TRFwVE1o2h9u5p8zsgzH2CjstwTk	2024-01-07 23:29:01.525964-05	2024-01-08 23:29:01-05	2	d21f7024a24041f1b9e77d82ef347308
+56	eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTcwNDc3NDU1OSwiaWF0IjoxNzA0Njg4MTU5LCJqdGkiOiJiMzI3MWIwMWMyNzI0ZWU1Yjc4ZGE0ZWVhYzAxZjlmNSIsInVzZXJfaWQiOjN9.83gWRmhMXdOVbXlynHZZiEfdn-KmUjGqi2ZMXlAmz60	2024-01-07 23:29:19.099941-05	2024-01-08 23:29:19-05	3	b3271b01c2724ee5b78da4eeac01f9f5
+57	eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTcwNDg1NzgyOCwiaWF0IjoxNzA0NzcxNDI4LCJqdGkiOiI5MDRhNTI4ODRhN2U0Njk4OGNiNWM4YjIxMGNjMTU1MCIsInVzZXJfaWQiOjJ9.opJnTry_JdkS34c3WfirCbrmNBGUi53Jko7ffj7L9pU	2024-01-08 22:37:08.378864-05	2024-01-09 22:37:08-05	2	904a52884a7e46988cb5c8b210cc1550
+58	eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTcwNDg1Nzg3OSwiaWF0IjoxNzA0NzcxNDc5LCJqdGkiOiIyM2U3MjYyMGQ5MTk0Zjg2ODNkZjY5Y2RmZGQ2YWE3YiIsInVzZXJfaWQiOjJ9.PxiOw8nIDjEDD75j_lDG7CMoao72RcMS-laJJLLaP4I	2024-01-08 22:37:59.33265-05	2024-01-09 22:37:59-05	2	23e72620d9194f8683df69cdfdd6aa7b
+59	eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTcwNDg1Nzg4MywiaWF0IjoxNzA0NzcxNDgzLCJqdGkiOiIyMGE3MGNhNWViMzM0ZmNhOWNhZDIzMWU0ZGRhZjVlNiIsInVzZXJfaWQiOjJ9.4Jm1rtb95s_rzG0qhrp0Vdv4iP-d2el9xPAVKmdZSRI	2024-01-08 22:38:03.795904-05	2024-01-09 22:38:03-05	2	20a70ca5eb334fca9cad231e4ddaf5e6
+60	eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTcwNDg1ODAzMywiaWF0IjoxNzA0NzcxNjMzLCJqdGkiOiJjNTI4NTI1MDcwYzA0ZGQ0OTM3MjVkNDg3NTkxMTg1NiIsInVzZXJfaWQiOjJ9.E1zyRRJnJYGvHcWDZIfUQLTX_vZFcgCvoy73oDHMuWI	2024-01-08 22:40:33.745069-05	2024-01-09 22:40:33-05	2	c528525070c04dd493725d4875911856
+61	eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTcwNDg1ODMwMywiaWF0IjoxNzA0NzcxOTAzLCJqdGkiOiJiMTdiMzk5OWEzNDQ0OWU5ODVlNTYwOTEyZWVjYzA5NCIsInVzZXJfaWQiOjJ9.EsqHQLBbIdX4Xl2iUDbPV2zt_A8Pk-0PZfnrHZU554g	2024-01-08 22:45:03.003009-05	2024-01-09 22:45:03-05	2	b17b3999a34449e985e560912eecc094
+62	eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTcwNDg1ODUxNCwiaWF0IjoxNzA0NzcyMTE0LCJqdGkiOiJkYzJjMDc5Zjk5NmE0ZmU5YTAzMGI0MDdjZGE3NTY1OSIsInVzZXJfaWQiOjJ9.AYtw57bc_CTkA1Zu_Ga4Ui_ubl6FV43j8ofRXyo8fQw	2024-01-08 22:48:34.581386-05	2024-01-09 22:48:34-05	2	dc2c079f996a4fe9a030b407cda75659
+63	eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTcwNDg1ODU1MywiaWF0IjoxNzA0NzcyMTUzLCJqdGkiOiJiZGYxMTBhNmU0YzU0NzcwYmMzNmFjYjk5NGYzNjU0OSIsInVzZXJfaWQiOjF9.4psZVUlxKh6Yv2Ohj7MzZ49-hdKUPARaZbD_xAijEJk	2024-01-08 22:49:13.423384-05	2024-01-09 22:49:13-05	1	bdf110a6e4c54770bc36acb994f36549
+64	eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTcwNDg1ODU5OSwiaWF0IjoxNzA0NzcyMTk5LCJqdGkiOiI5ZDMyOWM3YjllNjA0NDQ0YWVkYTEzMzAwYTIwZDVjMyIsInVzZXJfaWQiOjF9.8qrvNwP6TtWq27-uFa_mqK6EVvUm3I_RdJtQOx3dtHQ	2024-01-08 22:49:59.128665-05	2024-01-09 22:49:59-05	1	9d329c7b9e604444aeda13300a20d5c3
+65	eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTcwNDg1ODYzMSwiaWF0IjoxNzA0NzcyMjMxLCJqdGkiOiJlMzA3ZGU1YTU2ZjI0MGQxOTNlMTdiYzIwYmYzOTgwZSIsInVzZXJfaWQiOjN9.ZuoaAlDekCiyRn85S-Twjl0D9NxuvnyX0VBNYHjs5JE	2024-01-08 22:50:31.624891-05	2024-01-09 22:50:31-05	3	e307de5a56f240d193e17bc20bf3980e
+66	eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTcwNDg1ODczMCwiaWF0IjoxNzA0NzcyMzMwLCJqdGkiOiJkNWZjZjU2N2NhN2M0YmEzOTEwNDA3MThkMjg5MTNhOCIsInVzZXJfaWQiOjF9.KOF-jzHdhEHPYqgYL8khOgOOwX_-YrXPupUD0ai7OLQ	2024-01-08 22:52:10.786113-05	2024-01-09 22:52:10-05	1	d5fcf567ca7c4ba391040718d28913a8
+67	eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTcwNDg1ODc4MCwiaWF0IjoxNzA0NzcyMzgwLCJqdGkiOiI3Yjc2N2RkN2NiNGU0YjMwOGRhNDI4MjFkYzk2YmIzOCIsInVzZXJfaWQiOjN9.seTj4AeOfGf6TlTJrulJOGDdyTwSR3o7yAPJw3OBeKs	2024-01-08 22:53:00.621725-05	2024-01-09 22:53:00-05	3	7b767dd7cb4e4b308da42821dc96bb38
+68	eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTcwNDg1ODc4MSwiaWF0IjoxNzA0NzcyMzgxLCJqdGkiOiIxZGY4OTA3NGU2Zjc0OGY5OTIwMmI4YmM5N2Y4YjY2OCIsInVzZXJfaWQiOjN9.c5KLWFrcQa1ysvTNC_I5mjQfZblaiUpB_mSw9uB2V9k	2024-01-08 22:53:01.649058-05	2024-01-09 22:53:01-05	3	1df89074e6f748f99202b8bc97f8b668
+69	eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTcwNDg1ODgwNywiaWF0IjoxNzA0NzcyNDA3LCJqdGkiOiIyZGRkMTk4NTE3NDg0MDhjYTYzODFlMDExZmYzY2JhMSIsInVzZXJfaWQiOjF9.bssjtYhQ-wsZ9zy9gl8nV0CM1XTNrNB8CA1Iq84O1lg	2024-01-08 22:53:27.99706-05	2024-01-09 22:53:27-05	1	2ddd19851748408ca6381e011ff3cba1
+70	eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTcwNDg1OTAzMiwiaWF0IjoxNzA0NzcyNjMyLCJqdGkiOiJlYTAwZGU2ZTIxZTg0OWI3YjFjMjM5MGZhMWJhZDc5OSIsInVzZXJfaWQiOjF9.nVmPMwIjXqOrRIXbiTPUbUdkIBfWWv7ESBWxiK_wdyM	2024-01-08 22:57:12.725778-05	2024-01-09 22:57:12-05	1	ea00de6e21e849b7b1c2390fa1bad799
+71	eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTcwNDg1OTA1NywiaWF0IjoxNzA0NzcyNjU3LCJqdGkiOiIxNzE2OWMxNWFjODY0N2EzYjgyYTY0NDBiZWIxOThjMSIsInVzZXJfaWQiOjF9.KAFjLqeim3SZQx8aFIwVGUaR50r9epUpOiGIOnJdHBA	2024-01-08 22:57:37.701841-05	2024-01-09 22:57:37-05	1	17169c15ac8647a3b82a6440beb198c1
+72	eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTcwNDg1OTEwOCwiaWF0IjoxNzA0NzcyNzA4LCJqdGkiOiI4YzM0NTk2MWQ0MDQ0ZmVhYWEzZGI3ODk1MWE3YzdkYyIsInVzZXJfaWQiOjJ9.WgJnhe-2YP0GAuJ40beAdRCmCMTdjN6uXsCbCJaN1yc	2024-01-08 22:58:28.148638-05	2024-01-09 22:58:28-05	2	8c345961d4044feaaa3db78951a7c7dc
+73	eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTcwNDg1OTE0MSwiaWF0IjoxNzA0NzcyNzQxLCJqdGkiOiI3NWIzNzg4OGI3ZjE0YzhiOTFjNzhlMGY0ZmQ5MWE5NSIsInVzZXJfaWQiOjJ9.HBeN5Gtv5wjQTsYUMxbr_Ce_n9jIcI--PTyy2a3lY3k	2024-01-08 22:59:01.75834-05	2024-01-09 22:59:01-05	2	75b37888b7f14c8b91c78e0f4fd91a95
+74	eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTcwNDkzNjYyMywiaWF0IjoxNzA0ODUwMjIzLCJqdGkiOiI0YWYwMzQ3ZTc1ZDk0MmMzOTc3Zjg4NmRhOWExNGExMiIsInVzZXJfaWQiOjF9.C7n89IBGS2zq4BULs80N4ZkanhtR4IFsKE0vdwcU5Uo	2024-01-09 20:30:23.464404-05	2024-01-10 20:30:23-05	1	4af0347e75d942c3977f886da9a14a12
+75	eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTcwNDkzNjkyMiwiaWF0IjoxNzA0ODUwNTIyLCJqdGkiOiIyM2FmNzQ5ZDFiNjQ0ZmIyYmRhZTg1MTBlYTJkZGUzYSIsInVzZXJfaWQiOjJ9.BJSJQFUFuLvw9OXzMvmMk-ATG6ltDSln1cXJW4f-vQU	2024-01-09 20:35:22.972323-05	2024-01-10 20:35:22-05	2	23af749d1b644fb2bdae8510ea2dde3a
+76	eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTcwNDkzNzIwOSwiaWF0IjoxNzA0ODUwODA5LCJqdGkiOiJjNDFmZTZhZDI3YmI0MDAxOWVhZWRlZTU0OGE4OTMwYSIsInVzZXJfaWQiOjJ9.uGAvArkXMaBL23xAgMDk6yuvAojBMkpPkrvXk3uQb0E	2024-01-09 20:40:09.123414-05	2024-01-10 20:40:09-05	2	c41fe6ad27bb40019eaedee548a8930a
+77	eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTcwNDkzNzYwNSwiaWF0IjoxNzA0ODUxMjA1LCJqdGkiOiI3ZWQwMGViM2Y3YjQ0MTJjODIyZTc3YmE5ZjhlY2Q4ZCIsInVzZXJfaWQiOjJ9.k7ACIZ3Gbbx5ooxO8Z6QbsaePBA4B_j9qsNuZN1jQ6c	2024-01-09 20:46:45.506853-05	2024-01-10 20:46:45-05	2	7ed00eb3f7b4412c822e77ba9f8ecd8d
+78	eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTcwNDkzNzk3OCwiaWF0IjoxNzA0ODUxNTc4LCJqdGkiOiI4MDk5M2I0NmIwNjc0Y2UzODhjYTA0ZmE3ODg2ZmI4YyIsInVzZXJfaWQiOjJ9.qEwmdMuGS91RbroCsx0CBlECL9WvJtojxFX7ArjGZ5Q	2024-01-09 20:52:58.845074-05	2024-01-10 20:52:58-05	2	80993b46b0674ce388ca04fa7886fb8c
+79	eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTcwNDkzODAwMCwiaWF0IjoxNzA0ODUxNjAwLCJqdGkiOiI4ZGQxY2QwZWIyZTA0MmEzYjA5MDhiNmFjOTBlYzQzNiIsInVzZXJfaWQiOjF9.lm44WWCjGCp3Dt6FjGfjdOHYsXnS7jhgK8bDIDMf-zs	2024-01-09 20:53:20.402004-05	2024-01-10 20:53:20-05	1	8dd1cd0eb2e042a3b0908b6ac90ec436
+80	eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTcwNDkzODAyNSwiaWF0IjoxNzA0ODUxNjI1LCJqdGkiOiI5ZWFjY2MzODhmZTM0NDI2YjgwZWJjYjQwNmNlMmY5MCIsInVzZXJfaWQiOjF9.d1q4fG6fDz4ZctBMF-Y9ZOlLyNmhg_FnYOV5ff9TDH0	2024-01-09 20:53:45.799918-05	2024-01-10 20:53:45-05	1	9eaccc388fe34426b80ebcb406ce2f90
+81	eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTcwNDkzODA4NywiaWF0IjoxNzA0ODUxNjg3LCJqdGkiOiI2MTExODk1OTBkY2Q0YzVkOGU0YmY3MTEyYjI2NWE0MSIsInVzZXJfaWQiOjJ9.XvtRS1yiF4yd3IRuQCLUOHA43hrP7NgkidsFORc4bOw	2024-01-09 20:54:47.861138-05	2024-01-10 20:54:47-05	2	611189590dcd4c5d8e4bf7112b265a41
 \.
 
 
@@ -625,8 +683,8 @@ COPY public.ventas_lead (id, nombre, apellido, asignado, celular, celular2, come
 7			t	934789123			2023-12-29 18:34:47.930827-05	t	t	2023-12-29	\N	1	3	A	EP	1	1	1
 10			t	934789123			2023-12-29 18:35:30.289934-05	t	t	2023-12-29	\N	1	3	A	EP	1	1	1
 8	Juan	Reynoso	t	987564231		Pidio un asesor personal	2023-10-04 00:00:00-05	t	t	2023-12-29	\N	1	1	A	EP	1	1	1
-9	Jesus		t	958742315			2023-12-29 18:35:30.279107-05	t	t	2023-12-29	\N	1	2	A	EP	1	1	1
 6	Jesus		t	958742315			2023-12-29 18:34:47.913955-05	t	t	2023-12-29	\N	1	2	A	EP	1	1	1
+9	Jesus		t	958742315			2023-12-29 18:35:30-05	t	t	2024-01-09	\N	1	2	I	EP	1	1	1
 \.
 
 
@@ -645,7 +703,7 @@ COPY public.ventas_tipoevento (id, nombre, estado_id) FROM stdin;
 --
 
 COPY public.ventas_evento (id, titulo, duracion, fecha_visita, ubicacion, descripcion, fecha_creacion, fecha_actualizacion, asesor_id, estado_id, lead_id, proyecto_id, tipo_id, "usuarioActualizador_id", "usuarioCreador_id") FROM stdin;
-1	Firma del contrato de socabaya	50	2023-12-29 22:12:30-05	socabaya		2024-01-05	2023-12-29 22:13:24-05	2	A	1	1	1	2	1
+1	Firma del contrato de socabaya	50	2023-12-29 22:12:30-05	socabaya		2024-01-09	2023-12-29 22:13:24-05	2	A	1	1	1	2	1
 \.
 
 
@@ -718,7 +776,7 @@ SELECT pg_catalog.setval('public.auth_group_id_seq', 1, true);
 -- Name: auth_group_permissions_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.auth_group_permissions_id_seq', 51, true);
+SELECT pg_catalog.setval('public.auth_group_permissions_id_seq', 80, true);
 
 
 --
@@ -739,7 +797,7 @@ SELECT pg_catalog.setval('public.cuenta_modulo_id_seq', 1, false);
 -- Name: cuenta_user_groups_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.cuenta_user_groups_id_seq', 11, true);
+SELECT pg_catalog.setval('public.cuenta_user_groups_id_seq', 12, true);
 
 
 --
@@ -760,7 +818,7 @@ SELECT pg_catalog.setval('public.cuenta_user_user_permissions_id_seq', 1, true);
 -- Name: django_admin_log_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.django_admin_log_id_seq', 98, true);
+SELECT pg_catalog.setval('public.django_admin_log_id_seq', 118, true);
 
 
 --
@@ -809,7 +867,7 @@ SELECT pg_catalog.setval('public.token_blacklist_blacklistedtoken_id_seq', 1, fa
 -- Name: token_blacklist_outstandingtoken_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.token_blacklist_outstandingtoken_id_seq', 52, true);
+SELECT pg_catalog.setval('public.token_blacklist_outstandingtoken_id_seq', 81, true);
 
 
 --

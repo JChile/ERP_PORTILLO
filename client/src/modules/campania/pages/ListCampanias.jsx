@@ -1,13 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { getCampanias, deleteCampania } from "../helpers";
 import { Link } from "react-router-dom";
-import { DialogDeleteCampania, RowItemCampania } from "../components";
-import {
-  CustomCircularProgress,
-  CustomTablePagination,
-} from "../../../components";
+import { RowItemCampania } from "../components";
+import { CustomCircularProgress } from "../../../components";
 import { CustomInputBase } from "../../../components/CustomInputBase";
-import { CustomTableCampanias } from "../../../components/CustomTableCampanias";
 import {
   Button,
   Paper,
@@ -19,7 +15,7 @@ import {
   TablePagination,
   TableRow,
 } from "@mui/material";
-import { MdAdd, MdHdrPlus, MdPlusOne } from "react-icons/md";
+import { MdAdd } from "react-icons/md";
 import { useCustomTablePagination } from "../../../hooks";
 
 export const ListCampanias = () => {

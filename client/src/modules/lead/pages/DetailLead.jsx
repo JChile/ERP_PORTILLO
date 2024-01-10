@@ -177,7 +177,7 @@ export const DetailLead = () => {
                   Asesor:
                 </span>
                 <span className="block text-sm">
-                  {asesor?.codigo || "No asignado"}
+                  {asesor.asignado ? "No asignado" : "Asignado"}
                 </span>
               </label>
 

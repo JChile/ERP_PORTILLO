@@ -36,6 +36,8 @@ const ListJefeVentasLead = ({ credentials, projectId }) => {
   const [adminData, setAdminData] = useState(null);
   const [filteredLeads, setFilteredLeads] = useState([]);
 
+  console.log({adminData})
+
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };

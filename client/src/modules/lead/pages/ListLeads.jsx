@@ -10,7 +10,7 @@ import { DialogDeleteLead } from "../components/DialogDeleteLead";
 import { HiUserGroup } from "react-icons/hi";
 import { Button } from "@mui/material";
 import { AuthContext } from "../../../auth";
-import { Button, IconButton } from "@mui/material";
+import { IconButton } from "@mui/material";
 
 const headers = [
   { name: "Acciones", width: 20 },

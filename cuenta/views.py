@@ -144,14 +144,15 @@ class UserDetail(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = UserSerializer
 
     #update desacioar, desacociar
-    def update(self, request, *args, **kwargs):
+    def update(self, request, pk = None, *args, **kwargs):
         try:
             desasociar = request.data.pop("desasociar")
         except:
             desasociar = False
         
+
         try:
-            user = self.queryset.get(id = request.data.get("id"))
+            user = self.queryset.get(id = pk)
         except :
             return Response({"Message" : "User no existe"})
         

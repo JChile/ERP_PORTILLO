@@ -144,14 +144,15 @@ class UserDetail(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = UserSerializer
 
     #update desacioar, desacociar
-    def update(self, request, *args, **kwargs):
+    def update(self, request, pk = None, *args, **kwargs):
         try:
             desasociar = request.data.pop("desasociar")
         except:
             desasociar = False
         
+
         try:
-            user = self.queryset.get(id = request.data.get("id"))
+            user = self.queryset.get(id = pk)
         except :
             return Response({"Message" : "User no existe"})
         
@@ -326,4 +327,11 @@ class UserInactivoList(APIView):
         users = User.objects.filter(is_active=False)
         dataJson = UserSerializer(users, many=True, fields=(
             'id', 'first_name', 'last_name', 'username')).data
+        return Response(dataJson)
+
+class UserAsesorList(APIView):
+    def get(self, request):
+        users = User.objects.filter(is_active=True).filter(groups__in = [1])
+        dataJson = UserSerializer(users, many=True, fields=(
+            'id', 'first_name', 'last_name', 'username','codigoAsesor')).data
         return Response(dataJson)

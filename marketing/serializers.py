@@ -9,6 +9,7 @@ class ProyectoSerializer(serializers.ModelSerializer):
     class Meta:
         model = Proyecto
         fields = '__all__'
+
     def __init__(self, *args, **kwargs):
         # Recibe el parámetro 'fields' que contiene los campos deseados
         fields = kwargs.pop('fields', None)
@@ -19,6 +20,8 @@ class ProyectoSerializer(serializers.ModelSerializer):
             existing = set(self.fields)
             for field_name in existing - allowed:
                 self.fields.pop(field_name)
+
+
 
 class CategoriaSerializer(serializers.ModelSerializer):
     class Meta:

@@ -11,15 +11,11 @@ import {
 } from "@mui/material";
 import { useForm } from "../hooks";
 import { createEvent } from "../helpers/eventCases";
-import { useContext, useState } from "react";
-import { AuthContext } from "../../../auth/context/AuthContext";
+import { useState } from "react";
 import { FilterProyectos } from "../../../components";
 import { FilterTipoEvento } from "../../../components/filters/tipoEvento/FilterTipoEvento";
-import { FilterLeads } from "../../../components/filters/lead/FilterLead";
 
-export const DialogForm = ({ isOpen, onClose, lead, token, asesor }) => {
-  const { currentUser, authTokens } = useContext(AuthContext);
-  console.log(authTokens.access)
+export const DialogForm = ({ isOpen, onClose, lead, token, user }) => {
   const { form, handleChangeForm, handleSubmit } = useForm({
     titulo: "",
     duracion: 1,
@@ -28,28 +24,36 @@ export const DialogForm = ({ isOpen, onClose, lead, token, asesor }) => {
     tipo: null,
     proyecto: null,
     horaInicio: "",
+    ubicacion: "",
   });
   const [formErrors, setFormErrors] = useState({});
 
-  const { titulo, proyecto, tipo, descripcion, fecha, horaInicio, duracion } =
-    form;
+  const {
+    titulo,
+    proyecto,
+    tipo,
+    descripcion,
+    fecha,
+    horaInicio,
+    duracion,
+    ubicacion,
+  } = form;
 
   const handleSave = async () => {
     const errors = checkInputForm();
     if (Object.keys(errors).length === 0) {
-      // No hay errores, procede a guardar el evento
       const dateToSave = new Date(`${fecha}T${horaInicio}`);
       const eventSave = {
-        titulo: titulo,
         duracion: duracion,
         fecha_visita: dateToSave.toISOString(),
         descripcion: descripcion,
-        idUsuario: currentUser.user.id,
-        tipo: tipo,
-        proyecto: proyecto,
-        estado: "A",
         lead: lead,
-        asesor: asesor
+        titulo: titulo,
+        tipo: tipo,
+        ubicacion: ubicacion,
+        proyecto: proyecto,
+        usuarioCreador: user,
+        usuarioActualizador: user,
       };
       console.log({ eventSave });
       const result = await createEvent(eventSave, token);
@@ -64,9 +68,6 @@ export const DialogForm = ({ isOpen, onClose, lead, token, asesor }) => {
     const errors = {};
     if (!titulo) {
       errors.titulo = "El título es obligatorio";
-    }
-    if (!descripcion) {
-      errors.descripcion = "La descripción es obligatoria";
     }
     if (!fecha) {
       errors.fecha = "La fecha es obligatoria";
@@ -101,19 +102,13 @@ export const DialogForm = ({ isOpen, onClose, lead, token, asesor }) => {
     });
   };
 
-  const onAddLead = (item) => {
-    handleChangeForm({
-      target: {
-        name: "lead",
-        value: item.id,
-      },
-    });
-  };
-
-  //BackdropProps={{ style: { backgroundColor: "rgba(0, 0, 0, 0.7)" } }}
   return (
     <Backdrop open={isOpen}>
-      <Dialog open={isOpen} onClose={onClose}>
+      <Dialog
+        open={isOpen}
+        onClose={onClose}
+        PaperProps={{ sx: { borderRadius: "0px" } }}
+      >
         <DialogTitle className="text-white font-bold text-center bg-[#282828]">
           Registrar Evento
         </DialogTitle>
@@ -183,6 +178,16 @@ export const DialogForm = ({ isOpen, onClose, lead, token, asesor }) => {
                   value={duracion}
                   onChange={handleChangeForm}
                   name="duracion"
+                  size="small"
+                />
+
+                <TextField
+                  type="text"
+                  label="Ubicación"
+                  placeholder="Ubicación"
+                  value={ubicacion}
+                  onChange={handleChangeForm}
+                  name="ubicacion"
                   size="small"
                 />
               </div>

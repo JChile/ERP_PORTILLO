@@ -87,6 +87,7 @@ export const CalendarView = () => {
 
   // temporary viewr
 
+
   const handleTempFilters = (event) => {
     const { name, checked } = event.target;
     const updatedFilters = {

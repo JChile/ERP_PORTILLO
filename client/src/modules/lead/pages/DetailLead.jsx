@@ -8,7 +8,7 @@ import { AuthContext } from "../../../auth";
 export const DetailLead = () => {
   const { idLead } = useParams();
   const [showDialog, setShowDialog] = useState(false);
-  const { authTokens, } = useContext(AuthContext)
+  const { authTokens, currentUser } = useContext(AuthContext)
   const [lead, setLead] = useState({
     nombre: "",
     apellido: "",
@@ -61,6 +61,7 @@ export const DetailLead = () => {
     return () => controller.abort();
   }, []);
 
+
   return (
     <>
       {showDialog ? (
@@ -69,6 +70,7 @@ export const DetailLead = () => {
           isOpen={showDialog}
           onClose={() => setShowDialog(false)}
           token={authTokens.access}
+          user={currentUser.user_id}
         />
       ) : null}
 

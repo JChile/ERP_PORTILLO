@@ -246,9 +246,12 @@ class EventoList(generics.ListCreateAPIView):
     queryset = Evento.objects.all()
     def post(self, request):
         idUsuario = request.user.pk
-        print("id userr", idUsuario)
+        print("id user", idUsuario)
         try:
-            request.data["asesor"] = User.objects.get(user = idUsuario).pk
+            #print(f"Imprimiendo: {User.objects.get(user=idUsuario).pk}")
+            #print("--->entro")
+            request.data["asesor"] = idUsuario
+            #print("--> se imprime")
             serializer = EventoSerializer(data=request.data)
         except:
             return Response({"message":"El asesor no existe"})
@@ -260,7 +263,6 @@ class EventoList(generics.ListCreateAPIView):
     
     def list(self, request):
         usuarioId = request.user.pk
-        #Hola
 
         if not (bool(request.user.groups.first().permissions.filter(codename = PermissionEvento.CAN_VIEW) or request.user.is_superuser)) :
             return Response({"message" : "Usuario no tiene permisos para ver eventos"}, status=403)

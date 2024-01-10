@@ -11,6 +11,13 @@ import {
   Tab,
   Tabs,
 } from "@mui/material";
+import {
+  MdDataset,
+  MdDateRange,
+  MdDescription,
+  MdLocalActivity,
+  MdLocationPin,
+} from "react-icons/md";
 
 const headers = [
   { name: "Acciones", width: 20 },
@@ -74,28 +81,71 @@ const ListJefeVentasLead = ({ credentials, projectId }) => {
 
   return (
     <React.Fragment>
-      <div>
-        <h1 className="capitalize">Proyecto {adminData?.nombre}</h1>
-      </div>
-      <div>
-        <h2>Información general</h2>
-        <div className="flex gap-x-3">
-          <div className="bg-dark-purple text-white">
-            <p>12</p>
-            <p>Asesores</p>
+      <div className="flex flex-col gap-y-4">
+        <h1 className="capitalize font-semibold text-2xl">
+          Proyecto {adminData?.nombre}
+        </h1>
+        <div className="border rounded flex justify-around items-center bg-slate-100 py-3 px-2">
+          <div className="flex flex-col gap-y-1 items-center">
+            <MdDescription size={28} />
+            <p className="text-lg">Descripción</p>
+            <p className="text-xs">{adminData?.descripcion}</p>
           </div>
-          <div className="bg-dark-purple text-white">
-            <p>30</p>
-            <p>Leads</p>
+          <div className="h-8 w-1 rounded-sm border-black bg-black"></div>
+          <div className="flex flex-col gap-y-1 items-center">
+            <MdDateRange size={28} />
+            <p className="text-lg">Fecha de creación</p>
+            <p className="text-xs">{adminData?.fecha_creacion}</p>
+          </div>
+          <div className="h-8 w-1 rounded-sm border-black bg-black"></div>
+          <div className="flex flex-col gap-y-1 items-center">
+            <MdDateRange size={28} />
+            <p className="text-lg">Fecha de actualización</p>
+            <p className="text-xs">{adminData?.fecha_actualizacion}</p>
+          </div>
+          <div className="h-8 w-1 rounded-sm border-black bg-black"></div>
+          <div className="flex flex-col gap-y-1 items-center">
+            <MdLocationPin size={28} />
+            <p className="text-lg">Ubicación</p>
+            <p className="capitalize text-xs">{adminData?.ubicacion}</p>
           </div>
         </div>
       </div>
 
-      <div className="flex flex-col gap-y-5">
+      {/** ------------------------------------------------------------------ */}
+
+      <div className="flex mt-4 justify-center gap-x-6">
+        <div className="bg-dark-purple flex flex-col rounded items-center w-24 h-24 justify-center text-white">
+          <p className="text-lg">Asesores</p>
+          <p className="text-sm">{adminData?.asesor.length}</p>
+        </div>
+        <div className="bg-dark-purple flex flex-col rounded items-center w-24 h-24 justify-center text-white">
+          <p className="text-lg">Leads</p>
+          <p className="text-sm">{leads.length}</p>
+        </div>
+      </div>
+
+      <div className="mt-4 flex flex-col gap-y-5">
         <Box sx={{ width: "100%" }}>
           <Tabs aria-label="basic tabs" value={value} onChange={handleChange}>
-            <Tab sx={{ textTransform: "capitalize" }} label="Asesores" />
-            <Tab sx={{ textTransform: "capitalize" }} label="Leads" />
+            <Tab
+              sx={{
+                textTransform: "capitalize",
+                fontWeight: "semibold",
+                color: "black",
+                fontSize: "0.9rem",
+              }}
+              label="Asesores"
+            />
+            <Tab
+              sx={{
+                textTransform: "capitalize",
+                fontWeight: "semibold",
+                color: "black",
+                fontSize: "0.9rem",
+              }}
+              label="Leads"
+            />
           </Tabs>
         </Box>
 
@@ -109,15 +159,14 @@ const ListJefeVentasLead = ({ credentials, projectId }) => {
                   </AccordionSummary>
                   <AccordionDetails>
                     <ul>
-                      {
-                      item.lead.map((item, index) => {
+                      {item.lead.map((item, index) => {
                         return (
                           <li key={index} className="capitalize">
-                            {item.celular} - {item.nombre} {item.apellido} - {item.estadoLead}
+                            {item.celular} - {item.nombre} {item.apellido} -{" "}
+                            {item.estadoLead}
                           </li>
                         );
-                      })
-                      }
+                      })}
                     </ul>
                   </AccordionDetails>
                 </Accordion>

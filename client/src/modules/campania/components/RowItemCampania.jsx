@@ -4,7 +4,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { CustomMoreVerticalActions } from "../../../components";
 import { formatDate_ISO861_to_formatdate } from "../../../utils/formatDate";
 
-export const RowItemCampania = ({ item, onShowDeleteDialog }) => {
+export const RowItemCampania = ({ item, onDeleteCampania }) => {
   const { id, nombre, codigo, fecha_creacion, proyecto, categoria, estado } =
     item;
 
@@ -18,9 +18,10 @@ export const RowItemCampania = ({ item, onShowDeleteDialog }) => {
     <TableRow sx={{ "&:last-child td, &:last-child th": { border: 0 } }}>
       <TableCell>
         <CustomMoreVerticalActions
-          onDelete={() => onShowDeleteDialog(item)}
+          onDelete={() => onDeleteCampania(item)}
           onEdit={onEditItemSelected}
           activeOnDelete={estado === "A" ? true : false}
+          descriptionDialog="¿Deseas eliminar esta campaña?"
         />
       </TableCell>
       <TableCell>

@@ -13,7 +13,7 @@ import { RowItemCampania } from "../modules/campania/components";
 export const CustomTableCampanias = ({
   headerData,
   rowData,
-  onShowDeleteDialog,
+  onDeleteCampania,
 }) => {
   const campaniasRow = rowData.map((item) => (
     <RowItemCampania

@@ -8,36 +8,39 @@ import {
 } from "../../../components";
 import { CustomInputBase } from "../../../components/CustomInputBase";
 import { CustomTableCampanias } from "../../../components/CustomTableCampanias";
-import { Button } from "@mui/material";
+import {
+  Button,
+  Paper,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TablePagination,
+  TableRow,
+} from "@mui/material";
 import { MdAdd, MdHdrPlus, MdPlusOne } from "react-icons/md";
+import { useCustomTablePagination } from "../../../hooks";
 
 export const ListCampanias = () => {
   // Informaciion de las campanias.
   const [campanias, setCampanias] = useState([]);
   const [campaniasTemporal, setCampaniasTemporal] = useState([]);
 
+  // definimos el hook de pagination
+  const {
+    page,
+    rowsPerPage,
+    handleChangePage,
+    handleChangeRowsPerPage,
+    paginatedItems,
+  } = useCustomTablePagination(campaniasTemporal);
+
   // Retroalimentacion, estado de progreso.
   const [visibleProgress, setVisibleProgress] = useState(true);
 
   // Control de bottones, campanias activas e inactivas.
   const [activeButton, setActiveButton] = useState(true);
-
-  const [showDialog, setShowDialog] = useState(false);
-  const [itemSeleccionado, setItemSeleccionado] = useState(null);
-
-  // PARA ELIMINAR UN ITEM SELECCIONADO
-  const onCloseDeleteDialog = () => {
-    // ocultamos el modal
-    setShowDialog(false);
-    // dejamos el null la data del detalle
-    setItemSeleccionado(null);
-  };
-
-  // MOSTRAR Y OCULTAR DETALLE DE USUARIO
-  const onShowDeleteDialog = (item) => {
-    setItemSeleccionado(item);
-    setShowDialog(true);
-  };
 
   // Manejar los estados de los filtros
   const handleButtonState = (buttonState) => {
@@ -56,7 +59,7 @@ export const ListCampanias = () => {
     setCampaniasTemporal(result);
   };
 
-  const onDeleteItemSelected = async (item) => {
+  const onEliminarCampania = async (item) => {
     const { id, proyecto, categoria } = item;
     const body = {
       estado: "I",
@@ -148,7 +151,7 @@ export const ListCampanias = () => {
         </div>
       </div>
 
-      <CustomTableCampanias
+      {/* <CustomTableCampanias
         headerData={[
           { name: "Acciones", width: 20 },
           { name: "Nombre", width: 140 },
@@ -159,16 +162,52 @@ export const ListCampanias = () => {
         ]}
         rowData={campaniasTemporal}
         onShowDeleteDialog={onShowDeleteDialog}
-      />
-
-      {showDialog && (
-        <DialogDeleteCampania
-          item={itemSeleccionado}
-          showDialog={showDialog}
-          onDeleteItemSelected={onDeleteItemSelected}
-          onCloseDeleteDialog={onCloseDeleteDialog}
+      /> */}
+      <Paper sx={{ borderRadius: "0px" }}>
+        <TableContainer
+          sx={{ minWidth: 700 }}
+          arial-aria-labelledby="customized table"
+        >
+          <Table>
+            <TableHead>
+              <TableRow
+                sx={{
+                  "& th": {
+                    color: "rgba(200,200,200)",
+                    backgroundColor: "#404040",
+                  },
+                }}
+              >
+                <TableCell width={20}>Acciones</TableCell>
+                <TableCell width={140}>Nombre</TableCell>
+                <TableCell width={70}>Codigo</TableCell>
+                <TableCell width={80}>Fecha inicio</TableCell>
+                <TableCell width={100}>Proyecto</TableCell>
+                <TableCell width={70}>Categoria</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {paginatedItems.map((item) => (
+                <RowItemCampania
+                  key={item.id}
+                  item={item}
+                  onDeleteCampania={onEliminarCampania}
+                />
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
+        {/* PAGINACION DE LA TABLA */}
+        <TablePagination
+          rowsPerPageOptions={[5, 10, 25, 50, 100]}
+          component="div"
+          count={campaniasTemporal.length}
+          rowsPerPage={rowsPerPage}
+          page={page}
+          onPageChange={handleChangePage}
+          onRowsPerPageChange={handleChangeRowsPerPage}
         />
-      )}
+      </Paper>
 
       {/* CIRCULAR PROGRESS */}
       {visibleProgress && <CustomCircularProgress />}

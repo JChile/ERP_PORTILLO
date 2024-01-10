@@ -46,33 +46,38 @@ class ProyectoDetail(generics.RetrieveUpdateDestroyAPIView):
 
         userCreador_data = get_or_none(User, id=proyecto_data["usuarioCreador"])
         userActualizador_data = get_or_none(User, id=proyecto_data["usuarioActualizador"])
+        
 
         try : 
             campania_queryset = Campania.objects.filter(proyecto = proyecto.pk)
             campania_id_list = [int(campania.pk) for campania in campania_queryset]
             lead_queryset = Lead.objects.filter(campania__in=campania_id_list)
-            lead_asesor_list =  [int(lead.asesor.pk) for lead in lead_queryset]
-            asesor_queryset = User.objects.filter(id__in = lead_asesor_list)
+            #lead_asesor_list =  [int(lead.asesor.pk) for lead in lead_queryset]
+            #asesor_queryset = User.objects.filter(id__in = lead_asesor_list)
 
         except :
-            asesor_queryset = User.objects.filter(id= 0)
+            lead_queryset = Lead.objects.filter(id= 0)
 
 
         userCreadorSerializer = UserSerializer(userCreador_data,fields=(
         'id', 'first_name', 'last_name', 'username')) if userCreador_data else None
         userActualizadorializer = UserSerializer(userActualizador_data,fields=(
         'id', 'first_name', 'last_name', 'username')) if userActualizador_data else None
-        asesor_data = UserSerializer(asesor_queryset,fields=(
-        'id', 'first_name', 'last_name', 'username'), many = True).data
+
 
         proyecto_data["usuarioCreador"] = userCreadorSerializer.data if userCreadorSerializer else {}
         proyecto_data["usuarioActualizador"] = userActualizadorializer.data if userActualizadorializer else {}
         
 
         if request.user.isAdmin == True :
-            for i in asesor_data:
-                i["lead"] = LeadSerializer(Lead.objects.filter(asesor = i["id"]), many = True).data
-            proyecto_data["asesor"] = asesor_data if asesor_data else []
+            lead_datajson =  LeadSerializer(lead_queryset, many = True).data
+            for i in lead_datajson:
+                asesor = get_or_none(User, id = i["asesor"])
+                userSerializer = UserSerializer(asesor, fields=(
+                'id', 'first_name', 'last_name', 'username')) if asesor else None
+                i["asesor"] = userSerializer.data if userSerializer else {}
+            proyecto_data["lead"] = lead_datajson
+            #proyecto_data["asesor"] = asesor_data if asesor_data else []
         
         return Response(proyecto_data)
 

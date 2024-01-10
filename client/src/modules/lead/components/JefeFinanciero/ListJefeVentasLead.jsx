@@ -36,7 +36,7 @@ const ListJefeVentasLead = ({ credentials, projectId }) => {
   const [adminData, setAdminData] = useState(null);
   const [filteredLeads, setFilteredLeads] = useState([]);
 
-  console.log({adminData})
+  console.log({ adminData });
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
@@ -118,11 +118,15 @@ const ListJefeVentasLead = ({ credentials, projectId }) => {
 
       <div className="flex mt-4 justify-center gap-x-6">
         <div className="bg-dark-purple flex flex-col rounded items-center w-24 h-24 justify-center text-white">
-          <p className="text-lg">Asesores</p>
-          <p className="text-sm">{adminData?.asesor.length}</p>
+          <p className="text-lg text-center">Total de Leads</p>
+          <p className="text-sm">{leads.length}</p>
         </div>
         <div className="bg-dark-purple flex flex-col rounded items-center w-24 h-24 justify-center text-white">
-          <p className="text-lg">Leads</p>
+          <p className="text-lg capitalize text-center">Leads no asigandos</p>
+          <p className="text-sm">{leads.length}</p>
+        </div>
+        <div className="bg-dark-purple flex flex-col rounded items-center w-24 h-24 justify-center text-white">
+          <p className="text-lg capitalize text-center">Leads asignados</p>
           <p className="text-sm">{leads.length}</p>
         </div>
       </div>

@@ -18,6 +18,7 @@ import {
   MdLocalActivity,
   MdLocationPin,
 } from "react-icons/md";
+import { useCustomTablePagination } from "../../../../hooks";
 
 const headers = [
   { name: "Acciones", width: 20 },
@@ -29,14 +30,23 @@ const headers = [
 ];
 
 const ListJefeVentasLead = ({ credentials, projectId }) => {
-  const [leads, setLeads] = useState([]);
   const [visibleProgress, setVisibleProgress] = useState(true);
   const [error, setError] = useState(false);
   const [value, setValue] = useState(0);
-  const [adminData, setAdminData] = useState(null);
+
+  const [projectData, setprojectData] = useState(null);
+  const [leads, setLeads] = useState([]);
+  const [leadsNotAsigned, setLeadsNotAsigned] = useState([]);
+
   const [filteredLeads, setFilteredLeads] = useState([]);
 
-  console.log({ adminData });
+  const {
+    page,
+    rowsPerPage,
+    handleChangePage,
+    handleChangeRowsPerPage,
+    paginatedItems,
+  } = useCustomTablePagination(leadsNotAsigned);
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
@@ -59,12 +69,15 @@ const ListJefeVentasLead = ({ credentials, projectId }) => {
 
   const fetchData = async (token) => {
     try {
-      const data = await getAsesorLeads(token);
-      const proyectoAsesor = await getProyectoAsesor(token, projectId);
-      console.log({ proyectoAsesor });
-      setAdminData(proyectoAsesor);
-      setLeads(data.leads);
-      setFilteredLeads(data.leads);
+      //const data = await getAsesorLeads(token);
+      const project = await getProyectoAsesor(token, projectId);
+      console.log({ project });
+      setprojectData(project);
+      setLeads(project.lead);
+      const filtereddValues = project.lead.filter((item) => !item.asignado);
+      console.log(filtereddValues) 
+      setLeadsNotAsigned(project.lead.filter((item) => !item.asignado));
+      setFilteredLeads(project.lead);
     } catch (error) {
       setError(true);
     }
@@ -85,31 +98,31 @@ const ListJefeVentasLead = ({ credentials, projectId }) => {
     <React.Fragment>
       <div className="flex flex-col gap-y-4">
         <h1 className="capitalize font-semibold text-2xl">
-          Proyecto {adminData?.nombre}
+          Proyecto {projectData?.nombre}
         </h1>
         <div className="border rounded flex justify-around items-center bg-slate-100 py-3 px-2">
           <div className="flex flex-col gap-y-1 items-center">
             <MdDescription size={28} />
             <p className="text-lg">Descripción</p>
-            <p className="text-xs">{adminData?.descripcion}</p>
+            <p className="text-xs">{projectData?.descripcion}</p>
           </div>
           <div className="h-8 w-1 rounded-sm border-black bg-black"></div>
           <div className="flex flex-col gap-y-1 items-center">
             <MdDateRange size={28} />
             <p className="text-lg">Fecha de creación</p>
-            <p className="text-xs">{adminData?.fecha_creacion}</p>
+            <p className="text-xs">{projectData?.fecha_creacion}</p>
           </div>
           <div className="h-8 w-1 rounded-sm border-black bg-black"></div>
           <div className="flex flex-col gap-y-1 items-center">
             <MdDateRange size={28} />
             <p className="text-lg">Fecha de actualización</p>
-            <p className="text-xs">{adminData?.fecha_actualizacion}</p>
+            <p className="text-xs">{projectData?.fecha_actualizacion}</p>
           </div>
           <div className="h-8 w-1 rounded-sm border-black bg-black"></div>
           <div className="flex flex-col gap-y-1 items-center">
             <MdLocationPin size={28} />
             <p className="text-lg">Ubicación</p>
-            <p className="capitalize text-xs">{adminData?.ubicacion}</p>
+            <p className="capitalize text-xs">{projectData?.ubicacion}</p>
           </div>
         </div>
       </div>
@@ -131,18 +144,18 @@ const ListJefeVentasLead = ({ credentials, projectId }) => {
         </div>
       </div>
 
-      <div className="mt-4 flex flex-col gap-y-5">
+      <div className="mt-4 flex flex-col">
+        <CustomInputBase
+          placeholder="Buscar lead"
+          onSearch={handleSearchButton}
+        />
         <Box sx={{ width: "100%" }}>
-          <Tabs aria-label="basic tabs" value={value} onChange={handleChange}>
-            <Tab
-              sx={{
-                textTransform: "capitalize",
-                fontWeight: "semibold",
-                color: "black",
-                fontSize: "0.9rem",
-              }}
-              label="Asesores"
-            />
+          <Tabs
+            aria-label="basic tabs"
+            value={value}
+            onChange={handleChange}
+            sx={{ marginY: 2 }}
+          >
             <Tab
               sx={{
                 textTransform: "capitalize",
@@ -152,43 +165,22 @@ const ListJefeVentasLead = ({ credentials, projectId }) => {
               }}
               label="Leads"
             />
+            <Tab
+              sx={{
+                textTransform: "capitalize",
+                fontWeight: "semibold",
+                color: "black",
+                fontSize: "0.9rem",
+              }}
+              label="Leads no asignados"
+            />
           </Tabs>
         </Box>
 
         <CustomTabPanel value={value} index={0}>
-          {adminData !== null ? (
-            adminData.asesor.map((item, index) => {
-              return (
-                <Accordion key={index}>
-                  <AccordionSummary>
-                    {item.first_name} - {item.last_name}
-                  </AccordionSummary>
-                  <AccordionDetails>
-                    <ul>
-                      {item.lead.map((item, index) => {
-                        return (
-                          <li key={index} className="capitalize">
-                            {item.celular} - {item.nombre} {item.apellido} -{" "}
-                            {item.estadoLead}
-                          </li>
-                        );
-                      })}
-                    </ul>
-                  </AccordionDetails>
-                </Accordion>
-              );
-            })
-          ) : (
-            <p>Loading</p>
-          )}
-        </CustomTabPanel>
-        <CustomTabPanel value={value} index={1}>
-          <CustomInputBase
-            placeholder="Buscar lead"
-            onSearch={handleSearchButton}
-          />
           {showContent}
         </CustomTabPanel>
+        <CustomTabPanel value={value} index={1}></CustomTabPanel>
       </div>
       {visibleProgress && <CustomCircularProgress />}
     </React.Fragment>
@@ -215,26 +207,3 @@ const CustomTabPanel = (props) => {
 };
 
 export default ListJefeVentasLead;
-
-[
-  {
-    id: 22,
-    proyecto: "Nombre",
-    etc: "...",
-    asesor: [
-      {
-        id: "",
-        nombre: "cocloiso",
-        etc: "...",
-        leads: ["id_lead", "id_lead"],
-      },
-      {
-        otroaseser: "...",
-      },
-    ],
-  },
-];
-
-/*
-            
-            */

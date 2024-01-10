@@ -7,7 +7,7 @@ export const CustomInputBase = ({ onSearch, placeholder = "" }) => {
 
   return (
     <form
-      className="flex gap-x-2 mb-5"
+      className="flex gap-x-2 my-1"
       onSubmit={(event) => {
         event.preventDefault();
         onSearch(search);

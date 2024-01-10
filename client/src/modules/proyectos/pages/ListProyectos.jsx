@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { Button, Card, CardContent, Typography, Avatar } from "@mui/material";
 import { Link, useNavigate } from "react-router-dom";
 import Icon from "@mui/material/Icon";
@@ -8,16 +8,43 @@ import { deleteProyecto, getProyectos } from "../helpers";
 import { FaRegEdit } from "react-icons/fa";
 import { MdAdd, MdDeleteForever } from "react-icons/md";
 import { DialogDeleteProyecto } from "../components/DialogDeleteProyecto";
+import { combinarErrores } from "../../../utils";
+import { AuthContext } from "../../../auth";
+import { useAlertMUI } from "../../../hooks";
+import { CustomCircularProgress, CustomAlert } from "../../../components";
 
 const ListProyectos = () => {
+  const { authTokens } = useContext(AuthContext);
   const [activeButton, setActiveButton] = useState(true);
   const [showDialog, setShowDialog] = useState(false);
   const [projects, setProjects] = useState([]);
   const [itemSeleccionado, setItemSeleccionado] = useState(null);
+  const [visibleProgress, setVisibleProgress] = useState(false);
+
+  const {
+    feedbackCreate,
+    feedbackMessages,
+    setFeedbackMessages,
+    handleCloseFeedback,
+    handleClickFeedback,
+  } = useAlertMUI();
 
   const obtenerProyectos = async () => {
-    const data = await getProyectos();
-    setProjects(data);
+    setVisibleProgress(true);
+    try {
+      const data = await getProyectos({ authToken: authTokens["access"] });
+      setProjects(data);
+      setVisibleProgress(false);
+    } catch (error) {
+      setVisibleProgress(false);
+      const pilaError = combinarErrores(error);
+      // mostramos feedback de error
+      setFeedbackMessages({
+        style_message: "error",
+        feedback_description_error: pilaError,
+      });
+      handleClickFeedback();
+    }
   };
 
   const navigate = useNavigate();
@@ -56,7 +83,7 @@ const ListProyectos = () => {
   }, []);
 
   return (
-    <React.Fragment>
+    <>
       <div className="flex justify-between">
         <h1>Proyectos</h1>
       </div>
@@ -148,7 +175,16 @@ const ListProyectos = () => {
           onCloseDeleteDialog={onCloseDeleteDialog}
         />
       )}
-    </React.Fragment>
+
+      {/* COMPONENTE ALERTA */}
+      <CustomAlert
+        feedbackCreate={feedbackCreate}
+        feedbackMessages={feedbackMessages}
+        handleCloseFeedback={handleCloseFeedback}
+      />
+      {/* CIRCULAR PROGRESS */}
+      {visibleProgress && <CustomCircularProgress />}
+    </>
   );
 };
 

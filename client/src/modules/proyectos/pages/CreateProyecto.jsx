@@ -1,11 +1,14 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { TextField } from "@mui/material";
 import { createProyecto } from "../helpers";
 import { useAlertMUI } from "../../../hooks";
 import { CustomAlert, CustomCircularProgress } from "../../../components";
+import { AuthContext } from "../../../auth";
+import { combinarErrores } from "../../../utils";
 
 export const CreateProyecto = () => {
+  const { authTokens } = useContext(AuthContext);
   const [project, setProject] = useState({
     nombre: "",
     ubicacion: "",
@@ -64,11 +67,20 @@ export const CreateProyecto = () => {
       });
       handleClickFeedback();
     } else {
-      setVisibleProgress(true);
-      const result = await createProyecto(project);
-      console.log(project);
-      setVisibleProgress(false);
-      onNavigateBack();
+      try {
+        setVisibleProgress(true);
+        const result = await createProyecto(project, authTokens["access"]);
+        setVisibleProgress(false);
+        onNavigateBack();
+      } catch (error) {
+        setVisibleProgress(false);
+        const pilaError = combinarErrores(error);
+        setFeedbackMessages({
+          style_message: "error",
+          feedback_description_error: pilaError,
+        });
+        handleClickFeedback();
+      }
     }
   };
 

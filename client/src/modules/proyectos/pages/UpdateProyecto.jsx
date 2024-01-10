@@ -1,13 +1,16 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { TextField } from "@mui/material";
 import { useAlertMUI } from "../../../hooks";
 import { CustomAlert, CustomCircularProgress } from "../../../components";
 import { getProyecto, updateProyecto } from "../helpers";
+import { combinarErrores, validIdURL } from "../../../utils";
+import { AuthContext } from "../../../auth";
 
 export const UpdateProyecto = () => {
+  const { authTokens } = useContext(AuthContext);
   const { idProyecto } = useParams();
-
+  const numericId = parseInt(idProyecto);
   const [project, setProject] = useState({
     nombre: "",
     ubicacion: "",
@@ -27,9 +30,26 @@ export const UpdateProyecto = () => {
 
   const [visibleProgress, setVisibleProgress] = useState(false);
 
-  const obtenerProyecto = async (idProyecto) => {
-    const result = await getProyecto(idProyecto);
-    setProject(result);
+  const obtenerProyecto = async () => {
+    if (validIdURL(numericId)) {
+      setVisibleProgress(true);
+      try {
+        const result = await getProyecto(idProyecto, authTokens["access"]);
+        setProject(result);
+        setVisibleProgress(false);
+      } catch (error) {
+        setVisibleProgress(false);
+        const pilaError = combinarErrores(error);
+        // mostramos feedback de error
+        setFeedbackMessages({
+          style_message: "error",
+          feedback_description_error: pilaError,
+        });
+        handleClickFeedback();
+      }
+    } else {
+      onNavigateBack();
+    }
   };
 
   const handledForm = (event) => {
@@ -81,7 +101,7 @@ export const UpdateProyecto = () => {
   useEffect(() => {
     const controller = new AbortController();
     console.log(idProyecto);
-    obtenerProyecto(idProyecto);
+    obtenerProyecto();
     return () => controller.abort();
   }, []);
 

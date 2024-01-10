@@ -718,3 +718,8 @@ class PrecioDetail(generics.RetrieveUpdateDestroyAPIView):
         dataJson["cotizacion"] = CotizacionSerializer(cotizacion_queryset.get(id =  precio.cotizacion.pk)).data  
 
         return Response(dataJson)
+
+
+class HistoricoLeadAsesorList(generics.ListCreateAPIView):
+    serializer_class = HistoricoLeadAsesorSerlializer
+    queryset = HistoricoLeadAsesor.objects.all()

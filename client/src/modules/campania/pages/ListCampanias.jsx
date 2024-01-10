@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { getCampanias, deleteCampania } from "../helpers";
 import { Link } from "react-router-dom";
 import { RowItemCampania } from "../components";
-import { CustomCircularProgress } from "../../../components";
+import { CustomAlert, CustomCircularProgress } from "../../../components";
 import { CustomInputBase } from "../../../components/CustomInputBase";
 import {
   Button,
@@ -16,9 +16,12 @@ import {
   TableRow,
 } from "@mui/material";
 import { MdAdd } from "react-icons/md";
-import { useCustomTablePagination } from "../../../hooks";
+import { useAlertMUI, useCustomTablePagination } from "../../../hooks";
+import { combinarErrores } from "../../../utils";
+import { AuthContext } from "../../../auth";
 
 export const ListCampanias = () => {
+  const { authTokens } = useContext(AuthContext);
   // Informaciion de las campanias.
   const [campanias, setCampanias] = useState([]);
   const [campaniasTemporal, setCampaniasTemporal] = useState([]);
@@ -31,6 +34,15 @@ export const ListCampanias = () => {
     handleChangeRowsPerPage,
     paginatedItems,
   } = useCustomTablePagination(campaniasTemporal);
+
+  // hook alert
+  const {
+    feedbackCreate,
+    feedbackMessages,
+    setFeedbackMessages,
+    handleCloseFeedback,
+    handleClickFeedback,
+  } = useAlertMUI();
 
   // Retroalimentacion, estado de progreso.
   const [visibleProgress, setVisibleProgress] = useState(true);
@@ -45,29 +57,56 @@ export const ListCampanias = () => {
 
   // OBTENEMOS LAS CAMPAÑAS
   const obtenerCampanias = async () => {
-    let result = [];
-    if (activeButton) {
-      result = await getCampanias("estado=A");
-    } else {
-      result = await getCampanias("estado=I");
+    // mostramos el progress
+    setVisibleProgress(true);
+    try {
+      const result = await getCampanias(
+        `estado=${activeButton ? "A" : "I"}`,
+        authTokens["access"]
+      );
+      setCampanias(result);
+      setCampaniasTemporal(result);
+      // ocultar el progress
+      setVisibleProgress(false);
+    } catch (error) {
+      // ocultar el progress
+      setVisibleProgress(false);
+      const pilaError = combinarErrores(error);
+      // mostramos feedback de error
+      setFeedbackMessages({
+        style_message: "error",
+        feedback_description_error: pilaError,
+      });
+      handleClickFeedback();
     }
-    setCampanias(result);
-    setCampaniasTemporal(result);
   };
 
   const onEliminarCampania = async (item) => {
+    setVisibleProgress(true);
     const { id, proyecto, categoria } = item;
     const body = {
       estado: "I",
-      proyecto: proyecto.id,
-      categoria: categoria.id,
+      // proyecto: proyecto.id,
+      // categoria: categoria.id,
     };
     try {
-      const result = await deleteCampania(id, body);
+      const result = await deleteCampania(id, body, authTokens["access"]);
+      // obtenemos las campañas
       obtenerCampanias();
-      onCloseDeleteDialog();
+      // cerramos el loader
+      setVisibleProgress(false);
     } catch (error) {
-      // handled error.
+      // ocultar el progress
+      setVisibleProgress(false);
+      const pilaError = combinarErrores(error);
+      // mostramos feedback de error
+      setFeedbackMessages({
+        style_message: "error",
+        feedback_description_error: pilaError,
+      });
+      handleClickFeedback();
+      // cerramos el loader
+      setVisibleProgress(false);
     }
   };
 
@@ -86,13 +125,7 @@ export const ListCampanias = () => {
   };
 
   useEffect(() => {
-    // Necesitamos controllar el retorno, cancelar la solicitud
-    // cuando se quita el componente.
-    setVisibleProgress(true);
-    const controller = new AbortController();
     obtenerCampanias();
-    setVisibleProgress(false);
-    return () => controller.abort();
   }, [activeButton]);
 
   const filters = ["Nombre", "Proyecto"];
@@ -146,19 +179,6 @@ export const ListCampanias = () => {
           </div>
         </div>
       </div>
-
-      {/* <CustomTableCampanias
-        headerData={[
-          { name: "Acciones", width: 20 },
-          { name: "Nombre", width: 140 },
-          { name: "Codigo", width: 70 },
-          { name: "Fecha inicio", width: 80 },
-          { name: "Proyecto", width: 100 },
-          { name: "Categoria", width: 70 },
-        ]}
-        rowData={campaniasTemporal}
-        onShowDeleteDialog={onShowDeleteDialog}
-      /> */}
       <Paper sx={{ borderRadius: "0px" }}>
         <TableContainer
           sx={{ minWidth: 700 }}
@@ -204,6 +224,13 @@ export const ListCampanias = () => {
           onRowsPerPageChange={handleChangeRowsPerPage}
         />
       </Paper>
+
+      {/* COMPONENTE ALERTA */}
+      <CustomAlert
+        feedbackCreate={feedbackCreate}
+        feedbackMessages={feedbackMessages}
+        handleCloseFeedback={handleCloseFeedback}
+      />
 
       {/* CIRCULAR PROGRESS */}
       {visibleProgress && <CustomCircularProgress />}

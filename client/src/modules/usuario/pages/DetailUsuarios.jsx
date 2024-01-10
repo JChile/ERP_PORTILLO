@@ -1,12 +1,13 @@
 import React, { useContext, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { getUsuarioPerfil } from "../helpers";
-import { validIdURL } from "../../../utils";
-import { CustomCircularProgress } from "../../../components";
+import { combinarErrores, validIdURL } from "../../../utils";
+import { CustomAlert, CustomCircularProgress } from "../../../components";
 import { AuthContext } from "../../../auth";
+import { useAlertMUI } from "../../../hooks";
 
 export const DetailUsuarios = () => {
-  const { currentUser } = useContext(AuthContext);
+  const { authTokens } = useContext(AuthContext);
   const { idUsuario } = useParams();
   const numericId = parseInt(idUsuario);
   const [usuario, setUsuario] = useState({
@@ -15,12 +16,33 @@ export const DetailUsuarios = () => {
     last_name: "",
     email: "",
     groups: "",
+    is_active: false,
+    isAdmin: "",
+    codigoAsesor: "",
   });
 
-  const { username, first_name, last_name, email, groups } = usuario;
+  const {
+    username,
+    first_name,
+    last_name,
+    email,
+    groups,
+    is_active,
+    isAdmin,
+    codigoAsesor,
+  } = usuario;
 
   // estado de progress
   const [visibleProgress, setVisibleProgress] = useState(false);
+
+  // hook alert
+  const {
+    feedbackCreate,
+    feedbackMessages,
+    setFeedbackMessages,
+    handleCloseFeedback,
+    handleClickFeedback,
+  } = useAlertMUI();
 
   // ESTADOS PARA LA NAVEGACION
   const navigate = useNavigate();
@@ -32,12 +54,18 @@ export const DetailUsuarios = () => {
     if (validIdURL(numericId)) {
       setVisibleProgress(true);
       try {
-        const result = await getUsuarioPerfil(idUsuario);
-        setUsuario({ ...result, groups: currentUser["groups"] });
+        const result = await getUsuarioPerfil(idUsuario, authTokens["access"]);
+        setUsuario(result);
         setVisibleProgress(false);
       } catch (error) {
         setVisibleProgress(false);
-        onNavigateBack();
+        const pilaError = combinarErrores(error);
+        // mostramos feedback de error
+        setFeedbackMessages({
+          style_message: "error",
+          feedback_description_error: pilaError,
+        });
+        handleClickFeedback();
       }
     } else {
       onNavigateBack();
@@ -64,7 +92,9 @@ export const DetailUsuarios = () => {
               fontSize: "22px",
             }}
           >
-            {`${first_name[0]}${last_name[0]}`}
+            {`${first_name.length !== 0 ? first_name[0] : "-"}${
+              last_name.length !== 0 ? last_name[0] : "-"
+            }`}
           </div>
 
           <h1 className="text-2xl">
@@ -91,6 +121,20 @@ export const DetailUsuarios = () => {
                 </span>
                 <span className="block text-sm">{first_name}</span>
               </label>
+
+              <label className="block flex gap-y-1 ">
+                <span className="block text-sm font-medium min-w-[10rem] text-zinc-500">
+                  Esta activo
+                </span>
+                <span className="block text-sm">{is_active ? "Si" : "No"}</span>
+              </label>
+
+              <label className="block flex gap-y-1 ">
+                <span className="block text-sm font-medium min-w-[10rem] text-zinc-500">
+                  Es administrador
+                </span>
+                <span className="block text-sm">{isAdmin ? "Si" : "No"}</span>
+              </label>
             </div>
 
             <div className="w-full flex flex-col gap-y-3">
@@ -112,8 +156,17 @@ export const DetailUsuarios = () => {
                 <span className="block text-sm font-medium min-w-[10rem] text-zinc-500">
                   Rol
                 </span>
-                <span className="block text-sm">{groups}</span>
+                <span className="block text-sm">{groups["name"]}</span>
               </label>
+
+              {groups["id"] === 1 && (
+                <label className="block flex gap-y-1 ">
+                  <span className="block text-sm font-medium min-w-[10rem] text-zinc-500">
+                    Codigo asesor
+                  </span>
+                  <span className="block text-sm">{codigoAsesor}</span>
+                </label>
+              )}
             </div>
           </div>
         </div>
@@ -126,6 +179,12 @@ export const DetailUsuarios = () => {
           Volver
         </button>
       </div>
+      {/* COMPONENTE ALERTA */}
+      <CustomAlert
+        feedbackCreate={feedbackCreate}
+        feedbackMessages={feedbackMessages}
+        handleCloseFeedback={handleCloseFeedback}
+      />
       {/* CIRCULAR PROGRESS */}
       {visibleProgress && <CustomCircularProgress />}
     </>

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Checkbox } from "@mui/material";
 import { getUsuarioPerfil, updateUsuario } from "../helpers";
@@ -7,22 +7,38 @@ import {
   CustomCircularProgress,
   FilterRol,
   CustomAlert,
+  DynamicCustomerDialog,
 } from "../../../components";
 import { useAlertMUI } from "../../../hooks";
 import { combinarErrores, validIdURL } from "../../../utils";
+import { AuthContext } from "../../../auth";
 
 export const UpdateUsuarios = () => {
+  const { authTokens } = useContext(AuthContext);
   const { idUsuario } = useParams();
   const numericId = parseInt(idUsuario);
   const [usuario, setUsuario] = useState({
     first_name: "",
     last_name: "",
     email: "",
-    groups: [],
+    groups: {},
     is_active: false,
-    perfil: {},
+    isAdmin: false,
+    codigoAsesor: null,
+    codigoAsesorBefore: null,
+    groupsBefore: {},
   });
-  const { first_name, last_name, email, groups, is_active } = usuario;
+  const {
+    first_name,
+    last_name,
+    email,
+    groups,
+    is_active,
+    isAdmin,
+    codigoAsesor,
+    codigoAsesorBefore,
+    groupsBefore,
+  } = usuario;
 
   // HANDLED FORM
   const handledForm = ({ target }) => {
@@ -45,6 +61,17 @@ export const UpdateUsuarios = () => {
   // estado de progress
   const [visibleProgress, setVisibleProgress] = useState(false);
 
+  // estado para el dialogo
+  const [dialogOpen, setDialogOpen] = useState(false);
+
+  const handleOpenDialog = () => {
+    setDialogOpen(true);
+  };
+
+  const handleCloseDialog = () => {
+    setDialogOpen(false);
+  };
+
   // ESTADOS PARA LA NAVEGACION
   const navigate = useNavigate();
   const onNavigateBack = () => {
@@ -53,15 +80,24 @@ export const UpdateUsuarios = () => {
 
   // INPUT CODIGO MATERIA PRIMA
   const onAddGroup = ({ id }) => {
-    setUsuario({ ...usuario, groups: [id] });
+    const valorCodigoAsesor = id === 1 ? codigoAsesorBefore : null;
+    setUsuario({ ...usuario, groups: { id }, codigoAsesor: valorCodigoAsesor });
   };
 
   // INPUT CHECK ACTIVATE
-  const onAddCheckInput = (event) => {
-    setUsuario({ ...usuario, is_active: !is_active });
+  const onAddCheckInput = ({ target }) => {
+    const { name, checked } = target;
+
+    setUsuario({ ...usuario, [name]: checked });
   };
 
-  const validarDatosUsuario = (first_name, last_name, email, groups) => {
+  const validarDatosUsuario = (
+    first_name,
+    last_name,
+    email,
+    groups,
+    codigoAsesor
+  ) => {
     var messages_error = "";
     const emailPattern = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i;
     if (email.length === 0) {
@@ -77,35 +113,72 @@ export const UpdateUsuarios = () => {
     if (last_name.length === 0) {
       messages_error += "No proporciono ningun apellido\n";
     }
-    if (groups[0] === 0) {
+    if (groups["id"] === 0) {
       messages_error += "No proporciono ningun rol\n";
+    }
+    if (codigoAsesor === null) {
+      if (groups["id"] === 1) {
+        messages_error +=
+          "Si el rol es asesor, debes ingresar un código de asesor\n";
+      }
+    } else {
+      if (codigoAsesor.length === 0) {
+        messages_error +=
+          "Si el rol es asesor, debes ingresar un código de asesor\n";
+      }
     }
     return messages_error;
   };
 
-  const actualizarUsuario = async () => {
-    const validate = validarDatosUsuario(first_name, last_name, email, groups);
+  // funcion asincrona para actualizar un usuario
+  const actualizarUsuario = async ({ desasociar }) => {
+    const usuarioJSON = { ...usuario, desasociar, groups: [groups["id"]] };
+    delete usuarioJSON.id;
+    if (codigoAsesor === codigoAsesorBefore) {
+      delete usuarioJSON.codigoAsesor;
+    }
+    delete usuarioJSON.codigoAsesorBefore;
+    delete usuarioJSON.groupsBefore;
+    console.log(usuarioJSON);
+    setVisibleProgress(true);
 
+    try {
+      const result = await updateUsuario(
+        idUsuario,
+        usuarioJSON,
+        authTokens["access"]
+      );
+      // comprobar si se realizo con exito la creación del usuario
+      setVisibleProgress(false);
+      // navegamos atras
+      onNavigateBack();
+    } catch (error) {
+      setVisibleProgress(false);
+      const pilaError = combinarErrores(error);
+      // mostramos feedback de error
+      setFeedbackMessages({
+        style_message: "error",
+        feedback_description_error: pilaError,
+      });
+      handleClickFeedback();
+    }
+  };
+
+  const handledActualizaciónUsuario = () => {
+    // primero validamos el correcto ingreso de datos
+    const validate = validarDatosUsuario(
+      first_name,
+      last_name,
+      email,
+      groups,
+      codigoAsesor
+    );
     if (validate.length === 0) {
-      const usuarioJSON = { ...usuario };
-      delete usuarioJSON.id;
-      setVisibleProgress(true);
-
-      try {
-        const result = await updateUsuario(idUsuario, usuarioJSON);
-        // comprobar si se realizo con exito la creación del usuario
-        setVisibleProgress(false);
-        // navegamos atras
-        onNavigateBack();
-      } catch (error) {
-        setVisibleProgress(false);
-        const pilaError = combinarErrores(error);
-        // mostramos feedback de error
-        setFeedbackMessages({
-          style_message: "error",
-          feedback_description_error: pilaError,
-        });
-        handleClickFeedback();
+      // verificamos si se indico que el usuario estara inactivo o hubo un cambio de rol
+      if (is_active === false || groupsBefore["id"] !== groups["id"]) {
+        handleOpenDialog();
+      } else {
+        actualizarUsuario({ desasociar: false });
       }
     } else {
       // mostramos feedback
@@ -117,24 +190,34 @@ export const UpdateUsuarios = () => {
     }
   };
 
-  const obtenerUsuarioPerfil = async () => {
+  // funcion asincrona para traer informacion del usuario
+  const obtenerUsuario = async () => {
     if (validIdURL(numericId)) {
       setVisibleProgress(true);
       try {
-        const result = await getUsuarioPerfil(idUsuario);
-        setUsuario(result);
+        const result = await getUsuarioPerfil(idUsuario, authTokens["access"]);
+        const codigoAsesorBefore = result["codigoAsesor"];
+        const groupsBefore = result["groups"];
+        setUsuario({ ...result, codigoAsesorBefore, groupsBefore });
         setVisibleProgress(false);
       } catch (error) {
         setVisibleProgress(false);
-        onNavigateBack();
+        const pilaError = combinarErrores(error);
+        // mostramos feedback de error
+        setFeedbackMessages({
+          style_message: "error",
+          feedback_description_error: pilaError,
+        });
+        handleClickFeedback();
       }
     } else {
       onNavigateBack();
     }
   };
 
+  // use effect para la carga inicial de informacion del usuario
   useEffect(() => {
-    obtenerUsuarioPerfil();
+    obtenerUsuario();
   }, []);
 
   return (
@@ -153,7 +236,9 @@ export const UpdateUsuarios = () => {
               fontSize: "22px",
             }}
           >
-            {`${first_name[0]}${last_name[0]}`}
+            {`${first_name.length !== 0 ? first_name[0] : "-"}${
+              last_name.length !== 0 ? last_name[0] : "-"
+            }`}
           </div>
 
           <h1 className="text-2xl">
@@ -195,6 +280,7 @@ export const UpdateUsuarios = () => {
                 </span>
                 <Checkbox
                   checked={is_active}
+                  name="is_active"
                   onChange={onAddCheckInput}
                   inputProps={{ "aria-label": "controlled" }}
                 />
@@ -220,11 +306,36 @@ export const UpdateUsuarios = () => {
                 <div className="flex-1">
                   {groups.length !== 0 && (
                     <FilterRol
-                      defaultValue={groups[0]}
+                      defaultValue={groups["id"]}
                       onNewInput={onAddGroup}
                     />
                   )}
                 </div>
+              </label>
+
+              {groups["id"] === 1 && (
+                <label className="block flex gap-y-1 ">
+                  <span className="block text-sm font-medium min-w-[10rem] text-zinc-500">
+                    Código asesor
+                  </span>
+                  <CustomTextField
+                    name={"codigoAsesor"}
+                    value={codigoAsesor === null ? "" : codigoAsesor}
+                    handledForm={handledForm}
+                  />
+                </label>
+              )}
+
+              <label className="block flex flex-row gap-y-1">
+                <span className="block text-sm font-medium text-zinc-500 flex items-center me-2">
+                  Es administrador
+                </span>
+                <Checkbox
+                  checked={isAdmin}
+                  name="isAdmin"
+                  onChange={onAddCheckInput}
+                  inputProps={{ "aria-label": "controlled" }}
+                />
               </label>
             </div>
           </div>
@@ -233,7 +344,7 @@ export const UpdateUsuarios = () => {
       <div className="flex justify-center mt-4">
         <button
           className="bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded mr-2"
-          onClick={actualizarUsuario}
+          onClick={handledActualizaciónUsuario}
         >
           Guardar
         </button>
@@ -249,6 +360,44 @@ export const UpdateUsuarios = () => {
         feedbackCreate={feedbackCreate}
         feedbackMessages={feedbackMessages}
         handleCloseFeedback={handleCloseFeedback}
+      />
+      {/* DIALOGO */}
+      <DynamicCustomerDialog
+        open={dialogOpen}
+        title={`${is_active === false ? "Alerta usuario inactivo - " : ""}${
+          groupsBefore["id"] !== groups["id"]
+            ? " Alerta cambio de rol usuario"
+            : ""
+        }`}
+        description={`${
+          is_active === false
+            ? `Se ha indicado que el usuario estará inactivo. ${
+                groups["id"] === 1
+                  ? "El usuario a modificar es asesor. Recuerda que esta operación desasociará sus lead en un rango de 1 mes."
+                  : ""
+              }`
+            : ""
+        }
+            ${
+              groupsBefore["id"] !== groups["id"]
+                ? ` Este usuario tenia asignado otro rol. ${
+                    groupsBefore["id"] === 1
+                      ? "Se ha detectado que este usuario era asesor. Recuerda que esta operación desasociará sus lead en un rango de 1 mes."
+                      : ""
+                  }`
+                : ""
+            } ¿Deseas confirmar la operación?`}
+        onClose={handleCloseDialog}
+        onConfirm={() => {
+          actualizarUsuario({
+            desasociar:
+              (groupsBefore["id"] === 1 &&
+                groupsBefore["id"] !== groups["id"]) ||
+              (groups["id"] === 1 && is_active === false)
+                ? true
+                : false,
+          });
+        }}
       />
       {/* CIRCULAR PROGRESS */}
       {visibleProgress && <CustomCircularProgress />}

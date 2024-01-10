@@ -25,6 +25,11 @@ export const RowItemLead = ({ item, onShowDeleteDialog }) => {
     navigate(`/lead/update/${id}`);
   };
 
+  const getMessageWhatsapp = () => {
+    let text = `Saludos coordiales señor ${nombre} ${apellido}, ...`;
+    return text;
+  };
+
   return (
     <TableRow sx={{ "&:last-child td, &:last-child th": { border: 0 } }}>
       <TableCell>
@@ -81,7 +86,14 @@ export const RowItemLead = ({ item, onShowDeleteDialog }) => {
               }}
             />
           )}
-          <a href={"https://wa.me/" + celular}>{celular}</a>
+          <a
+            href={`whatsapp://send?phone=${celular.replace(
+              /\s+/g,
+              ""
+            )}&text=${getMessageWhatsapp()}`}
+          >
+            {celular}
+          </a>
         </div>
       </TableCell>
       <TableCell>{estadoLead}</TableCell>

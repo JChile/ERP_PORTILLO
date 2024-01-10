@@ -10,3 +10,4 @@ export * from "./DynamicIcon";
 export * from "./filters/index";
 export * from "./NotFoundPage";
 export * from "./MenuSimple";
+export * from "./DynamicCustomerDialog";

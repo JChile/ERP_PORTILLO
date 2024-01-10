@@ -1,9 +1,14 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { getCampania } from "../helpers";
+import { AuthContext } from "../../../auth";
+import { CustomAlert, CustomCircularProgress } from "../../../components";
+import { useAlertMUI } from "../../../hooks";
+import { combinarErrores } from "../../../utils";
 
 export const DetailCampania = () => {
   const { idCampania } = useParams();
+  const { authTokens } = useContext(AuthContext);
   const [campania, setCampania] = useState({
     nombre: "",
     codigo: "",
@@ -34,9 +39,35 @@ export const DetailCampania = () => {
     categoria,
   } = campania;
 
+  // hook alert
+  const {
+    feedbackCreate,
+    feedbackMessages,
+    setFeedbackMessages,
+    handleCloseFeedback,
+    handleClickFeedback,
+  } = useAlertMUI();
+
+  // Retroalimentacion, estado de progreso.
+  const [visibleProgress, setVisibleProgress] = useState(true);
+
   const obtenerCamapania = async (idCampania) => {
-    const auxCampania = await getCampania(idCampania);
-    setCampania(auxCampania);
+    setVisibleProgress(true);
+    try {
+      const auxCampania = await getCampania(idCampania, authTokens["access"]);
+      setCampania(auxCampania);
+      setVisibleProgress(false);
+    } catch (error) {
+      // ocultar el progress
+      setVisibleProgress(false);
+      const pilaError = combinarErrores(error);
+      // mostramos feedback de error
+      setFeedbackMessages({
+        style_message: "error",
+        feedback_description_error: pilaError,
+      });
+      handleClickFeedback();
+    }
   };
 
   const navigate = useNavigate();
@@ -45,9 +76,7 @@ export const DetailCampania = () => {
   };
 
   useEffect(() => {
-    const controller = new AbortController();
     obtenerCamapania(idCampania);
-    return () => controller.abort();
   }, []);
 
   return (
@@ -144,6 +173,15 @@ export const DetailCampania = () => {
           </div>
         </div>
       </div>
+      {/* COMPONENTE ALERTA */}
+      <CustomAlert
+        feedbackCreate={feedbackCreate}
+        feedbackMessages={feedbackMessages}
+        handleCloseFeedback={handleCloseFeedback}
+      />
+
+      {/* CIRCULAR PROGRESS */}
+      {visibleProgress && <CustomCircularProgress />}
     </>
   );
 };

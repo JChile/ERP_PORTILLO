@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { getProyectos } from "./getProyectos";
 import { Autocomplete, TextField } from "@mui/material";
+import { AuthContext } from "../../../auth";
 
 const defaultOption = {
   value: 0,
@@ -8,12 +9,17 @@ const defaultOption = {
   id: 0,
 };
 
-export const FilterProyectos = ({ defaultValue = null, onNewInput, label = "" }) => {
+export const FilterProyectos = ({
+  defaultValue = null,
+  onNewInput,
+  label = "",
+}) => {
   const [options, setOptions] = useState([defaultOption]);
   const [value, setValue] = useState(defaultOption);
+  const { authTokens } = useContext(AuthContext);
 
   const obtenerProyectos = async () => {
-    const result = await getProyectos();
+    const result = await getProyectos(authTokens["access"]);
     const formatSelect = [
       defaultOption,
       ...result.map((element) => {
@@ -40,9 +46,7 @@ export const FilterProyectos = ({ defaultValue = null, onNewInput, label = "" })
   };
 
   useEffect(() => {
-    const controller = new AbortController();
     obtenerProyectos();
-    return () => controller.abort();
   }, [defaultValue]);
 
   return (
@@ -53,7 +57,9 @@ export const FilterProyectos = ({ defaultValue = null, onNewInput, label = "" })
       getOptionLabel={(option) => option.label}
       onChange={handleChange}
       isOptionEqualToValue={(option, value) => option.id == value.id}
-      renderInput={(params) => <TextField {...params} size="small" label={label}/>}
+      renderInput={(params) => (
+        <TextField {...params} size="small" label={label} />
+      )}
     />
   );
 };

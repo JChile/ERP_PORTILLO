@@ -9,8 +9,11 @@ import {
   FilterSubcategoria,
   CustomCircularProgress,
 } from "../../../components";
+import { AuthContext } from "../../../auth";
+import { combinarErrores } from "../../../utils";
 
 export const CreateCampania = () => {
+  const { authTokens } = useContext(AuthContext);
   const [campaign, setCampaign] = useState({
     nombre: "",
     fecha_estimada: "",
@@ -125,10 +128,22 @@ export const CreateCampania = () => {
       handleClickFeedback();
     } else {
       setVisibleProgress(true);
-      const result = await createCampania(campaign);
-      console.log(result);
-      setVisibleProgress(false);
-      onNavigateBack();
+      try {
+        const result = await createCampania(campaign, authTokens["access"]);
+        console.log(result);
+        setVisibleProgress(false);
+        onNavigateBack();
+      } catch (error) {
+        // ocultar el progress
+        setVisibleProgress(false);
+        const pilaError = combinarErrores(error);
+        // mostramos feedback de error
+        setFeedbackMessages({
+          style_message: "error",
+          feedback_description_error: pilaError,
+        });
+        handleClickFeedback();
+      }
     }
   };
 
@@ -169,6 +184,7 @@ export const CreateCampania = () => {
                   placeholder="Costo estimado"
                   value={coste_estimado}
                   onChange={handledForm}
+                  onWheel={(e) => e.target.blur()}
                 />
               </label>
 
@@ -217,6 +233,7 @@ export const CreateCampania = () => {
                   placeholder="Costo real"
                   value={coste_real}
                   onChange={handledForm}
+                  onWheel={(e) => e.target.blur()}
                 />
               </label>
 

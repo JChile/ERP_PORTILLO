@@ -10,6 +10,10 @@ export const RowItemCampania = ({ item, onDeleteCampania }) => {
 
   const navigate = useNavigate();
 
+  const onDeleteCampaniaSelected = () => {
+    onDeleteCampania(item);
+  };
+
   const onEditItemSelected = () => {
     navigate(`/campania/update/${id}`);
   };
@@ -18,27 +22,14 @@ export const RowItemCampania = ({ item, onDeleteCampania }) => {
     <TableRow sx={{ "&:last-child td, &:last-child th": { border: 0 } }}>
       <TableCell>
         <CustomMoreVerticalActions
-          onDelete={() => onDeleteCampania(item)}
+          onDelete={onDeleteCampaniaSelected}
           onEdit={onEditItemSelected}
           activeOnDelete={estado === "A" ? true : false}
           descriptionDialog="¿Deseas eliminar esta campaña?"
         />
       </TableCell>
       <TableCell>
-        <Link
-          to={`/campania/detail/${id}`}
-          style={{
-            textDecoration: "none",
-            color: "black",
-            transition: "color 0.3s", // Add a smooth transition effect
-          }}
-          onMouseEnter={(e) => {
-            e.target.style.color = "blue";
-          }}
-          onMouseLeave={(e) => {
-            e.target.style.color = "black";
-          }}
-        >
+        <Link className="text-blue-500" to={`/campania/detail/${id}`}>
           {nombre}
         </Link>
       </TableCell>

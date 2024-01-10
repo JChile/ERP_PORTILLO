@@ -14,7 +14,7 @@ from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import permission_classes
 from .consts import *
-
+import datetime
 
 
 class LeadCreationConfirmation(APIView):
@@ -434,3 +434,33 @@ class ProyectoCotizaciones(APIView):
 
 
         return Response(proyectoSerializer)
+
+
+class AsignacionMasivaAsesorLeadById(APIView):
+    def post(self, request):
+        request_data = request.data
+        arrAsesor = request_data["asesor"]
+        arrLead = request_data["lead"]
+
+        user_queryset = User.objects.all()
+        lead_queryset = Lead.objects.all()
+
+        error = []
+        iter = 0
+        for i in arrLead:
+            try :
+                lead =  lead_queryset.get(id = i)
+                user =  user_queryset.get(id = arrAsesor[iter])
+                lead.asesor = user
+                lead.fecha_actualizacion = datetime.datetime.now()  
+                lead.save()
+                HistoricoLeadAsesor.objects.create(lead = lead, usuario = user)
+            except :
+                error.append(i)
+                pass
+            print(i , arrAsesor[iter])
+            iter = -1 if iter == len(arrAsesor)-1 else iter
+            iter = iter +1
+
+        print(arrAsesor)
+        return Response({"Leads no asignados" : error})

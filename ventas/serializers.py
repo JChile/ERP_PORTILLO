@@ -103,3 +103,7 @@ class ProyectoTipoProductoSerializer(serializers.ModelSerializer):
         model = ProyectoTipoProducto
         fields = '__all__'
 
+class HistoricoLeadAsesorSerlializer(serializers.ModelSerializer):
+    class Meta:
+        model = HistoricoLeadAsesor
+        fields = '__all__'

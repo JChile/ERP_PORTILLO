@@ -8,10 +8,6 @@ import { CustomMoreVerticalActions } from "../../../components";
 export const RowItemRol = ({ item }) => {
   const navigate = useNavigate();
 
-  const onDeleteItemSelected = () => {
-    // onShowDeleteDialog(item);
-  };
-
   const onEditItemSelected = () => {
     navigate(`/rol/update/${item.id}`);
   };
@@ -25,7 +21,7 @@ export const RowItemRol = ({ item }) => {
       <TableCell>
         <CustomMoreVerticalActions
           onEdit={onEditItemSelected}
-          onDelete={onDeleteItemSelected}
+          activeOnDelete={false}
         />
       </TableCell>
       <TableCell>

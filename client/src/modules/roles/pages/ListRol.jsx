@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { Link } from "react-router-dom";
 import { RiUserAddLine } from "react-icons/ri";
 import Table from "@mui/material/Table";
@@ -15,10 +15,13 @@ import {
   CustomCircularProgress,
   CustomTablePagination,
 } from "../../../components";
-import { useAlertMUI } from "../../../hooks";
+import { useAlertMUI, useCustomTablePagination } from "../../../hooks";
 import { combinarErrores } from "../../../utils";
+import { TablePagination } from "@mui/material";
+import { AuthContext } from "../../../auth";
 
 export const ListRol = () => {
+  const { authTokens } = useContext(AuthContext);
   const [listRoles, setListRoles] = useState([]);
 
   // hook alert
@@ -30,13 +33,21 @@ export const ListRol = () => {
     handleClickFeedback,
   } = useAlertMUI();
 
+  const {
+    page,
+    rowsPerPage,
+    handleChangePage,
+    handleChangeRowsPerPage,
+    paginatedItems,
+  } = useCustomTablePagination(listRoles);
+
   // estado de progress
   const [visibleProgress, setVisibleProgress] = useState(false);
 
   const obtenerRoles = async () => {
     setVisibleProgress(true);
     try {
-      const result = await getRoles();
+      const result = await getRoles(authTokens["access"]);
       setListRoles(result);
       setVisibleProgress(false);
     } catch (error) {
@@ -86,13 +97,22 @@ export const ListRol = () => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {listRoles.map((item) => (
+              {paginatedItems.map((item) => (
                 <RowItemRol key={item.id} item={item} />
               ))}
             </TableBody>
           </Table>
         </TableContainer>
-        <CustomTablePagination count={listRoles.length} />
+        {/* <CustomTablePagination count={listRoles.length} /> */}
+        <TablePagination
+          rowsPerPageOptions={[5, 10, 25, 50, 100]}
+          component="div"
+          count={listRoles.length}
+          rowsPerPage={rowsPerPage}
+          page={page}
+          onPageChange={handleChangePage}
+          onRowsPerPageChange={handleChangeRowsPerPage}
+        />
       </Paper>
       {/* COMPONENTE ALERTA */}
       <CustomAlert

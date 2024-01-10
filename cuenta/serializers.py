@@ -43,6 +43,8 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = '__all__'
+    password = serializers.CharField(required=False)
+    username = serializers.CharField(required=False)
 
     def __init__(self, *args, **kwargs):
         # Recibe el parámetro 'fields' que contiene los campos deseados

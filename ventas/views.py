@@ -271,7 +271,7 @@ class EventoList(generics.ListCreateAPIView):
         if not (bool(request.user.groups.first().permissions.filter(codename = PermissionEvento.CAN_ADD) or request.user.is_superuser)) :
             return Response({"message" : "Usuario no tiene permisos para crear eventos"}, status=403)
         idUsuario = request.user.pk
-        print("id userr", idUsuario)
+        print("id user", idUsuario)
         try:
             request.data["asesor"] = idUsuario
             serializer = EventoSerializer(data=request.data)
@@ -285,7 +285,6 @@ class EventoList(generics.ListCreateAPIView):
     
     def list(self, request):
         usuarioId = request.user.pk
-        #Hola
 
         if not (bool(request.user.groups.first().permissions.filter(codename = PermissionEvento.CAN_VIEW) or request.user.is_superuser)) :
             return Response({"message" : "Usuario no tiene permisos para ver eventos"}, status=403)
@@ -718,3 +717,8 @@ class PrecioDetail(generics.RetrieveUpdateDestroyAPIView):
         dataJson["cotizacion"] = CotizacionSerializer(cotizacion_queryset.get(id =  precio.cotizacion.pk)).data  
 
         return Response(dataJson)
+
+
+class HistoricoLeadAsesorList(generics.ListCreateAPIView):
+    serializer_class = HistoricoLeadAsesorSerlializer
+    queryset = HistoricoLeadAsesor.objects.all()

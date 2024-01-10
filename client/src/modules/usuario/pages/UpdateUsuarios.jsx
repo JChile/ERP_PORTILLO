@@ -14,7 +14,7 @@ import { combinarErrores, validIdURL } from "../../../utils";
 import { AuthContext } from "../../../auth";
 
 export const UpdateUsuarios = () => {
-  const { authTokens } = useContext(AuthContext);
+  const { authTokens, currentUser, logoutUser } = useContext(AuthContext);
   const { idUsuario } = useParams();
   const numericId = parseInt(idUsuario);
   const [usuario, setUsuario] = useState({
@@ -132,6 +132,7 @@ export const UpdateUsuarios = () => {
 
   // funcion asincrona para actualizar un usuario
   const actualizarUsuario = async ({ desasociar }) => {
+    const idUsuarioItem = usuario["id"];
     const usuarioJSON = { ...usuario, desasociar, groups: [groups["id"]] };
     delete usuarioJSON.id;
     if (codigoAsesor === codigoAsesorBefore) {
@@ -139,7 +140,6 @@ export const UpdateUsuarios = () => {
     }
     delete usuarioJSON.codigoAsesorBefore;
     delete usuarioJSON.groupsBefore;
-    console.log(usuarioJSON);
     setVisibleProgress(true);
 
     try {
@@ -150,8 +150,13 @@ export const UpdateUsuarios = () => {
       );
       // comprobar si se realizo con exito la creación del usuario
       setVisibleProgress(false);
-      // navegamos atras
-      onNavigateBack();
+      // si se hizo modificaciones sobre el usuario logeado
+      if (currentUser["user_id"] === idUsuarioItem) {
+        logoutUser();
+      } else {
+        // navegamos atras
+        onNavigateBack();
+      }
     } catch (error) {
       setVisibleProgress(false);
       const pilaError = combinarErrores(error);

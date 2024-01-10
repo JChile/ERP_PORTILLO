@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { styled } from "@mui/material/styles";
 import Table from "@mui/material/Table";
@@ -13,6 +13,7 @@ import { createRoles, getModulos } from "../helpers";
 import { CustomAlert, CustomCircularProgress } from "../../../components";
 import { useAlertMUI } from "../../../hooks";
 import { combinarErrores } from "../../../utils";
+import { AuthContext } from "../../../auth";
 
 // definimos el estilo del head
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
@@ -29,10 +30,9 @@ export const CreateRol = () => {
   const [rol, setRol] = useState({
     nameRol: "",
   });
-
   const { nameRol } = rol;
-
   const [modules, setModules] = useState([]);
+  const { authTokens } = useContext(AuthContext);
 
   // hook alert
   const {
@@ -61,6 +61,7 @@ export const CreateRol = () => {
     });
   };
 
+  // modificar los permisos para todos
   const modifyAllPermissions = (id, checked) => {
     const auxPermissions = modules.map((item) => {
       if (item.id === id) {
@@ -78,6 +79,7 @@ export const CreateRol = () => {
     setModules(auxPermissions);
   };
 
+  // modificar permisos de roles
   const modifyPermission = (id, name, checked) => {
     const auxPermissions = modules.map((item) => {
       if (item.id === id) {
@@ -92,9 +94,9 @@ export const CreateRol = () => {
     setModules(auxPermissions);
   };
 
+  // funcion para crear roles
   const crearRol = async () => {
     const auxPermissions = [];
-
     modules.forEach((data) => {
       for (const key in data) {
         if (Array.isArray(data[key]) && data[key][0] === true) {
@@ -102,7 +104,6 @@ export const CreateRol = () => {
         }
       }
     });
-
     if (auxPermissions.length === 0 || nameRol.trim().length === 0) {
       if (auxPermissions.length === 0) {
         setFeedbackMessages({
@@ -127,7 +128,7 @@ export const CreateRol = () => {
       setVisibleProgress(true);
       try {
         // realizamos la llamada API
-        const result = await createRoles(newRole);
+        const result = await createRoles(newRole, authTokens["access"]);
         setVisibleProgress(false);
         // navegamos a la anterior vista
         onNavigateBack();
@@ -143,19 +144,31 @@ export const CreateRol = () => {
     }
   };
 
+  // traer informacion de los modulos
   const traerDatosModulos = async () => {
-    const result = await getModulos();
-
-    const resultParser = result.map((item) => {
-      return {
-        ...item,
-        can_view: [true, item["can_view"]],
-        can_change: [true, item["can_change"]],
-        can_delete: [true, item["can_delete"]],
-        can_add: [true, item["can_add"]],
-      };
-    });
-    setModules(resultParser);
+    setVisibleProgress(true);
+    try {
+      const result = await getModulos(authTokens["access"]);
+      const resultParser = result.map((item) => {
+        return {
+          ...item,
+          can_view: [true, item["can_view"]],
+          can_change: [true, item["can_change"]],
+          can_delete: [true, item["can_delete"]],
+          can_add: [true, item["can_add"]],
+        };
+      });
+      setModules(resultParser);
+      setVisibleProgress(false);
+    } catch (error) {
+      setVisibleProgress(false);
+      const pilaError = combinarErrores(error);
+      setFeedbackMessages({
+        style_message: "error",
+        feedback_description_error: pilaError,
+      });
+      handleClickFeedback();
+    }
   };
 
   useEffect(() => {

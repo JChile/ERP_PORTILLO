@@ -1,12 +1,14 @@
 import axios from "axios";
 
-export const createCampania = async (body, authToken) => {
+export const deactiveUsuario = async (idUsuario, body, authToken) => {
   const DOMAIN = import.meta.env.VITE_BACKEND_URL;
-  const URL = `${DOMAIN}/api/campania/`;
+  const URL = `${DOMAIN}/api/user/${idUsuario}`;
 
-  const { data } = await axios.post(
+  const { data } = await axios.put(
     URL,
-    { ...body },
+    {
+      ...body,
+    },
     {
       headers: {
         "Content-Type": "application/json",

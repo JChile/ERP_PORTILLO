@@ -45,9 +45,7 @@ export const FilterProyectos = ({
   };
 
   useEffect(() => {
-    const controller = new AbortController();
     obtenerProyectos();
-    return () => controller.abort();
   }, [defaultValue]);
 
   return (

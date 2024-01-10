@@ -75,7 +75,7 @@ const initialState = {
 };
 
 export const CalendarView = () => {
-  const { currentUser, logoutUser } = useContext(AuthContext);
+  const { authTokens } = useContext(AuthContext);
   const [state, dispatch] = useReducer(reducer, initialState);
   const [flagLoader, setFlagLoader] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState(null);
@@ -87,6 +87,7 @@ export const CalendarView = () => {
 
   // temporary viewr
 
+
   const handleTempFilters = (event) => {
     const { name, checked } = event.target;
     const updatedFilters = {
@@ -96,6 +97,7 @@ export const CalendarView = () => {
     setTempFilters(updatedFilters);
   };
 
+
   const applyFilters = () => {
     const filtered = originalEvents.filter(
       (event) => tempFilters[event.tipo.nombre]
@@ -104,10 +106,11 @@ export const CalendarView = () => {
     setSelectedFilters(tempFilters);
   };
 
-  const getCalendarData = async (user_id) => {
+  const getCalendarData = async (authTokens) => {
     try {
-      const events = await getEvents(user_id);
+      const events = await getEvents(authTokens);
       const typeEvents = await getTipoEventos();
+
 
       if (Object.keys(selectedFilters).length === 0) {
         const initialFilters = {};
@@ -137,7 +140,7 @@ export const CalendarView = () => {
 
   useEffect(() => {
     const controller = new AbortController();
-    getCalendarData(currentUser.user_id);
+    getCalendarData(authTokens.access);
     return () => controller.abort();
   }, [flagLoader]);
 
@@ -145,15 +148,6 @@ export const CalendarView = () => {
     <React.Fragment>
       <div className="flex flex-col gap-y-3">
         <div className="flex justify-between">
-          <Button
-            variant="contained"
-            color="inherit"
-            sx={{ textTransform: "capitalize", borderRadius: "0px" }}
-            onClick={() => dispatch({ type: "create_state" })}
-          >
-            Crear
-          </Button>
-
           <Button
             variant="contained"
             color="inherit"

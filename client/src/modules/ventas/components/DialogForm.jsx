@@ -11,63 +11,55 @@ import {
 } from "@mui/material";
 import { useForm } from "../hooks";
 import { createEvent } from "../helpers/eventCases";
-import { useContext, useState } from "react";
-import { AuthContext } from "../../../auth/context/AuthContext";
+import { useState } from "react";
 import { FilterProyectos } from "../../../components";
 import { FilterTipoEvento } from "../../../components/filters/tipoEvento/FilterTipoEvento";
-import { FilterLeads } from "../../../components/filters/lead/FilterLead";
 
-export const DialogForm = ({ isOpen, onClose }) => {
-  const { currentUser } = useContext(AuthContext);
-
+export const DialogForm = ({ isOpen, onClose, lead, token, user }) => {
   const { form, handleChangeForm, handleSubmit } = useForm({
     titulo: "",
     duracion: 1,
     fecha: "",
-    ubicacion: "",
     descripcion: "",
     tipo: null,
     proyecto: null,
     horaInicio: "",
-    lead: null,
+    ubicacion: "",
   });
   const [formErrors, setFormErrors] = useState({});
 
   const {
     titulo,
-    ubicacion,
     proyecto,
     tipo,
     descripcion,
     fecha,
     horaInicio,
     duracion,
-    lead,
+    ubicacion,
   } = form;
 
   const handleSave = async () => {
     const errors = checkInputForm();
     if (Object.keys(errors).length === 0) {
-      // No hay errores, procede a guardar el evento
       const dateToSave = new Date(`${fecha}T${horaInicio}`);
       const eventSave = {
-        titulo: titulo,
         duracion: duracion,
         fecha_visita: dateToSave.toISOString(),
-        ubicacion: ubicacion,
         descripcion: descripcion,
-        idUsuario: currentUser.user.id,
-      
-        tipo: tipo,
-        proyecto: proyecto,
-        estado: "A",
         lead: lead,
+        titulo: titulo,
+        tipo: tipo,
+        ubicacion: ubicacion,
+        proyecto: proyecto,
+        usuarioCreador: user,
+        usuarioActualizador: user,
       };
-      const result = await createEvent(eventSave);
+      console.log({ eventSave });
+      const result = await createEvent(eventSave, token);
       console.log(result);
       onClose();
     } else {
-      // Hay errores en el formulario, actualiza el estado con los errores
       setFormErrors(errors);
     }
   };
@@ -76,9 +68,6 @@ export const DialogForm = ({ isOpen, onClose }) => {
     const errors = {};
     if (!titulo) {
       errors.titulo = "El título es obligatorio";
-    }
-    if (!descripcion) {
-      errors.descripcion = "La descripción es obligatoria";
     }
     if (!fecha) {
       errors.fecha = "La fecha es obligatoria";
@@ -113,19 +102,13 @@ export const DialogForm = ({ isOpen, onClose }) => {
     });
   };
 
-  const onAddLead = (item) => {
-    handleChangeForm({
-      target: {
-        name: "lead",
-        value: item.id,
-      },
-    });
-  };
-
-  //BackdropProps={{ style: { backgroundColor: "rgba(0, 0, 0, 0.7)" } }}
   return (
     <Backdrop open={isOpen}>
-      <Dialog open={isOpen} onClose={onClose}>
+      <Dialog
+        open={isOpen}
+        onClose={onClose}
+        PaperProps={{ sx: { borderRadius: "0px" } }}
+      >
         <DialogTitle className="text-white font-bold text-center bg-[#282828]">
           Registrar Evento
         </DialogTitle>
@@ -159,6 +142,7 @@ export const DialogForm = ({ isOpen, onClose }) => {
                   label="Proyectos"
                   onNewInput={onAddProyecto}
                   defaultValue={null}
+                  token={token}
                 />
               </div>
 
@@ -206,8 +190,6 @@ export const DialogForm = ({ isOpen, onClose }) => {
                   name="ubicacion"
                   size="small"
                 />
-
-                <FilterLeads defaultValue={null} onNewInput={onAddLead} label="Lead"/>
               </div>
             </div>
           </FormControl>
@@ -225,6 +207,7 @@ export const DialogForm = ({ isOpen, onClose }) => {
             onClick={onClose}
             sx={{
               textTransform: "capitalize",
+              borderRadius: 0,
             }}
           >
             Cerrar
@@ -234,6 +217,7 @@ export const DialogForm = ({ isOpen, onClose }) => {
             color="info"
             sx={{
               textTransform: "capitalize",
+              borderRadius: 0,
             }}
             onClick={() => handleSubmit(handleSave)}
           >

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { styled } from "@mui/material/styles";
 import Table from "@mui/material/Table";
@@ -12,6 +12,7 @@ import { RowItemDetailPermission } from "../components";
 import { getRolById } from "../helpers";
 import { CustomCircularProgress } from "../../../components";
 import { validIdURL } from "../../../utils";
+import { AuthContext } from "../../../auth";
 
 // definimos el estilo del head
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
@@ -25,6 +26,7 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
 }));
 
 export const DetailRol = () => {
+  const { authTokens } = useContext(AuthContext);
   const { idRol } = useParams();
   const numericId = parseInt(idRol);
   const [rolData, setRolData] = useState({
@@ -47,7 +49,7 @@ export const DetailRol = () => {
     if (validIdURL(numericId)) {
       setVisibleProgress(true);
       try {
-        const resultDetalleRol = await getRolById(idRol);
+        const resultDetalleRol = await getRolById(idRol, authTokens["access"]);
         setRolData(resultDetalleRol);
         setVisibleProgress(false);
       } catch (error) {

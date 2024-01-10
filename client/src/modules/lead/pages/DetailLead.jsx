@@ -8,9 +8,9 @@ import { AuthContext } from "../../../auth";
 
 export const DetailLead = () => {
   const { idLead } = useParams();
-  const { currentUser } = useContext(AuthContext);
   const isAdmin = true;
   const [showDialog, setShowDialog] = useState(false);
+  const { authTokens, currentUser } = useContext(AuthContext)
   const [lead, setLead] = useState({
     nombre: "",
     apellido: "",
@@ -54,7 +54,8 @@ export const DetailLead = () => {
   } = lead;
 
   const obtenerLead = async (idLead) => {
-    const auxLead = await getLead(idLead);
+    const auxLead = await getLead(idLead,authTokens.access);
+    setLead(auxLead);
     setLead({
       ...auxLead,
       registroLlamadas: [
@@ -95,13 +96,16 @@ export const DetailLead = () => {
     return () => controller.abort();
   }, []);
 
+
   return (
     <>
       {showDialog ? (
         <DialogForm
-          leadId={idLead}
+          lead={idLead}
           isOpen={showDialog}
           onClose={() => setShowDialog(false)}
+          token={authTokens.access}
+          user={currentUser.user_id}
         />
       ) : null}
 
@@ -173,7 +177,7 @@ export const DetailLead = () => {
                   Asesor:
                 </span>
                 <span className="block text-sm">
-                  {asesor?.codigo || "No asignado"}
+                  {asesor.asignado ? "No asignado" : "Asignado"}
                 </span>
               </label>
 
@@ -199,6 +203,23 @@ export const DetailLead = () => {
             </div>
           </div>
 
+          <div className="flex gap-2">
+            <Button
+              variant="contained"
+              color="success"
+              sx={{ textTransform: "capitalize", borderRadius: 0 }}
+              onClick={() => setShowDialog(true)}
+            >
+              Crear Evento
+            </Button>
+            <Button
+              variant="contained"
+              color="info"
+              sx={{ textTransform: "capitalize", borderRadius: 0 }}
+            >
+              <Link to={"cotizacion/"}>Generar Cotización</Link>
+            </Button>
+          </div>
           {/* SECCION DE ACCIONES SOBRE LEADS */}
 
           {isAdmin && (
@@ -220,12 +241,13 @@ export const DetailLead = () => {
           )}
 
           <div className="flex justify-center">
-            <button
-              className="bg-gray-500 hover:bg-gray-600 text-white py-2 px-4 rounded"
+            <Button
+              variant="contained"
+              sx={{ borderRadius: 0, backgroundColor: "gray" }}
               onClick={onNavigateBack}
             >
               Volver
-            </button>
+            </Button>
           </div>
         </div>
       </div>

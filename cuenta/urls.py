@@ -23,6 +23,8 @@ urlpatterns = [
     re_path(r'^modulo_permission/$', views.ModuloPermissions.as_view()),
     re_path(r'^user_active/$', views.UserActivoList.as_view()),
     re_path(r'^user_inactive/$', views.UserInactivoList.as_view()),
+    re_path(r'^asesor/$', views.UserAsesorList.as_view()),
+
 
 
     path('token/', MyTokenObtainPairView.as_view(), name='token_obtain_pair'),

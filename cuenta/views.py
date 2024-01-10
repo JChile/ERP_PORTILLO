@@ -328,3 +328,10 @@ class UserInactivoList(APIView):
         dataJson = UserSerializer(users, many=True, fields=(
             'id', 'first_name', 'last_name', 'username')).data
         return Response(dataJson)
+
+class UserAsesorList(APIView):
+    def get(self, request):
+        users = User.objects.filter(is_active=True).filter(groups__in = [1])
+        dataJson = UserSerializer(users, many=True, fields=(
+            'id', 'first_name', 'last_name', 'username','codigoAsesor')).data
+        return Response(dataJson)

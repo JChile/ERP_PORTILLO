@@ -9,7 +9,8 @@ from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework.permissions import IsAuthenticated
 from django.shortcuts import get_object_or_404
 from rest_framework.views import APIView
-
+from ventas.models import Lead
+import json
 
 class GroupList(generics.ListCreateAPIView):
     serializer_class = GruopSerializer
@@ -142,6 +143,33 @@ class UserDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
 
+    #update desacioar, desacociar
+    def update(self, request, *args, **kwargs):
+        try:
+            desasociar = request.data.pop("desasociar")
+        except:
+            desasociar = False
+        
+        try:
+            user = self.queryset.get(id = request.data.get("id"))
+        except :
+            return Response({"Message" : "User no existe"})
+        
+        serializer = UserSerializer(user, data=request.data)
+        if serializer.is_valid():
+            if desasociar :
+                leads_queryset = Lead.objects.filter(asesor = user.pk)
+
+                for i in leads_queryset :
+                    i.asesor = None
+                    i.asignado = False
+                    i.save()
+            serializer.save()
+            return Response(serializer.data)
+
+        return Response({"Message" : "No se actualizo"})
+    
+    #eliminar password en el envio
     def retrieve(self, request, pk=None):
         user_queryset = User.objects.all()
         user = get_object_or_404(user_queryset, pk=pk)

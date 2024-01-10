@@ -40,16 +40,18 @@ const ListJefeVentasLead = ({ credentials, projectId }) => {
 
   const [filteredLeads, setFilteredLeads] = useState([]);
 
-  const {
-    page,
-    rowsPerPage,
-    handleChangePage,
-    handleChangeRowsPerPage,
-    paginatedItems,
-  } = useCustomTablePagination(leadsNotAsigned);
-
   const handleChange = (event, newValue) => {
     setValue(newValue);
+    switch (newValue) {
+      case 0: {
+        setFilteredLeads(projectData.lead);
+        break;
+      }
+      case 1: {
+        setFilteredLeads(leadsNotAsigned);
+        break;
+      }
+    }
   };
 
   const handleSearchButton = (searchText) => {
@@ -71,11 +73,8 @@ const ListJefeVentasLead = ({ credentials, projectId }) => {
     try {
       //const data = await getAsesorLeads(token);
       const project = await getProyectoAsesor(token, projectId);
-      console.log({ project });
       setprojectData(project);
       setLeads(project.lead);
-      const filtereddValues = project.lead.filter((item) => !item.asignado);
-      console.log(filtereddValues) 
       setLeadsNotAsigned(project.lead.filter((item) => !item.asignado));
       setFilteredLeads(project.lead);
     } catch (error) {
@@ -93,6 +92,8 @@ const ListJefeVentasLead = ({ credentials, projectId }) => {
   ) : (
     <div>Hola</div>
   );
+
+  console.log(filteredLeads);
 
   return (
     <React.Fragment>
@@ -180,7 +181,9 @@ const ListJefeVentasLead = ({ credentials, projectId }) => {
         <CustomTabPanel value={value} index={0}>
           {showContent}
         </CustomTabPanel>
-        <CustomTabPanel value={value} index={1}></CustomTabPanel>
+        <CustomTabPanel value={value} index={1}>
+          {showContent}
+        </CustomTabPanel>
       </div>
       {visibleProgress && <CustomCircularProgress />}
     </React.Fragment>

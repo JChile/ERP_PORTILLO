@@ -17,7 +17,7 @@ import { useAlertMUI, useCustomTablePagination } from "../../../hooks";
 import { TablePagination } from "@mui/material";
 
 export const ListUsuarios = () => {
-  const { authTokens } = useContext(AuthContext);
+  const { authTokens, currentUser, logoutUser } = useContext(AuthContext);
   const [usuarios, setusuarios] = useState([]);
   const [usuariosTemporal, setUsuariosTemporal] = useState([]);
 
@@ -51,20 +51,26 @@ export const ListUsuarios = () => {
 
   // ELIMINAR DETALLE DE FORMULA
   const onEliminarUsuario = async (idItem) => {
+    const idUsuarioItem = idItem["id"];
     // formamos el body de la peticion
     const body = {
       is_active: false,
       desasociar: idItem["groups"][0]["id"] === 1 ? true : false,
     };
-    console.log(body);
     try {
       const result = await deactiveUsuario(
-        idItem["id"],
+        idUsuarioItem,
         body,
         authTokens["access"]
       );
-      // traemos de nuevo la data
-      obtenerUsuarios();
+
+      // si se hizo modificaciones sobre el usuario logeado
+      if (currentUser["user_id"] === idUsuarioItem) {
+        logoutUser();
+      } else {
+        // traemos de nuevo la data
+        obtenerUsuarios();
+      }
     } catch (error) {
       setVisibleProgress(false);
       const pilaError = combinarErrores(error);

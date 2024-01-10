@@ -7,9 +7,9 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
-import { getUsuarios, deleteLogicUsuario } from "../helpers";
+import { getUsuarios, deactiveUsuario } from "../helpers";
 import { RiUserAddLine } from "react-icons/ri";
-import { RowItemUsuario, DialogDeleteUsuario } from "../components";
+import { RowItemUsuario } from "../components";
 import { CustomCircularProgress, CustomAlert } from "../../../components";
 import { AuthContext } from "../../../auth";
 import { combinarErrores } from "../../../utils";
@@ -17,13 +17,9 @@ import { useAlertMUI, useCustomTablePagination } from "../../../hooks";
 import { TablePagination } from "@mui/material";
 
 export const ListUsuarios = () => {
-  const { authTokens } = useContext(AuthContext);
+  const { authTokens, currentUser, logoutUser } = useContext(AuthContext);
   const [usuarios, setusuarios] = useState([]);
   const [usuariosTemporal, setUsuariosTemporal] = useState([]);
-
-  // ESTADOS PARA EL DIALOG DELETE
-  const [mostrarDialog, setMostrarDialog] = useState(false);
-  const [itemSeleccionado, setItemSeleccionado] = useState(null);
 
   // CONTROL DE ACTIVOS Y DESACTIVOS
   const [activeButton, setActiveButton] = useState(true);
@@ -53,29 +49,38 @@ export const ListUsuarios = () => {
   // estado de progress
   const [visibleProgress, setVisibleProgress] = useState(false);
 
-  // PARA ELIMINAR UN ITEM SELECCIONADO
-  const onCloseDeleteDialog = () => {
-    // ocultamos el modal
-    setMostrarDialog(false);
-    // dejamos el null la data del detalle
-    setItemSeleccionado(null);
-  };
-
-  // MOSTRAR Y OCULTAR DETALLE DE USUARIO
-  const onShowDeleteDialog = (item) => {
-    setItemSeleccionado(item);
-    setMostrarDialog(true);
-  };
-
   // ELIMINAR DETALLE DE FORMULA
-  const onDeleteItemSelected = async (idItem) => {
+  const onEliminarUsuario = async (idItem) => {
+    const idUsuarioItem = idItem["id"];
+    // formamos el body de la peticion
     const body = {
       is_active: false,
-      perfil: {},
+      desasociar: idItem["groups"][0]["id"] === 1 ? true : false,
     };
-    const result = await deleteLogicUsuario(idItem, body);
-    obtenerUsuarios();
-    onCloseDeleteDialog();
+    try {
+      const result = await deactiveUsuario(
+        idUsuarioItem,
+        body,
+        authTokens["access"]
+      );
+
+      // si se hizo modificaciones sobre el usuario logeado
+      if (currentUser["user_id"] === idUsuarioItem) {
+        logoutUser();
+      } else {
+        // traemos de nuevo la data
+        obtenerUsuarios();
+      }
+    } catch (error) {
+      setVisibleProgress(false);
+      const pilaError = combinarErrores(error);
+      // mostramos feedback de error
+      setFeedbackMessages({
+        style_message: "error",
+        feedback_description_error: pilaError,
+      });
+      handleClickFeedback();
+    }
   };
 
   // FILTROS
@@ -200,7 +205,7 @@ export const ListUsuarios = () => {
                 <RowItemUsuario
                   key={item.id}
                   item={item}
-                  onShowDeleteDialog={onShowDeleteDialog}
+                  onDeleteUsuario={onEliminarUsuario}
                 />
               ))}
             </TableBody>
@@ -217,15 +222,6 @@ export const ListUsuarios = () => {
           onRowsPerPageChange={handleChangeRowsPerPage}
         />
       </Paper>
-
-      {mostrarDialog && (
-        <DialogDeleteUsuario
-          item={itemSeleccionado}
-          showDialog={mostrarDialog}
-          onDeleteItemSelected={onDeleteItemSelected}
-          onCloseDeleteDialog={onCloseDeleteDialog}
-        />
-      )}
 
       {/* COMPONENTE ALERTA */}
       <CustomAlert

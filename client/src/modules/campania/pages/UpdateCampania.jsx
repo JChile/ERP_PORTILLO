@@ -11,6 +11,7 @@ import {
   FilterProyectos,
 } from "../../../components";
 import { AuthContext } from "../../../auth";
+import { combinarErrores } from "../../../utils";
 
 export const UpdateCampania = () => {
   const { idCampania } = useParams();
@@ -56,16 +57,6 @@ export const UpdateCampania = () => {
 
   const [visibleProgress, setVisibleProgress] = useState(false);
 
-  const obtenerCampania = async (idCampania) => {
-    const result = await getCampania(idCampania);
-    setCampaign({
-      ...result,
-      user: currentUser.user_id,
-      proyecto: result.proyecto.id,
-      categoria: result.categoria.id,
-    });
-  };
-
   const onAddCategory = (category) => {
     setCampaign({
       ...campaign,
@@ -77,6 +68,14 @@ export const UpdateCampania = () => {
     setCampaign({
       ...campaign,
       proyecto: project.id,
+    });
+  };
+
+  const handledForm = (event) => {
+    const { name, value } = event.target;
+    setCampaign({
+      ...campaign,
+      [name]: value,
     });
   };
 
@@ -151,24 +150,55 @@ export const UpdateCampania = () => {
       handleClickFeedback();
     } else {
       setVisibleProgress(true);
-      const result = await updateCampania(idCampania, campaign);
-      setVisibleProgress(false);
-      onNavigateBack();
+      try {
+        const result = await updateCampania(
+          idCampania,
+          campaign,
+          authTokens["access"]
+        );
+        setVisibleProgress(false);
+        onNavigateBack();
+      } catch (error) {
+        // ocultar el progress
+        setVisibleProgress(false);
+        const pilaError = combinarErrores(error);
+        // mostramos feedback de error
+        setFeedbackMessages({
+          style_message: "error",
+          feedback_description_error: pilaError,
+        });
+        handleClickFeedback();
+      }
     }
   };
 
-  const handledForm = (event) => {
-    const { name, value } = event.target;
-    setCampaign({
-      ...campaign,
-      [name]: value,
-    });
+  const obtenerCampania = async (idCampania) => {
+    setVisibleProgress(true);
+    try {
+      const result = await getCampania(idCampania, authTokens["access"]);
+      console.log(result);
+      setCampaign({
+        ...result,
+        user: currentUser.user_id,
+        proyecto: result.proyecto.id,
+        categoria: result.categoria.id,
+      });
+      setVisibleProgress(false);
+    } catch (error) {
+      // ocultar el progress
+      setVisibleProgress(false);
+      const pilaError = combinarErrores(error);
+      // mostramos feedback de error
+      setFeedbackMessages({
+        style_message: "error",
+        feedback_description_error: pilaError,
+      });
+      handleClickFeedback();
+    }
   };
 
   useEffect(() => {
-    const controller = new AbortController();
     obtenerCampania(idCampania);
-    return () => controller.abort();
   }, []);
 
   return (
@@ -256,7 +286,6 @@ export const UpdateCampania = () => {
                 >
                   <MenuItem value="A">Activo</MenuItem>
                   <MenuItem value="I">Inactivo</MenuItem>
-                  <MenuItem value="E">Eliminado</MenuItem>
                 </Select>
               </label>
 

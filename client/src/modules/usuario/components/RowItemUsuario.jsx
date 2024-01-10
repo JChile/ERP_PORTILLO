@@ -4,11 +4,12 @@ import TableCell from "@mui/material/TableCell";
 import { Link, useNavigate } from "react-router-dom";
 import { CustomMoreVerticalActions } from "../../../components";
 
-export const RowItemUsuario = ({ item, onShowDeleteDialog }) => {
+export const RowItemUsuario = ({ item, onDeleteUsuario }) => {
+  const idGroup = item["groups"][0]["id"];
   const navigate = useNavigate();
 
   const onDeleteItemSelected = () => {
-    onShowDeleteDialog(item);
+    onDeleteUsuario(item);
   };
 
   const onEditItemSelected = () => {
@@ -26,6 +27,12 @@ export const RowItemUsuario = ({ item, onShowDeleteDialog }) => {
           activeOnDelete={item.is_active}
           onEdit={onEditItemSelected}
           onDelete={onDeleteItemSelected}
+          titleDialog="Dialogo de confirmación"
+          descriptionDialog={`${
+            idGroup === 1
+              ? "Se ha detectado que este usuario es asesor. Recuerda que esta operación desasociará sus lead en un rango de 1 mes."
+              : ""
+          }¿Estas seguro de eliminar este usuario?`}
         />
       </TableCell>
       <TableCell>

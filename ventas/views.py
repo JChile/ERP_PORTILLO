@@ -33,7 +33,14 @@ class LeadList(generics.ListCreateAPIView):
         if not (bool(request.user.groups.first().permissions.filter(codename = PermissionLead.CAN_VIEW) or request.user.is_superuser)) :
             return Response({"message" : "Usuario no tiene permisos para ver leads"}, status=403)
         
-        lead_queryset = self.queryset
+
+        estado = request.query_params.get('estado')
+        print(estado)
+        if estado:
+            lead_queryset =  self.queryset.filter(estado=estado)
+        else:
+            lead_queryset = self.queryset
+
         leadSerializer = LeadSerializer(lead_queryset, many=True)
         leadData = leadSerializer.data
         for i in leadData:
@@ -283,13 +290,19 @@ class EventoList(generics.ListCreateAPIView):
         if not (bool(request.user.groups.first().permissions.filter(codename = PermissionEvento.CAN_VIEW) or request.user.is_superuser)) :
             return Response({"message" : "Usuario no tiene permisos para ver eventos"}, status=403)
         
-        if request.user.isAdmin == False:
-            evento_queryset = Evento.objects.filter(asesor=usuarioId)
-        elif request.user.isAdmin == True:
+        estado = request.query_params.get('estado')
+        print(estado) 
+        if estado:
+            evento_queryset =  Evento.objects.all().filter(estado=estado)
+        else:
             evento_queryset = Evento.objects.all()
+
+        if request.user.isAdmin == False:
+            evento_queryset = evento_queryset.filter(asesor=usuarioId)
+        elif request.user.isAdmin == True:
+            evento_queryset = evento_queryset
         
-        if len(evento_queryset) == 0:
-            return Response({"message" : "No existen eventos"}, status=404)
+
         
         evento_data = EventoSerializer(evento_queryset, many = True).data
         print(evento_data)
@@ -355,8 +368,6 @@ class EventoDetail(generics.RetrieveUpdateDestroyAPIView):
         except :
             return Response({"message":"El evento no existe"}, status=404)        
         
-
-
         asesor = get_or_none(User, id = evento.asesor.pk)
         tipo = get_or_none(TipoEvento, id = evento.tipo.pk)
         proyecto = get_or_none(Proyecto, id = evento.proyecto.pk)
@@ -405,8 +416,16 @@ class ProductoList(generics.ListCreateAPIView):
         if not (bool(request.user.groups.first().permissions.filter(codename = PermissionProducto.CAN_VIEW) or request.user.is_superuser)) :
             return Response({"message" : "Usuario no tiene permisos para ver productos"}, status=403)
         
+
+        estado = request.query_params.get('estado')
+        print(estado) 
+        if estado:
+            producto_queryset =  Producto.objects.all().filter(estado=estado)
+        else:
+            producto_queryset = Producto.objects.all()
+
+
         try:
-            producto_queryset = Producto.objects.all()        
             producto_datajson = ProductoSerializer(producto_queryset, many = True).data
         except:
             return Response({"message":"El producto no existe"},status=404)

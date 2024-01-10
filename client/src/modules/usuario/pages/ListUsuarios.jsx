@@ -10,14 +10,11 @@ import Paper from "@mui/material/Paper";
 import { getUsuarios, deleteLogicUsuario } from "../helpers";
 import { RiUserAddLine } from "react-icons/ri";
 import { RowItemUsuario, DialogDeleteUsuario } from "../components";
-import {
-  CustomTablePagination,
-  CustomCircularProgress,
-  CustomAlert,
-} from "../../../components";
+import { CustomCircularProgress, CustomAlert } from "../../../components";
 import { AuthContext } from "../../../auth";
 import { combinarErrores } from "../../../utils";
-import { useAlertMUI } from "../../../hooks";
+import { useAlertMUI, useCustomTablePagination } from "../../../hooks";
+import { TablePagination } from "@mui/material";
 
 export const ListUsuarios = () => {
   const { authTokens } = useContext(AuthContext);
@@ -43,6 +40,15 @@ export const ListUsuarios = () => {
     handleCloseFeedback,
     handleClickFeedback,
   } = useAlertMUI();
+
+  // definimos el hook de pagination
+  const {
+    page,
+    rowsPerPage,
+    handleChangePage,
+    handleChangeRowsPerPage,
+    paginatedItems,
+  } = useCustomTablePagination(usuariosTemporal);
 
   // estado de progress
   const [visibleProgress, setVisibleProgress] = useState(false);
@@ -190,7 +196,7 @@ export const ListUsuarios = () => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {usuariosTemporal.map((item) => (
+              {paginatedItems.map((item) => (
                 <RowItemUsuario
                   key={item.id}
                   item={item}
@@ -201,7 +207,15 @@ export const ListUsuarios = () => {
           </Table>
         </TableContainer>
         {/* PAGINACION DE LA TABLA */}
-        <CustomTablePagination count={usuariosTemporal.length} />
+        <TablePagination
+          rowsPerPageOptions={[5, 10, 25, 50, 100]}
+          component="div"
+          count={usuariosTemporal.length}
+          rowsPerPage={rowsPerPage}
+          page={page}
+          onPageChange={handleChangePage}
+          onRowsPerPageChange={handleChangeRowsPerPage}
+        />
       </Paper>
 
       {mostrarDialog && (

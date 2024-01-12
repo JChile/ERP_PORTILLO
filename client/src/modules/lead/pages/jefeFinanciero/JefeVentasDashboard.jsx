@@ -9,7 +9,7 @@ const JefeVentasDashboard = ({token}) => {
 
   const fetchCampania = async () => {
     try {
-      const data = await getProyectos(token);
+      const data = await getProyectos({authToken: token});
       setProjects(data);
     } catch (error) {
       setError(true);

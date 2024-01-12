@@ -33,7 +33,6 @@ const ListJefeVentasLead = ({ credentials, projectId }) => {
   const [visibleProgress, setVisibleProgress] = useState(true);
   const [error, setError] = useState(false);
   const [value, setValue] = useState(0);
-
   const [projectData, setprojectData] = useState(null);
   const [leads, setLeads] = useState([]);
   const [leadsNotAsigned, setLeadsNotAsigned] = useState([]);

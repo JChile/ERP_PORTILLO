@@ -60,8 +60,6 @@ class LeadList(generics.ListCreateAPIView):
             objecionSerializer = ObjecionSerializer(objecion_data) if objecion_data else None
 
             i["asesor"] = userSerializer.data if userSerializer else {}
-            i["usuarioCreador"] = userCreadorSerializer.data if userCreadorSerializer else {}
-            i["usuarioActualizador"] = userActualizadorializer.data if userActualizadorializer else {}
             i["campania"] = campaniaSerializer.data if campaniaSerializer else {}
             i["objecion"] = objecionSerializer.data if objecionSerializer else {}
 
@@ -156,8 +154,6 @@ class LeadDetail(generics.RetrieveUpdateDestroyAPIView):
         objecionSerializer = ObjecionSerializer(objecion_data) if objecion_data else None
 
         lead_data["asesor"] = userSerializer.data if userSerializer else {}
-        lead_data["usuarioCreador"] = userCreadorSerializer.data if userCreadorSerializer else {}
-        lead_data["usuarioActualizador"] = userActualizadorializer.data if userActualizadorializer else {}
         lead_data["campania"] = campaniaSerializer.data if campaniaSerializer else {}
         lead_data["objecion"] = objecionSerializer.data if objecionSerializer else {}
         lead_data["whatsapp"] = WhatsAppSerializer(WhatsApp.objects.filter(lead = lead.pk), many = True).data
@@ -327,8 +323,7 @@ class EventoList(generics.ListCreateAPIView):
             eventoIterador["tipo"] = tipoSerializer.data if tipoSerializer else {}
             eventoIterador["lead"] = leadSerializer.data if leadSerializer else {}
             eventoIterador["proyecto"] = proyectoSerializer.data if proyectoSerializer else {}
-            eventoIterador["usuarioCreador"] = userCreadorSerializer.data if userCreadorSerializer else {}
-            eventoIterador["usuarioActualizador"] = userActualizadorializer.data if userActualizadorializer else {}
+
 
         return Response(evento_data)
 
@@ -445,8 +440,7 @@ class ProductoList(generics.ListCreateAPIView):
 
             i["tipo"] = tipoProductoSerializer.data if tipoProductoSerializer else {}
             i["proyecto"] = proyectoSerializer.data if proyectoSerializer else {}
-            i["usuarioCreador"] = userCreadorSerializer.data if userCreadorSerializer else {}
-            i["usuarioActualizador"] = userActualizadorializer.data if userActualizadorializer else {}
+
 
         return Response(producto_datajson)
 
@@ -503,9 +497,6 @@ class ProductoDetail(generics.RetrieveUpdateDestroyAPIView):
 
         producto_datajson["tipo"] = tipoProductoSerializer.data if tipoProductoSerializer else {}
         producto_datajson["proyecto"] = proyectoSerializer.data if proyectoSerializer else {}
-        producto_datajson["usuarioCreador"] = userCreadorSerializer.data if userCreadorSerializer else {}
-        producto_datajson["usuarioActualizador"] = userActualizadorializer.data if userActualizadorializer else {}
-       
 
         return Response(producto_datajson)
 

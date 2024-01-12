@@ -65,10 +65,6 @@ class ProyectoDetail(generics.RetrieveUpdateDestroyAPIView):
         'id', 'first_name', 'last_name', 'username')) if userActualizador_data else None
 
 
-        proyecto_data["usuarioCreador"] = userCreadorSerializer.data if userCreadorSerializer else {}
-        proyecto_data["usuarioActualizador"] = userActualizadorializer.data if userActualizadorializer else {}
-        
-
         if request.user.isAdmin == True :
             lead_datajson =  LeadSerializer(lead_queryset, many = True).data
             for i in lead_datajson:

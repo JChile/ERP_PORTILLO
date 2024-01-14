@@ -11,15 +11,14 @@ import {
   FilterProyectos,
 } from "../../../components";
 import { AuthContext } from "../../../auth";
-import { combinarErrores } from "../../../utils";
+import {
+  combinarErrores,
+  obtenerHoraActualFormatPostgress,
+} from "../../../utils";
 
 export const UpdateCampania = () => {
   const { idCampania } = useParams();
-  const { authTokens } = useContext(AuthContext);
-  /* obtenemos los datos de la sesión para enviarlo. */
-  const [currentUser, setCurrentUser] = useState(() =>
-    jwtDecode(authTokens.refresh)
-  );
+  const { authTokens, currentUser } = useContext(AuthContext);
 
   const [campaign, setCampaign] = useState({
     nombre: "",
@@ -29,7 +28,6 @@ export const UpdateCampania = () => {
     coste_real: 0,
     descripcion: "",
     estado: "",
-    user: currentUser.user_id,
     proyecto: 0,
     categoria: 0,
   });
@@ -42,7 +40,6 @@ export const UpdateCampania = () => {
     coste_real,
     descripcion,
     estado,
-    user,
     proyecto,
     categoria,
   } = campaign;
@@ -86,7 +83,6 @@ export const UpdateCampania = () => {
     coste_estimado,
     coste_real,
     estado,
-    user,
     proyecto,
     categoria
   ) => {
@@ -109,9 +105,6 @@ export const UpdateCampania = () => {
     }
     if (!estado) {
       errors.push("- El estado es obligatorio.");
-    }
-    if (!user) {
-      errors.push("- El usuario es obligatorio.");
     }
     if (!proyecto) {
       errors.push("- El proyecto es obligatorio.");
@@ -136,7 +129,6 @@ export const UpdateCampania = () => {
       coste_estimado,
       coste_real,
       estado,
-      user,
       proyecto,
       categoria
     );
@@ -151,9 +143,14 @@ export const UpdateCampania = () => {
     } else {
       setVisibleProgress(true);
       try {
+        const formatData = {
+          ...campaign,
+          usuarioActualizador: currentUser["user_id"],
+          fecha_actualizacion: obtenerHoraActualFormatPostgress(),
+        };
         const result = await updateCampania(
           idCampania,
-          campaign,
+          formatData,
           authTokens["access"]
         );
         setVisibleProgress(false);
@@ -179,7 +176,6 @@ export const UpdateCampania = () => {
       console.log(result);
       setCampaign({
         ...result,
-        user: currentUser.user_id,
         proyecto: result.proyecto.id,
         categoria: result.categoria.id,
       });

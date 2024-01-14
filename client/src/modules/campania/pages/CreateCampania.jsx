@@ -13,7 +13,7 @@ import { AuthContext } from "../../../auth";
 import { combinarErrores } from "../../../utils";
 
 export const CreateCampania = () => {
-  const { authTokens } = useContext(AuthContext);
+  const { authTokens, currentUser } = useContext(AuthContext);
   const [campaign, setCampaign] = useState({
     nombre: "",
     fecha_estimada: "",
@@ -129,7 +129,12 @@ export const CreateCampania = () => {
     } else {
       setVisibleProgress(true);
       try {
-        const result = await createCampania(campaign, authTokens["access"]);
+        const formatData = {
+          ...campaign,
+          usuarioCreador: currentUser["user_id"],
+          usuarioActualizador: currentUser["user_id"],
+        };
+        const result = await createCampania(formatData, authTokens["access"]);
         console.log(result);
         setVisibleProgress(false);
         onNavigateBack();

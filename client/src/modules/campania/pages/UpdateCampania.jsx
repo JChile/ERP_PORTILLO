@@ -173,7 +173,6 @@ export const UpdateCampania = () => {
     setVisibleProgress(true);
     try {
       const result = await getCampania(idCampania, authTokens["access"]);
-      console.log(result);
       setCampaign({
         ...result,
         proyecto: result.proyecto.id,

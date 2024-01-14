@@ -135,7 +135,6 @@ export const CreateCampania = () => {
           usuarioActualizador: currentUser["user_id"],
         };
         const result = await createCampania(formatData, authTokens["access"]);
-        console.log(result);
         setVisibleProgress(false);
         onNavigateBack();
       } catch (error) {

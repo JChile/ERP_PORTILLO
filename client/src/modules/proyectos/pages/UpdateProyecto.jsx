@@ -98,13 +98,11 @@ export const UpdateProyecto = () => {
           usuarioActualizador: currentUser["user_id"],
           usuarioCreador: currentUser["user_id"],
         };
-        console.log(formatProject);
         const result = await updateProyecto(
           idProyecto,
           formatProject,
           authTokens["access"]
         );
-        console.log(result);
         setVisibleProgress(false);
         onNavigateBack();
       } catch (error) {

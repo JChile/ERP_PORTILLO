@@ -99,32 +99,35 @@ export const UpdateUsuarios = () => {
     codigoAsesor
   ) => {
     var messages_error = "";
-    const emailPattern = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i;
-    if (email.length === 0) {
-      messages_error += "No proporciono email\n";
-    } else {
-      if (!emailPattern.test(email)) {
-        messages_error += "El email no cumple con el formato adecuado\n";
-      }
+    const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    const nombrePattern = /^[a-zA-ZÀ-ÿ\s']+$/u;
+    const apellidoPattern = /^[a-zA-ZÀ-ÿ\s']+$/u;
+    const codigoAsesorPattern = /^[a-zA-Z0-9_]{3,20}$/;
+
+    if (!emailPattern.test(email)) {
+      messages_error += "El valor de email no cumple con el formato adecuado\n";
     }
-    if (first_name.length === 0) {
-      messages_error += "No proporciono ningun nombre\n";
+    if (!nombrePattern.test(first_name)) {
+      messages_error +=
+        "El valor del nombre no cumple con el formato adecuado\n";
     }
-    if (last_name.length === 0) {
-      messages_error += "No proporciono ningun apellido\n";
+    if (!apellidoPattern.test(last_name)) {
+      messages_error +=
+        "El valor del apellido no cumple con el formato adecuado\n";
     }
     if (groups["id"] === 0) {
       messages_error += "No proporciono ningun rol\n";
     }
+
     if (codigoAsesor === null) {
       if (groups["id"] === 1) {
         messages_error +=
           "Si el rol es asesor, debes ingresar un código de asesor\n";
       }
     } else {
-      if (codigoAsesor.length === 0) {
+      if (!codigoAsesorPattern.test(codigoAsesor)) {
         messages_error +=
-          "Si el rol es asesor, debes ingresar un código de asesor\n";
+          "El valor del codigo del asesor no cumple con el formato adecuado\n";
       }
     }
     return messages_error;

@@ -151,14 +151,25 @@ export const UpdateUsuarios = () => {
         usuarioJSON,
         authTokens["access"]
       );
+      console.log(result);
       // comprobar si se realizo con exito la creación del usuario
       setVisibleProgress(false);
-      // si se hizo modificaciones sobre el usuario logeado
-      if (currentUser["user_id"] === idUsuarioItem) {
-        logoutUser();
+      if (result["Message"] === "No se actualizo") {
+        // mostramos feedback de error
+        setFeedbackMessages({
+          style_message: "error",
+          feedback_description_error:
+            "No se puede actualizar. Si esta proporcionando un código, asegurese que no este asignado a otro usuario",
+        });
+        handleClickFeedback();
       } else {
-        // navegamos atras
-        onNavigateBack();
+        // si se hizo modificaciones sobre el usuario logeado
+        if (currentUser["user_id"] === idUsuarioItem) {
+          logoutUser();
+        } else {
+          // navegamos atras
+          onNavigateBack();
+        }
       }
     } catch (error) {
       setVisibleProgress(false);

@@ -8,8 +8,8 @@ import {
   CustomAlert,
   CustomCircularProgress,
   FilterCampania,
+  FilterEstadoLead,
 } from "../../../components";
-import { FilterEstadoLead } from "../../../components/filters/estado/FilterEstadoLead";
 import { FilterObjecion } from "../../../components/filters/objecion/FilterObjecion";
 import { FilterAsesor } from "../../../components/filters/asesor/FilterAsesor";
 import { AuthContext } from "../../../auth";
@@ -61,7 +61,7 @@ export const UpdateLead = () => {
   const [visibleProgress, setVisibleProgress] = useState(false);
 
   const obtenerLead = async (idLead) => {
-    const result = await getLead(idLead);
+    const result = await getLead(idLead, authTokens["access"]);
     setLead({
       ...result,
       asesor: Object.keys(result.asesor).length !== 0 ? result.asesor.id : null,

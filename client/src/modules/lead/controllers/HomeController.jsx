@@ -9,11 +9,15 @@ const HomeController = () => {
 
   switch (currentUser.groups) {
     case "asesor": {
-      return <AsesorLeadDashboard token={authTokens.access} />;
+      console.log("ASESOR");
+      return <AsesorLeadDashboard token={authTokens["access"]} />;
     }
     case "jefe_ventas": {
-      return <JefeVentasDashboard token={authTokens.access} />;
+      return <JefeVentasDashboard token={authTokens["access"]} />;
     }
+    default:
+      console.log("OTHER");
+      break;
   }
 };
 

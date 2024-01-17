@@ -7,7 +7,7 @@ import {
   FilterCampania,
   CustomCircularProgress,
 } from "../../../components";
-import { FilterEstadoLead } from "../../../components/filters/estado/FilterEstadoLead";
+import { FilterEstadoLead } from "../../../components/filters/estado_leads/FilterEstadoLead";
 import { FilterObjecion } from "../../../components/filters/objecion/FilterObjecion";
 import { FilterAsesor } from "../../../components/filters/asesor/FilterAsesor";
 import { useAlertMUI } from "../../../hooks";

@@ -61,6 +61,7 @@ export const ListLeads = () => {
 
   const loadLeads = async () => {
     const data = await getLeadsActivos(authTokens.access);
+    console.log(data);
     setLeads(data);
     setFilterLeads(data);
   };

@@ -1,11 +1,12 @@
 import axios from "axios";
-export const getProyecto = async (id, authToken) => {
+
+export const getEstadoLead = async (token) => {
   const DOMAIN = import.meta.env.VITE_BACKEND_URL;
-  const URL = `${DOMAIN}/api/proyecto/${id}`;
+  const URL = `${DOMAIN}/api/estadoLead/`;
   const config = {
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${authToken}`,
+      Authorization: `Bearer ${token}`,
     },
   };
   const { data } = await axios.get(URL, config);

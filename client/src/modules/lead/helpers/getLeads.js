@@ -20,11 +20,16 @@ export const getLeadsActivos = async (token) => {
   return data;
 };
 
-export const getLeadsNoAsignados = async () => {
+export const getLeadsNoAsignados = async (token) => {
   const DOMAIN = process.env.VITE_BACKEND_URL;
   const URL = `${DOMAIN}/api/leadNoAsignado/`;
 
-  const { data } = await axios.get(URL);
+  const config = {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  };
+  const { data } = await axios.get(URL, config);
 
   return data;
 };

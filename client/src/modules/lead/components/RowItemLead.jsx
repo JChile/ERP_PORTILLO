@@ -6,7 +6,7 @@ import { HiPhoneMissedCall } from "react-icons/hi";
 import { CustomMoreVerticalActions } from "../../../components";
 import { formatDate_ISO861_to_formatdate } from "../../../utils/formatDate";
 
-export const RowItemLead = ({ item, onShowDeleteDialog }) => {
+export const RowItemLead = ({ item, onDeleteItemSelected }) => {
   const {
     id,
     nombre,
@@ -33,7 +33,7 @@ export const RowItemLead = ({ item, onShowDeleteDialog }) => {
     <TableRow sx={{ "&:last-child td, &:last-child th": { border: 0 } }}>
       <TableCell>
         <CustomMoreVerticalActions
-          onDelete={() => onShowDeleteDialog(item)}
+          onDelete={() => onDeleteItemSelected(item)}
           onEdit={onEditItemSelected}
         />
       </TableCell>

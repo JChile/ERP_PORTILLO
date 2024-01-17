@@ -5,14 +5,18 @@ import { useAlertMUI } from "../../../hooks";
 import { CustomAlert, CustomCircularProgress } from "../../../components";
 import { FilterProyectos } from "../../../components";
 import { FilterTipoProducto } from "../../../components";
-import { combinarErrores, validIdURL } from "../../../utils";
+import {
+  combinarErrores,
+  obtenerHoraActualFormatPostgress,
+  validIdURL,
+} from "../../../utils";
 import { AuthContext } from "../../../auth";
 
 export const UpdateProducto = () => {
-  const { authTokens } = useContext(AuthContext);
-  const { idProduct } = useParams();
-  const numericId = parseInt(idProduct);
-  console.log(numericId);
+  const { idProducto } = useParams();
+  const { authTokens, currentUser } = useContext(AuthContext);
+  //const numericId = parseInt(idProduct);
+  console.log({ idProducto });
   const [product, setProduct] = useState({
     nombre: "",
     numero: 0.0,
@@ -34,27 +38,23 @@ export const UpdateProducto = () => {
 
   const [visibleProgress, setVisibleProgress] = useState(false);
 
-  const obtenerProducto = async () => {
-    if (validIdURL(numericId)) {
-      try {
-        const result = await getProducto(idProduct, authTokens["access"]);
-        setProduct({
-          ...result,
-          tipo: result.tipo.id,
-          proyecto: result.proyecto.id,
-        });
-      } catch (error) {
-        setVisibleProgress(false);
-        const pilaError = combinarErrores(error);
-        // mostramos feedback de error
-        setFeedbackMessages({
-          style_message: "error",
-          feedback_description_error: pilaError,
-        });
-        handleClickFeedback();
-      }
-    } else {
-      onNavigateBack();
+  const obtenerProducto = async (idProduct) => {
+    try {
+      const result = await getProducto(idProduct, authTokens["access"]);
+      setProduct({
+        ...result,
+        tipo: result.tipo.id,
+        proyecto: result.proyecto.id,
+      });
+    } catch (error) {
+      setVisibleProgress(false);
+      const pilaError = combinarErrores(error);
+      // mostramos feedback de error
+      setFeedbackMessages({
+        style_message: "error",
+        feedback_description_error: pilaError,
+      });
+      handleClickFeedback();
     }
   };
 
@@ -117,9 +117,14 @@ export const UpdateProducto = () => {
     } else {
       setVisibleProgress(true);
       try {
+        const formatData = {
+          ...product,
+          usuarioActualizador: currentUser["user_id"],
+          fecha_actualizacion: obtenerHoraActualFormatPostgress(),
+        };
         const result = await updateProducto(
           idProduct,
-          product,
+          formatData,
           authTokens["access"]
         );
         setVisibleProgress(false);
@@ -138,9 +143,7 @@ export const UpdateProducto = () => {
   };
 
   useEffect(() => {
-    const controller = new AbortController();
-    obtenerProducto();
-    return () => controller.abort();
+    obtenerProducto(idProducto);
   }, []);
 
   return (

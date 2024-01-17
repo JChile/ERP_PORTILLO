@@ -7,9 +7,11 @@ import { FilterProyectos } from "../../../components";
 import { FilterTipoProducto } from "../../../components";
 import { combinarErrores } from "../../../utils";
 import { AuthContext } from "../../../auth";
+import { v4 as uuidv4 } from "uuid";
 
 export const CreateProducto = () => {
-  const { authTokens } = useContext(AuthContext);
+  const { authTokens, currentUser } = useContext(AuthContext);
+  const uniqueId = uuidv4();
   const [product, setProduct] = useState({
     nombre: "",
     numero: 0.0,
@@ -90,11 +92,17 @@ export const CreateProducto = () => {
     } else {
       setVisibleProgress(true);
       try {
-        const result = await createProducto(product, authTokens["access"]);
-        console.log(product);
+        const formatData = {
+          ...product,
+          codigo: uuidv4(),
+          usuarioCreador: currentUser["user_id"],
+          usuarioActualizador: currentUser["user_id"],
+        };
+        const result = await createProducto(formatData, authTokens["access"]);
         setVisibleProgress(false);
         onNavigateBack();
       } catch (error) {
+        console.log(error);
         setVisibleProgress(false);
         const pilaError = combinarErrores(error);
         // mostramos feedback de error

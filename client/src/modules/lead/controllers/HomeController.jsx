@@ -1,6 +1,7 @@
 import React, { useContext } from "react";
 import { AuthContext } from "../../../auth";
 import { NoAccessLeads } from "../components";
+import MarketingDashboard from "../pages/marketing/MarketingLeadDashboard";
 import ListJefeVentasLead from "../components/JefeFinanciero/ListJefeVentasLead";
 import { ListAsesorVentasLead } from "../components/Asesor/ListAsesorVentasLead";
 
@@ -16,6 +17,9 @@ const HomeController = () => {
       ) : (
         <ListAsesorVentasLead />
       );
+    }
+    case "marketing": {
+      return <MarketingDashboard token={authTokens["access"]} />;
     }
     default:
       return <NoAccessLeads />;

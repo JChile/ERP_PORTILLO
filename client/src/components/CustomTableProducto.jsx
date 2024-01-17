@@ -13,13 +13,13 @@ import { RowItemProducto } from "../modules/productos/components";
 export const CustomTableProducto = ({
   headerData,
   rowData,
-  onShowDeleteDialog,
+  onDeleteItemSelected,
 }) => {
   const productoRow = rowData.map((item) => (
     <RowItemProducto
       key={item.id}
       item={item}
-      onShowDeleteDialog={onShowDeleteDialog}
+      onDeleteItemSelected={onDeleteItemSelected}
     />
   ));
 

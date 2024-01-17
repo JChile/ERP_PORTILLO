@@ -14,13 +14,16 @@ import { useAlertMUI } from "../../../hooks";
 import { CustomCircularProgress, CustomAlert } from "../../../components";
 
 const ListProyectos = () => {
-  const { authTokens } = useContext(AuthContext);
+  const { authTokens, currentUser } = useContext(AuthContext);
   const [activeButton, setActiveButton] = useState(true);
   const [showDialog, setShowDialog] = useState(false);
   const [projects, setProjects] = useState([]);
+  const [projectsTemporal, setProjectsTemporal] = useState([]);
   const [itemSeleccionado, setItemSeleccionado] = useState(null);
   const [visibleProgress, setVisibleProgress] = useState(false);
-
+  const handleButtonState = (buttonState) => {
+    setActiveButton(buttonState);
+  };
   const {
     feedbackCreate,
     feedbackMessages,
@@ -32,8 +35,15 @@ const ListProyectos = () => {
   const obtenerProyectos = async () => {
     setVisibleProgress(true);
     try {
-      const data = await getProyectos({ authToken: authTokens["access"] });
+      const data = await getProyectos(
+        `estado=${activeButton ? "A" : "I"}`,
+        authTokens["access"]
+      );
       setProjects(data);
+      setProjectsTemporal(data);
+      console.log(activeButton);
+      console.log(projects);
+      console.log(projectsTemporal);
       setVisibleProgress(false);
     } catch (error) {
       setVisibleProgress(false);
@@ -61,13 +71,11 @@ const ListProyectos = () => {
 
   const onDeleteItemSelected = async (item) => {
     const { id } = item;
-    const body = {
-      estado: "I",
-    };
     try {
-      const result = await deleteProyecto(id, body, {
-        authToken: authTokens["access"],
-      });
+      const body = {
+        estado: "I",
+      };
+      const result = await deleteProyecto(id, body, authTokens["access"]);
       obtenerProyectos();
       onCloseDeleteDialog();
     } catch (error) {
@@ -82,7 +90,7 @@ const ListProyectos = () => {
 
   useEffect(() => {
     obtenerProyectos();
-  }, []);
+  }, [activeButton]);
 
   return (
     <>
@@ -100,7 +108,7 @@ const ListProyectos = () => {
                 backgroundColor: activeButton ? "#1976d2" : "#d1d5db",
                 color: activeButton ? "white" : "black",
               }}
-              /* onClick={() => handleButtonState(true)} */
+              onClick={() => handleButtonState(true)}
             >
               Activas
             </Button>
@@ -112,7 +120,7 @@ const ListProyectos = () => {
                 backgroundColor: !activeButton ? "#1976d2" : "#d1d5db",
                 color: !activeButton ? "white" : "black",
               }}
-              /* onClick={() => handleButtonState(false)} */
+              onClick={() => handleButtonState(false)}
             >
               Inactivas
             </Button>
@@ -130,7 +138,7 @@ const ListProyectos = () => {
         </div>
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        {projects.map((project) => (
+        {projectsTemporal.map((project) => (
           <Card key={project.id}>
             <CardContent className="flex flex-col items-center justify-center">
               <Avatar

@@ -12,6 +12,7 @@ export const CreateProducto = () => {
   const { authTokens } = useContext(AuthContext);
   const [product, setProduct] = useState({
     nombre: "",
+    codigo: "000",
     numero: 0.0,
     area: 0.0,
     tipo: null,
@@ -19,7 +20,7 @@ export const CreateProducto = () => {
     estado: "A",
   });
 
-  const { nombre, numero, area, tipo, proyecto, estado } = product;
+  const { nombre, codigo, numero, area, tipo, proyecto, estado } = product;
 
   const {
     feedbackCreate,
@@ -90,8 +91,12 @@ export const CreateProducto = () => {
     } else {
       setVisibleProgress(true);
       try {
-        const result = await createProducto(product, authTokens["access"]);
-        console.log(product);
+        const formatData = {
+          ...product,
+          usuarioCreador: currentUser["user_id"],
+          usuarioActualizador: currentUser["user_id"],
+        };
+        const result = await createProducto(formatData, authTokens["access"]);
         setVisibleProgress(false);
         onNavigateBack();
       } catch (error) {

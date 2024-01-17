@@ -5,14 +5,16 @@ import ListJefeVentasLead from "../components/JefeFinanciero/ListJefeVentasLead"
 
 const HomeController = () => {
   const { currentUser, authTokens } = useContext(AuthContext);
+  const { user } = currentUser;
 
   switch (currentUser.groups) {
     case "asesor": {
-      //console.log({admin: currentUser.isAdmin});
-      return <AsesorLeadDashboard token={authTokens["access"]} />;
-    }
-    case "jefe_ventas": {
-      return <ListJefeVentasLead credentials={authTokens["access"]} />;
+      console.log({ admin: currentUser.user.isAdmin });
+      return user.isAdmin ? (
+        <ListJefeVentasLead credentials={authTokens["access"]} />
+      ) : (
+        <div>Admin</div>
+      );
     }
     default:
       return <NoAccessLeads />;

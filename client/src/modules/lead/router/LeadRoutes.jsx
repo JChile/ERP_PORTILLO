@@ -3,7 +3,6 @@ import { Route, Routes } from "react-router-dom";
 import {
   AddLeadManual,
   AddLeadSheet,
-  ListLeads,
   DetailLead,
   UpdateLead,
   AsignLeads,
@@ -33,8 +32,6 @@ export const LeadRoutes = () => {
         element={<CreatePlantilla />}
       />
   */}
-
-      <Route path="proyecto/:projectId" element={<ListLeadController />} />
     </Routes>
   );
 };

@@ -1,20 +1,14 @@
 import React, { useEffect, useState, useContext } from "react";
-import {
-  deleteProducto,
-  getProductosActivos,
-  getProductosInactivos,
-} from "../helpers";
+import { deleteProducto, getProductos } from "../helpers";
 import { Link } from "react-router-dom";
 import { DialogDeleteProducto } from "../components";
-import {
-  CustomCircularProgress,
-  CustomTablePagination,
-} from "../../../components";
+import { CustomCircularProgress } from "../../../components";
 import { AuthContext } from "../../../auth";
 import { CustomInputBase } from "../../../components/CustomInputBase";
 import { Button } from "@mui/material";
-import { MdAdd, MdHdrPlus, MdPlusOne } from "react-icons/md";
+import { MdAdd } from "react-icons/md";
 import { CustomTableProducto } from "../../../components/CustomTableProducto";
+import { combinarErrores } from "../../../utils";
 
 export const ListProductos = () => {
   const { authTokens } = useContext(AuthContext);
@@ -27,23 +21,6 @@ export const ListProductos = () => {
   // Control de bottones, campanias activas e inactivas.
   const [activeButton, setActiveButton] = useState(true);
 
-  const [showDialog, setShowDialog] = useState(false);
-  const [itemSeleccionado, setItemSeleccionado] = useState(null);
-
-  // PARA ELIMINAR UN ITEM SELECCIONADO
-  const onCloseDeleteDialog = () => {
-    // ocultamos el modal
-    setShowDialog(false);
-    // dejamos el null la data del detalle
-    setItemSeleccionado(null);
-  };
-
-  // MOSTRAR Y OCULTAR DETALLE DE USUARIO
-  const onShowDeleteDialog = (item) => {
-    setItemSeleccionado(item);
-    setShowDialog(true);
-  };
-
   // Manejar los estados de los filtros
   const handleButtonState = (buttonState) => {
     setActiveButton(buttonState);
@@ -52,14 +29,10 @@ export const ListProductos = () => {
   const obtenerProductos = async () => {
     setVisibleProgress(true);
     try {
-      let result = [];
-      if (activeButton) {
-        result = await getProductosActivos({ authToken: authTokens["access"] });
-      } else {
-        result = await getProductosInactivos({
-          authToken: authTokens["access"],
-        });
-      }
+      const result = await getProductos(
+        `estado=${activeButton ? "A" : "I"}`,
+        authTokens["access"]
+      );
       setProductos(result);
       setProductosTemporal(result);
       setVisibleProgress(false);
@@ -76,6 +49,7 @@ export const ListProductos = () => {
   };
 
   const onDeleteItemSelected = async (item) => {
+    setVisibleProgress(true);
     const { id, proyecto, tipo } = item;
     const body = {
       estado: "I",
@@ -83,11 +57,22 @@ export const ListProductos = () => {
       tipo: tipo.id,
     };
     try {
-      const result = await deleteProducto(id, body);
+      const result = await deleteProducto(id, body, authTokens["access"]);
       obtenerProductos();
-      onCloseDeleteDialog();
+      //onCloseDeleteDialog();
+      setVisibleProgress(false);
     } catch (error) {
-      // handled error.
+      // ocultar el progress
+      setVisibleProgress(false);
+      const pilaError = combinarErrores(error);
+      // mostramos feedback de error
+      setFeedbackMessages({
+        style_message: "error",
+        feedback_description_error: pilaError,
+      });
+      handleClickFeedback();
+      // cerramos el loader
+      setVisibleProgress(false);
     }
   };
 
@@ -106,11 +91,7 @@ export const ListProductos = () => {
   };
 
   useEffect(() => {
-    setVisibleProgress(true);
-    const controller = new AbortController();
     obtenerProductos();
-    setVisibleProgress(false);
-    return () => controller.abort();
   }, [activeButton]);
 
   const filters = ["Nombre", "Proyecto"];
@@ -176,18 +157,8 @@ export const ListProductos = () => {
           { name: "Proyecto", width: 70 },
         ]}
         rowData={productosTemporal}
-        onShowDeleteDialog={onShowDeleteDialog}
+        onDeleteItemSelected={onDeleteItemSelected}
       />
-
-      {showDialog && (
-        <DialogDeleteProducto
-          item={itemSeleccionado}
-          showDialog={showDialog}
-          onDeleteItemSelected={onDeleteItemSelected}
-          onCloseDeleteDialog={onCloseDeleteDialog}
-        />
-      )}
-
       {/* CIRCULAR PROGRESS */}
       {visibleProgress && <CustomCircularProgress />}
     </>

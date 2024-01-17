@@ -8,7 +8,7 @@ import { AuthContext } from "../../../auth";
 import { combinarErrores } from "../../../utils";
 
 export const CreateProyecto = () => {
-  const { authTokens } = useContext(AuthContext);
+  const { authTokens, currentUser } = useContext(AuthContext);
   const [project, setProject] = useState({
     nombre: "",
     ubicacion: "",
@@ -67,9 +67,14 @@ export const CreateProyecto = () => {
       });
       handleClickFeedback();
     } else {
+      setVisibleProgress(true);
       try {
-        setVisibleProgress(true);
-        const result = await createProyecto(project, authTokens["access"]);
+        const formatData = {
+          ...project,
+          usuarioCreador: currentUser["user_id"],
+          usuarioActualizador: currentUser["user_id"],
+        };
+        const result = await createProyecto(formatData, authTokens["access"]);
         setVisibleProgress(false);
         onNavigateBack();
       } catch (error) {

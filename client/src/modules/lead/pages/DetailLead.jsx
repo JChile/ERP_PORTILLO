@@ -8,9 +8,9 @@ import { AuthContext } from "../../../auth";
 
 export const DetailLead = () => {
   const { idLead } = useParams();
-  const isAdmin = true;
+  const { authTokens, currentUser } = useContext(AuthContext);
+  const [isAdmin, setIsAdmin] = useState(false);
   const [showDialog, setShowDialog] = useState(false);
-  const { authTokens, currentUser } = useContext(AuthContext)
   const [lead, setLead] = useState({
     nombre: "",
     apellido: "",
@@ -53,8 +53,10 @@ export const DetailLead = () => {
     registroEventos,
   } = lead;
 
+  console.log(currentUser.groups);
+
   const obtenerLead = async (idLead) => {
-    const auxLead = await getLead(idLead,authTokens.access);
+    const auxLead = await getLead(idLead, authTokens.access);
     setLead(auxLead);
     setLead({
       ...auxLead,
@@ -91,11 +93,13 @@ export const DetailLead = () => {
   };
 
   useEffect(() => {
-    const controller = new AbortController();
     obtenerLead(idLead);
-    return () => controller.abort();
+    if (currentUser.groups === "marketing") {
+      setIsAdmin(false);
+    } else {
+      setIsAdmin(true);
+    }
   }, []);
-
 
   return (
     <>

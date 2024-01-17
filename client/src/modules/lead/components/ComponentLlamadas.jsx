@@ -8,7 +8,7 @@ import {
   TableRow,
   Typography,
 } from "@mui/material";
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { FaPhone } from "react-icons/fa";
 import { styled } from "@mui/material/styles";
 import Dialog from "@mui/material/Dialog";
@@ -16,6 +16,9 @@ import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
 import DialogActions from "@mui/material/DialogActions";
 import Button from "@mui/material/Button";
+import { createLlamada } from "../helpers";
+import { combinarErrores } from "../../../utils";
+import { AuthContext } from "../../../auth";
 
 const ITEM_HEIGHT = 48;
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
@@ -27,9 +30,10 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   },
 }));
 
-export const ComponentLlamadas = ({ usuario, dataLlamadas }) => {
+export const ComponentLlamadas = ({ lead, dataLlamadas, onLoadDataRfresh }) => {
   const [itemSelected, setItemSelected] = useState(null);
   const [openDialogDetalle, setOpenDialogDetalle] = useState(false);
+  const { currentUser, authTokens } = useContext(AuthContext);
 
   const handleSelectDetalle = (element) => {
     setItemSelected(element);
@@ -39,6 +43,22 @@ export const ComponentLlamadas = ({ usuario, dataLlamadas }) => {
   const handleCloseDetalle = () => {
     setItemSelected(null);
     setOpenDialogDetalle(false);
+  };
+
+  const crearRegistroLlamada = async (body) => {
+    const formatData = {
+      ...body,
+      lead: lead,
+      usuarioCreador: currentUser["user_id"],
+      usuarioActualizador: currentUser["user_id"],
+    };
+    try {
+      const result = await createLlamada(formatData, authTokens["access"]);
+      onLoadDataRfresh();
+    } catch (error) {
+      const pilaError = combinarErrores(error);
+      alert(pilaError);
+    }
   };
 
   return (
@@ -81,7 +101,7 @@ export const ComponentLlamadas = ({ usuario, dataLlamadas }) => {
                     >
                       <TableCell>{index + 1}</TableCell>
                       <TableCell>{element["detalle"]}</TableCell>
-                      <TableCell>{element["fechaCreacion"]}</TableCell>
+                      <TableCell>{element["fecha_creacion"]}</TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
@@ -90,7 +110,10 @@ export const ComponentLlamadas = ({ usuario, dataLlamadas }) => {
           ) : (
             <p>No hay registros</p>
           )}
-          <DialogRegistrarLlamada />
+          <DialogRegistrarLlamada
+            onCreateRegistroLlamada={crearRegistroLlamada}
+          />
+
           {itemSelected !== null && (
             <DialogDetalleLlamada
               open={openDialogDetalle}
@@ -104,7 +127,7 @@ export const ComponentLlamadas = ({ usuario, dataLlamadas }) => {
   );
 };
 
-const DialogRegistrarLlamada = () => {
+const DialogRegistrarLlamada = ({ onCreateRegistroLlamada }) => {
   const [open, setOpen] = React.useState(false);
   const handleClickOpen = () => {
     setOpen(true);
@@ -113,9 +136,21 @@ const DialogRegistrarLlamada = () => {
     setOpen(false);
   };
   const [inputValue, setinputValue] = React.useState("");
+
   const handleInputValue = ({ target }) => {
     const { value, name } = target;
     setinputValue(value);
+  };
+
+  const crearRegistroLlamada = () => {
+    if (inputValue.length === 0) {
+      alert("Debe ingresar un detalle del mensaje");
+    } else {
+      const formatData = {
+        detalle: inputValue,
+      };
+      onCreateRegistroLlamada(formatData);
+    }
   };
   return (
     <div className="py-4">
@@ -165,7 +200,7 @@ const DialogRegistrarLlamada = () => {
             autoFocus
             onClick={() => {
               // registramos un nuevo mensaje
-              console.log("Nuevo mensaje", inputValue);
+              crearRegistroLlamada();
               // cerramos el cuadro de dialogo
               handleClose();
             }}
@@ -201,7 +236,7 @@ const DialogDetalleLlamada = ({ element, open, handleClose }) => {
             <Typography variant="subtitle1" sx={{ fontWeight: "bold" }}>
               Fecha de creación:
             </Typography>
-            <Typography>{element["fechaCreacion"]}</Typography>
+            <Typography>{element["fecha_creacion"]}</Typography>
           </Grid>
           {/* Agrega más campos de propiedad según sea necesario */}
         </Grid>

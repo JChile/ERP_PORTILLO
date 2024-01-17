@@ -40,11 +40,12 @@ export const getLeadsNoAsignados = async (token) => {
  *  @returns {object} data, object with asesor information and its leads.
  *  @throws {error} if something happens
  * */
-export const getAsesorLeads = async (token) => {
+export const getAsesorLeads = async (token, queries = "") => {
   const DOMAIN = process.env.VITE_BACKEND_URL;
   const URL = `${DOMAIN}/api/asesorLead/`;
   const config = {
     headers: {
+      "Content-Type": "application/json",
       Authorization: `Bearer ${token}`,
     },
   };

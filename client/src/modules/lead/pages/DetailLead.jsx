@@ -5,11 +5,15 @@ import { Button, Checkbox } from "@mui/material";
 import { DialogForm } from "../../ventas/components/DialogForm";
 import { ComponentLlamadas, ComponentWhatsapp } from "../components";
 import { AuthContext } from "../../../auth";
+import { CustomAlert, CustomCircularProgress } from "../../../components";
+import { useAlertMUI } from "../../../hooks";
+import { combinarErrores, validIdURL } from "../../../utils";
 
 export const DetailLead = () => {
   const { idLead } = useParams();
+  const numericId = parseInt(idLead);
   const { authTokens, currentUser } = useContext(AuthContext);
-  const [isAdmin, setIsAdmin] = useState(false);
+  const isAsesor = currentUser["groupsId"] === "1" ? true : false;
   const [showDialog, setShowDialog] = useState(false);
   const [lead, setLead] = useState({
     nombre: "",
@@ -31,9 +35,9 @@ export const DetailLead = () => {
     campania: {
       nombre: "",
     },
-    registroLlamadas: [],
-    registroWhatsapps: [],
-    registroEventos: [],
+    llamadas: [],
+    whatsapps: [],
+    eventos: [],
   });
 
   const {
@@ -48,57 +52,53 @@ export const DetailLead = () => {
     estadoLead,
     objecion,
     campania,
-    registroLlamadas,
-    registroWhatsapps,
-    registroEventos,
+    llamadas,
+    whatsapps,
+    eventos,
   } = lead;
 
-  console.log(currentUser.groups);
-
-  const obtenerLead = async (idLead) => {
-    const auxLead = await getLead(idLead, authTokens.access);
-    setLead(auxLead);
-    setLead({
-      ...auxLead,
-      registroLlamadas: [
-        {
-          id: 1,
-          detalle: "No respondio la llamada",
-          fechaCreacion: "2023-08-07 14:05:55",
-        },
-        {
-          id: 2,
-          detalle: "Indico que la llamen en otro momento del día",
-          fechaCreacion: "2023-04-07 11:30:05",
-        },
-      ],
-      registroWhatsapps: [
-        {
-          id: 1,
-          detalle: "No respondio el mensaje",
-          fechaCreacion: "2023-08-07 14:05:55",
-        },
-        {
-          id: 2,
-          detalle: "Desea un catalogo de departamentos",
-          fechaCreacion: "2023-04-07 11:30:05",
-        },
-      ],
-    });
-  };
+  const {
+    feedbackCreate,
+    feedbackMessages,
+    setFeedbackMessages,
+    handleCloseFeedback,
+    handleClickFeedback,
+  } = useAlertMUI();
 
   const navigate = useNavigate();
+
   const onNavigateBack = () => {
     navigate(-1);
   };
 
-  useEffect(() => {
-    obtenerLead(idLead);
-    if (currentUser.groups === "marketing") {
-      setIsAdmin(false);
+  const [visibleProgress, setVisibleProgress] = useState(false);
+
+  const obtenerLead = async () => {
+    if (validIdURL(numericId)) {
+      try {
+        setVisibleProgress(true);
+        const auxLead = await getLead(numericId, authTokens.access);
+        console.log(auxLead);
+        setLead(auxLead);
+        // comprobar si se realizo con exito la creación del usuario
+        setVisibleProgress(false);
+      } catch (error) {
+        setVisibleProgress(false);
+        const pilaError = combinarErrores(error);
+        // mostramos feedback de error
+        setFeedbackMessages({
+          style_message: "error",
+          feedback_description_error: pilaError,
+        });
+        handleClickFeedback();
+      }
     } else {
-      setIsAdmin(true);
+      onNavigateBack();
     }
+  };
+
+  useEffect(() => {
+    obtenerLead();
   }, []);
 
   return (
@@ -226,19 +226,21 @@ export const DetailLead = () => {
           </div>
           {/* SECCION DE ACCIONES SOBRE LEADS */}
 
-          {isAdmin && (
+          {isAsesor && (
             <>
               <div className="flex justify-center">
                 {/* Columna 1 */}
                 <ComponentWhatsapp
-                  usuario={currentUser}
-                  dataWhatsapp={registroWhatsapps}
+                  lead={idLead}
+                  dataWhatsapp={whatsapps}
+                  onLoadDataRfresh={obtenerLead}
                 />
 
                 {/* Columna 2 */}
                 <ComponentLlamadas
-                  usuario={currentUser}
-                  dataLlamadas={registroLlamadas}
+                  lead={idLead}
+                  dataLlamadas={llamadas}
+                  onLoadDataRfresh={obtenerLead}
                 />
               </div>
             </>
@@ -255,6 +257,14 @@ export const DetailLead = () => {
           </div>
         </div>
       </div>
+      {/* COMPONENTE ALERTA */}
+      <CustomAlert
+        feedbackCreate={feedbackCreate}
+        feedbackMessages={feedbackMessages}
+        handleCloseFeedback={handleCloseFeedback}
+      />
+      {/* CIRCULAR PROGRESS */}
+      {visibleProgress && <CustomCircularProgress />}
     </>
   );
 };

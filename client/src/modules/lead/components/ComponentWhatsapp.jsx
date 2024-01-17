@@ -8,7 +8,7 @@ import {
   TableRow,
   Typography,
 } from "@mui/material";
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { FaWhatsapp } from "react-icons/fa";
 import { styled } from "@mui/material/styles";
 import Dialog from "@mui/material/Dialog";
@@ -16,6 +16,9 @@ import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
 import DialogActions from "@mui/material/DialogActions";
 import Button from "@mui/material/Button";
+import { createWhatsapp } from "../helpers";
+import { AuthContext } from "../../../auth";
+import { combinarErrores } from "../../../utils";
 
 const ITEM_HEIGHT = 48;
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
@@ -27,9 +30,10 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   },
 }));
 
-export const ComponentWhatsapp = ({ usuario, dataWhatsapp }) => {
+export const ComponentWhatsapp = ({ lead, dataWhatsapp, onLoadDataRfresh }) => {
   const [itemSelected, setItemSelected] = useState(null);
   const [openDialogDetalle, setOpenDialogDetalle] = useState(false);
+  const { currentUser, authTokens } = useContext(AuthContext);
 
   const handleSelectDetalle = (element) => {
     setItemSelected(element);
@@ -39,6 +43,22 @@ export const ComponentWhatsapp = ({ usuario, dataWhatsapp }) => {
   const handleCloseDetalle = () => {
     setItemSelected(null);
     setOpenDialogDetalle(false);
+  };
+
+  const crearRegistroWhatsapp = async (body) => {
+    const formatData = {
+      ...body,
+      lead: lead,
+      usuarioCreador: currentUser["user_id"],
+      usuarioActualizador: currentUser["user_id"],
+    };
+    try {
+      const result = await createWhatsapp(formatData, authTokens["access"]);
+      onLoadDataRfresh();
+    } catch (error) {
+      const pilaError = combinarErrores(error);
+      alert(pilaError);
+    }
   };
 
   return (
@@ -81,7 +101,7 @@ export const ComponentWhatsapp = ({ usuario, dataWhatsapp }) => {
                     >
                       <TableCell>{index + 1}</TableCell>
                       <TableCell>{element["detalle"]}</TableCell>
-                      <TableCell>{element["fechaCreacion"]}</TableCell>
+                      <TableCell>{element["fecha_creacion"]}</TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
@@ -90,7 +110,9 @@ export const ComponentWhatsapp = ({ usuario, dataWhatsapp }) => {
           ) : (
             <p>No hay registros</p>
           )}
-          <DialogRegistrarMensajeWhatsapp />
+          <DialogRegistrarMensajeWhatsapp
+            onCreateRegistroWhatsapp={crearRegistroWhatsapp}
+          />
           {itemSelected !== null && (
             <DialogDetalleMensajeWhatsapp
               open={openDialogDetalle}
@@ -104,7 +126,7 @@ export const ComponentWhatsapp = ({ usuario, dataWhatsapp }) => {
   );
 };
 
-const DialogRegistrarMensajeWhatsapp = () => {
+const DialogRegistrarMensajeWhatsapp = ({ onCreateRegistroWhatsapp }) => {
   const [open, setOpen] = React.useState(false);
   const handleClickOpen = () => {
     setOpen(true);
@@ -117,6 +139,18 @@ const DialogRegistrarMensajeWhatsapp = () => {
     const { value, name } = target;
     setinputValue(value);
   };
+
+  const crearRegistroWhatsapp = () => {
+    if (inputValue.length === 0) {
+      alert("Debe ingresar un detalle del mensaje");
+    } else {
+      const formatData = {
+        detalle: inputValue,
+      };
+      onCreateRegistroWhatsapp(formatData);
+    }
+  };
+
   return (
     <div className="py-4">
       <button
@@ -165,7 +199,7 @@ const DialogRegistrarMensajeWhatsapp = () => {
             autoFocus
             onClick={() => {
               // registramos un nuevo mensaje
-              console.log("Nuevo mensaje", inputValue);
+              crearRegistroWhatsapp();
               // cerramos el cuadro de dialogo
               handleClose();
             }}
@@ -201,7 +235,7 @@ const DialogDetalleMensajeWhatsapp = ({ element, open, handleClose }) => {
             <Typography variant="subtitle1" sx={{ fontWeight: "bold" }}>
               Fecha de creación:
             </Typography>
-            <Typography>{element["fechaCreacion"]}</Typography>
+            <Typography>{element["fecha_creacion"]}</Typography>
           </Grid>
           {/* Agrega más campos de propiedad según sea necesario */}
         </Grid>

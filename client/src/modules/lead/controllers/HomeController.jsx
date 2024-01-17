@@ -3,6 +3,7 @@ import { AuthContext } from "../../../auth";
 import { NoAccessLeads } from "../components";
 import MarketingDashboard from "../pages/marketing/MarketingLeadDashboard";
 import ListJefeVentasLead from "../components/JefeFinanciero/ListJefeVentasLead";
+import { ListAsesorVentasLead } from "../components/Asesor/ListAsesorVentasLead";
 
 const HomeController = () => {
   const { currentUser, authTokens } = useContext(AuthContext);
@@ -13,7 +14,7 @@ const HomeController = () => {
       return user.isAdmin ? (
         <ListJefeVentasLead credentials={authTokens["access"]} />
       ) : (
-        <div>Admin</div>
+        <ListAsesorVentasLead />
       );
     }
     case "marketing": {

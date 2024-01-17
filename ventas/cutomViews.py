@@ -67,15 +67,18 @@ class leadConfirmation:
 
         return lead
 
-    def check_numero(self, phone_numbers):       
+    def check_numero(self, phone_numbers):
         celular = self.data.get("celular")
         if not celular:
-            self.errores.append("El numero de celular no se envió en los datos.")
+            self.errores.append(
+                "El numero de celular no se envió en los datos.")
         else:
             if len(celular) != 9 or not celular.startswith('9') or not celular.isdigit():
-                self.errores.append("El numero de celular no cumple con los requisitos.")
+                self.errores.append(
+                    "El numero de celular no cumple con los requisitos.")
             elif celular in phone_numbers:
-                self.errores.append("El numero de celular ya existe en el proyecto en un plazo de 30 dias.")
+                self.errores.append(
+                    "El numero de celular ya existe en el proyecto en un plazo de 30 dias.")
 
     def check_asesor(self):
         if "asesor" in self.data:
@@ -140,32 +143,32 @@ class leadMultipleCreationAutomatic(APIView):
         return Response(response)
 
 
-
 class leadCreation:
     def __init__(self, data):
         self.data = data
         self.create_data()
-    
+
     def serialize_lead(self):
         return self.data
 
-    def create_data(self): 
+    def create_data(self):
         try:
-            self.data["horaRecepcion"] = datetime.strptime(self.data["horaRecepcion"], "%d/%m/%Y")
+            self.data["horaRecepcion"] = datetime.strptime(
+                self.data["horaRecepcion"], "%d/%m/%Y")
         except (ValueError, KeyError):
             self.data["horaRecepcion"] = datetime.now()
 
         try:
-            self.data["campania"] = Campania.objects.get(codigo = self.data["campania"]).id
+            self.data["campania"] = Campania.objects.get(
+                codigo=self.data["campania"]).id
         except:
             self.data["campania"] = None
-            
-
 
     def put_asesor(self, asesor):
         self.data["asesor"] = asesor.id
         self.data["asignado"] = True
         asesor.numeroLeads += 1
+
 
 class LeadAssigner:
     def __init__(self, asesores):
@@ -192,6 +195,7 @@ class LeadAssigner:
 class LeadMultipleAssign(generics.UpdateAPIView):
     queryset = Lead.objects.all()
     serializer_class = LeadListSerializer
+
     def update(self, request):
         data = request.data
         for assignment in data:
@@ -237,7 +241,7 @@ class LeadMultipleCreationManual(APIView):
             error_message = []
             try:
                 i["horaRecepcion"] = datetime.strptime(
-                i["horaRecepcion"], "%d/%m/%Y")
+                    i["horaRecepcion"], "%d/%m/%Y")
             except (ValueError, KeyError):
                 i["horaRecepcion"] = datetime.now()
 
@@ -273,7 +277,7 @@ class LeadMultipleCreationManual(APIView):
                     data_no_saved["data"] = i
                     error_message.append(
                         "Se repite el numero telefonico con registro de hace 30 dias")
-                
+
                 data.save()
                 lead = Lead.objects.get(id=data.data["id"])
                 if flag_asignado:
@@ -310,46 +314,47 @@ class AsesorAsignacion(APIView):
                 if lead.asesor == None or lead.asesor.pk != user.pk:
                     lead.asesor = user
                     lead.asignado = True
-                    lead.save()                   
+                    lead.save()
             except:
                 leadsNoAsigandos.append(i)
 
         if len(leadsNoAsigandos) == 0:
             return Response({'detalle': error_message})
-        return Response({'message': f"No se reasignaron los leads : {leadsNoAsigandos} porque no existen" , 'detalle': error_message})
-
+        return Response({'message': f"No se reasignaron los leads : {leadsNoAsigandos} porque no existen", 'detalle': error_message})
 
 
 class AsesorLead(APIView):
     permission_classes = [IsAuthenticated]
+
     def get(self, request):
-        print(bool(request.user.groups.first().permissions.filter(codename = PermissionLead.CAN_VIEW))) 
-        print(request.user.groups.first())
-        if not (bool(request.user.groups.first().permissions.filter(codename = PermissionLead.CAN_VIEW) or request.user.is_superuser)) :
-            return Response({"message" : "Usuario no tiene permisos para ver leads"}, status=403)
-        
+        if not (bool(request.user.groups.first().permissions.filter(codename=PermissionLead.CAN_VIEW) or request.user.is_superuser)):
+            return Response({"message": "Usuario no tiene permisos para ver leads"}, status=403)
+
         pk = request.user.pk
-        if request.user.isAdmin == True : 
+        if request.user.isAdmin == True:
             try:
-                asesor_queryset = User.objects.get(id = pk)
-            except :
+                asesor_queryset = User.objects.get(id=pk)
+            except:
                 return Response({"mesaje": "asesor no existe"})
-            asesorSerializer = UserSerializer(asesor_queryset,fields=(
+            asesorSerializer = UserSerializer(asesor_queryset, fields=(
                 'id', 'first_name', 'last_name', 'username'))
             dataJson = asesorSerializer.data
-            dataJson["leads"] = LeadSerializer(Lead.objects.all(),many = True).data
+            dataJson["leads"] = LeadSerializer(
+                Lead.objects.all(), many=True).data
             return Response(dataJson)
         else:
             try:
-                asesor_queryset = User.objects.get(id = pk)
-            except :
+                asesor_queryset = User.objects.get(id=pk)
+                print(asesor_queryset.pk)
+            except:
                 return Response({"mesaje": "asesor no existe"})
-            asesorSerializer = UserSerializer(asesor_queryset,fields=(
+            asesorSerializer = UserSerializer(asesor_queryset, fields=(
                 'id', 'first_name', 'last_name', 'username'))
             dataJson = asesorSerializer.data
-            dataJson["leads"] = LeadSerializer(Lead.objects.filter(asesor = asesor_queryset.pk),many = True).data
+            dataJson["leads"] = LeadSerializer(Lead.objects.filter(
+                asesor=asesor_queryset.pk), many=True).data
             return Response(dataJson)
-    
+
 
 class ProyectoTipoProductoList(generics.ListCreateAPIView):
     serializer_class = ProyectoTipoProductoSerializer
@@ -360,34 +365,43 @@ class ProyectoTipoProductoList(generics.ListCreateAPIView):
         proyecto_queryset = Proyecto.objects.all()
         tipo_producto_queryset = TipoProducto.objects.all()
 
-        dataJson = ProyectoTipoProductoSerializer(proyecto_tipo_producto_queryset, many = True).data
+        dataJson = ProyectoTipoProductoSerializer(
+            proyecto_tipo_producto_queryset, many=True).data
 
-        for i in dataJson:        
-            i["proyecto"] = ProyectoSerializer(proyecto_queryset.get(id = i["proyecto"])).data
-            i["tipo_producto"] = TipoProductoSerializer(tipo_producto_queryset.get(id = i["tipo_producto"])).data
+        for i in dataJson:
+            i["proyecto"] = ProyectoSerializer(
+                proyecto_queryset.get(id=i["proyecto"])).data
+            i["tipo_producto"] = TipoProductoSerializer(
+                tipo_producto_queryset.get(id=i["tipo_producto"])).data
 
         return Response(dataJson)
+
 
 class ProyectoTipoProductoListSinFiltros(ProyectoTipoProductoList):
     def list(self, request):
         self.queryset = self.queryset.filter()
         return super().list(request)
 
-class ProyectoTipoProductoDetail(APIView):    
+
+class ProyectoTipoProductoDetail(APIView):
     def get(self, request, pk=None):
-        
+
         try:
-            proyecto_tipo_producto_queryset = ProyectoTipoProducto.objects.get(id=pk)
-        except :
+            proyecto_tipo_producto_queryset = ProyectoTipoProducto.objects.get(
+                id=pk)
+        except:
             return Response({"mesaje": "proyecto no existe"})
-        
-        proyectoTipoProductoSerializer = ProyectoTipoProductoSerializer(proyecto_tipo_producto_queryset)
+
+        proyectoTipoProductoSerializer = ProyectoTipoProductoSerializer(
+            proyecto_tipo_producto_queryset)
         proyecto_queryset = Proyecto.objects.all()
         tipo_producto_queryset = TipoProducto.objects.all()
 
         dataJson = proyectoTipoProductoSerializer.data
-        dataJson["proyecto"] = ProyectoSerializer(proyecto_queryset.get(id=proyecto_tipo_producto_queryset.proyecto.pk)).data
-        dataProyecto = ProyectoTipoProductoSerializer(ProyectoTipoProducto.objects.filter(proyecto=proyecto_tipo_producto_queryset.proyecto.pk), many=True).data
+        dataJson["proyecto"] = ProyectoSerializer(proyecto_queryset.get(
+            id=proyecto_tipo_producto_queryset.proyecto.pk)).data
+        dataProyecto = ProyectoTipoProductoSerializer(ProyectoTipoProducto.objects.filter(
+            proyecto=proyecto_tipo_producto_queryset.proyecto.pk), many=True).data
 
         tipo_producto_data = []
         for i in dataProyecto:
@@ -403,16 +417,14 @@ class ProyectoTipoProductoDetail(APIView):
         return Response(dataJson)
 
 
-
-
-class ProyectoCotizaciones(APIView):    
+class ProyectoCotizaciones(APIView):
     def get(self, request, pk=None):
 
         try:
             proyecto_queryset = Proyecto.objects.get(id=pk)
-        except :
+        except:
             return Response({"mesaje": "proyecto no existe"})
-        
+
         proyectoSerializer = ProyectoSerializer(proyecto_queryset).data
         proyectoTipoProducto_queryset = ProyectoTipoProducto.objects.all()
         cotizacion_queryset = Cotizacion.objects.all()
@@ -420,18 +432,22 @@ class ProyectoCotizaciones(APIView):
         precio_queryset = Precio.objects.all()
         tipoProducto_queryset = TipoProducto.objects.all()
 
-        cotizacion_serializer = CotizacionSerializer(cotizacion_queryset.filter(proyecto = pk), many = True)
-        tipoProducto_serializer = ProyectoTipoProductoSerializer(proyectoTipoProducto_queryset.filter(proyecto = pk), many = True)
-        
+        cotizacion_serializer = CotizacionSerializer(
+            cotizacion_queryset.filter(proyecto=pk), many=True)
+        tipoProducto_serializer = ProyectoTipoProductoSerializer(
+            proyectoTipoProducto_queryset.filter(proyecto=pk), many=True)
+
         for i in tipoProducto_serializer.data:
-            i["tipo"] = TipoProductoSerializer(tipoProducto_queryset.get(id = i["tipo_producto"])).data
+            i["tipo"] = TipoProductoSerializer(
+                tipoProducto_queryset.get(id=i["tipo_producto"])).data
         for i in cotizacion_serializer.data:
-            i["cuota"] = CuotaSerializer(cuota_queryset.filter(cotizacion = i["id"]), many = True).data
-            i["precio"] = PrecioSerializer(precio_queryset.filter(cotizacion = i["id"]), many = True).data
+            i["cuota"] = CuotaSerializer(cuota_queryset.filter(
+                cotizacion=i["id"]), many=True).data
+            i["precio"] = PrecioSerializer(
+                precio_queryset.filter(cotizacion=i["id"]), many=True).data
 
-        proyectoSerializer["tipoProducto"]= tipoProducto_serializer.data
-        proyectoSerializer["cotizacion"]= cotizacion_serializer.data
-
+        proyectoSerializer["tipoProducto"] = tipoProducto_serializer.data
+        proyectoSerializer["cotizacion"] = cotizacion_serializer.data
 
         return Response(proyectoSerializer)
 
@@ -448,19 +464,19 @@ class AsignacionMasivaAsesorLeadById(APIView):
         error = []
         iter = 0
         for i in arrLead:
-            try :
-                lead =  lead_queryset.get(id = i)
-                user =  user_queryset.get(id = arrAsesor[iter])
+            try:
+                lead = lead_queryset.get(id=i)
+                user = user_queryset.get(id=arrAsesor[iter])
                 lead.asesor = user
-                lead.fecha_actualizacion = datetime.datetime.now()  
+                lead.fecha_actualizacion = datetime.datetime.now()
                 lead.save()
-                HistoricoLeadAsesor.objects.create(lead = lead, usuario = user)
-            except :
+                HistoricoLeadAsesor.objects.create(lead=lead, usuario=user)
+            except:
                 error.append(i)
                 pass
-            print(i , arrAsesor[iter])
+            print(i, arrAsesor[iter])
             iter = -1 if iter == len(arrAsesor)-1 else iter
-            iter = iter +1
+            iter = iter + 1
 
         print(arrAsesor)
-        return Response({"Leads no asignados" : error})
+        return Response({"Leads no asignados": error})

@@ -4,4 +4,6 @@ djangorestframework-simplejwt==5.2.2
 psycopg2-binary==2.9.6
 pyscopg2==66.0.2
 django-cors-headers==4.1.0
+django-filter==23.3
+requests==2.31.0
 

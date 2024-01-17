@@ -1,9 +1,21 @@
 import axios from "axios";
 
-export const deleteLead = async (idItem, body) => {
+export const deleteLead = async (idItem, body, authToken) => {
   const DOMAIN = import.meta.env.VITE_BACKEND_URL;
-  const URL = `${DOMAIN}/api/lead/${idItem}`;
-
-  const { data } = await axios.put(URL, { ...body });
-  return data;
+  try {
+    const URL = `${DOMAIN}/api/lead/${idItem}`;
+    const { data } = await axios.put(
+      URL,
+      { ...body },
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${authToken}`,
+        },
+      }
+    );
+    return data;
+  } catch (error) {
+    throw error;
+  }
 };

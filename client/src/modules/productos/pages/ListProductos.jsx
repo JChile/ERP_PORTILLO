@@ -21,23 +21,6 @@ export const ListProductos = () => {
   // Control de bottones, campanias activas e inactivas.
   const [activeButton, setActiveButton] = useState(true);
 
-  const [showDialog, setShowDialog] = useState(false);
-  const [itemSeleccionado, setItemSeleccionado] = useState(null);
-
-  // PARA ELIMINAR UN ITEM SELECCIONADO
-  const onCloseDeleteDialog = () => {
-    // ocultamos el modal
-    setShowDialog(false);
-    // dejamos el null la data del detalle
-    setItemSeleccionado(null);
-  };
-
-  // MOSTRAR Y OCULTAR DETALLE DE USUARIO
-  const onShowDeleteDialog = (item) => {
-    setItemSeleccionado(item);
-    setShowDialog(true);
-  };
-
   // Manejar los estados de los filtros
   const handleButtonState = (buttonState) => {
     setActiveButton(buttonState);
@@ -76,7 +59,7 @@ export const ListProductos = () => {
     try {
       const result = await deleteProducto(id, body, authTokens["access"]);
       obtenerProductos();
-      onCloseDeleteDialog();
+      //onCloseDeleteDialog();
       setVisibleProgress(false);
     } catch (error) {
       // ocultar el progress
@@ -108,11 +91,7 @@ export const ListProductos = () => {
   };
 
   useEffect(() => {
-    setVisibleProgress(true);
-    const controller = new AbortController();
     obtenerProductos();
-    setVisibleProgress(false);
-    return () => controller.abort();
   }, [activeButton]);
 
   const filters = ["Nombre", "Proyecto"];
@@ -178,18 +157,8 @@ export const ListProductos = () => {
           { name: "Proyecto", width: 70 },
         ]}
         rowData={productosTemporal}
-        onShowDeleteDialog={onShowDeleteDialog}
+        onDeleteItemSelected={onDeleteItemSelected}
       />
-
-      {showDialog && (
-        <DialogDeleteProducto
-          item={itemSeleccionado}
-          showDialog={showDialog}
-          onDeleteItemSelected={onDeleteItemSelected}
-          onCloseDeleteDialog={onCloseDeleteDialog}
-        />
-      )}
-
       {/* CIRCULAR PROGRESS */}
       {visibleProgress && <CustomCircularProgress />}
     </>

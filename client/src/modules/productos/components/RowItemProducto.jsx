@@ -3,7 +3,7 @@ import React from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { CustomMoreVerticalActions } from "../../../components";
 
-export const RowItemProducto = ({ item, onShowDeleteDialog }) => {
+export const RowItemProducto = ({ item, onDeleteItemSelected }) => {
   const { id, nombre, codigo, numero, area, tipo, proyecto, estado } = item;
   console.log(item);
   const navigate = useNavigate();
@@ -16,7 +16,7 @@ export const RowItemProducto = ({ item, onShowDeleteDialog }) => {
     <TableRow sx={{ "&:last-child td, &:last-child th": { border: 0 } }}>
       <TableCell>
         <CustomMoreVerticalActions
-          onDelete={() => onShowDeleteDialog(item)}
+          onDelete={() => onDeleteItemSelected(item)}
           onEdit={onEditItemSelected}
           activeOnDelete={estado === "A" ? true : false}
         />

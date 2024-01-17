@@ -17,7 +17,7 @@ import { CustomTablePagination } from "./CustomTablePagination";
  * @param {list} rowData
  * @returns
  */
-export const CustomTable = ({ headerData, rowData, onShowDeleteDialog }) => {
+export const CustomTable = ({ headerData, rowData, onDeleteItemSelected }) => {
   const headers = headerData.map((header, index) => (
     <TableCell key={index} align="left" width={header.width}>
       <b>{header.name}</b>
@@ -29,7 +29,7 @@ export const CustomTable = ({ headerData, rowData, onShowDeleteDialog }) => {
       <RowItemLead
         key={item.id}
         item={item}
-        onShowDeleteDialog={onShowDeleteDialog}
+        onDeleteItemSelected={onDeleteItemSelected}
       />
     );
   });

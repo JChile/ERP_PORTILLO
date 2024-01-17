@@ -3,7 +3,6 @@ import { Route, Routes } from "react-router-dom";
 import {
   AddLeadManual,
   AddLeadSheet,
-  ListLeads,
   DetailLead,
   UpdateLead,
   AsignLeads,
@@ -22,17 +21,17 @@ export const LeadRoutes = () => {
       <Route path="detail/:idLead" element={<DetailLead />} />
       <Route path="update/:idLead" element={<UpdateLead />} />
       <Route path="asign" element={<AsignLeads />} />
+      {/*
       <Route
         path="detail/:idLead/cotizacion/"
         element={<CreateCotizaciones />}
       />
+      
       <Route
         path="detail/:idLead/cotizacion/plantilla/"
         element={<CreatePlantilla />}
       />
-
-      <Route path="proyecto/:projectId" element={<ListLeadController />} />
-
+  */}
     </Routes>
   );
 };

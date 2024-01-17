@@ -11,7 +11,6 @@ import { NotPublicPage } from "../components/NotPublicPage";
 import { VentasRouter } from "../modules/ventas/router/VentasRouter";
 import CotizacionRouter from "../modules/cotizaciones/router/CotizacionRouter";
 import { ProyectoRoutes } from "../modules/proyectos/router/ProyectoRoutes";
-import Dashboard from "../Dashboard";
 import { ProductoRoutes } from "../modules/productos/router/ProductoRoutes";
 
 export const AppRouter = () => {

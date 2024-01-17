@@ -1,24 +1,16 @@
 import React, { useEffect, useState } from "react";
 import { getAsesorLeads, getProyectoAsesor } from "../../helpers";
-import { CustomCircularProgress } from "../../../../components";
+import {
+  CustomCircularProgress,
+  FilterEstadoLead,
+  FilterProyectos,
+} from "../../../../components";
 import { CustomTable } from "../../../../components/CustomLeadTable";
 import { CustomInputBase } from "../../../../components/CustomInputBase";
-import {
-  Accordion,
-  AccordionDetails,
-  AccordionSummary,
-  Box,
-  Tab,
-  Tabs,
-} from "@mui/material";
-import {
-  MdDataset,
-  MdDateRange,
-  MdDescription,
-  MdLocalActivity,
-  MdLocationPin,
-} from "react-icons/md";
+import { Box, Tab, Tabs } from "@mui/material";
+import { MdDateRange, MdDescription, MdLocationPin } from "react-icons/md";
 import { useCustomTablePagination } from "../../../../hooks";
+import { FilterAsesor } from "../../../../components/filters/asesor/FilterAsesor";
 
 const headers = [
   { name: "Acciones", width: 20 },
@@ -29,15 +21,15 @@ const headers = [
   { name: "Entrega", width: 50 },
 ];
 
-const ListJefeVentasLead = ({ credentials, projectId }) => {
+const ListJefeVentasLead = ({ credentials }) => {
   const [visibleProgress, setVisibleProgress] = useState(true);
   const [error, setError] = useState(false);
   const [value, setValue] = useState(0);
   const [projectData, setprojectData] = useState(null);
   const [leads, setLeads] = useState([]);
   const [leadsNotAsigned, setLeadsNotAsigned] = useState([]);
-
   const [filteredLeads, setFilteredLeads] = useState([]);
+  const [filterState, setFilterState] = useState({});
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
@@ -82,6 +74,28 @@ const ListJefeVentasLead = ({ credentials, projectId }) => {
     setVisibleProgress(false);
   };
 
+  /** Filters functions */
+  const onAddProject = (project) => {
+    setFilterState((prev) => ({
+      ...prev,
+      proyecto: project.id,
+    }));
+  };
+
+  const onAddAsesor = (asesor) => {
+    setFilterState((prev) => ({
+      ...prev,
+      asesor: asesor.id,
+    }));
+  };
+
+  const onAddEstadoLead = (estadoLead) => {
+    setFilterState((prev) => ({
+      ...prev,
+      estadoLead: estadoLead.id,
+    }));
+  };
+
   useEffect(() => {
     fetchData(credentials);
   }, []);
@@ -97,58 +111,32 @@ const ListJefeVentasLead = ({ credentials, projectId }) => {
   return (
     <React.Fragment>
       <div className="flex flex-col gap-y-4">
-        <h1 className="capitalize font-semibold text-2xl">
-          Proyecto {projectData?.nombre}
+        <h1 className="font-semibold text-2xl">
+          Gestion de leads - Jefe de Ventas
         </h1>
-        <div className="border rounded flex justify-around items-center bg-slate-100 py-3 px-2">
-          <div className="flex flex-col gap-y-1 items-center">
-            <MdDescription size={28} />
-            <p className="text-lg">Descripción</p>
-            <p className="text-xs">{projectData?.descripcion}</p>
-          </div>
-          <div className="h-8 w-1 rounded-sm border-black bg-black"></div>
-          <div className="flex flex-col gap-y-1 items-center">
-            <MdDateRange size={28} />
-            <p className="text-lg">Fecha de creación</p>
-            <p className="text-xs">{projectData?.fecha_creacion}</p>
-          </div>
-          <div className="h-8 w-1 rounded-sm border-black bg-black"></div>
-          <div className="flex flex-col gap-y-1 items-center">
-            <MdDateRange size={28} />
-            <p className="text-lg">Fecha de actualización</p>
-            <p className="text-xs">{projectData?.fecha_actualizacion}</p>
-          </div>
-          <div className="h-8 w-1 rounded-sm border-black bg-black"></div>
-          <div className="flex flex-col gap-y-1 items-center">
-            <MdLocationPin size={28} />
-            <p className="text-lg">Ubicación</p>
-            <p className="capitalize text-xs">{projectData?.ubicacion}</p>
-          </div>
-        </div>
       </div>
 
-      {/** ------------------------------------------------------------------ */}
-
-      <div className="flex mt-4 justify-center gap-x-6">
-        <div className="bg-dark-purple flex flex-col rounded items-center w-24 h-24 justify-center text-white">
-          <p className="text-lg text-center">Total de Leads</p>
-          <p className="text-sm">{leads.length}</p>
-        </div>
-        <div className="bg-dark-purple flex flex-col rounded items-center w-24 h-24 justify-center text-white">
-          <p className="text-lg capitalize text-center">Leads no asigandos</p>
-          <p className="text-sm">{leads.length}</p>
-        </div>
-        <div className="bg-dark-purple flex flex-col rounded items-center w-24 h-24 justify-center text-white">
-          <p className="text-lg capitalize text-center">Leads asignados</p>
-          <p className="text-sm">{leads.length}</p>
-        </div>
-      </div>
-
-      <div className="mt-4 flex flex-col">
+      <div className="mt-3 flex flex-col gap-y-4">
         <CustomInputBase
           placeholder="Buscar lead"
           onSearch={handleSearchButton}
         />
+
+        <div className="flex gap-x-3">
+          <div>
+            <FilterProyectos 
+              label="Proyecto" 
+              onNewInput={onAddProject} />
+            <FilterAsesor 
+              label="Asesor" 
+              onNewInput={onAddAsesor} />
+            <FilterEstadoLead
+              label="Estado lead"
+              onNewInput={onAddEstadoLead}
+            />
+          </div>
+        </div>
+
         <Box sx={{ width: "100%" }}>
           <Tabs
             aria-label="basic tabs"

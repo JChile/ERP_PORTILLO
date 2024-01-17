@@ -1,21 +1,21 @@
 import React, { useContext } from "react";
 import { AuthContext } from "../../../auth";
-import ListLeadController from "./ListLeadController";
-import JefeVentasDashboard from "../pages/jefeFinanciero/JefeVentasDashboard";
-import AsesorLeadDashboard from "../pages/asesor/AsesorLeadDashboard";
 import { NoAccessLeads } from "../components";
-import ListAsesorVentasLead from "../components/Asesor/ListAsesorVentasLead";
+import ListJefeVentasLead from "../components/JefeFinanciero/ListJefeVentasLead";
+import { ListAsesorVentasLead } from "../components/Asesor/ListAsesorVentasLead";
 
 const HomeController = () => {
   const { currentUser, authTokens } = useContext(AuthContext);
+  const { user } = currentUser;
 
   switch (currentUser.groups) {
     case "asesor": {
-      console.log("ASESOR");
-      return <ListAsesorVentasLead />;
-    }
-    case "jefe_ventas": {
-      return <JefeVentasDashboard token={authTokens["access"]} />;
+      console.log({ admin: currentUser.user.isAdmin });
+      return user.isAdmin ? (
+        <ListJefeVentasLead credentials={authTokens["access"]} />
+      ) : (
+        <ListAsesorVentasLead />
+      );
     }
     default:
       return <NoAccessLeads />;

@@ -14,7 +14,7 @@ const headers = [
   { name: "Entrega", width: 50 },
 ];
 
-const ListAsesorVentasLead = ({ credentials }) => {
+export const ListAsesorVentasLead = () => {
   //const [ventasData, setVentasData] = useState(null);
   const [leads, setLeads] = useState([]);
   const [filteredLeads, setFilteredLeads] = useState([]);
@@ -71,5 +71,3 @@ const ListAsesorVentasLead = ({ credentials }) => {
     </React.Fragment>
   );
 };
-
-export default ListAsesorVentasLead;

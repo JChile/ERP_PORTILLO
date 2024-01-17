@@ -12,7 +12,7 @@ export const UpdateProducto = () => {
   const { authTokens } = useContext(AuthContext);
   const { idProduct } = useParams();
   const numericId = parseInt(idProduct);
-  console.log(numericId);
+  console.log({ idProduct });
   const [product, setProduct] = useState({
     nombre: "",
     numero: 0.0,
@@ -54,7 +54,7 @@ export const UpdateProducto = () => {
         handleClickFeedback();
       }
     } else {
-      onNavigateBack();
+      //onNavigateBack();
     }
   };
 

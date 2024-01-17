@@ -15,10 +15,9 @@ const headers = [
 ];
 
 export const ListAsesorVentasLead = () => {
-  //const [ventasData, setVentasData] = useState(null);
   const [leads, setLeads] = useState([]);
   const [filteredLeads, setFilteredLeads] = useState([]);
-  const [visibleProgress, setVisibleProgress] = useState(true);
+  const [visibleProgress, setVisibleProgress] = useState(false);
   const [error, setError] = useState(false);
   const { authTokens } = useContext(AuthContext);
 
@@ -37,9 +36,11 @@ export const ListAsesorVentasLead = () => {
     setFilteredLeads(filter);
   };
 
-  const fetchData = async () => {
+  const traerLeadByAsesor = async () => {
+    setVisibleProgress(true);
     try {
       const data = await getAsesorLeads(authTokens["access"]);
+      console.log(data);
       setLeads(data.leads);
       setFilteredLeads(data.leads);
     } catch (error) {
@@ -49,7 +50,7 @@ export const ListAsesorVentasLead = () => {
   };
 
   useEffect(() => {
-    fetchData(credentials);
+    traerLeadByAsesor();
   }, []);
 
   const showContent = !error ? (

@@ -4,7 +4,6 @@ import { TableCell, TableRow } from "@mui/material";
 import { HiPhoneIncoming } from "react-icons/hi";
 import { HiPhoneMissedCall } from "react-icons/hi";
 import { CustomMoreVerticalActions } from "../../../components";
-import { deleteLead } from "../helpers";
 import { formatDate_ISO861_to_formatdate } from "../../../utils/formatDate";
 
 export const RowItemLead = ({ item, onShowDeleteDialog }) => {
@@ -13,7 +12,7 @@ export const RowItemLead = ({ item, onShowDeleteDialog }) => {
     nombre,
     apellido,
     celular,
-    horaEntrega,
+    horaRecepcion,
     llamar,
     estadoLead,
     campania,
@@ -98,7 +97,7 @@ export const RowItemLead = ({ item, onShowDeleteDialog }) => {
       </TableCell>
       <TableCell>{estadoLead}</TableCell>
       <TableCell>{campania.nombre}</TableCell>
-      <TableCell>{formatDate_ISO861_to_formatdate(horaEntrega)}</TableCell>
+      <TableCell>{formatDate_ISO861_to_formatdate(horaRecepcion)}</TableCell>
     </TableRow>
   );
 };

@@ -1,13 +1,18 @@
 export const formatDate_ISO861_to_formatdate = (fecha_hora_iso) => {
-  var fecha_hora = new Date(fecha_hora_iso);
-  var options = {
-    day: "2-digit",
-    month: "2-digit",
-    year: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-  };
-  return fecha_hora.toLocaleString("es-ES", options);
+  // Crear un objeto Date a partir de la cadena de fecha
+  let fecha = new Date(fecha_hora_iso);
+
+  // Obtener los componentes de la fecha
+  let year = fecha.getFullYear();
+  let month = String(fecha.getMonth() + 1).padStart(2, "0"); // Añadir ceros a la izquierda si es necesario
+  let day = String(fecha.getDate()).padStart(2, "0");
+  let hours = String(fecha.getHours()).padStart(2, "0");
+  let minutes = String(fecha.getMinutes()).padStart(2, "0");
+  let seconds = String(fecha.getSeconds()).padStart(2, "0");
+
+  // Formatear la fecha como "YYYY/MM/DD HH:mm:ss"
+  let fechaFormateada = `${year}/${month}/${day} ${hours}:${minutes}:${seconds}`;
+  return fechaFormateada;
 };
 
 export const obtenerHoraActualFormatPostgress = () => {

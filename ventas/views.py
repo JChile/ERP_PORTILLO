@@ -184,10 +184,12 @@ class LeadDetail(generics.RetrieveUpdateDestroyAPIView):
         lead_data["asesor"] = userSerializer.data if userSerializer else {}
         lead_data["campania"] = campaniaSerializer.data if campaniaSerializer else {}
         lead_data["objecion"] = objecionSerializer.data if objecionSerializer else {}
-        lead_data["whatsapp"] = WhatsAppSerializer(
+        lead_data["whatsapps"] = WhatsAppSerializer(
             WhatsApp.objects.filter(lead=lead.pk), many=True).data
-        lead_data["llemada"] = LlamadaSerializer(
+        lead_data["llamadas"] = LlamadaSerializer(
             Llamada.objects.filter(lead=lead.pk), many=True).data
+        lead_data["eventos"] = EventoSerializer(
+            Evento.objects.filter(lead=lead.pk), many=True).data
 
         return Response(lead_data)
 

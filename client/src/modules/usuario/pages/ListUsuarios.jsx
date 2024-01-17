@@ -135,7 +135,7 @@ export const ListUsuarios = () => {
   }, []);
 
   return (
-    <>
+    <div className="px-4">
       <div className="flex items-center justify-end bg-gray-100 p-4">
         {/* Botón de "Agregar usuario" en el extremo derecho */}
         <Link
@@ -232,6 +232,6 @@ export const ListUsuarios = () => {
 
       {/* CIRCULAR PROGRESS */}
       {visibleProgress && <CustomCircularProgress />}
-    </>
+    </div>
   );
 };

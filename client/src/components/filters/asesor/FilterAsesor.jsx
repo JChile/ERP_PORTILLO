@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { getAsesorActivo } from "./getAsesor";
 import { Autocomplete, TextField } from "@mui/material";
+import { AuthContext } from "../../../auth";
 
 const defaultOption = {
   value: 0,
@@ -11,15 +12,25 @@ const defaultOption = {
 export const FilterAsesor = ({ defaultValue = null, onNewInput }) => {
   const [options, setOptions] = useState([defaultOption]);
   const [value, setValue] = useState(defaultOption);
+  const { authTokens } = useContext(AuthContext);
 
   const obtenerAsesor = async () => {
-    const result = await getAsesorActivo();
+    const result = await getAsesorActivo(authTokens["access"]);
     const formatSelect = [
       defaultOption,
       ...result.map((element) => {
         return {
           value: element.id,
-          label: element.codigo,
+          label: `${
+            element["first_name"].length !== 0 &&
+            element["last_name"].length !== 0
+              ? element["first_name"].split(" ")[0] +
+                " " +
+                element["last_name"].split(" ")[0]
+              : element["codigoAsesor"].length !== 0
+              ? element["codigoAsesor"]
+              : ""
+          }`,
           id: element.id,
         };
       }),

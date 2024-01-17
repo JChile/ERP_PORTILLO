@@ -4,6 +4,7 @@ import ListLeadController from "./ListLeadController";
 import JefeVentasDashboard from "../pages/jefeFinanciero/JefeVentasDashboard";
 import AsesorLeadDashboard from "../pages/asesor/AsesorLeadDashboard";
 import { NoAccessLeads } from "../components";
+import ListAsesorVentasLead from "../components/Asesor/ListAsesorVentasLead";
 
 const HomeController = () => {
   const { currentUser, authTokens } = useContext(AuthContext);
@@ -11,7 +12,7 @@ const HomeController = () => {
   switch (currentUser.groups) {
     case "asesor": {
       console.log("ASESOR");
-      return <AsesorLeadDashboard token={authTokens["access"]} />;
+      return <ListAsesorVentasLead />;
     }
     case "jefe_ventas": {
       return <JefeVentasDashboard token={authTokens["access"]} />;

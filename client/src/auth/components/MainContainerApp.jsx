@@ -14,8 +14,7 @@ import ListItem from "@mui/material/ListItem";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
-import { MdAllInbox, MdMenu } from "react-icons/md";
-import { FiInbox } from "react-icons/fi";
+import { MdMenu } from "react-icons/md";
 import { Link, NavLink } from "react-router-dom";
 import { DynamicIcon } from "./DynamicIcon";
 
@@ -23,7 +22,6 @@ const drawerWidth = 240;
 
 export const MainContainerApp = ({ children }) => {
   const { currentUser, logoutUser, permissions } = useContext(AuthContext);
-  console.log(permissions);
   const [open, setOpen] = useState(false);
   const { user } = currentUser;
   const { first_name, last_name, groups } = user;

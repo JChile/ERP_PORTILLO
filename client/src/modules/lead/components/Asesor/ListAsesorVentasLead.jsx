@@ -1,8 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { getAsesorLeads } from "../../helpers";
 import { CustomCircularProgress } from "../../../../components";
 import { CustomTable } from "../../../../components/CustomLeadTable";
 import { CustomInputBase } from "../../../../components/CustomInputBase";
+import { AuthContext } from "../../../../auth";
 
 const headers = [
   { name: "Acciones", width: 20 },
@@ -19,6 +20,7 @@ const ListAsesorVentasLead = ({ credentials }) => {
   const [filteredLeads, setFilteredLeads] = useState([]);
   const [visibleProgress, setVisibleProgress] = useState(true);
   const [error, setError] = useState(false);
+  const { authTokens } = useContext(AuthContext);
 
   const handleSearchButton = (searchText) => {
     const filter = leads
@@ -35,10 +37,9 @@ const ListAsesorVentasLead = ({ credentials }) => {
     setFilteredLeads(filter);
   };
 
-  const fetchData = async (token) => {
+  const fetchData = async () => {
     try {
-      const data = await getAsesorLeads(token);
-      //setVentasData(data);
+      const data = await getAsesorLeads(authTokens["access"]);
       setLeads(data.leads);
       setFilteredLeads(data.leads);
     } catch (error) {

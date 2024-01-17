@@ -3,6 +3,7 @@ import { AuthContext } from "../../../auth";
 import ListLeadController from "./ListLeadController";
 import JefeVentasDashboard from "../pages/jefeFinanciero/JefeVentasDashboard";
 import AsesorLeadDashboard from "../pages/asesor/AsesorLeadDashboard";
+import { NoAccessLeads } from "../components";
 
 const HomeController = () => {
   const { currentUser, authTokens } = useContext(AuthContext);
@@ -16,8 +17,7 @@ const HomeController = () => {
       return <JefeVentasDashboard token={authTokens["access"]} />;
     }
     default:
-      console.log("OTHER");
-      break;
+      return <NoAccessLeads />;
   }
 };
 

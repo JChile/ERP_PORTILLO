@@ -6,7 +6,7 @@ import { UsuarioRoutes } from "../modules/usuario";
 import { CampaniaRoutes } from "../modules/campania";
 import { LeadRoutes } from "../modules/lead";
 import { AsesorRoutes } from "../modules/asesor";
-import { NotFoundPage } from "../components";
+import { HomePage, NotFoundPage } from "../components";
 import { NotPublicPage } from "../components/NotPublicPage";
 import { VentasRouter } from "../modules/ventas/router/VentasRouter";
 import CotizacionRouter from "../modules/cotizaciones/router/CotizacionRouter";
@@ -19,14 +19,7 @@ export const AppRouter = () => {
     <>
       <AuthProvider>
         <Routes>
-          <Route
-            path="login/*"
-            element={
-              <Routes>
-                <Route path="/*" element={<Login />} />
-              </Routes>
-            }
-          />
+          <Route path="" element={<Login />} />
           <Route path="no-access-page" element={<NotFoundPage />} />
           <Route path="no-access-public-page" element={<NotPublicPage />} />
           <Route
@@ -34,11 +27,11 @@ export const AppRouter = () => {
             element={
               <MainContainerApp>
                 <Routes>
-                  <Route path="" element={ <Dashboard/> } />
-                  <Route path="usuario/*" element={<UsuarioRoutes />}></Route>
-                  <Route path="rol/*" element={<RolRoutes />}></Route>
-                  <Route path="campania/*" element={<CampaniaRoutes />}></Route>
-                  <Route path="lead/*" element={<LeadRoutes />}></Route>
+                  <Route path="home/*" element={<HomePage />} />
+                  <Route path="usuario/*" element={<UsuarioRoutes />} />
+                  <Route path="rol/*" element={<RolRoutes />} />
+                  <Route path="campania/*" element={<CampaniaRoutes />} />
+                  <Route path="lead/*" element={<LeadRoutes />} />
                   <Route path="asesor/*" element={<AsesorRoutes />} />
                   <Route path="evento/*" element={<VentasRouter />} />
                   <Route path="cotizaciones/*" element={<CotizacionRouter />} />

@@ -18,12 +18,16 @@ import { NavLink } from "react-router-dom";
 import { AuthContext } from "../auth";
 import MenuSimple from "./MenuSimple";
 
-const drawerWidth = 240;
 export const CustomSideBar = ({ children, permissions }) => {
   const [open, setOpen] = useState(false);
   const { currentUser, logoutUser } = useContext(AuthContext);
   const { user } = currentUser;
   const { first_name, last_name, groups } = user;
+  const [selectedItem, setSelectedItem] = useState(null);
+
+  const handleItemClick = (index) => {
+    setSelectedItem(index);
+  };
 
   return (
     <Box sx={{ display: "flex" }}>
@@ -60,12 +64,22 @@ export const CustomSideBar = ({ children, permissions }) => {
         <List sx={{ marginTop: 8, flex: 1 }}>
           {permissions.map((item, index) => (
             <NavLink to={item.url} key={item.title}>
-              <ListItem disablePadding sx={{ display: "block" }}>
+              <ListItem
+                disablePadding
+                sx={{
+                  display: "block",
+                  backgroundColor:
+                    selectedItem === index ? "white" : "transparent",
+                }}
+              >
                 <ListItemButton
+                  selected={selectedItem === index}
+                  onClick={() => handleItemClick(item)}
                   sx={{
                     minHeight: 48,
                     justifyContent: open ? "initial" : "center",
                     px: 2.5,
+                    color: selectedItem === index ? "#9E154A" : "inherit",
                   }}
                 >
                   <ListItemIcon
@@ -73,13 +87,17 @@ export const CustomSideBar = ({ children, permissions }) => {
                       minWidth: 0,
                       justifyContent: "center",
                       mr: open ? 2 : "auto",
+                      color: selectedItem === index ? "#9E154A" : "inherit",
                     }}
                   >
                     {index % 2 === 0 ? <FiInbox /> : <MdAllInbox />}
                   </ListItemIcon>
                   <ListItemText
                     primary={item.title}
-                    sx={{ opacity: open ? 1 : 0 }}
+                    sx={{
+                      opacity: open ? 1 : 0,
+                      color: selectedItem === index ? "#9E154A" : "inherit",
+                    }}
                   />
                 </ListItemButton>
               </ListItem>
@@ -96,4 +114,3 @@ export const CustomSideBar = ({ children, permissions }) => {
     </Box>
   );
 };
-

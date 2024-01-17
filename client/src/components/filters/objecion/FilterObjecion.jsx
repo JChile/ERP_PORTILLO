@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { getObjecion } from "./getObjecion";
 import { Autocomplete, TextField } from "@mui/material";
+import { AuthContext } from "../../../auth";
 
 const defaultOption = {
   value: 0,
@@ -11,9 +12,10 @@ const defaultOption = {
 export const FilterObjecion = ({ defaultValue = null, onNewInput }) => {
   const [options, setOptions] = useState([defaultOption]);
   const [value, setValue] = useState(defaultOption);
+  const { authTokens } = useContext(AuthContext);
 
   const obtenerObjecion = async () => {
-    const result = await getObjecion();
+    const result = await getObjecion(authTokens["access"]);
     const formatSelect = [
       defaultOption,
       ...result.map((element) => {

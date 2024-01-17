@@ -32,11 +32,6 @@ export const AuthProvider = ({ children }) => {
   const loginUser = async (username, password) => {
     const permissions_user = [];
     const DOMAIN = process.env.VITE_BACKEND_URL;
-     
-    // "http://127.0.0.1:8000"  
-    // import.meta.env.VITE_BACKEND_URL || "http://127.0.0.1:8000";    
-    // ENDOINT AUTENTICACION
-
     const ENDPOINT = `${DOMAIN}/api/token/`;
     const response = await fetch(ENDPOINT, {
       method: "POST",
@@ -78,7 +73,7 @@ export const AuthProvider = ({ children }) => {
 
       localStorage.setItem("authTokens", JSON.stringify(data));
       localStorage.setItem("permissions", JSON.stringify(permissions_user));
-      navigate(`/${permissions_user[0]["url"]}`);
+      navigate(`/home`);
     }
     if (response.status == 401) {
       return data;
@@ -91,7 +86,7 @@ export const AuthProvider = ({ children }) => {
     setPermissions(null);
     localStorage.removeItem("authTokens");
     localStorage.removeItem("permissions");
-    navigate("/login");
+    navigate("");
   };
 
   const contextData = {

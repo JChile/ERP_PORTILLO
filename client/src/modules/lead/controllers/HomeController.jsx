@@ -9,7 +9,6 @@ const HomeController = () => {
 
   switch (currentUser.groups) {
     case "asesor": {
-      console.log({ admin: currentUser.user.isAdmin });
       return user.isAdmin ? (
         <ListJefeVentasLead credentials={authTokens["access"]} />
       ) : (

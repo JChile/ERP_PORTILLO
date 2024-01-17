@@ -9,7 +9,6 @@ import {
 } from "../pages";
 import CreateCotizaciones from "../../cotizaciones/pages/CreateCotizaciones";
 import CreatePlantilla from "../../cotizaciones/pages/CreatePlantilla";
-import ListLeadController from "../controllers/ListLeadController";
 import HomeController from "../controllers/HomeController";
 
 export const LeadRoutes = () => {

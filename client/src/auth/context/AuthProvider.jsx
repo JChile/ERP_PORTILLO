@@ -31,10 +31,10 @@ export const AuthProvider = ({ children }) => {
   // funcion para logearse
   const loginUser = async (username, password) => {
     const permissions_user = [];
-    const DOMAIN = process.env.VITE_BACKEND_URL;
+    //const DOMAIN = process.env.VITE_BACKEND_URL;
      
     // "http://127.0.0.1:8000"  
-    // import.meta.env.VITE_BACKEND_URL || "http://127.0.0.1:8000";    
+    const DOMAIN = import.meta.env.VITE_BACKEND_URL;    
     // ENDOINT AUTENTICACION
 
     const ENDPOINT = `${DOMAIN}/api/token/`;

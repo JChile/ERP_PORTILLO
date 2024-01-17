@@ -11,6 +11,7 @@ import { HiUserGroup } from "react-icons/hi";
 import { Button } from "@mui/material";
 import { AuthContext } from "../../../auth";
 import { IconButton } from "@mui/material";
+import { combinarErrores } from "../../../utils";
 
 const headers = [
   { name: "Acciones", width: 20 },
@@ -52,15 +53,30 @@ export const ListLeads = () => {
       estado: "I",
       celular: celular,
     };
-    console.log(body);
-    const result = await deleteLead(id, body);
-    console.log(result);
-    loadLeads();
-    onCloseDeleteDialog();
+    try {
+      console.log(body);
+      const result = await deleteLead(id, body, authTokens["access"]);
+      console.log(result);
+      loadLeads();
+      onCloseDeleteDialog();
+    } catch (error) {
+      // ocultar el progress
+      setVisibleProgress(false);
+      const pilaError = combinarErrores(error);
+      // mostramos feedback de error
+      setFeedbackMessages({
+        style_message: "error",
+        feedback_description_error: pilaError,
+      });
+      handleClickFeedback();
+      // cerramos el loader
+      setVisibleProgress(false);
+    }
   };
 
   const loadLeads = async () => {
     const data = await getLeadsActivos(authTokens.access);
+    console.log(data);
     setLeads(data);
     setFilterLeads(data);
   };
@@ -115,11 +131,9 @@ export const ListLeads = () => {
   };
 
   useEffect(() => {
-    const controller = new AbortController();
     setVisibleProgress(true);
     loadLeads();
     setVisibleProgress(false);
-    return () => controller.abort();
   }, []);
 
   return (
@@ -207,22 +221,12 @@ export const ListLeads = () => {
           <CustomTable
             headerData={headers}
             rowData={filterLeads}
-            onShowDeleteDialog={onShowDeleteDialog}
+            onDeleteItemSelected={onDeleteItemSelected}
           />
         ) : (
           <CustomSelectedTable headerData={headersLead} rowData={filterLeads} />
         )}
       </div>
-
-      {showDialog && (
-        <DialogDeleteLead
-          item={itemSeleccionado}
-          showDialog={showDialog}
-          onDeleteItemSelected={onDeleteItemSelected}
-          onCloseDeleteDialog={onCloseDeleteDialog}
-        />
-      )}
-
       {visibleProgress && <CustomCircularProgress />}
     </>
   );

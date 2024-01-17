@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { Checkbox } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { createLead } from "../helpers";
@@ -7,13 +7,16 @@ import {
   FilterCampania,
   CustomCircularProgress,
 } from "../../../components";
-import { FilterEstadoLead } from "../../../components/filters/estado/FilterEstadoLead";
+import { FilterEstadoLead } from "../../../components/filters/estado_leads/FilterEstadoLead";
 import { FilterObjecion } from "../../../components/filters/objecion/FilterObjecion";
 import { FilterAsesor } from "../../../components/filters/asesor/FilterAsesor";
 import { useAlertMUI } from "../../../hooks";
 import { MuiTelInput } from "mui-tel-input";
+import { AuthContext } from "../../../auth";
+import { combinarErrores } from "../../../utils";
 
 export const AddLeadManual = () => {
+  const { authTokens, currentUser } = useContext(AuthContext);
   const [lead, setLead] = useState({
     nombre: "",
     apellido: "",
@@ -99,15 +102,31 @@ export const AddLeadManual = () => {
       handleClickFeedback();
     } else {
       setVisibleProgress(true);
-      const formatLead = { ...lead };
+      try {
+        const formatLead = {
+          ...lead,
+          usuarioCreador: currentUser["user_id"],
+          usuarioActualizador: currentUser["user_id"],
+        };
 
-      if (lead.horaRecepcion.length === 0) {
-        delete formatLead.horaRecepcion;
+        if (lead.horaRecepcion.length === 0) {
+          delete formatLead.horaRecepcion;
+        }
+        console.log(formatLead);
+        const result = await createLead(formatLead, authTokens["access"]);
+        setVisibleProgress(false);
+        onNavigateBack();
+      } catch (error) {
+        // ocultar el progress
+        setVisibleProgress(false);
+        const pilaError = combinarErrores(error);
+        // mostramos feedback de error
+        setFeedbackMessages({
+          style_message: "error",
+          feedback_description_error: pilaError,
+        });
+        handleClickFeedback();
       }
-      console.log(formatLead);
-      const result = await createLead(formatLead);
-      setVisibleProgress(false);
-      onNavigateBack();
     }
   };
   return (

@@ -1,24 +1,16 @@
 import React, { useEffect, useState } from "react";
-import { getAsesorLeads, getProyectoAsesor } from "../../helpers";
-import { CustomCircularProgress } from "../../../../components";
+import { getLeadsActivos } from "../../helpers";
+import {
+  CustomCircularProgress,
+  FilterEstadoLead,
+  FilterProyectos,
+} from "../../../../components";
 import { CustomTable } from "../../../../components/CustomLeadTable";
 import { CustomInputBase } from "../../../../components/CustomInputBase";
-import {
-  Accordion,
-  AccordionDetails,
-  AccordionSummary,
-  Box,
-  Tab,
-  Tabs,
-} from "@mui/material";
-import {
-  MdDataset,
-  MdDateRange,
-  MdDescription,
-  MdLocalActivity,
-  MdLocationPin,
-} from "react-icons/md";
-import { useCustomTablePagination } from "../../../../hooks";
+import { Box, Button, Tab, Tabs, TextField } from "@mui/material";
+import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { FilterAsesor } from "../../../../components/filters/asesor/FilterAsesor";
 
 const headers = [
   { name: "Acciones", width: 20 },
@@ -29,15 +21,23 @@ const headers = [
   { name: "Entrega", width: 50 },
 ];
 
-const ListJefeVentasLead = ({ credentials, projectId }) => {
+const ListJefeVentasLead = ({ credentials }) => {
   const [visibleProgress, setVisibleProgress] = useState(true);
   const [error, setError] = useState(false);
   const [value, setValue] = useState(0);
   const [projectData, setprojectData] = useState(null);
   const [leads, setLeads] = useState([]);
   const [leadsNotAsigned, setLeadsNotAsigned] = useState([]);
-
   const [filteredLeads, setFilteredLeads] = useState([]);
+  const [filterState, setFilterState] = useState({
+    proyecto: 0,
+    asesor: 0,
+    estadoLead: null,
+    startDate: null,
+    endDate: null,
+  });
+  const [startDate, setStartDate] = useState(null);
+  const [endDate, setEndDate] = useState(null);
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
@@ -68,87 +68,152 @@ const ListJefeVentasLead = ({ credentials, projectId }) => {
     setFilteredLeads(filter);
   };
 
+  /** Filters functions */
+  const onAddProject = (project) => {
+    setFilterState((prev) => ({
+      ...prev,
+      proyecto: project.id,
+    }));
+  };
+
+  const onAddAsesor = (asesor) => {
+    setFilterState((prev) => ({
+      ...prev,
+      asesor: asesor.id,
+    }));
+  };
+
+  const onAddEstadoLead = (estadoLead) => {
+    setFilterState((prev) => ({
+      ...prev,
+      estadoLead: estadoLead.id,
+    }));
+  };
+
   const fetchData = async (token) => {
     try {
-      //const data = await getAsesorLeads(token);
-      const project = await getProyectoAsesor(token, projectId);
-      setprojectData(project);
-      setLeads(project.lead);
-      setLeadsNotAsigned(project.lead.filter((item) => !item.asignado));
-      setFilteredLeads(project.lead);
+      const leads = await getLeadsActivos(token);
+      setLeads(leads);
+      setFilteredLeads(leads);
     } catch (error) {
       setError(true);
     }
     setVisibleProgress(false);
   };
 
+  const onHandleFilterClick = () => {
+    const filtered = leads.filter((lead) => {
+      // Filtrar por asesor
+      if (filterState.asesor && lead.asesor.id !== filterState.asesor) {
+        return false;
+      }
+
+      // Filtrar por proyecto
+      if (
+        filterState.proyecto &&
+        lead.campania.proyecto !== filterState.proyecto
+      ) {
+        return false;
+      }
+
+      // Filtrar por estadoLead
+      if (
+        filterState.estadoLead &&
+        lead.estadoLead !== filterState.estadoLead
+      ) {
+        return false;
+      }
+
+      // Filtrar por fecha de inicio
+      if (filterState.startDate) {
+        const startDate = new Date(filterState.startDate);
+        const leadDate = new Date(lead.horaRecepcion);
+        if (leadDate < startDate) {
+          return false;
+        }
+      }
+
+      // Filtrar por fecha de fin
+      if (filterState.endDate) {
+        const endDate = new Date(filterState.endDate);
+        const leadDate = new Date(lead.horaRecepcion);
+        if (leadDate > endDate) {
+          return false;
+        }
+      }
+
+      return true;
+    });
+    setFilteredLeads(filtered);
+  };
+
   useEffect(() => {
     fetchData(credentials);
   }, []);
 
+  console.log(leads);
+  console.log(filterState);
+
   const showContent = !error ? (
     <CustomTable headerData={headers} rowData={filteredLeads} />
   ) : (
-    <div>Hola</div>
+    <div>No leads por cargar</div>
   );
-
-  console.log(filteredLeads);
 
   return (
     <React.Fragment>
       <div className="flex flex-col gap-y-4">
-        <h1 className="capitalize font-semibold text-2xl">
-          Proyecto {projectData?.nombre}
+        <h1 className="font-semibold text-2xl">
+          Gestion de leads - Jefe de Ventas
         </h1>
-        <div className="border rounded flex justify-around items-center bg-slate-100 py-3 px-2">
-          <div className="flex flex-col gap-y-1 items-center">
-            <MdDescription size={28} />
-            <p className="text-lg">Descripción</p>
-            <p className="text-xs">{projectData?.descripcion}</p>
-          </div>
-          <div className="h-8 w-1 rounded-sm border-black bg-black"></div>
-          <div className="flex flex-col gap-y-1 items-center">
-            <MdDateRange size={28} />
-            <p className="text-lg">Fecha de creación</p>
-            <p className="text-xs">{projectData?.fecha_creacion}</p>
-          </div>
-          <div className="h-8 w-1 rounded-sm border-black bg-black"></div>
-          <div className="flex flex-col gap-y-1 items-center">
-            <MdDateRange size={28} />
-            <p className="text-lg">Fecha de actualización</p>
-            <p className="text-xs">{projectData?.fecha_actualizacion}</p>
-          </div>
-          <div className="h-8 w-1 rounded-sm border-black bg-black"></div>
-          <div className="flex flex-col gap-y-1 items-center">
-            <MdLocationPin size={28} />
-            <p className="text-lg">Ubicación</p>
-            <p className="capitalize text-xs">{projectData?.ubicacion}</p>
-          </div>
-        </div>
       </div>
 
-      {/** ------------------------------------------------------------------ */}
-
-      <div className="flex mt-4 justify-center gap-x-6">
-        <div className="bg-dark-purple flex flex-col rounded items-center w-24 h-24 justify-center text-white">
-          <p className="text-lg text-center">Total de Leads</p>
-          <p className="text-sm">{leads.length}</p>
-        </div>
-        <div className="bg-dark-purple flex flex-col rounded items-center w-24 h-24 justify-center text-white">
-          <p className="text-lg capitalize text-center">Leads no asigandos</p>
-          <p className="text-sm">{leads.length}</p>
-        </div>
-        <div className="bg-dark-purple flex flex-col rounded items-center w-24 h-24 justify-center text-white">
-          <p className="text-lg capitalize text-center">Leads asignados</p>
-          <p className="text-sm">{leads.length}</p>
-        </div>
-      </div>
-
-      <div className="mt-4 flex flex-col">
+      <div className="mt-3 flex flex-col gap-y-3">
         <CustomInputBase
           placeholder="Buscar lead"
           onSearch={handleSearchButton}
         />
+
+        <div className="flex flex-col gap-y-4">
+          <h2 className="font-bold">Filtrar leads</h2>
+          <form className="flex gap-x-3">
+            <FilterProyectos label="Proyecto" onNewInput={onAddProject} />
+            <FilterAsesor label="Asesor" onNewInput={onAddAsesor} />
+            <FilterEstadoLead label="Estado" onNewInput={onAddEstadoLead} />
+            <LocalizationProvider dateAdapter={AdapterDayjs}>
+              <DatePicker
+                sx={{
+                  width: "9rem",
+                }}
+                label="Desde"
+                value={filterState.startDate}
+                onChange={(newValue) => {
+                  setFilterState((prev) => ({ ...prev, startDate: newValue }));
+                }}
+                TextField={(params) => <TextField {...params} />}
+              />
+              <DatePicker
+                sx={{
+                  width: "9rem",
+                }}
+                label="Hasta"
+                value={filterState.endDate}
+                onChange={(newValue) => {
+                  setFilterState((prev) => ({ ...prev, endDate: newValue }));
+                }}
+                TextField={(params) => <TextField {...params} />}
+              />
+            </LocalizationProvider>
+            <Button
+              variant="contained"
+              sx={{ borderRadius: "0px", textTransform: "capitalize" }}
+              onClick={onHandleFilterClick}
+            >
+              Filtrar
+            </Button>
+          </form>
+        </div>
+
         <Box sx={{ width: "100%" }}>
           <Tabs
             aria-label="basic tabs"

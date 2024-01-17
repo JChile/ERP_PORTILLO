@@ -2,8 +2,8 @@ import axios from "axios";
 
 const DOMAIN = import.meta.env.VITE_BACKEND_URL;
 
-export const getProductos= async ({authToken}) => {
-  const URL = `${DOMAIN}/api/producto/`;
+export const getProductos= async (query, authToken) => {
+  const URL = `${DOMAIN}/api/producto/?${query}`;
   const { data } = await axios.get(
     URL,
     {

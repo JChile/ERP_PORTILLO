@@ -20,11 +20,16 @@ export const getLeadsActivos = async (token) => {
   return data;
 };
 
-export const getLeadsNoAsignados = async () => {
+export const getLeadsNoAsignados = async (token) => {
   const DOMAIN = process.env.VITE_BACKEND_URL;
   const URL = `${DOMAIN}/api/leadNoAsignado/`;
 
-  const { data } = await axios.get(URL);
+  const config = {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  };
+  const { data } = await axios.get(URL, config);
 
   return data;
 };
@@ -35,11 +40,12 @@ export const getLeadsNoAsignados = async () => {
  *  @returns {object} data, object with asesor information and its leads.
  *  @throws {error} if something happens
  * */
-export const getAsesorLeads = async (token) => {
+export const getAsesorLeads = async (token, queries = "") => {
   const DOMAIN = process.env.VITE_BACKEND_URL;
   const URL = `${DOMAIN}/api/asesorLead/`;
   const config = {
     headers: {
+      "Content-Type": "application/json",
       Authorization: `Bearer ${token}`,
     },
   };

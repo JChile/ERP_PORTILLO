@@ -86,8 +86,8 @@ export const ListCampanias = () => {
     const { id, proyecto, categoria } = item;
     const body = {
       estado: "I",
-      // proyecto: proyecto.id,
-      // categoria: categoria.id,
+      proyecto: proyecto.id,
+      categoria: categoria.id,
     };
     try {
       const result = await deleteCampania(id, body, authTokens["access"]);

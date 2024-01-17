@@ -4,16 +4,15 @@ import { TableCell, TableRow } from "@mui/material";
 import { HiPhoneIncoming } from "react-icons/hi";
 import { HiPhoneMissedCall } from "react-icons/hi";
 import { CustomMoreVerticalActions } from "../../../components";
-import { deleteLead } from "../helpers";
 import { formatDate_ISO861_to_formatdate } from "../../../utils/formatDate";
 
-export const RowItemLead = ({ item, onShowDeleteDialog }) => {
+export const RowItemLead = ({ item, onDeleteItemSelected }) => {
   const {
     id,
     nombre,
     apellido,
     celular,
-    horaEntrega,
+    horaRecepcion,
     llamar,
     estadoLead,
     campania,
@@ -34,7 +33,7 @@ export const RowItemLead = ({ item, onShowDeleteDialog }) => {
     <TableRow sx={{ "&:last-child td, &:last-child th": { border: 0 } }}>
       <TableCell>
         <CustomMoreVerticalActions
-          onDelete={() => onShowDeleteDialog(item)}
+          onDelete={() => onDeleteItemSelected(item)}
           onEdit={onEditItemSelected}
         />
       </TableCell>
@@ -98,7 +97,7 @@ export const RowItemLead = ({ item, onShowDeleteDialog }) => {
       </TableCell>
       <TableCell>{estadoLead}</TableCell>
       <TableCell>{campania.nombre}</TableCell>
-      <TableCell>{formatDate_ISO861_to_formatdate(horaEntrega)}</TableCell>
+      <TableCell>{formatDate_ISO861_to_formatdate(horaRecepcion)}</TableCell>
     </TableRow>
   );
 };

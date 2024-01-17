@@ -4,6 +4,7 @@ export const getProyecto = async (id, authToken) => {
   const URL = `${DOMAIN}/api/proyecto/${id}`;
   const config = {
     headers: {
+      "Content-Type": "application/json",
       Authorization: `Bearer ${authToken}`,
     },
   };

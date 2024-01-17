@@ -1,6 +1,6 @@
 import React, { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { MenuItem, Select, TextField } from "@mui/material";
+import { TextField } from "@mui/material";
 import { createCampania } from "../helpers";
 import { useAlertMUI } from "../../../hooks";
 import {
@@ -86,18 +86,49 @@ export const CreateCampania = () => {
 
     if (!nombre) {
       errors.push("- El nombre de la campaña es obligatorio.");
+    } else if (nombre.length < 10 || nombre.length > 30) {
+      errors.push(
+        "- El nombre de la campaña debe tener entre 10 y 24 caracteres y no debe contener espacios en blanco."
+      );
     }
     if (!fecha_estimada) {
       errors.push("- La fecha estimada es obligatoria.");
+    } else {
+      const partesFecha = fecha_estimada.split("-");
+      const anio = parseInt(partesFecha[0]);
+      const mes = parseInt(partesFecha[1]) - 1; // Restamos 1 para ajustar al formato de meses de JavaScript
+      const dia = parseInt(partesFecha[2]);
+      const fechaEstimada = new Date(anio, mes, dia);
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      if (fechaEstimada.getTime() < today.getTime()) {
+        errors.push("- La fecha estimada no puede ser anterior a hoy.");
+      }
     }
     if (!fecha_cierre) {
       errors.push("- La fecha de cierre es obligatoria.");
+    } else {
+      const fechaEstimada = new Date(fecha_estimada);
+      const fechaCierre = new Date(fecha_cierre);
+
+      if (fechaCierre.getTime() < fechaEstimada.getTime()) {
+        errors.push(
+          "- La fecha de cierre no puede ser anterior a la fecha de inicio."
+        );
+      }
     }
+    // Validación para el campo coste_estimado
     if (!coste_estimado) {
       errors.push("- El costo estimado es obligatorio.");
+    } else if (isNaN(coste_estimado) || coste_estimado <= 0) {
+      errors.push("- El costo estimado debe ser un número mayor a 0.");
     }
+
+    // Validación para el campo coste_real
     if (!coste_real) {
       errors.push("- El costo real es obligatorio.");
+    } else if (isNaN(coste_real) || coste_real <= 0) {
+      errors.push("- El costo real debe ser un número mayor a 0.");
     }
     if (!proyecto) {
       errors.push("- El proyecto es obligatorio.");
@@ -167,6 +198,8 @@ export const CreateCampania = () => {
                   Nombre de la campaña
                 </span>
                 <input
+                  minLength={10}
+                  maxLength={30}
                   type="text"
                   name="nombre"
                   className="mt-1 px-3 py-2 bg-white border shadow-sm border-slate-300 placeholder-slate-400 focus:outline-none focus:border-sky-500 focus:ring-sky-500 block w-full rounded-md sm:text-sm focus:ring-1"
@@ -182,6 +215,7 @@ export const CreateCampania = () => {
                   Costo estimado
                 </span>
                 <input
+                  min={1}
                   type="number"
                   name="coste_estimado"
                   className="mt-1 px-3 py-2  bg-white border shadow-sm border-slate-300 placeholder-slate-400 focus:outline-none focus:border-sky-500 focus:ring-sky-500 block w-full rounded-md sm:text-sm focus:ring-1"
@@ -232,6 +266,7 @@ export const CreateCampania = () => {
                 </span>
                 <input
                   type="number"
+                  min={1}
                   name="coste_real"
                   className="mt-1 px-3 py-2 bg-white border shadow-sm border-slate-300 placeholder-slate-400 focus:outline-none focus:border-sky-500 focus:ring-sky-500 block w-full rounded-md sm:text-sm focus:ring-1"
                   placeholder="Costo real"
@@ -267,6 +302,7 @@ export const CreateCampania = () => {
                 id="descripcion"
                 value={descripcion}
                 multiline
+                maxLength={200}
                 rows={2}
                 inputProps={{
                   style: {

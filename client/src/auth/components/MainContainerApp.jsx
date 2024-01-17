@@ -14,9 +14,9 @@ import ListItem from "@mui/material/ListItem";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
-import { MdAllInbox, MdMenu } from "react-icons/md";
-import { FiInbox } from "react-icons/fi";
-import { NavLink } from "react-router-dom";
+import { MdMenu } from "react-icons/md";
+import { Link, NavLink } from "react-router-dom";
+import { DynamicIcon } from "./DynamicIcon";
 
 const drawerWidth = 240;
 
@@ -25,6 +25,11 @@ export const MainContainerApp = ({ children }) => {
   const [open, setOpen] = useState(false);
   const { user } = currentUser;
   const { first_name, last_name, groups } = user;
+  const [selectedItem, setSelectedItem] = useState(null);
+
+  const handleItemClick = (index) => {
+    setSelectedItem(index);
+  };
 
   return (
     <Box sx={{ display: "flex" }}>
@@ -40,9 +45,11 @@ export const MainContainerApp = ({ children }) => {
           >
             <MdMenu />
           </IconButton>
-          <Typography variant="h6" noWrap component="div">
-            Sistema Portillo
-          </Typography>
+          <Link to={"/home"}>
+            <Typography variant="h6" noWrap component="div">
+              Sistema Portillo
+            </Typography>
+          </Link>
           <div style={{ flex: 1 }} />
           <div className="flex flex-row gap-x-3 items-center">
             <div>
@@ -67,18 +74,20 @@ export const MainContainerApp = ({ children }) => {
           }}
         >
           {permissions.map((item, index) => (
-            <NavLink
-              to={item.url}
-              key={item.title}
-              className={({ isActive }) =>
-                isActive ? "bg-slate-200" : "bg-transparent"
-              }
-            >
+            <NavLink to={item.url} key={item.title}>
               <ListItem
                 disablePadding
-                sx={{ display: "block", backgroundColor: "inherit" }}
+                sx={{
+                  display: "block",
+                  backgroundColor:
+                    selectedItem === index ? "white" : "transparent",
+                }}
               >
                 <ListItemButton
+                  selected={selectedItem === index}
+                  onClick={() => {
+                    handleItemClick(index);
+                  }}
                   sx={{
                     minHeight: 48,
                     justifyContent: open ? "initial" : "center",
@@ -90,17 +99,17 @@ export const MainContainerApp = ({ children }) => {
                       minWidth: 0,
                       justifyContent: "center",
                       mr: open ? 2 : "auto",
+                      color: selectedItem === index ? "#9E154A" : "inherit",
                     }}
                   >
-                    {index % 2 === 0 ? (
-                      <FiInbox color="white" />
-                    ) : (
-                      <MdAllInbox color="white" />
-                    )}
+                    <DynamicIcon iconName={item.url} />
                   </ListItemIcon>
                   <ListItemText
                     primary={item.title}
-                    sx={{ opacity: open ? 1 : 0 }}
+                    sx={{
+                      opacity: open ? 1 : 0,
+                      color: selectedItem === index ? "#9E154A" : "inherit",
+                    }}
                   />
                 </ListItemButton>
               </ListItem>
@@ -111,6 +120,7 @@ export const MainContainerApp = ({ children }) => {
       <Box
         component="main"
         sx={{ flexGrow: 1, paddingX: 3, marginTop: 11, paddingBottom: 5 }}
+        // sx={{ flexGrow: 1, }}
       >
         {children}
       </Box>

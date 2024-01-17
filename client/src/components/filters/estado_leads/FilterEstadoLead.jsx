@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { getEstadoLead } from "./getEstadoLead";
 import { Autocomplete, TextField } from "@mui/material";
+import { AuthContext } from "../../../auth";
 
 const defaultOption = {
   value: 0,
@@ -8,12 +9,17 @@ const defaultOption = {
   id: null,
 };
 
-export const FilterEstadoLead = ({ defaultValue = null, onNewInput }) => {
+export const FilterEstadoLead = ({
+  defaultValue = null,
+  onNewInput,
+  label = "",
+}) => {
   const [options, setOptions] = useState([defaultOption]);
   const [value, setValue] = useState(defaultOption);
+  const { authTokens } = useContext(AuthContext);
 
   const obtenerEstadosLead = async () => {
-    const result = await getEstadoLead();
+    const result = await getEstadoLead(authTokens["access"]);
     const formatSelect = [
       defaultOption,
       ...result.map((element) => {
@@ -54,7 +60,9 @@ export const FilterEstadoLead = ({ defaultValue = null, onNewInput }) => {
       getOptionLabel={(option) => option.label}
       onChange={handleChange}
       isOptionEqualToValue={(option, value) => option.id == value.id}
-      renderInput={(params) => <TextField {...params} size="small" />}
+      renderInput={(params) => (
+        <TextField {...params} size="small" label={label} />
+      )}
     />
   );
 };

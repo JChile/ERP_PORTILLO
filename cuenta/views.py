@@ -159,8 +159,8 @@ class UserDetail(generics.RetrieveUpdateDestroyAPIView):
     #update desacioar, desacociar
     def update(self, request, pk = None, *args, **kwargs):
 
-        if not (bool(request.user.groups.first().permissions.filter(codename = PermissionUser.CAN_CHANGE) or request.user.is_superuser)) :
-            return Response({"message" : "Usuario no tiene permisos para editar usuarios"}, status=403)
+        #if not (bool(request.user.groups.first().permissions.filter(codename = PermissionUser.CAN_CHANGE) or request.user.is_superuser)) :
+        #    return Response({"message" : "Usuario no tiene permisos para editar usuarios"}, status=403)
 
         try:
             desasociar = request.data.pop("desasociar")

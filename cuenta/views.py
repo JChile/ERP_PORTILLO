@@ -14,6 +14,7 @@ import json
 from rest_framework.decorators import permission_classes
 from ventas.consts import *
 
+
 class GroupList(generics.ListCreateAPIView):
     serializer_class = GruopSerializer
     queryset = Group.objects.all()
@@ -58,37 +59,33 @@ class PermissionDetail(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = PermissionSerializer
 
 
-
-@permission_classes([IsAuthenticated])
 class UserList(generics.ListCreateAPIView):
     serializer_class = UserSerializer
     queryset = User.objects.all()
-    
+
     def list(self, request):
-        if not (bool(request.user.groups.first().permissions.filter(codename = PermissionUser.CAN_VIEW) or request.user.is_superuser)) :
-            return Response({"message" : "Usuario no tiene permisos para ver usuarios"}, status=403)
-    
         user_queryset = User.objects.all()
-        userSerializer = UserSerializer(user_queryset, many=True,fields=(
-            'id', 'first_name', 'last_name', 'username','groups'))
+        userSerializer = UserSerializer(user_queryset, many=True, fields=(
+            'id', 'first_name', 'last_name', 'username', 'groups'))
         dataJson = userSerializer.data
         for i in dataJson:
-            
+
             groups_queryset = Group.objects.all().filter(id__in=i["groups"])
 
             groupSerializer = GruopSerializer(groups_queryset, many=True)
             i["groups"] = groupSerializer.data
         return Response(dataJson)
-    
+
     def create(self, request):
         print(request.data)
         data = UserSerializer(data=request.data)
-        if not (bool(request.user.groups.first().permissions.filter(codename = PermissionUser.CAN_ADD) or request.user.is_superuser)) :
-            return Response({"message" : "Usuario no tiene permisos para agregar usuarios"}, status=403)
+        if not (bool(request.user.groups.first().permissions.filter(codename=PermissionUser.CAN_ADD) or request.user.is_superuser)):
+            return Response({"message": "Usuario no tiene permisos para agregar usuarios"}, status=403)
         if data.is_valid():
             print("Entra aqui")
             data.save()
         return Response(data.data)
+
 
 def mergePermissionsIdWithContentType(permissionSerializer, moduloSerializer, contentType_queryset):
     for a in permissionSerializer.data:
@@ -156,47 +153,46 @@ class UserDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
 
-    #update desacioar, desacociar
-    def update(self, request, pk = None, *args, **kwargs):
+    # update desacioar, desacociar
+    def update(self, request, pk=None, *args, **kwargs):
 
-        #if not (bool(request.user.groups.first().permissions.filter(codename = PermissionUser.CAN_CHANGE) or request.user.is_superuser)) :
+        # if not (bool(request.user.groups.first().permissions.filter(codename = PermissionUser.CAN_CHANGE) or request.user.is_superuser)) :
         #    return Response({"message" : "Usuario no tiene permisos para editar usuarios"}, status=403)
 
         try:
             desasociar = request.data.pop("desasociar")
         except:
             desasociar = False
-        
+
         try:
-            user = self.queryset.get(id = pk)
-        except :
-            return Response({"Message" : "User no existe"})
-        
+            user = self.queryset.get(id=pk)
+        except:
+            return Response({"Message": "User no existe"})
+
         serializer = UserSerializer(user, data=request.data)
         if serializer.is_valid():
-            if desasociar :
-                leads_queryset = Lead.objects.filter(asesor = user.pk)
+            if desasociar:
+                leads_queryset = Lead.objects.filter(asesor=user.pk)
 
-                for i in leads_queryset :
+                for i in leads_queryset:
                     i.asesor = None
                     i.asignado = False
                     i.save()
             serializer.save()
             return Response(serializer.data)
 
-        return Response({"Message" : "No se actualizo"})
-    
-    #eliminar password en el envio
+        return Response({"Message": "No se actualizo"})
+
+    # eliminar password en el envio
     def retrieve(self, request, pk=None):
 
-        #if not (bool(request.user.groups.first().permissions.filter(codename = PermissionUser.CAN_VIEW) or request.user.is_superuser)) :
+        # if not (bool(request.user.groups.first().permissions.filter(codename = PermissionUser.CAN_VIEW) or request.user.is_superuser)) :
         #    return Response({"message" : "Usuario no tiene permisos para ver usuarios"}, status=403)
-
 
         user_queryset = User.objects.all()
         user = get_object_or_404(user_queryset, pk=pk)
         userSerializer = UserSerializer(user, fields=(
-            'id', 'first_name', 'last_name', 'username','groups', 'user_permissions'))
+            'id', 'first_name', 'last_name', 'username', 'groups', 'user_permissions'))
         dataJson = userSerializer.data
         permissions_queryset = Permission.objects.all().filter(
             id__in=userSerializer.data["user_permissions"])
@@ -235,8 +231,6 @@ class UserDetail(generics.RetrieveUpdateDestroyAPIView):
             dataJson["groups"] = dataJsonGroup
 
         return Response(dataJson)
-
-
 
 
 class ModuloList(generics.ListCreateAPIView):
@@ -351,9 +345,10 @@ class UserInactivoList(APIView):
             'id', 'first_name', 'last_name', 'username')).data
         return Response(dataJson)
 
+
 class UserAsesorList(APIView):
     def get(self, request):
-        users = User.objects.filter(is_active=True).filter(groups__in = [1])
+        users = User.objects.filter(is_active=True).filter(groups__in=[1])
         dataJson = UserSerializer(users, many=True, fields=(
-            'id', 'first_name', 'last_name', 'username','codigoAsesor')).data
+            'id', 'first_name', 'last_name', 'username', 'codigoAsesor')).data
         return Response(dataJson)

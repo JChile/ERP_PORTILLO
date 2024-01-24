@@ -72,7 +72,6 @@ class UserList(generics.ListCreateAPIView):
         for i in dataJson:
             i.pop("password")
             i.pop("user_permissions")
-
             groups_queryset = Group.objects.all().filter(id__in=i["groups"])
             groupSerializer = GruopSerializer(groups_queryset, many=True)
             i["groups"] = groupSerializer.data
@@ -193,8 +192,7 @@ class UserDetail(generics.RetrieveUpdateDestroyAPIView):
 
         user_queryset = User.objects.all()
         user = get_object_or_404(user_queryset, pk=pk)
-        userSerializer = UserSerializer(user, fields=(
-            'id', 'first_name', 'last_name', 'username','groups', 'user_permissions'))
+        userSerializer = UserSerializer(user)
         dataJson = userSerializer.data
         permissions_queryset = Permission.objects.all().filter(
             id__in=userSerializer.data["user_permissions"])
@@ -207,6 +205,9 @@ class UserDetail(generics.RetrieveUpdateDestroyAPIView):
 
         dataJson["user_permissions"] = permissionSerializer.data
 
+
+        dataJson.pop("password")
+        dataJson.pop("user_permissions")
         print(type(userSerializer.data))
 
         if len(userSerializer.data) > 0 and len(userSerializer.data.get("groups")) > 0:

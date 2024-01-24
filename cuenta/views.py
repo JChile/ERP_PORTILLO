@@ -59,23 +59,19 @@ class PermissionDetail(generics.RetrieveUpdateDestroyAPIView):
 
 
 
-@permission_classes([IsAuthenticated])
+
 class UserList(generics.ListCreateAPIView):
     serializer_class = UserSerializer
     queryset = User.objects.all()
     
     def list(self, request):
-        if not (bool(request.user.groups.first().permissions.filter(codename = PermissionUser.CAN_VIEW) or request.user.is_superuser)) :
-            return Response({"message" : "Usuario no tiene permisos para ver usuarios"}, status=403)
-    
+
         user_queryset = User.objects.all()
-        userSerializer = UserSerializer(user_queryset, many=True,fields=(
-            'id', 'first_name', 'last_name', 'username','groups'))
+        userSerializer = UserSerializer(user_queryset, many=True)
         dataJson = userSerializer.data
         for i in dataJson:
-            
+            i.pop("password")
             groups_queryset = Group.objects.all().filter(id__in=i["groups"])
-
             groupSerializer = GruopSerializer(groups_queryset, many=True)
             i["groups"] = groupSerializer.data
         return Response(dataJson)

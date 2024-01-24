@@ -78,6 +78,9 @@ class WhatsApp(models.Model):
     detalle = models.TextField(max_length=200, null=True, blank=True)
     estado = models.ForeignKey(
         EstadoRegistro, on_delete=models.SET_NULL, default='A', null=True)
+    respondio = models.BooleanField(default=False)
+    objeciones = models.ForeignKey(
+        Objecion, on_delete=models.SET_NULL, null=True)
     usuarioCreador = models.ForeignKey(
         User, on_delete=models.SET_NULL, null=True, related_name='usuarioCreadorWhatsapp')
     usuarioActualizador = models.ForeignKey(
@@ -97,6 +100,9 @@ class Llamada(models.Model):
     detalle = models.TextField(max_length=200, null=True, blank=True)
     estado = models.ForeignKey(
         EstadoRegistro, on_delete=models.SET_NULL, default='A', null=True)
+    contesto = models.BooleanField(default=False)
+    objeciones = models.ForeignKey(
+        Objecion, on_delete=models.SET_NULL, null=True)
     usuarioCreador = models.ForeignKey(
         User, on_delete=models.SET_NULL, null=True, related_name='usuarioCreadorLlamada')
     usuarioActualizador = models.ForeignKey(

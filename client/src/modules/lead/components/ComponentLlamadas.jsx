@@ -1,4 +1,6 @@
 import {
+  Checkbox,
+  FormControlLabel,
   Grid,
   Table,
   TableBody,
@@ -19,6 +21,7 @@ import Button from "@mui/material/Button";
 import { createLlamada } from "../helpers";
 import { combinarErrores } from "../../../utils";
 import { AuthContext } from "../../../auth";
+import { FilterObjecion } from "../../../components";
 
 const ITEM_HEIGHT = 48;
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
@@ -135,23 +138,53 @@ const DialogRegistrarLlamada = ({ onCreateRegistroLlamada }) => {
   const handleClose = () => {
     setOpen(false);
   };
-  const [inputValue, setinputValue] = React.useState("");
+
+  const [dataLlamadas, setDataLlamadas] = useState({
+    detalle: "",
+    contesto: false,
+    ojeciones: null,
+  });
+
+  const { detalle, contesto, objeciones } = dataLlamadas;
 
   const handleInputValue = ({ target }) => {
     const { value, name } = target;
-    setinputValue(value);
+    setDataLlamadas({
+      ...dataLlamadas,
+      [name]: value,
+    });
+  };
+
+  const handleChangeCheckBoxContesto = (event) => {
+    setDataLlamadas({
+      ...dataLlamadas,
+      contesto: event.target.checked,
+    });
+  };
+
+  const onAddObjecion = (value) => {
+    const { id } = value;
+    setDataLlamadas({
+      ...dataLlamadas,
+      objeciones: id,
+    });
   };
 
   const crearRegistroLlamada = () => {
-    if (inputValue.length === 0) {
-      alert("Debe ingresar un detalle del mensaje");
+    let handleErrors = "";
+    if (detalle.length === 0 || objeciones === null) {
+      if (detalle.length === 0) {
+        handleErrors += "Debe ingresar un detalle del mensaje\n";
+      }
+      if (objeciones === null) {
+        handleErrors += "Debe ingresar una objeción\n";
+      }
+      alert(handleErrors);
     } else {
-      const formatData = {
-        detalle: inputValue,
-      };
-      onCreateRegistroLlamada(formatData);
+      onCreateRegistroLlamada(dataLlamadas);
     }
   };
+
   return (
     <div className="py-4">
       <button
@@ -171,6 +204,31 @@ const DialogRegistrarLlamada = ({ onCreateRegistroLlamada }) => {
           Registrar llamada
         </DialogTitle>
         <DialogContent dividers>
+          {/* Checkbox de respondio */}
+          <div className="mb-4 ml-0">
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={contesto}
+                  onChange={handleChangeCheckBoxContesto}
+                  inputProps={{ "aria-label": "controlled" }}
+                />
+              }
+              label="Contestó?"
+              labelPlacement="start"
+            />
+          </div>
+          {/* SELECCION DE OBJECION */}
+          <div className="mb-3">
+            <label htmlFor="detalle" className="form-label">
+              Objeción:
+            </label>
+            <FilterObjecion
+              onNewInput={onAddObjecion}
+              defaultValue={objeciones}
+            />
+          </div>
+          {/* DETALLE DE OPERACION */}
           <div className="mb-3">
             <label htmlFor="detalle" className="form-label">
               Detalle:
@@ -178,7 +236,8 @@ const DialogRegistrarLlamada = ({ onCreateRegistroLlamada }) => {
             <textarea
               id="detalle"
               className="form-control"
-              value={inputValue}
+              name="detalle"
+              value={detalle}
               onChange={handleInputValue}
               style={{
                 width: "100%",

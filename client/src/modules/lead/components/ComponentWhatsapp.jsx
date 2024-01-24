@@ -1,4 +1,6 @@
 import {
+  Checkbox,
+  FormControlLabel,
   Grid,
   Table,
   TableBody,
@@ -19,6 +21,7 @@ import Button from "@mui/material/Button";
 import { createWhatsapp } from "../helpers";
 import { AuthContext } from "../../../auth";
 import { combinarErrores } from "../../../utils";
+import { FilterObjecion } from "../../../components";
 
 const ITEM_HEIGHT = 48;
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
@@ -134,20 +137,49 @@ const DialogRegistrarMensajeWhatsapp = ({ onCreateRegistroWhatsapp }) => {
   const handleClose = () => {
     setOpen(false);
   };
-  const [inputValue, setinputValue] = React.useState("");
+  const [dataWhatsapp, setDataWhatsapp] = useState({
+    detalle: "",
+    respondio: false,
+    ojeciones: null,
+  });
+
+  const { detalle, respondio, objeciones } = dataWhatsapp;
+
   const handleInputValue = ({ target }) => {
     const { value, name } = target;
-    setinputValue(value);
+    setDataWhatsapp({
+      ...dataWhatsapp,
+      [name]: value,
+    });
+  };
+
+  const handleChangeCheckBoxRespondio = (event) => {
+    setDataWhatsapp({
+      ...dataWhatsapp,
+      respondio: event.target.checked,
+    });
+  };
+
+  const onAddObjecion = (value) => {
+    const { id } = value;
+    setDataWhatsapp({
+      ...dataWhatsapp,
+      objeciones: id,
+    });
   };
 
   const crearRegistroWhatsapp = () => {
-    if (inputValue.length === 0) {
-      alert("Debe ingresar un detalle del mensaje");
+    let handleErrors = "";
+    if (detalle.length === 0 || objeciones === null) {
+      if (detalle.length === 0) {
+        handleErrors += "Debe ingresar un detalle del mensaje\n";
+      }
+      if (objeciones === null) {
+        handleErrors += "Debe ingresar una objeción\n";
+      }
+      alert(handleErrors);
     } else {
-      const formatData = {
-        detalle: inputValue,
-      };
-      onCreateRegistroWhatsapp(formatData);
+      onCreateRegistroWhatsapp(dataWhatsapp);
     }
   };
 
@@ -170,6 +202,31 @@ const DialogRegistrarMensajeWhatsapp = ({ onCreateRegistroWhatsapp }) => {
           Registrar mensaje Whatsapp
         </DialogTitle>
         <DialogContent dividers>
+          {/* Checkbox de respondio */}
+          <div className="mb-4 ml-0">
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={respondio}
+                  onChange={handleChangeCheckBoxRespondio}
+                  inputProps={{ "aria-label": "controlled" }}
+                />
+              }
+              label="¿Respondió?"
+              labelPlacement="start"
+            />
+          </div>
+          {/* SELECCION DE OBJECION */}
+          <div className="mb-3">
+            <label htmlFor="detalle" className="form-label">
+              Objeción:
+            </label>
+            <FilterObjecion
+              onNewInput={onAddObjecion}
+              defaultValue={objeciones}
+            />
+          </div>
+          {/* DETALLE DE OPERACION */}
           <div className="mb-3">
             <label htmlFor="detalle" className="form-label">
               Detalle:
@@ -177,7 +234,8 @@ const DialogRegistrarMensajeWhatsapp = ({ onCreateRegistroWhatsapp }) => {
             <textarea
               id="detalle"
               className="form-control"
-              value={inputValue}
+              name="detalle"
+              value={detalle}
               onChange={handleInputValue}
               style={{
                 width: "100%",

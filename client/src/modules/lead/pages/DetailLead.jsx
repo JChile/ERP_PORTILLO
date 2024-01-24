@@ -216,13 +216,13 @@ export const DetailLead = () => {
             >
               Crear Evento
             </Button>
-            <Button
+            {/* <Button
               variant="contained"
               color="info"
               sx={{ textTransform: "capitalize", borderRadius: 0 }}
             >
               <Link to={"cotizacion/"}>Generar Cotización</Link>
-            </Button>
+            </Button> */}
           </div>
           {/* SECCION DE ACCIONES SOBRE LEADS */}
 

@@ -7,3 +7,4 @@ export * from "./estado_asesor/FilterEstadoAsesor";
 export * from "./estado_registro/FilterEstadoRegistro";
 export * from "./tipoProducto/FilterTipoProducto";
 export * from "./estado_leads/FilterEstadoLead";
+export * from "./objecion/FilterObjecion";

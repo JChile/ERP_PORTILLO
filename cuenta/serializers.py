@@ -13,6 +13,9 @@ import requests
 """
 
 
+
+BACKEND = "http://3.144.105.189:8000"
+
 class PermissionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Permission

@@ -33,13 +33,19 @@ class LeadList(generics.ListCreateAPIView):
             return Response({"message": "Usuario no tiene permisos para ver leads"}, status=403)
 
         estado = request.query_params.get('estado')
-        print(estado)
+        desde = request.query_params.get('desde')
+        hasta = request.query_params.get('hasta')
+        print("ESTADOOOOOOOOOOOOO", estado)
         if estado:
             lead_queryset = self.queryset.filter(estado=estado)
         else:
-            lead_queryset = self.queryset
+            lead_queryset = Lead.objects.all()
+        
+        if desde and hasta:
+            lead_queryset = lead_queryset.filter(fecha_creacion__range=[desde, hasta])
 
         leadSerializer = LeadSerializer(lead_queryset, many=True)
+
         leadData = leadSerializer.data
         for i in leadData:
             user_data = get_or_none(User, id=i["asesor"])

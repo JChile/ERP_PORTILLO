@@ -64,14 +64,13 @@ class UserList(generics.ListCreateAPIView):
     queryset = User.objects.all()
 
     def list(self, request):
+
         user_queryset = User.objects.all()
-        userSerializer = UserSerializer(user_queryset, many=True, fields=(
-            'id', 'first_name', 'last_name', 'username', 'groups'))
+        userSerializer = UserSerializer(user_queryset, many=True)
         dataJson = userSerializer.data
         for i in dataJson:
-
+            i.pop("password")
             groups_queryset = Group.objects.all().filter(id__in=i["groups"])
-
             groupSerializer = GruopSerializer(groups_queryset, many=True)
             i["groups"] = groupSerializer.data
         return Response(dataJson)

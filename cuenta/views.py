@@ -191,12 +191,7 @@ class UserDetail(generics.RetrieveUpdateDestroyAPIView):
 
         user_queryset = User.objects.all()
         user = get_object_or_404(user_queryset, pk=pk)
-<<<<<<< HEAD
-        userSerializer = UserSerializer(user, fields=(
-            'id', 'first_name', 'last_name', 'username', 'groups', 'user_permissions'))
-=======
         userSerializer = UserSerializer(user)
->>>>>>> c904f8bf951b6e14de7e56731a733f2d2c3a1a38
         dataJson = userSerializer.data
         permissions_queryset = Permission.objects.all().filter(
             id__in=userSerializer.data["user_permissions"])
@@ -208,7 +203,6 @@ class UserDetail(generics.RetrieveUpdateDestroyAPIView):
         groupSerializer = GruopSerializer(grops_queryset, many=True)
 
         dataJson["user_permissions"] = permissionSerializer.data
-
 
         dataJson.pop("password")
         dataJson.pop("user_permissions")

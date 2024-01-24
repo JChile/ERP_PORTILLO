@@ -13,6 +13,7 @@ export const FilterAsesor = ({
   defaultValue = null,
   onNewInput,
   label = "",
+  size = "small",
 }) => {
   const [options, setOptions] = useState([defaultOption]);
   const [value, setValue] = useState(defaultOption);
@@ -69,7 +70,7 @@ export const FilterAsesor = ({
       onChange={handleChange}
       isOptionEqualToValue={(option, value) => option.id == value.id}
       renderInput={(params) => (
-        <TextField {...params} size="small" label={label} />
+        <TextField {...params} size={size} label={label} />
       )}
     />
   );

@@ -12,6 +12,7 @@ export const FilterProyectos = ({
   defaultValue = null,
   onNewInput,
   label = "",
+  size = "small"
 }) => {
   const { authTokens } = useContext(AuthContext);
   const [options, setOptions] = useState([defaultOption]);
@@ -57,7 +58,7 @@ export const FilterProyectos = ({
       onChange={handleChange}
       isOptionEqualToValue={(option, value) => option.id == value.id}
       renderInput={(params) => (
-        <TextField {...params} size="small" label={label} />
+        <TextField {...params} size={size} label={label} />
       )}
     />
   );

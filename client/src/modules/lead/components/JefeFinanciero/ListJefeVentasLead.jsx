@@ -147,6 +147,19 @@ const ListJefeVentasLead = ({ credentials }) => {
     setFilteredLeads(filtered);
   };
 
+  const onHandleCleanFilter = () => {
+    setFilterState(() => {
+      onHandleFilterClick();
+      return {
+        proyecto: 0,
+        asesor: 0,
+        estadoLead: null,
+        startDate: null,
+        endDate: null,
+      };
+    });
+  };
+
   useEffect(() => {
     fetchData(credentials);
   }, []);
@@ -176,41 +189,63 @@ const ListJefeVentasLead = ({ credentials }) => {
 
         <div className="flex flex-col gap-y-4">
           <h2 className="font-bold">Filtrar leads</h2>
-          <form className="flex gap-x-3">
-            <FilterProyectos label="Proyecto" onNewInput={onAddProject} />
-            <FilterAsesor label="Asesor" onNewInput={onAddAsesor} />
-            <FilterEstadoLead label="Estado" onNewInput={onAddEstadoLead} />
-            <LocalizationProvider dateAdapter={AdapterDayjs}>
-              <DatePicker
-                sx={{
-                  width: "9rem",
-                }}
-                label="Desde"
-                value={filterState.startDate}
-                onChange={(newValue) => {
-                  setFilterState((prev) => ({ ...prev, startDate: newValue }));
-                }}
-                TextField={(params) => <TextField {...params} />}
+          <form className="flex flex-col gap-y-3">
+            <div className="grid grid-cols-3 gap-x-6 gap-y-6">
+              <FilterProyectos
+                label="Proyecto"
+                onNewInput={onAddProject}
+                size="medium"
               />
-              <DatePicker
-                sx={{
-                  width: "9rem",
-                }}
-                label="Hasta"
-                value={filterState.endDate}
-                onChange={(newValue) => {
-                  setFilterState((prev) => ({ ...prev, endDate: newValue }));
-                }}
-                TextField={(params) => <TextField {...params} />}
+              <FilterAsesor
+                label="Asesor"
+                onNewInput={onAddAsesor}
+                size="medium"
               />
-            </LocalizationProvider>
-            <Button
-              variant="contained"
-              sx={{ borderRadius: "0px", textTransform: "capitalize" }}
-              onClick={onHandleFilterClick}
-            >
-              Filtrar
-            </Button>
+              <FilterEstadoLead
+                label="Estado"
+                onNewInput={onAddEstadoLead}
+                size="medium"
+              />
+              <LocalizationProvider dateAdapter={AdapterDayjs}>
+                <DatePicker
+                  label="Desde"
+                  value={filterState.startDate}
+                  onChange={(newValue) => {
+                    setFilterState((prev) => ({
+                      ...prev,
+                      startDate: newValue,
+                    }));
+                  }}
+                  TextField={(params) => <TextField {...params} />}
+                />
+                <DatePicker
+                  label="Hasta"
+                  value={filterState.endDate}
+                  onChange={(newValue) => {
+                    setFilterState((prev) => ({ ...prev, endDate: newValue }));
+                  }}
+                  TextField={(params) => <TextField {...params} />}
+                />
+              </LocalizationProvider>
+            </div>
+            <div className="flex gap-x-2">
+              <Button
+                size="large"
+                variant="contained"
+                sx={{ textTransform: "capitalize" }}
+                onClick={onHandleCleanFilter}
+              >
+                Limpiar
+              </Button>
+              <Button
+                size="large"
+                variant="contained"
+                sx={{ textTransform: "capitalize" }}
+                onClick={onHandleFilterClick}
+              >
+                Filtrar
+              </Button>
+            </div>
           </form>
         </div>
 

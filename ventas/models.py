@@ -136,7 +136,7 @@ class Evento(models.Model):
     descripcion = models.TextField(null=True, blank=True)
     estado = models.ForeignKey(
         EstadoRegistro, on_delete=models.SET_NULL, default='A', null=True)
-    estado = models.ForeignKey(
+    estadoEvento = models.ForeignKey(
         EstadoEvento, on_delete=models.SET_NULL, null=True)
     usuarioCreador = models.ForeignKey(
         User, on_delete=models.SET_NULL, null=True, related_name='usuarioCreadorEvento')

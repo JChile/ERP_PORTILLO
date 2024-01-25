@@ -131,7 +131,7 @@ class Evento(models.Model):
     duracion = models.IntegerField(null=True, blank=True)
     fecha_visita = models.DateTimeField(null=True, blank=True)
     tipo = models.ForeignKey(TipoEvento,  on_delete=models.CASCADE)
-    descripcion = models.TextField(null=True, blank=True)
+    observacion = models.TextField(null=True, blank=True)
     estado = models.ForeignKey(
         EstadoRegistro, on_delete=models.SET_NULL, default='A', null=True)
     estadoEvento = models.ForeignKey(
@@ -142,6 +142,8 @@ class Evento(models.Model):
         User, on_delete=models.SET_NULL, null=True, related_name='usuarioActualizadorEvento')
     fecha_creacion = models.DateField(auto_now=True)
     fecha_actualizacion = models.DateTimeField(blank=True, null=True)
+    separado = models.BooleanField(default=False)
+
 
     def __str__(self):
         return self.titulo

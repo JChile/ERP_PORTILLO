@@ -249,3 +249,11 @@ class ProyectoTipoProducto(models.Model):
         Proyecto, on_delete=models.CASCADE, null=True, blank=True)
     tipo_producto = models.ForeignKey(
         TipoProducto, on_delete=models.CASCADE, null=True, blank=True)
+
+
+
+
+class DesasignacionLeadAsesor(models.Model):
+    lead = models.ForeignKey(Lead, on_delete=models.SET_NULL, null=True)
+    usuario = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
+    fecha = models.DateField(auto_now=True)

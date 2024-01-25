@@ -19,6 +19,9 @@ admin.site.register(Precio)
 admin.site.register(ProyectoTipoProducto)
 admin.site.register(HistoricoLeadAsesor)
 admin.site.register(EstadoEvento)
+admin.site.register(DesasignacionLeadAsesor)
+
+
 
 
 

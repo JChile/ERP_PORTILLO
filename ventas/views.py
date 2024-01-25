@@ -32,15 +32,19 @@ class LeadList(generics.ListCreateAPIView):
         if not (bool(request.user.groups.first().permissions.filter(codename=PermissionLead.CAN_VIEW) or request.user.is_superuser)):
             return Response({"message": "Usuario no tiene permisos para ver leads"}, status=403)
 
+        lead_queryset = Lead.objects.all()
+        
         estado = request.query_params.get('estado')
         desde = request.query_params.get('desde')
         hasta = request.query_params.get('hasta')
+        asignado = request.query_params.get('asignado')
+        
         print("ESTADOOOOOOOOOOOOO", estado)
+        
+        if asignado:
+            lead_queryset = self.queryset.filter(asignado=asignado)
         if estado:
             lead_queryset = self.queryset.filter(estado=estado)
-        else:
-            lead_queryset = Lead.objects.all()
-        
         if desde and hasta:
             lead_queryset = lead_queryset.filter(horaRecepcion__range=[desde, hasta])
 

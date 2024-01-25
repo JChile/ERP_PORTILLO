@@ -1,7 +1,6 @@
 import {
   Button,
   Checkbox,
-  IconButton,
   Paper,
   Table,
   TableBody,
@@ -9,12 +8,14 @@ import {
   TableContainer,
   TableHead,
   TableRow,
+  TextField,
 } from "@mui/material";
 import React, { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../../../../auth";
 import { getLeads } from "../../helpers";
 import RowItemLeadAsignado from "./RowItemLeadAsignado";
-import { MdHourglassTop, MdSearch } from "react-icons/md";
+import { MdSearch } from "react-icons/md";
+import { quitarLeads } from "../../helpers/desasignarLeads";
 
 const ViewLeadAsignados = () => {
   const { authTokens } = useContext(AuthContext);
@@ -24,19 +25,37 @@ const ViewLeadAsignados = () => {
   const handleChange = (event) => {
     const state = event.target.checked;
     setChecked(state);
-    const leadsChecked = setLeadsAsignados.map((element) => {
+    const leadsChecked = leadAsignados.map((element) => {
       return {
         ...element,
         isSelected: state,
       };
     });
-
     setLeadsAsignados(leadsChecked);
   };
 
   const traerLeadAsiganados = async () => {
-    const result = await getLeads(authTokens["access"], "asignado=True");
-    setLeadsAsignados(result);
+    const rowData = await getLeads(authTokens["access"], "asignado=True");
+    const processData = rowData.map((element) => {
+      return {
+        ...element,
+        isSelected: false,
+      };
+    });
+    setLeadsAsignados(processData);
+  };
+
+  const updateLeadAsignado = (index, isSelected) => {
+    const updatedLeads = [...leadAsignados];
+    updatedLeads[index].isSelected = isSelected;
+    setLeadsAsignados(updatedLeads);
+  };
+
+  const desasignarLeads = async () => {
+    const selectedLeads = leadAsignados.filter((item) => item["isSelected"]);
+    const leadsId = selectedLeads.map((item) => item.id);
+    console.log(selectedLeads)
+    const result = await quitarLeads(authTokens["access"], { "leads": leadsId });
   };
 
   useEffect(() => {
@@ -45,6 +64,7 @@ const ViewLeadAsignados = () => {
 
   return (
     <Paper sx={{ borderRadius: "0px" }}>
+      <Button onClick={desasignarLeads}>Quitar Leads</Button>
       <TableContainer
         sx={{
           minHeight: 700,
@@ -56,8 +76,8 @@ const ViewLeadAsignados = () => {
             <TableRow
               sx={{
                 "& th": {
-                  color: "rgba(200,200,200)",
                   backgroundColor: "#404040",
+                  color: "whitesmoke",
                 },
               }}
             >
@@ -68,7 +88,7 @@ const ViewLeadAsignados = () => {
                   inputProps={{ "aria-label": "controlled" }}
                 />
               </TableCell>
-              <TableCell>Numero</TableCell>
+              <TableCell>Número</TableCell>
               <TableCell>Nombre</TableCell>
               <TableCell>Campaña</TableCell>
               <TableCell>Proyecto</TableCell>
@@ -77,22 +97,76 @@ const ViewLeadAsignados = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            <TableCell>
-              <Button
-                startIcon={<MdSearch />}
-                sx={{
-                  textTransform: "capitalize",
-                  borderRadius: "0px",
-                }}
-                color="success"
-                variant="contained"
-              >
-                Buscar
-              </Button>
-            </TableCell>
-
+            <TableRow>
+              <TableCell>
+                <Button
+                  startIcon={<MdSearch />}
+                  sx={{
+                    textTransform: "capitalize",
+                    borderRadius: "0px",
+                  }}
+                  color="success"
+                  variant="contained"
+                >
+                  Buscar
+                </Button>
+              </TableCell>
+              <TableCell>
+                <TextField
+                  size="small"
+                  variant="outlined"
+                  placeholder="Número"
+                  type="number"
+                />
+              </TableCell>
+              <TableCell>
+                <TextField
+                  variant="outlined"
+                  placeholder="Nombre"
+                  size="small"
+                  type="text"
+                />
+              </TableCell>
+              <TableCell>
+                <TextField
+                  variant="outlined"
+                  placeholder="Campaña"
+                  size="small"
+                  type="text"
+                />
+              </TableCell>
+              <TableCell>
+                <TextField
+                  variant="outlined"
+                  placeholder="Proyecto"
+                  size="small"
+                  type="text"
+                />
+              </TableCell>
+              <TableCell>
+                <TextField
+                  variant="outlined"
+                  placeholder="Estado"
+                  size="small"
+                  type="text"
+                />
+              </TableCell>
+              <TableCell>
+                <TextField
+                  variant="outlined"
+                  placeholder="Asesor"
+                  size="small"
+                  type="text"
+                />
+              </TableCell>
+            </TableRow>
             {leadAsignados.map((item, index) => (
-              <RowItemLeadAsignado item={item} key={index} />
+              <RowItemLeadAsignado
+                item={item}
+                key={index}
+                index={index}
+                updateLeadAsignado={updateLeadAsignado}
+              />
             ))}
           </TableBody>
         </Table>

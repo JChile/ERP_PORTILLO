@@ -1,15 +1,19 @@
 import { Checkbox, TableCell, TableRow } from "@mui/material";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { CustomMoreVerticalActions } from "../../../../components";
 
-const RowItemLeadAsignado = ({ item }) => {
-  const [checked, setChecked] = useState(false);
+const RowItemLeadAsignado = ({ item, index, updateLeadAsignado }) => {
+  const [checked, setChecked] = useState(item["isSelected"]);
 
   const handleChange = (event) => {
-    setChecked(event.target.checked);
+    const state = event.target.checked;
+    setChecked(state);
+    updateLeadAsignado(index, state);
   };
 
-  console.log(item);
+  useEffect(() => {
+    setChecked(item["isSelected"]);
+  }, [item]);
 
   return (
     <TableRow>
@@ -24,7 +28,7 @@ const RowItemLeadAsignado = ({ item }) => {
       <TableCell>{item.celular}</TableCell>
       <TableCell>{item.nombre}</TableCell>
       <TableCell>{item.campania.nombre}</TableCell>
-      <TableCell>{"Proyecto"}</TableCell>
+      <TableCell>{item.campania.proyecto.nombre}</TableCell>
       <TableCell>{item.estadoLead}</TableCell>
       <TableCell>
         {item.asesor.first_name} {item.asesor.last_name}

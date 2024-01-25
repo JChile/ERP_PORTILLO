@@ -817,3 +817,32 @@ class PrecioDetail(generics.RetrieveUpdateDestroyAPIView):
 class HistoricoLeadAsesorList(generics.ListCreateAPIView):
     serializer_class = HistoricoLeadAsesorSerlializer
     queryset = HistoricoLeadAsesor.objects.all()
+
+    def list(self, request):
+        queryset = HistoricoLeadAsesor.objects.all()
+        lead_queryset = Lead.objects.all()
+        user_queryset = User.objects.all()
+        dataJson = HistoricoLeadAsesorSerlializer(queryset, many=True).data
+
+        for i in dataJson:
+            i["lead"] = LeadSerializer(lead_queryset.filter(pk = i["lead"]).first(),fields = ["nombre", "apellido", "celular"]).data
+            i["usuario"] = UserSerializer(user_queryset.filter(pk = i["usuario"]).first(), fields = ["username", "first_name", "last_name"]).data
+
+        return Response(dataJson)
+
+
+class DesasignacionLeadAsesorList(generics.ListCreateAPIView):
+    serializer_class = DesasignacionLeadAsesorSerlializer
+    queryset = DesasignacionLeadAsesor.objects.all()
+
+    def list(self, request):
+        queryset = DesasignacionLeadAsesor.objects.all()
+        lead_queryset = Lead.objects.all()
+        user_queryset = User.objects.all()
+        dataJson = DesasignacionLeadAsesorSerlializer(queryset, many=True).data
+
+        for i in dataJson:
+            i["lead"] = LeadSerializer(lead_queryset.filter(pk = i["lead"]).first(),fields = ["nombre", "apellido", "celular"]).data
+            i["usuario"] = UserSerializer(user_queryset.filter(pk = i["usuario"]).first(), fields = ["username", "first_name", "last_name"]).data
+
+        return Response(dataJson)

@@ -70,6 +70,7 @@ class LeadList(generics.ListCreateAPIView):
 
             i["asesor"] = userSerializer.data if userSerializer else {}
             i["campania"] = campaniaSerializer.data if campaniaSerializer else {}
+            i["campania"]["proyecto"] = ProyectoSerializer(Proyecto.objects.filter(pk = i["campania"]["proyecto"]).first()).data
             i["objecion"] = objecionSerializer.data if objecionSerializer else {}
 
         return Response(leadData)

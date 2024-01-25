@@ -106,7 +106,6 @@ export const ListUsuarios = () => {
     setVisibleProgress(true);
     try {
       const result = await getUsuarios({ authToken: authTokens["access"] });
-      console.log(result);
       setusuarios(result);
       // mostramos en primer lugar los activos
       setUsuariosTemporal(

@@ -78,6 +78,9 @@ class WhatsApp(models.Model):
     detalle = models.TextField(max_length=200, null=True, blank=True)
     estado = models.ForeignKey(
         EstadoRegistro, on_delete=models.SET_NULL, default='A', null=True)
+    respondio = models.BooleanField(default=False)
+    objeciones = models.ForeignKey(
+        Objecion, on_delete=models.SET_NULL, null=True)
     usuarioCreador = models.ForeignKey(
         User, on_delete=models.SET_NULL, null=True, related_name='usuarioCreadorWhatsapp')
     usuarioActualizador = models.ForeignKey(
@@ -97,6 +100,9 @@ class Llamada(models.Model):
     detalle = models.TextField(max_length=200, null=True, blank=True)
     estado = models.ForeignKey(
         EstadoRegistro, on_delete=models.SET_NULL, default='A', null=True)
+    contesto = models.BooleanField(default=False)
+    objeciones = models.ForeignKey(
+        Objecion, on_delete=models.SET_NULL, null=True)
     usuarioCreador = models.ForeignKey(
         User, on_delete=models.SET_NULL, null=True, related_name='usuarioCreadorLlamada')
     usuarioActualizador = models.ForeignKey(
@@ -104,6 +110,16 @@ class Llamada(models.Model):
     fecha_creacion = models.DateField(auto_now=True)
     fecha_actualizacion = models.DateTimeField(blank=True, null=True)
 
+
+
+class EstadoEvento(models.Model):
+    nombre = models.CharField(max_length=2, primary_key=True)
+    descripcion = models.CharField(max_length=50, null=True, default=None)
+    estado = models.ForeignKey(
+        EstadoRegistro, on_delete=models.SET_NULL, default='A', null=True)
+
+    def __str__(self):
+        return self.descripcion
 
 class Evento(models.Model):
     asesor = models.ForeignKey(
@@ -115,12 +131,13 @@ class Evento(models.Model):
     duracion = models.IntegerField(null=True, blank=True)
     fecha_visita = models.DateTimeField(null=True, blank=True)
     tipo = models.ForeignKey(TipoEvento,  on_delete=models.CASCADE)
-    ubicacion = models.CharField(max_length=100, null=True)
-    proyecto = models.ForeignKey(Proyecto, on_delete=models.CASCADE)
+    #ubicacion = models.CharField(max_length=100, null=True)
+    #proyecto = models.ForeignKey(Proyecto, on_delete=models.CASCADE)
     descripcion = models.TextField(null=True, blank=True)
     estado = models.ForeignKey(
         EstadoRegistro, on_delete=models.SET_NULL, default='A', null=True)
-
+    estadoEvento = models.ForeignKey(
+        EstadoEvento, on_delete=models.SET_NULL, null=True)
     usuarioCreador = models.ForeignKey(
         User, on_delete=models.SET_NULL, null=True, related_name='usuarioCreadorEvento')
     usuarioActualizador = models.ForeignKey(

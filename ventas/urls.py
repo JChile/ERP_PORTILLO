@@ -5,7 +5,7 @@ from . import views
 from . import cutomViews
 
 urlpatterns = [
-    re_path(r'^lead/$', views.LeadListSinFiltros.as_view()),
+    re_path(r'^lead/$', views.LeadList.as_view()),
     re_path(r'^lead/(?P<pk>[0-9]+)$', views.LeadDetail.as_view()),
     re_path(r'^leadActivo/$', views.LeadListActivos.as_view()),
     re_path(r'^leadInactivo/$', views.LeadListInactivos.as_view()),

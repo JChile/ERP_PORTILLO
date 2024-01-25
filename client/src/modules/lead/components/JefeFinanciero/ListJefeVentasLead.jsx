@@ -11,6 +11,8 @@ import { Box, Button, Tab, Tabs, TextField } from "@mui/material";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { FilterAsesor } from "../../../../components/filters/asesor/FilterAsesor";
+import { ViewLeadsNoAsignados } from "./ViewLeadsNoAsignados";
+import styled from "@emotion/styled";
 
 const headers = [
   { name: "Acciones", width: 20 },
@@ -281,7 +283,7 @@ const ListJefeVentasLead = ({ credentials }) => {
           {showContent}
         </CustomTabPanel>
         <CustomTabPanel value={value} index={1}>
-          {showContent}
+          <ViewLeadsNoAsignados />
         </CustomTabPanel>
       </div>
       {visibleProgress && <CustomCircularProgress />}

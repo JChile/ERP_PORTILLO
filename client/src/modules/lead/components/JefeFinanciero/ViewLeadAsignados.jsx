@@ -55,7 +55,7 @@ const ViewLeadAsignados = () => {
     const selectedLeads = leadAsignados.filter((item) => item["isSelected"]);
     const leadsId = selectedLeads.map((item) => item.id);
     console.log(selectedLeads)
-    const result = await quitarLeads(authTokens["access"], { "leads": leadsId });
+    const result = await quitarLeads(authTokens["access"], { "lead": leadsId });
   };
 
   useEffect(() => {

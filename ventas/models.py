@@ -61,6 +61,7 @@ class Lead(models.Model):
         User, on_delete=models.SET_NULL, null=True, related_name='usuarioActualizadorLead')
     fecha_creacion = models.DateField(auto_now=True)
     fecha_actualizacion = models.DateTimeField(blank=True, null=True)
+    
 
     def __str__(self):
         return self.nombre + "-"+str(self.celular)

@@ -21,6 +21,7 @@ urlpatterns = [
     re_path(r'^asesorLead/$', cutomViews.AsesorLead.as_view()),
     re_path(r'^asesorAsignacion/$', cutomViews.AsesorAsignacion.as_view()),
     re_path(r'^asignacionAsesorLeadById/$', cutomViews.AsignacionMasivaAsesorLeadById.as_view()),
+    re_path(r'^desasignacionAsesorLeadById/$', cutomViews.DesAsignacionMasivaLeadsById.as_view()),
 
 
     re_path(r'^whatsapp/$', views.WhatsAppList.as_view()),
@@ -94,6 +95,8 @@ urlpatterns = [
     re_path(r'^proyectoCotizaciones/(?P<pk>[\w-]+)$', cutomViews.ProyectoCotizaciones.as_view()),
 
     re_path(r'^historicoLeadAsesor/$', views.HistoricoLeadAsesorList.as_view()),
+
+    re_path(r'^desasignacionLeadAsesor/$', views.DesasignacionLeadAsesorList.as_view()),
 
     
 ]

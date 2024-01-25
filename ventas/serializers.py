@@ -8,6 +8,18 @@ class LeadSerializer(serializers.ModelSerializer):
     class Meta:
         model = Lead
         fields = '__all__'
+
+    def __init__(self, *args, **kwargs):
+        # Recibe el parámetro 'fields' que contiene los campos deseados
+        fields = kwargs.pop('fields', None)
+        super(LeadSerializer, self).__init__(*args, **kwargs)
+        if fields is not None:
+            # Filtra los campos según los especificados en 'fields'
+            allowed = set(fields)
+            existing = set(self.fields)
+            for field_name in existing - allowed:
+                self.fields.pop(field_name)
+
         
 class MultipleLeadSerializer(serializers.ListSerializer):
     def create(self, validated_data):
@@ -106,4 +118,10 @@ class ProyectoTipoProductoSerializer(serializers.ModelSerializer):
 class HistoricoLeadAsesorSerlializer(serializers.ModelSerializer):
     class Meta:
         model = HistoricoLeadAsesor
+        fields = '__all__'
+
+
+class DesasignacionLeadAsesorSerlializer(serializers.ModelSerializer):
+    class Meta:
+        model = DesasignacionLeadAsesor
         fields = '__all__'

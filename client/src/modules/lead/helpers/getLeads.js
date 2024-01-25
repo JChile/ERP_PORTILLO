@@ -1,6 +1,6 @@
 import axios from "axios";
 
-export const getLeads = async () => {
+export const getLeads = async (token) => {
   const DOMAIN = process.env.VITE_BACKEND_URL;
   const URL = `${DOMAIN}/api/lead/`;
   const { data } = await axios.get(URL);

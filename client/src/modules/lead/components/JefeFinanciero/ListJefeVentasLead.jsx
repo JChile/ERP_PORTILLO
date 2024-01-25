@@ -13,6 +13,7 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { FilterAsesor } from "../../../../components/filters/asesor/FilterAsesor";
 import { ViewLeadsNoAsignados } from "./ViewLeadsNoAsignados";
 import styled from "@emotion/styled";
+import ViewLeadAsignados from "./ViewLeadAsignados";
 
 const headers = [
   { name: "Acciones", width: 20 },
@@ -164,10 +165,7 @@ const ListJefeVentasLead = ({ credentials }) => {
 
   useEffect(() => {
     fetchData(credentials);
-  }, []);
-
-  console.log(leads);
-  console.log(filterState);
+  }, [value]);
 
   const showContent = !error ? (
     <CustomTable headerData={headers} rowData={filteredLeads} />
@@ -179,35 +177,13 @@ const ListJefeVentasLead = ({ credentials }) => {
     <React.Fragment>
       <div className="flex flex-col gap-y-4">
         <h1 className="font-semibold text-2xl">
-          Gestion de leads - Jefe de Ventas
+          Gestion de leads - Administrador
         </h1>
       </div>
-
       <div className="mt-3 flex flex-col gap-y-3">
-        <CustomInputBase
-          placeholder="Buscar lead"
-          onSearch={handleSearchButton}
-        />
-
         <div className="flex flex-col gap-y-4">
-          <h2 className="font-bold">Filtrar leads</h2>
           <form className="flex flex-col gap-y-3">
-            <div className="grid grid-cols-3 gap-x-6 gap-y-6">
-              <FilterProyectos
-                label="Proyecto"
-                onNewInput={onAddProject}
-                size="medium"
-              />
-              <FilterAsesor
-                label="Asesor"
-                onNewInput={onAddAsesor}
-                size="medium"
-              />
-              <FilterEstadoLead
-                label="Estado"
-                onNewInput={onAddEstadoLead}
-                size="medium"
-              />
+            <div className="row gap-x-6 gap-y-6 justify-center">
               <LocalizationProvider dateAdapter={AdapterDayjs}>
                 <DatePicker
                   label="Desde"
@@ -229,8 +205,6 @@ const ListJefeVentasLead = ({ credentials }) => {
                   TextField={(params) => <TextField {...params} />}
                 />
               </LocalizationProvider>
-            </div>
-            <div className="flex gap-x-2">
               <Button
                 size="large"
                 variant="contained"
@@ -251,7 +225,7 @@ const ListJefeVentasLead = ({ credentials }) => {
           </form>
         </div>
 
-        <Box sx={{ width: "100%" }}>
+        <Box sx={{}}>
           <Tabs
             aria-label="basic tabs"
             value={value}
@@ -265,7 +239,7 @@ const ListJefeVentasLead = ({ credentials }) => {
                 color: "black",
                 fontSize: "0.9rem",
               }}
-              label="Leads"
+              label="Leads asignados"
             />
             <Tab
               sx={{
@@ -280,7 +254,7 @@ const ListJefeVentasLead = ({ credentials }) => {
         </Box>
 
         <CustomTabPanel value={value} index={0}>
-          {showContent}
+          <ViewLeadAsignados />
         </CustomTabPanel>
         <CustomTabPanel value={value} index={1}>
           <ViewLeadsNoAsignados />

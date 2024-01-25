@@ -9,7 +9,7 @@ from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework.permissions import IsAuthenticated
 from django.shortcuts import get_object_or_404
 from rest_framework.views import APIView
-from ventas.models import Lead
+from ventas.models import Lead , DesasignacionLeadAsesor
 import json
 from rest_framework.decorators import permission_classes
 from ventas.consts import *
@@ -177,6 +177,7 @@ class UserDetail(generics.RetrieveUpdateDestroyAPIView):
                 for i in leads_queryset:
                     i.asesor = None
                     i.asignado = False
+                    DesasignacionLeadAsesor.objects.create(lead = i, usuario = user).save()
                     i.save()
             serializer.save()
             return Response(serializer.data)

@@ -251,8 +251,6 @@ class ProyectoTipoProducto(models.Model):
         TipoProducto, on_delete=models.CASCADE, null=True, blank=True)
 
 
-
-
 class DesasignacionLeadAsesor(models.Model):
     lead = models.ForeignKey(Lead, on_delete=models.SET_NULL, null=True)
     usuario = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)

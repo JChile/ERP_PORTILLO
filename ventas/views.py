@@ -38,13 +38,11 @@ class LeadList(generics.ListCreateAPIView):
         desde = request.query_params.get('desde')
         hasta = request.query_params.get('hasta')
         asignado = request.query_params.get('asignado')
-        
-        print("ESTADOOOOOOOOOOOOO", estado)
-        
+             
         if asignado:
-            lead_queryset = self.queryset.filter(asignado=asignado)
+            lead_queryset = lead_queryset.filter(asignado=asignado)
         if estado:
-            lead_queryset = self.queryset.filter(estado=estado)
+            lead_queryset = lead_queryset.filter(estado=estado)
         if desde and hasta:
             lead_queryset = lead_queryset.filter(horaRecepcion__range=[desde, hasta])
 
@@ -72,6 +70,7 @@ class LeadList(generics.ListCreateAPIView):
 
             i["asesor"] = userSerializer.data if userSerializer else {}
             i["campania"] = campaniaSerializer.data if campaniaSerializer else {}
+            i["campania"]["proyecto"] = ProyectoSerializer(Proyecto.objects.filter(pk = i["campania"]["proyecto"]).first()).data
             i["objecion"] = objecionSerializer.data if objecionSerializer else {}
 
         return Response(leadData)
@@ -352,21 +351,17 @@ class EventoList(generics.ListCreateAPIView):
         if not (bool(request.user.groups.first().permissions.filter(codename=PermissionEvento.CAN_VIEW) or request.user.is_superuser)):
             return Response({"message": "Usuario no tiene permisos para ver eventos"}, status=403)
 
+        evento_queryset = Evento.objects.all()
         estado = request.query_params.get('estado')
         desde = request.query_params.get('desde')
         hasta = request.query_params.get('hasta')
-        print(estado)
-        
-        
+ 
         
         if estado:
             evento_queryset = Evento.objects.all().filter(estado=estado)
-        else:
-            evento_queryset = Evento.objects.all()
-        
-        
         if desde and hasta:
             evento_queryset = evento_queryset.filter(fecha_creacion__range=[desde, hasta])
+
 
         if request.user.isAdmin == False:
             evento_queryset = evento_queryset.filter(asesor=usuarioId)

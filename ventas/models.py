@@ -79,7 +79,7 @@ class WhatsApp(models.Model):
     estado = models.ForeignKey(
         EstadoRegistro, on_delete=models.SET_NULL, default='A', null=True)
     respondio = models.BooleanField(default=False)
-    objeciones = models.ForeignKey(
+    objecion = models.ForeignKey(
         Objecion, on_delete=models.SET_NULL, null=True)
     usuarioCreador = models.ForeignKey(
         User, on_delete=models.SET_NULL, null=True, related_name='usuarioCreadorWhatsapp')
@@ -101,7 +101,7 @@ class Llamada(models.Model):
     estado = models.ForeignKey(
         EstadoRegistro, on_delete=models.SET_NULL, default='A', null=True)
     contesto = models.BooleanField(default=False)
-    objeciones = models.ForeignKey(
+    objecion = models.ForeignKey(
         Objecion, on_delete=models.SET_NULL, null=True)
     usuarioCreador = models.ForeignKey(
         User, on_delete=models.SET_NULL, null=True, related_name='usuarioCreadorLlamada')
@@ -131,8 +131,6 @@ class Evento(models.Model):
     duracion = models.IntegerField(null=True, blank=True)
     fecha_visita = models.DateTimeField(null=True, blank=True)
     tipo = models.ForeignKey(TipoEvento,  on_delete=models.CASCADE)
-    #ubicacion = models.CharField(max_length=100, null=True)
-    #proyecto = models.ForeignKey(Proyecto, on_delete=models.CASCADE)
     descripcion = models.TextField(null=True, blank=True)
     estado = models.ForeignKey(
         EstadoRegistro, on_delete=models.SET_NULL, default='A', null=True)

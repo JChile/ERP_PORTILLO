@@ -192,8 +192,16 @@ class LeadDetail(generics.RetrieveUpdateDestroyAPIView):
         lead_data["objecion"] = objecionSerializer.data if objecionSerializer else {}
         lead_data["whatsapps"] = WhatsAppSerializer(
             WhatsApp.objects.filter(lead=lead.pk), many=True).data
+        
+        for i in lead_data["whatsapps"] :
+            i["objecion"] = ObjecionSerializer(Objecion.objects.filter(pk = i["objecion"]).first()).data
+        
         lead_data["llamadas"] = LlamadaSerializer(
             Llamada.objects.filter(lead=lead.pk), many=True).data
+        
+        for i in lead_data["llamadas"] :
+            i["objecion"] = ObjecionSerializer(Objecion.objects.filter(pk = i["objecion"]).first()).data
+
         lead_data["eventos"] = EventoSerializer(
             Evento.objects.filter(lead=lead.pk), many=True).data
 
@@ -358,7 +366,6 @@ class EventoList(generics.ListCreateAPIView):
             asesor = get_or_none(User, id=eventoIterador["asesor"])
             tipo = get_or_none(TipoEvento, id=eventoIterador["tipo"])
             lead = get_or_none(Lead, id=eventoIterador["lead"])
-            proyecto = get_or_none(Proyecto, id=eventoIterador["proyecto"])
             userCreador = get_or_none(
                 User, id=eventoIterador["usuarioCreador"])
             userActualizador = get_or_none(
@@ -368,19 +375,16 @@ class EventoList(generics.ListCreateAPIView):
                 'id', 'first_name', 'last_name', 'username')) if asesor else None
             tipoSerializer = TipoEventoSerializer(tipo) if tipo else None
             leadSerializer = LeadSerializer(lead) if lead else None
-            proyectoSerializer = ProyectoSerializer(
-                proyecto) if proyecto else None
+
             userCreadorSerializer = UserSerializer(userCreador, fields=(
                 'id', 'first_name', 'last_name', 'username')) if userCreador else None
             userActualizadorializer = UserSerializer(userActualizador, fields=(
                 'id', 'first_name', 'last_name', 'username')) if userActualizador else None
 
-            eventoIterador["asesor"] = userAsesorSerializer.data if userAsesorSerializer else {
-            }
+            eventoIterador["asesor"] = userAsesorSerializer.data if userAsesorSerializer else {}
             eventoIterador["tipo"] = tipoSerializer.data if tipoSerializer else {}
             eventoIterador["lead"] = leadSerializer.data if leadSerializer else {}
-            eventoIterador["proyecto"] = proyectoSerializer.data if proyectoSerializer else {
-            }
+
 
         return Response(evento_data)
 
@@ -421,19 +425,16 @@ class EventoDetail(generics.RetrieveUpdateDestroyAPIView):
 
         asesor = get_or_none(User, id=evento.asesor.pk)
         tipo = get_or_none(TipoEvento, id=evento.tipo.pk)
-        proyecto = get_or_none(Proyecto, id=evento.proyecto.pk)
 
         asesorSerlializer = UserSerializer(asesor, fields=(
             'id', 'first_name', 'last_name', 'username')) if asesor else None
         tipoSerializer = TipoEventoSerializer(tipo) if tipo else None
-        proyectoSerializer = ProyectoSerializer(proyecto) if proyecto else None
 
         evento_dataJson = EventoSerializer(evento).data
         evento_dataJson["asesor"] = asesorSerlializer.data if asesorSerlializer else {
         }
         evento_dataJson["tipo"] = tipoSerializer.data if tipoSerializer else {}
-        evento_dataJson["proyecto"] = proyectoSerializer.data if proyectoSerializer else {
-        }
+
 
         return Response(evento_dataJson)
 

@@ -194,13 +194,13 @@ class LeadDetail(generics.RetrieveUpdateDestroyAPIView):
             WhatsApp.objects.filter(lead=lead.pk), many=True).data
         
         for i in lead_data["whatsapps"] :
-            i["objeciones"] = ObjecionSerializer(Objecion.objects.filter(pk = i["objeciones"]).first()).data
+            i["objecion"] = ObjecionSerializer(Objecion.objects.filter(pk = i["objecion"]).first()).data
         
         lead_data["llamadas"] = LlamadaSerializer(
             Llamada.objects.filter(lead=lead.pk), many=True).data
         
         for i in lead_data["llamadas"] :
-            i["objeciones"] = ObjecionSerializer(Objecion.objects.filter(pk = i["objeciones"]).first()).data
+            i["objecion"] = ObjecionSerializer(Objecion.objects.filter(pk = i["objecion"]).first()).data
 
         lead_data["eventos"] = EventoSerializer(
             Evento.objects.filter(lead=lead.pk), many=True).data

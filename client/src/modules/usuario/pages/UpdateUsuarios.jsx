@@ -151,7 +151,6 @@ export const UpdateUsuarios = () => {
         usuarioJSON,
         authTokens["access"]
       );
-      console.log(result);
       // comprobar si se realizo con exito la creación del usuario
       setVisibleProgress(false);
       if (result["Message"] === "No se actualizo") {

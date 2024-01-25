@@ -71,28 +71,6 @@ const ListJefeVentasLead = ({ credentials }) => {
     setFilteredLeads(filter);
   };
 
-  /** Filters functions */
-  const onAddProject = (project) => {
-    setFilterState((prev) => ({
-      ...prev,
-      proyecto: project.id,
-    }));
-  };
-
-  const onAddAsesor = (asesor) => {
-    setFilterState((prev) => ({
-      ...prev,
-      asesor: asesor.id,
-    }));
-  };
-
-  const onAddEstadoLead = (estadoLead) => {
-    setFilterState((prev) => ({
-      ...prev,
-      estadoLead: estadoLead.id,
-    }));
-  };
-
   const fetchData = async (token) => {
     try {
       const leads = await getLeadsActivos(token);
@@ -106,27 +84,6 @@ const ListJefeVentasLead = ({ credentials }) => {
 
   const onHandleFilterClick = () => {
     const filtered = leads.filter((lead) => {
-      // Filtrar por asesor
-      if (filterState.asesor && lead.asesor.id !== filterState.asesor) {
-        return false;
-      }
-
-      // Filtrar por proyecto
-      if (
-        filterState.proyecto &&
-        lead.campania.proyecto !== filterState.proyecto
-      ) {
-        return false;
-      }
-
-      // Filtrar por estadoLead
-      if (
-        filterState.estadoLead &&
-        lead.estadoLead !== filterState.estadoLead
-      ) {
-        return false;
-      }
-
       // Filtrar por fecha de inicio
       if (filterState.startDate) {
         const startDate = new Date(filterState.startDate);
@@ -135,7 +92,6 @@ const ListJefeVentasLead = ({ credentials }) => {
           return false;
         }
       }
-
       // Filtrar por fecha de fin
       if (filterState.endDate) {
         const endDate = new Date(filterState.endDate);
@@ -165,7 +121,7 @@ const ListJefeVentasLead = ({ credentials }) => {
 
   useEffect(() => {
     fetchData(credentials);
-  }, [value]);
+  }, []);
 
   const showContent = !error ? (
     <CustomTable headerData={headers} rowData={filteredLeads} />

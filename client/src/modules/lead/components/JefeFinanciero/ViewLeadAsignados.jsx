@@ -1,5 +1,7 @@
 import {
+  Button,
   Checkbox,
+  IconButton,
   Paper,
   Table,
   TableBody,
@@ -10,7 +12,9 @@ import {
 } from "@mui/material";
 import React, { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../../../../auth";
-import { getAsesorLeads, getLeadsActivos } from "../../helpers";
+import { getLeads } from "../../helpers";
+import RowItemLeadAsignado from "./RowItemLeadAsignado";
+import { MdHourglassTop, MdSearch } from "react-icons/md";
 
 const ViewLeadAsignados = () => {
   const { authTokens } = useContext(AuthContext);
@@ -31,14 +35,13 @@ const ViewLeadAsignados = () => {
   };
 
   const traerLeadAsiganados = async () => {
-    const result = await getLeadsActivos(authTokens["access"])
-    console.log(result)
+    const result = await getLeads(authTokens["access"], "asignado=True");
+    setLeadsAsignados(result);
   };
 
   useEffect(() => {
     traerLeadAsiganados();
   }, []);
-
 
   return (
     <Paper sx={{ borderRadius: "0px" }}>
@@ -67,10 +70,31 @@ const ViewLeadAsignados = () => {
               </TableCell>
               <TableCell>Numero</TableCell>
               <TableCell>Nombre</TableCell>
-              <TableCell>Acciones</TableCell>
+              <TableCell>Campaña</TableCell>
+              <TableCell>Proyecto</TableCell>
+              <TableCell>Estado</TableCell>
+              <TableCell>Asesor</TableCell>
             </TableRow>
           </TableHead>
-          <TableBody></TableBody>
+          <TableBody>
+            <TableCell>
+              <Button
+                startIcon={<MdSearch />}
+                sx={{
+                  textTransform: "capitalize",
+                  borderRadius: "0px",
+                }}
+                color="success"
+                variant="contained"
+              >
+                Buscar
+              </Button>
+            </TableCell>
+
+            {leadAsignados.map((item, index) => (
+              <RowItemLeadAsignado item={item} key={index} />
+            ))}
+          </TableBody>
         </Table>
       </TableContainer>
     </Paper>

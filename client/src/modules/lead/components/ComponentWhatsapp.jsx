@@ -2,6 +2,7 @@ import {
   Checkbox,
   FormControlLabel,
   Grid,
+  IconButton,
   Table,
   TableBody,
   TableCell,
@@ -10,7 +11,7 @@ import {
   TableRow,
   Typography,
 } from "@mui/material";
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { FaWhatsapp } from "react-icons/fa";
 import { styled } from "@mui/material/styles";
 import Dialog from "@mui/material/Dialog";
@@ -18,10 +19,13 @@ import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
 import DialogActions from "@mui/material/DialogActions";
 import Button from "@mui/material/Button";
-import { createWhatsapp } from "../helpers";
 import { AuthContext } from "../../../auth";
-import { combinarErrores } from "../../../utils";
-import { FilterObjecion } from "../../../components";
+import {
+  formatDate_ISO861_to_formatdate,
+  obtenerHoraActualFormatPostgress,
+} from "../../../utils";
+import { CustomTextArea, FilterObjecion } from "../../../components";
+import { FiEdit, FiSave, FiX } from "react-icons/fi";
 
 const ITEM_HEIGHT = 48;
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
@@ -33,10 +37,24 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   },
 }));
 
-export const ComponentWhatsapp = ({ lead, dataWhatsapp, onLoadDataRfresh }) => {
+export const ComponentWhatsapp = ({
+  lead,
+  dataWhatsapp,
+  onUpdateDataWhatsapp,
+  onCreateDataWhatsapp,
+}) => {
   const [itemSelected, setItemSelected] = useState(null);
   const [openDialogDetalle, setOpenDialogDetalle] = useState(false);
-  const { currentUser, authTokens } = useContext(AuthContext);
+  const { currentUser } = useContext(AuthContext);
+
+  useEffect(() => {
+    if (itemSelected !== null) {
+      const findElement = dataWhatsapp.find(
+        (element) => element.id == itemSelected.id
+      );
+      setItemSelected(findElement);
+    }
+  }, [dataWhatsapp]);
 
   const handleSelectDetalle = (element) => {
     setItemSelected(element);
@@ -48,20 +66,24 @@ export const ComponentWhatsapp = ({ lead, dataWhatsapp, onLoadDataRfresh }) => {
     setOpenDialogDetalle(false);
   };
 
+  // crear registro de whatsapp
   const crearRegistroWhatsapp = async (body) => {
     const formatData = {
       ...body,
       lead: lead,
       usuarioCreador: currentUser["user_id"],
-      usuarioActualizador: currentUser["user_id"],
     };
-    try {
-      const result = await createWhatsapp(formatData, authTokens["access"]);
-      onLoadDataRfresh();
-    } catch (error) {
-      const pilaError = combinarErrores(error);
-      alert(pilaError);
-    }
+    onCreateDataWhatsapp(formatData);
+  };
+
+  // actualizar registro de whatsapp
+  const actualizarRegistroWhatsapp = (id, body) => {
+    const formatData = {
+      ...body,
+      usuarioActualizador: currentUser["user_id"],
+      fecha_actualizacion: obtenerHoraActualFormatPostgress(),
+    };
+    onUpdateDataWhatsapp(id, formatData);
   };
 
   return (
@@ -121,6 +143,7 @@ export const ComponentWhatsapp = ({ lead, dataWhatsapp, onLoadDataRfresh }) => {
               open={openDialogDetalle}
               element={itemSelected}
               handleClose={handleCloseDetalle}
+              onUpdateDataWhatsapp={actualizarRegistroWhatsapp}
             />
           )}
         </div>
@@ -140,10 +163,10 @@ const DialogRegistrarMensajeWhatsapp = ({ onCreateRegistroWhatsapp }) => {
   const [dataWhatsapp, setDataWhatsapp] = useState({
     detalle: "",
     respondio: false,
-    ojeciones: null,
+    objecion: null,
   });
 
-  const { detalle, respondio, objeciones } = dataWhatsapp;
+  const { detalle, respondio, objecion } = dataWhatsapp;
 
   const handleInputValue = ({ target }) => {
     const { value, name } = target;
@@ -164,17 +187,25 @@ const DialogRegistrarMensajeWhatsapp = ({ onCreateRegistroWhatsapp }) => {
     const { id } = value;
     setDataWhatsapp({
       ...dataWhatsapp,
-      objeciones: id,
+      objecion: id,
+    });
+  };
+
+  const resetFields = () => {
+    setDataWhatsapp({
+      detalle: "",
+      respondio: false,
+      objecion: null,
     });
   };
 
   const crearRegistroWhatsapp = () => {
     let handleErrors = "";
-    if (detalle.length === 0 || objeciones === null) {
+    if (detalle.length === 0 || objecion === null) {
       if (detalle.length === 0) {
         handleErrors += "Debe ingresar un detalle del mensaje\n";
       }
-      if (objeciones === null) {
+      if (objecion === null) {
         handleErrors += "Debe ingresar una objeción\n";
       }
       alert(handleErrors);
@@ -223,7 +254,7 @@ const DialogRegistrarMensajeWhatsapp = ({ onCreateRegistroWhatsapp }) => {
             </label>
             <FilterObjecion
               onNewInput={onAddObjecion}
-              defaultValue={objeciones}
+              defaultValue={objecion}
             />
           </div>
           {/* DETALLE DE OPERACION */}
@@ -258,6 +289,8 @@ const DialogRegistrarMensajeWhatsapp = ({ onCreateRegistroWhatsapp }) => {
             onClick={() => {
               // registramos un nuevo mensaje
               crearRegistroWhatsapp();
+              // reset fields
+              resetFields();
               // cerramos el cuadro de dialogo
               handleClose();
             }}
@@ -270,32 +303,168 @@ const DialogRegistrarMensajeWhatsapp = ({ onCreateRegistroWhatsapp }) => {
   );
 };
 
-const DialogDetalleMensajeWhatsapp = ({ element, open, handleClose }) => {
+const DialogDetalleMensajeWhatsapp = ({
+  element,
+  open,
+  handleClose,
+  onUpdateDataWhatsapp,
+}) => {
+  const [dataAuxtMensajeWhatsapp, setDataAuxMensajeWhatsapp] =
+    useState(element);
+
+  useEffect(() => {
+    parserDataElement();
+  }, [element]);
+
+  const parserDataElement = () => {
+    setDataAuxMensajeWhatsapp(element);
+  };
+
+  const {
+    id,
+    detalle,
+    respondio,
+    objecion,
+    fecha_creacion,
+    fecha_actualizacion,
+  } = dataAuxtMensajeWhatsapp;
+
+  const [editData, setEditData] = useState(true);
+
+  // handle change value
+  const handledChangeValue = ({ target }) => {
+    const { value, name } = target;
+    setDataAuxMensajeWhatsapp({
+      ...dataAuxtMensajeWhatsapp,
+      [name]: value,
+    });
+  };
+
+  // handle checkbox
+  const handleCheckBox = (event) => {
+    setDataAuxMensajeWhatsapp({
+      ...dataAuxtMensajeWhatsapp,
+      respondio: event.target.checked,
+    });
+  };
+
+  // cambiar objecion
+  const handleChangeObjecion = (value) => {
+    const { id } = value;
+    setDataAuxMensajeWhatsapp({
+      ...dataAuxtMensajeWhatsapp,
+      objecion: id,
+    });
+  };
+
+  // guardar data
+  const onSaveChanges = () => {
+    onUpdateDataWhatsapp(id, dataAuxtMensajeWhatsapp);
+    setEditData(true);
+  };
+
+  // cancelar guardado
+  const onCancelChanges = () => {
+    parserDataElement();
+    setEditData(true);
+  };
+
   return (
     <BootstrapDialog
-      maxWidth={"lg"}
+      maxWidth={"xs"}
       onClose={handleClose}
       aria-labelledby="customized-dialog-title"
       open={open}
     >
-      <DialogTitle sx={{ m: 0, p: 2 }} id="customized-dialog-title">
+      <DialogTitle
+        sx={{
+          m: 0,
+          p: 2,
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+        }}
+        id="customized-dialog-title"
+      >
         Detalle mensaje Whatsapp
+        {editData ? (
+          <IconButton
+            onClick={() => {
+              setEditData(!editData);
+            }}
+          >
+            <FiEdit />
+          </IconButton>
+        ) : (
+          <div>
+            <IconButton color="success" onClick={onSaveChanges}>
+              <FiSave />
+            </IconButton>
+            <IconButton color="error" onClick={onCancelChanges}>
+              <FiX />
+            </IconButton>
+          </div>
+        )}
       </DialogTitle>
       <DialogContent dividers>
         <Grid container spacing={2}>
-          <Grid item xs={12}>
+          {/* RESPONDIÓ */}
+          <Grid item xs={10}>
+            <Typography variant="subtitle1" sx={{ fontWeight: "bold" }}>
+              Respondió:
+            </Typography>
+            <Checkbox
+              checked={respondio}
+              disabled={editData}
+              onChange={handleCheckBox}
+              inputProps={{ "aria-label": "controlled" }}
+            />
+          </Grid>
+          {/* DETALLE */}
+          <Grid item xs={10}>
             <Typography variant="subtitle1" sx={{ fontWeight: "bold" }}>
               Detalle:
             </Typography>
-            <Typography>{element["detalle"]}</Typography>
+            <CustomTextArea
+              value={detalle}
+              name="detalle"
+              onChangeValue={handledChangeValue}
+              active={editData}
+            />
           </Grid>
-          <Grid item xs={12}>
+          {/* OBJECION */}
+          <Grid item xs={10}>
+            <Typography variant="subtitle1" sx={{ fontWeight: "bold" }}>
+              Objeción:
+            </Typography>
+            <FilterObjecion
+              defaultValue={objecion}
+              onNewInput={handleChangeObjecion}
+              active={editData}
+            />
+          </Grid>
+          {/* FECHA DE CREACION */}
+          <Grid item xs={10}>
             <Typography variant="subtitle1" sx={{ fontWeight: "bold" }}>
               Fecha de creación:
             </Typography>
-            <Typography>{element["fecha_creacion"]}</Typography>
+            <Typography>
+              {formatDate_ISO861_to_formatdate(fecha_creacion)}
+            </Typography>
           </Grid>
-          {/* Agrega más campos de propiedad según sea necesario */}
+          {/* FECHA DE ACTULIZACION */}
+          <Grid item xs={10}>
+            <Typography variant="subtitle1" sx={{ fontWeight: "bold" }}>
+              Fecha de actualización:
+            </Typography>
+            {fecha_actualizacion ? (
+              <Typography>
+                {formatDate_ISO861_to_formatdate(fecha_actualizacion)}
+              </Typography>
+            ) : (
+              <Typography>No actualizado</Typography>
+            )}
+          </Grid>
         </Grid>
       </DialogContent>
       <DialogActions>

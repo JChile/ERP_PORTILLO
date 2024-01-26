@@ -27,7 +27,6 @@ const RowItemLeadAsignado = ({ item, index, updateLeadAsignado }) => {
       </TableCell>
       <TableCell>{item.celular}</TableCell>
       <TableCell>{item.nombre}</TableCell>
-      <TableCell>{item.campania.nombre}</TableCell>
       <TableCell>{item.campania.proyecto.nombre}</TableCell>
       <TableCell>{item.estadoLead}</TableCell>
       <TableCell>

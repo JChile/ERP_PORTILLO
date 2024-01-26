@@ -12,32 +12,6 @@ export const getLeads = async (token, query) => {
   return data;
 };
 
-export const getLeadsActivos = async (token) => {
-  const DOMAIN = process.env.VITE_BACKEND_URL;
-  const URL = `${DOMAIN}/api/leadActivo/`;
-  const config = {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  };
-  const { data } = await axios.get(URL, config);
-
-  return data;
-};
-
-export const getLeadsNoAsignados = async (token) => {
-  const DOMAIN = process.env.VITE_BACKEND_URL;
-  const URL = `${DOMAIN}/api/leadNoAsignado/`;
-
-  const config = {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  };
-  const { data } = await axios.get(URL, config);
-
-  return data;
-};
 
 /** Endpoints para realizar solitudes de leads por asesor,
  *  endpoints relacionados al area de ventas

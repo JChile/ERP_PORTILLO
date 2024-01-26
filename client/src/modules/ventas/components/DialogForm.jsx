@@ -20,24 +20,13 @@ export const DialogForm = ({ isOpen, onClose, lead, token, user }) => {
     titulo: "",
     duracion: 1,
     fecha: "",
-    descripcion: "",
+    observacion: "",
     tipo: null,
-    proyecto: null,
     horaInicio: "",
-    ubicacion: "",
   });
   const [formErrors, setFormErrors] = useState({});
 
-  const {
-    titulo,
-    proyecto,
-    tipo,
-    descripcion,
-    fecha,
-    horaInicio,
-    duracion,
-    ubicacion,
-  } = form;
+  const { titulo, tipo, observacion, fecha, horaInicio, duracion } = form;
 
   const handleSave = async () => {
     const errors = checkInputForm();
@@ -46,12 +35,10 @@ export const DialogForm = ({ isOpen, onClose, lead, token, user }) => {
       const eventSave = {
         duracion: duracion,
         fecha_visita: dateToSave.toISOString(),
-        descripcion: descripcion,
+        observacion: observacion,
         lead: lead,
         titulo: titulo,
         tipo: tipo,
-        ubicacion: ubicacion,
-        proyecto: proyecto,
         usuarioCreador: user,
         usuarioActualizador: user,
       };
@@ -124,25 +111,19 @@ export const DialogForm = ({ isOpen, onClose, lead, token, user }) => {
                   onChange={handleChangeForm}
                   name="titulo"
                 />
-                <TextField
-                  size="small"
-                  label="Descripción"
-                  placeholder="Descripción"
-                  value={descripcion}
-                  onChange={handleChangeForm}
-                  name="descripcion"
-                  rows={2}
-                  minRows={2}
-                />
                 <FilterTipoEvento
                   defaultValue={null}
                   onNewInput={onAddTipoEvento}
                 />
-                <FilterProyectos
-                  label="Proyectos"
-                  onNewInput={onAddProyecto}
-                  defaultValue={null}
-                  token={token}
+                <TextField
+                  size="small"
+                  label="Observación"
+                  placeholder="Observación"
+                  value={observacion}
+                  onChange={handleChangeForm}
+                  name="observacion"
+                  rows={2}
+                  minRows={2}
                 />
               </div>
 
@@ -178,16 +159,6 @@ export const DialogForm = ({ isOpen, onClose, lead, token, user }) => {
                   value={duracion}
                   onChange={handleChangeForm}
                   name="duracion"
-                  size="small"
-                />
-
-                <TextField
-                  type="text"
-                  label="Ubicación"
-                  placeholder="Ubicación"
-                  value={ubicacion}
-                  onChange={handleChangeForm}
-                  name="ubicacion"
                   size="small"
                 />
               </div>

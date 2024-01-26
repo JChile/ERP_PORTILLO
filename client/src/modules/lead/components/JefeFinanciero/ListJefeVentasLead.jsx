@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { getLeadsActivos } from "../../helpers";
 import {
   CustomCircularProgress,
   FilterEstadoLead,

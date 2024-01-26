@@ -1,4 +1,5 @@
 import {
+  Box,
   Button,
   Checkbox,
   Paper,
@@ -35,7 +36,7 @@ const ViewLeadAsignados = () => {
   };
 
   const traerLeadAsiganados = async () => {
-    const rowData = await getLeads(authTokens["access"], "asignado=True");
+    const rowData = await getLeads(authTokens["access"], "asignadoTrue");
     const processData = rowData.map((element) => {
       return {
         ...element,
@@ -44,6 +45,9 @@ const ViewLeadAsignados = () => {
     });
     setLeadsAsignados(processData);
   };
+
+  //
+  //http://127.0.0.1:8000/api/lead/?estado=A&desde=2011-12-29&hasta=2024-12-29&asignado=True
 
   const updateLeadAsignado = (index, isSelected) => {
     const updatedLeads = [...leadAsignados];
@@ -54,8 +58,7 @@ const ViewLeadAsignados = () => {
   const desasignarLeads = async () => {
     const selectedLeads = leadAsignados.filter((item) => item["isSelected"]);
     const leadsId = selectedLeads.map((item) => item.id);
-    console.log(selectedLeads)
-    const result = await quitarLeads(authTokens["access"], { "lead": leadsId });
+    const result = await quitarLeads(authTokens["access"], { lead: leadsId });
   };
 
   useEffect(() => {
@@ -64,7 +67,11 @@ const ViewLeadAsignados = () => {
 
   return (
     <Paper sx={{ borderRadius: "0px" }}>
-      <Button onClick={desasignarLeads}>Quitar Leads</Button>
+      <Box width="100%" sx={{ background: "#404040" }}>
+        <Button onClick={desasignarLeads} sx={{ textTransform: "capitalize" }}>
+          Más
+        </Button>
+      </Box>
       <TableContainer
         sx={{
           minHeight: 700,
@@ -72,7 +79,7 @@ const ViewLeadAsignados = () => {
         arial-aria-labelledby="customized table"
       >
         <Table stickyHeader>
-          <TableHead sx={{ background: "black" }}>
+          <TableHead>
             <TableRow
               sx={{
                 "& th": {
@@ -90,7 +97,6 @@ const ViewLeadAsignados = () => {
               </TableCell>
               <TableCell>Número</TableCell>
               <TableCell>Nombre</TableCell>
-              <TableCell>Campaña</TableCell>
               <TableCell>Proyecto</TableCell>
               <TableCell>Estado</TableCell>
               <TableCell>Asesor</TableCell>
@@ -123,14 +129,6 @@ const ViewLeadAsignados = () => {
                 <TextField
                   variant="outlined"
                   placeholder="Nombre"
-                  size="small"
-                  type="text"
-                />
-              </TableCell>
-              <TableCell>
-                <TextField
-                  variant="outlined"
-                  placeholder="Campaña"
                   size="small"
                   type="text"
                 />

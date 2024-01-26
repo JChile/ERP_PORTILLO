@@ -1,5 +1,4 @@
 import React, { useContext, useEffect, useState } from "react";
-import { getLeadsNoAsignados } from "../../helpers";
 import { AuthContext } from "../../../../auth";
 import {
   Checkbox,

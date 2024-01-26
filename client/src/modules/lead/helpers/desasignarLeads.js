@@ -9,6 +9,6 @@ export const quitarLeads = async (token, body) => {
       Authorization: `Bearer ${token}`,
     },
   };
-  const { data } = await axios.get(URL, { ...body }, config);
+  const { data } = await axios.post(URL, { ...body }, config);
   return data;
 };

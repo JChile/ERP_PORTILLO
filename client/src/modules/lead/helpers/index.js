@@ -10,3 +10,5 @@ export * from "./asignAsesor";
 export * from "./getProyectoAsesor";
 export * from "./llamada/createLlamada";
 export * from "./whatsapp/createWhatsapp";
+export * from "./llamada/updateLlamada";
+export * from "./whatsapp/updateWhatsapp";

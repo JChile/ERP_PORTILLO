@@ -1,6 +1,12 @@
 import React, { useContext, useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import { getLead } from "../helpers";
+import {
+  createLlamada,
+  createWhatsapp,
+  getLead,
+  updateWhatsapp,
+  updateLlamada,
+} from "../helpers";
 import { Button, Checkbox } from "@mui/material";
 import { DialogForm } from "../../ventas/components/DialogForm";
 import { ComponentLlamadas, ComponentWhatsapp } from "../components";
@@ -73,12 +79,12 @@ export const DetailLead = () => {
 
   const [visibleProgress, setVisibleProgress] = useState(false);
 
+  // obtener informacion del lead
   const obtenerLead = async () => {
     if (validIdURL(numericId)) {
       try {
         setVisibleProgress(true);
         const auxLead = await getLead(numericId, authTokens.access);
-        console.log(auxLead);
         setLead(auxLead);
         // comprobar si se realizo con exito la creación del usuario
         setVisibleProgress(false);
@@ -94,6 +100,95 @@ export const DetailLead = () => {
       }
     } else {
       onNavigateBack();
+    }
+  };
+
+  // crear informacion de whatsapp
+  const createWhatsappMessage = async (itemData) => {
+    try {
+      const result = await createWhatsapp(itemData, authTokens["access"]);
+      const createDataWhatsapp = [...whatsapps, result];
+      setLead({
+        ...lead,
+        whatsapps: createDataWhatsapp,
+      });
+    } catch (error) {
+      const pilaError = combinarErrores(error);
+      setFeedbackMessages({
+        style_message: "error",
+        feedback_description_error: pilaError,
+      });
+      handleClickFeedback();
+    }
+  };
+
+  // actualizar informacion de whatsapp
+  const updateWhatsappMessage = async (id, itemData) => {
+    try {
+      const result = await updateWhatsapp(id, itemData, authTokens["access"]);
+      const updateDataWhatsapp = whatsapps.map((element) => {
+        if (element.id === id) {
+          return result;
+        } else {
+          return element;
+        }
+      });
+      setLead({
+        ...lead,
+        whatsapps: updateDataWhatsapp,
+      });
+    } catch (error) {
+      const pilaError = combinarErrores(error);
+      setFeedbackMessages({
+        style_message: "error",
+        feedback_description_error: pilaError,
+      });
+      handleClickFeedback();
+    }
+  };
+
+  // crear informacion de llamada
+  const createLlamadaLead = async (itemData) => {
+    try {
+      const result = await createLlamada(itemData, authTokens["access"]);
+      const createDataLlamada = [...llamadas, result];
+      setLead({
+        ...lead,
+        llamadas: createDataLlamada,
+      });
+    } catch (error) {
+      const pilaError = combinarErrores(error);
+      setFeedbackMessages({
+        style_message: "error",
+        feedback_description_error: pilaError,
+      });
+      handleClickFeedback();
+    }
+  };
+
+  // actualizar informacion de whatsapp
+  const updateLlamadaLead = async (id, itemData) => {
+    try {
+      const result = await updateLlamada(id, itemData, authTokens["access"]);
+      const updateDataLlamada = llamadas.map((element) => {
+        if (element.id === id) {
+          return result;
+        } else {
+          return element;
+        }
+      });
+      console.log(updateDataLlamada);
+      setLead({
+        ...lead,
+        llamadas: updateDataLlamada,
+      });
+    } catch (error) {
+      const pilaError = combinarErrores(error);
+      setFeedbackMessages({
+        style_message: "error",
+        feedback_description_error: pilaError,
+      });
+      handleClickFeedback();
     }
   };
 
@@ -116,7 +211,6 @@ export const DetailLead = () => {
       <div className="flex flex-col gap-y-4">
         <div className="p-3 border-[1px] flex flex-col gap-x-5">
           <h1 className="text-lg font-bold">Detalle Lead</h1>
-          {/* <h3 className="text-sm">Proyecto: {proyecto.nombre}</h3> */}
         </div>
         <div className="p-3 border-[1px] flex flex-col gap-y-4">
           <div className="flex flex-col md:flex-row min-w-[242px] gap-x-2 gap-y-3">
@@ -156,6 +250,7 @@ export const DetailLead = () => {
                 <Checkbox
                   name="llamar"
                   checked={llamar}
+                  disabled={true}
                   inputProps={{ "aria-label": "controlled" }}
                 />
               </label>
@@ -208,14 +303,14 @@ export const DetailLead = () => {
           </div>
 
           <div className="flex gap-2">
-            <Button
+            {/* <Button
               variant="contained"
               color="success"
               sx={{ textTransform: "capitalize", borderRadius: 0 }}
               onClick={() => setShowDialog(true)}
             >
               Crear Evento
-            </Button>
+            </Button> */}
             {/* <Button
               variant="contained"
               color="info"
@@ -233,14 +328,16 @@ export const DetailLead = () => {
                 <ComponentWhatsapp
                   lead={idLead}
                   dataWhatsapp={whatsapps}
-                  onLoadDataRfresh={obtenerLead}
+                  onUpdateDataWhatsapp={updateWhatsappMessage}
+                  onCreateDataWhatsapp={createWhatsappMessage}
                 />
 
                 {/* Columna 2 */}
                 <ComponentLlamadas
                   lead={idLead}
-                  dataLlamadas={llamadas}
-                  onLoadDataRfresh={obtenerLead}
+                  dataLlamada={llamadas}
+                  onUpdatedataLlamada={updateLlamadaLead}
+                  onCreatedataLlamada={createLlamadaLead}
                 />
               </div>
             </>

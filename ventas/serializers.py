@@ -129,3 +129,9 @@ class DesasignacionLeadAsesorSerlializer(serializers.ModelSerializer):
     class Meta:
         model = DesasignacionLeadAsesor
         fields = '__all__'
+
+
+class EstadoEventoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = EstadoEvento
+        fields = '__all__'

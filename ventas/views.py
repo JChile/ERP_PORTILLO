@@ -851,3 +851,15 @@ class DesasignacionLeadAsesorList(generics.ListCreateAPIView):
                 pk=i["usuario"]).first(), fields=["username", "first_name", "last_name"]).data
 
         return Response(dataJson)
+
+
+class EstadoEventoList(generics.ListCreateAPIView):
+    serializer_class = EstadoEventoSerializer
+    queryset = EstadoEvento.objects.all()
+
+
+
+
+class EstadoEventoDetail(generics.RetrieveUpdateDestroyAPIView):
+    serializer_class = EstadoEventoSerializer
+    queryset = EstadoEvento.objects.all()

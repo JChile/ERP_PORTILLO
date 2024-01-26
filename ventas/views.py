@@ -33,18 +33,19 @@ class LeadList(generics.ListCreateAPIView):
             return Response({"message": "Usuario no tiene permisos para ver leads"}, status=403)
 
         lead_queryset = Lead.objects.all()
-        
+
         estado = request.query_params.get('estado')
         desde = request.query_params.get('desde')
         hasta = request.query_params.get('hasta')
         asignado = request.query_params.get('asignado')
-             
+
         if asignado:
             lead_queryset = lead_queryset.filter(asignado=asignado)
         if estado:
             lead_queryset = lead_queryset.filter(estado=estado)
         if desde and hasta:
-            lead_queryset = lead_queryset.filter(horaRecepcion__range=[desde, hasta])
+            lead_queryset = lead_queryset.filter(
+                horaRecepcion__range=[desde, hasta])
 
         leadSerializer = LeadSerializer(lead_queryset, many=True)
 
@@ -70,7 +71,8 @@ class LeadList(generics.ListCreateAPIView):
 
             i["asesor"] = userSerializer.data if userSerializer else {}
             i["campania"] = campaniaSerializer.data if campaniaSerializer else {}
-            i["campania"]["proyecto"] = ProyectoSerializer(Proyecto.objects.filter(pk = i["campania"]["proyecto"]).first()).data
+            i["campania"]["proyecto"] = ProyectoSerializer(
+                Proyecto.objects.filter(pk=i["campania"]["proyecto"]).first()).data
             i["objecion"] = objecionSerializer.data if objecionSerializer else {}
 
         return Response(leadData)
@@ -195,15 +197,16 @@ class LeadDetail(generics.RetrieveUpdateDestroyAPIView):
         lead_data["objecion"] = objecionSerializer.data if objecionSerializer else {}
         lead_data["whatsapps"] = WhatsAppSerializer(
             WhatsApp.objects.filter(lead=lead.pk), many=True).data
-        
-        for i in lead_data["whatsapps"] :
-            i["objecion"] = ObjecionSerializer(Objecion.objects.filter(pk = i["objecion"]).first()).data
-        
+
+        # for i in lead_data["whatsapps"] :
+        #     i["objecion"] = ObjecionSerializer(Objecion.objects.filter(pk = i["objecion"]).first()).data
+
         lead_data["llamadas"] = LlamadaSerializer(
             Llamada.objects.filter(lead=lead.pk), many=True).data
-        
-        for i in lead_data["llamadas"] :
-            i["objecion"] = ObjecionSerializer(Objecion.objects.filter(pk = i["objecion"]).first()).data
+
+        # for i in lead_data["llamadas"]:
+        #     i["objecion"] = ObjecionSerializer(
+        #         Objecion.objects.filter(pk=i["objecion"]).first()).data
 
         lead_data["eventos"] = EventoSerializer(
             Evento.objects.filter(lead=lead.pk), many=True).data
@@ -355,13 +358,12 @@ class EventoList(generics.ListCreateAPIView):
         estado = request.query_params.get('estado')
         desde = request.query_params.get('desde')
         hasta = request.query_params.get('hasta')
- 
-        
+
         if estado:
             evento_queryset = Evento.objects.all().filter(estado=estado)
         if desde and hasta:
-            evento_queryset = evento_queryset.filter(fecha_creacion__range=[desde, hasta])
-
+            evento_queryset = evento_queryset.filter(
+                fecha_creacion__range=[desde, hasta])
 
         if request.user.isAdmin == False:
             evento_queryset = evento_queryset.filter(asesor=usuarioId)
@@ -389,10 +391,10 @@ class EventoList(generics.ListCreateAPIView):
             userActualizadorializer = UserSerializer(userActualizador, fields=(
                 'id', 'first_name', 'last_name', 'username')) if userActualizador else None
 
-            eventoIterador["asesor"] = userAsesorSerializer.data if userAsesorSerializer else {}
+            eventoIterador["asesor"] = userAsesorSerializer.data if userAsesorSerializer else {
+            }
             eventoIterador["tipo"] = tipoSerializer.data if tipoSerializer else {}
             eventoIterador["lead"] = leadSerializer.data if leadSerializer else {}
-
 
         return Response(evento_data)
 
@@ -442,7 +444,6 @@ class EventoDetail(generics.RetrieveUpdateDestroyAPIView):
         evento_dataJson["asesor"] = asesorSerlializer.data if asesorSerlializer else {
         }
         evento_dataJson["tipo"] = tipoSerializer.data if tipoSerializer else {}
-
 
         return Response(evento_dataJson)
 
@@ -825,8 +826,10 @@ class HistoricoLeadAsesorList(generics.ListCreateAPIView):
         dataJson = HistoricoLeadAsesorSerlializer(queryset, many=True).data
 
         for i in dataJson:
-            i["lead"] = LeadSerializer(lead_queryset.filter(pk = i["lead"]).first(),fields = ["nombre", "apellido", "celular"]).data
-            i["usuario"] = UserSerializer(user_queryset.filter(pk = i["usuario"]).first(), fields = ["username", "first_name", "last_name"]).data
+            i["lead"] = LeadSerializer(lead_queryset.filter(pk=i["lead"]).first(), fields=[
+                                       "nombre", "apellido", "celular"]).data
+            i["usuario"] = UserSerializer(user_queryset.filter(
+                pk=i["usuario"]).first(), fields=["username", "first_name", "last_name"]).data
 
         return Response(dataJson)
 
@@ -842,7 +845,9 @@ class DesasignacionLeadAsesorList(generics.ListCreateAPIView):
         dataJson = DesasignacionLeadAsesorSerlializer(queryset, many=True).data
 
         for i in dataJson:
-            i["lead"] = LeadSerializer(lead_queryset.filter(pk = i["lead"]).first(),fields = ["nombre", "apellido", "celular"]).data
-            i["usuario"] = UserSerializer(user_queryset.filter(pk = i["usuario"]).first(), fields = ["username", "first_name", "last_name"]).data
+            i["lead"] = LeadSerializer(lead_queryset.filter(pk=i["lead"]).first(), fields=[
+                                       "nombre", "apellido", "celular"]).data
+            i["usuario"] = UserSerializer(user_queryset.filter(
+                pk=i["usuario"]).first(), fields=["username", "first_name", "last_name"]).data
 
         return Response(dataJson)

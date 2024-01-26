@@ -2,7 +2,6 @@ import {
   Checkbox,
   FormControlLabel,
   Grid,
-  IconButton,
   Table,
   TableBody,
   TableCell,
@@ -11,7 +10,7 @@ import {
   TableRow,
   Typography,
 } from "@mui/material";
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useState } from "react";
 import { FaPhone } from "react-icons/fa";
 import { styled } from "@mui/material/styles";
 import Dialog from "@mui/material/Dialog";
@@ -19,13 +18,10 @@ import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
 import DialogActions from "@mui/material/DialogActions";
 import Button from "@mui/material/Button";
+import { createLlamada } from "../helpers";
+import { combinarErrores } from "../../../utils";
 import { AuthContext } from "../../../auth";
-import {
-  formatDate_ISO861_to_formatdate,
-  obtenerHoraActualFormatPostgress,
-} from "../../../utils";
-import { CustomTextArea, FilterObjecion } from "../../../components";
-import { FiEdit, FiSave, FiX } from "react-icons/fi";
+import { FilterObjecion } from "../../../components";
 
 const ITEM_HEIGHT = 48;
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
@@ -37,24 +33,10 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   },
 }));
 
-export const ComponentLlamadas = ({
-  lead,
-  dataLlamada,
-  onUpdatedataLlamada,
-  onCreatedataLlamada,
-}) => {
+export const ComponentLlamadas = ({ lead, dataLlamadas, onLoadDataRfresh }) => {
   const [itemSelected, setItemSelected] = useState(null);
   const [openDialogDetalle, setOpenDialogDetalle] = useState(false);
-  const { currentUser } = useContext(AuthContext);
-
-  useEffect(() => {
-    if (itemSelected !== null) {
-      const findElement = dataLlamada.find(
-        (element) => element.id == itemSelected.id
-      );
-      setItemSelected(findElement);
-    }
-  }, [dataLlamada]);
+  const { currentUser, authTokens } = useContext(AuthContext);
 
   const handleSelectDetalle = (element) => {
     setItemSelected(element);
@@ -66,24 +48,20 @@ export const ComponentLlamadas = ({
     setOpenDialogDetalle(false);
   };
 
-  // crear registro de llamada
   const crearRegistroLlamada = async (body) => {
     const formatData = {
       ...body,
       lead: lead,
       usuarioCreador: currentUser["user_id"],
-    };
-    onCreatedataLlamada(formatData);
-  };
-
-  // actualizar registro de llamada
-  const actualizarRegistroLlamada = (id, body) => {
-    const formatData = {
-      ...body,
       usuarioActualizador: currentUser["user_id"],
-      fecha_actualizacion: obtenerHoraActualFormatPostgress(),
     };
-    onUpdatedataLlamada(id, formatData);
+    try {
+      const result = await createLlamada(formatData, authTokens["access"]);
+      onLoadDataRfresh();
+    } catch (error) {
+      const pilaError = combinarErrores(error);
+      alert(pilaError);
+    }
   };
 
   return (
@@ -92,12 +70,12 @@ export const ComponentLlamadas = ({
         <div className="bg-blue-500 rounded-t-lg p-4 text-white mb-4">
           <div className="flex items-center">
             <FaPhone className="mr-2" />
-            <h2 className="text-lg font-bold">{`Llamada (${dataLlamada.length})`}</h2>
+            <h2 className="text-lg font-bold">{`Llamadas (${dataLlamadas.length})`}</h2>
           </div>
         </div>
         <div className="bg-white rounded-b-lg px-3 flex justify-center items-center flex-col">
           {/* Contenido de la primera columna */}
-          {dataLlamada.length !== 0 ? (
+          {dataLlamadas.length !== 0 ? (
             <TableContainer
               sx={{ minWidth: 100, maxWidth: 600 }}
               arial-aria-labelledby="customized table"
@@ -108,7 +86,7 @@ export const ComponentLlamadas = ({
                     sx={{
                       "& th": {
                         color: "rgba(0,0,0)",
-                        backgroundColor: "#c8e3c5",
+                        backgroundColor: "#d0ecea",
                         fontWeight: "bold",
                       },
                     }}
@@ -119,7 +97,7 @@ export const ComponentLlamadas = ({
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {dataLlamada.map((element, index) => (
+                  {dataLlamadas.map((element, index) => (
                     <TableRow
                       key={index}
                       onClick={() => handleSelectDetalle(element)}
@@ -138,12 +116,12 @@ export const ComponentLlamadas = ({
           <DialogRegistrarLlamada
             onCreateRegistroLlamada={crearRegistroLlamada}
           />
+
           {itemSelected !== null && (
             <DialogDetalleLlamada
               open={openDialogDetalle}
               element={itemSelected}
               handleClose={handleCloseDetalle}
-              onUpdatedataLlamada={actualizarRegistroLlamada}
             />
           )}
         </div>
@@ -160,42 +138,35 @@ const DialogRegistrarLlamada = ({ onCreateRegistroLlamada }) => {
   const handleClose = () => {
     setOpen(false);
   };
-  const [dataLlamada, setdataLlamada] = useState({
+
+  const [dataLlamadas, setDataLlamadas] = useState({
     detalle: "",
     contesto: false,
     objecion: null,
   });
 
-  const { detalle, contesto, objecion } = dataLlamada;
+  const { detalle, contesto, objecion } = dataLlamadas;
 
   const handleInputValue = ({ target }) => {
     const { value, name } = target;
-    setdataLlamada({
-      ...dataLlamada,
+    setDataLlamadas({
+      ...dataLlamadas,
       [name]: value,
     });
   };
 
-  const handleChangeCheckBoxcontesto = (event) => {
-    setdataLlamada({
-      ...dataLlamada,
+  const handleChangeCheckBoxContesto = (event) => {
+    setDataLlamadas({
+      ...dataLlamadas,
       contesto: event.target.checked,
     });
   };
 
   const onAddObjecion = (value) => {
     const { id } = value;
-    setdataLlamada({
-      ...dataLlamada,
+    setDataLlamadas({
+      ...dataLlamadas,
       objecion: id,
-    });
-  };
-
-  const resetFields = () => {
-    setdataLlamada({
-      detalle: "",
-      contesto: false,
-      objecion: null,
     });
   };
 
@@ -210,7 +181,7 @@ const DialogRegistrarLlamada = ({ onCreateRegistroLlamada }) => {
       }
       alert(handleErrors);
     } else {
-      onCreateRegistroLlamada(dataLlamada);
+      onCreateRegistroLlamada(dataLlamadas);
     }
   };
 
@@ -230,20 +201,20 @@ const DialogRegistrarLlamada = ({ onCreateRegistroLlamada }) => {
         open={open}
       >
         <DialogTitle sx={{ m: 0, p: 2 }} id="customized-dialog-title">
-          Registrar Llamada
+          Registrar llamada
         </DialogTitle>
         <DialogContent dividers>
-          {/* Checkbox de contesto */}
+          {/* Checkbox de respondio */}
           <div className="mb-4 ml-0">
             <FormControlLabel
               control={
                 <Checkbox
                   checked={contesto}
-                  onChange={handleChangeCheckBoxcontesto}
+                  onChange={handleChangeCheckBoxContesto}
                   inputProps={{ "aria-label": "controlled" }}
                 />
               }
-              label="¿Contestó?"
+              label="Contestó?"
               labelPlacement="start"
             />
           </div>
@@ -284,13 +255,11 @@ const DialogRegistrarLlamada = ({ onCreateRegistroLlamada }) => {
           </Button>
           <Button
             variant="contained"
-            color="success"
+            color="primary"
             autoFocus
             onClick={() => {
               // registramos un nuevo mensaje
               crearRegistroLlamada();
-              // reset fields
-              resetFields();
               // cerramos el cuadro de dialogo
               handleClose();
             }}
@@ -303,167 +272,32 @@ const DialogRegistrarLlamada = ({ onCreateRegistroLlamada }) => {
   );
 };
 
-const DialogDetalleLlamada = ({
-  element,
-  open,
-  handleClose,
-  onUpdatedataLlamada,
-}) => {
-  const [dataAuxLlamada, setDataAuxLlamada] = useState(element);
-
-  useEffect(() => {
-    parserDataElement();
-  }, [element]);
-
-  const parserDataElement = () => {
-    setDataAuxLlamada(element);
-  };
-
-  const {
-    id,
-    detalle,
-    contesto,
-    objecion,
-    fecha_creacion,
-    fecha_actualizacion,
-  } = dataAuxLlamada;
-
-  const [editData, setEditData] = useState(true);
-
-  // handle change value
-  const handledChangeValue = ({ target }) => {
-    const { value, name } = target;
-    setDataAuxLlamada({
-      ...dataAuxLlamada,
-      [name]: value,
-    });
-  };
-
-  // handle checkbox
-  const handleCheckBox = (event) => {
-    setDataAuxLlamada({
-      ...dataAuxLlamada,
-      contesto: event.target.checked,
-    });
-  };
-
-  // cambiar objecion
-  const handleChangeObjecion = (value) => {
-    const { id } = value;
-    setDataAuxLlamada({
-      ...dataAuxLlamada,
-      objecion: id,
-    });
-  };
-
-  // guardar data
-  const onSaveChanges = () => {
-    onUpdatedataLlamada(id, dataAuxLlamada);
-    setEditData(true);
-  };
-
-  // cancelar guardado
-  const onCancelChanges = () => {
-    parserDataElement();
-    setEditData(true);
-  };
-
+const DialogDetalleLlamada = ({ element, open, handleClose }) => {
   return (
     <BootstrapDialog
-      maxWidth={"xs"}
+      maxWidth={"lg"}
       onClose={handleClose}
       aria-labelledby="customized-dialog-title"
       open={open}
     >
-      <DialogTitle
-        sx={{
-          m: 0,
-          p: 2,
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-        }}
-        id="customized-dialog-title"
-      >
-        Detalle Llamada
-        {editData ? (
-          <IconButton
-            onClick={() => {
-              setEditData(!editData);
-            }}
-          >
-            <FiEdit />
-          </IconButton>
-        ) : (
-          <div>
-            <IconButton color="success" onClick={onSaveChanges}>
-              <FiSave />
-            </IconButton>
-            <IconButton color="error" onClick={onCancelChanges}>
-              <FiX />
-            </IconButton>
-          </div>
-        )}
+      <DialogTitle sx={{ m: 0, p: 2 }} id="customized-dialog-title">
+        Detalle llamada
       </DialogTitle>
       <DialogContent dividers>
         <Grid container spacing={2}>
-          {/* CONTESTÓ */}
-          <Grid item xs={10}>
-            <Typography variant="subtitle1" sx={{ fontWeight: "bold" }}>
-              Contestó:
-            </Typography>
-            <Checkbox
-              checked={contesto}
-              disabled={editData}
-              onChange={handleCheckBox}
-              inputProps={{ "aria-label": "controlled" }}
-            />
-          </Grid>
-          {/* DETALLE */}
-          <Grid item xs={10}>
+          <Grid item xs={12}>
             <Typography variant="subtitle1" sx={{ fontWeight: "bold" }}>
               Detalle:
             </Typography>
-            <CustomTextArea
-              value={detalle}
-              name="detalle"
-              onChangeValue={handledChangeValue}
-              active={editData}
-            />
+            <Typography>{element["detalle"]}</Typography>
           </Grid>
-          {/* OBJECION */}
-          <Grid item xs={10}>
-            <Typography variant="subtitle1" sx={{ fontWeight: "bold" }}>
-              Objeción:
-            </Typography>
-            <FilterObjecion
-              defaultValue={objecion}
-              onNewInput={handleChangeObjecion}
-              active={editData}
-            />
-          </Grid>
-          {/* FECHA DE CREACION */}
-          <Grid item xs={10}>
+          <Grid item xs={12}>
             <Typography variant="subtitle1" sx={{ fontWeight: "bold" }}>
               Fecha de creación:
             </Typography>
-            <Typography>
-              {formatDate_ISO861_to_formatdate(fecha_creacion)}
-            </Typography>
+            <Typography>{element["fecha_creacion"]}</Typography>
           </Grid>
-          {/* FECHA DE ACTULIZACION */}
-          <Grid item xs={10}>
-            <Typography variant="subtitle1" sx={{ fontWeight: "bold" }}>
-              Fecha de actualización:
-            </Typography>
-            {fecha_actualizacion ? (
-              <Typography>
-                {formatDate_ISO861_to_formatdate(fecha_actualizacion)}
-              </Typography>
-            ) : (
-              <Typography>No actualizado</Typography>
-            )}
-          </Grid>
+          {/* Agrega más campos de propiedad según sea necesario */}
         </Grid>
       </DialogContent>
       <DialogActions>

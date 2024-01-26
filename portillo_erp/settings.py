@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'cuenta.apps.CuentaConfig',
     'marketing.apps.MarketingConfig',
     'ventas.apps.VentasConfig',
+    'multimedia.apps.MultimediaConfig',
     'rest_framework',
     'corsheaders',
     'rest_framework_simplejwt.token_blacklist',
@@ -101,8 +102,8 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'portillo_erp',
         'USER': 'postgres',
-        #'PASSWORD': '123',
-        'PASSWORD': 'admin',
+        'PASSWORD': '123',
+        # 'PASSWORD': 'admin',
         'HOST': 'localhost',
         'PORT': '',
     }

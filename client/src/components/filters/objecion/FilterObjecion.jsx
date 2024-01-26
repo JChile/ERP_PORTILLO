@@ -9,7 +9,11 @@ const defaultOption = {
   id: null,
 };
 
-export const FilterObjecion = ({ defaultValue = null, onNewInput }) => {
+export const FilterObjecion = ({
+  defaultValue = null,
+  onNewInput,
+  active = false,
+}) => {
   const [options, setOptions] = useState([defaultOption]);
   const [value, setValue] = useState(defaultOption);
   const { authTokens } = useContext(AuthContext);
@@ -49,6 +53,7 @@ export const FilterObjecion = ({ defaultValue = null, onNewInput }) => {
 
   return (
     <Autocomplete
+      disabled={active}
       options={options}
       value={value}
       disableClearable

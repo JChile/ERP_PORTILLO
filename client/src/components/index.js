@@ -12,3 +12,4 @@ export * from "./NotFoundPage";
 export * from "./MenuSimple";
 export * from "./DynamicCustomerDialog";
 export * from "./HomePage";
+export * from "./CustomTextArea";

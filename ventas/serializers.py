@@ -3,7 +3,6 @@ from .models import *
 from cuenta.models import *
 
 
-
 class LeadSerializer(serializers.ModelSerializer):
     class Meta:
         model = Lead
@@ -20,20 +19,20 @@ class LeadSerializer(serializers.ModelSerializer):
             for field_name in existing - allowed:
                 self.fields.pop(field_name)
 
-        
+
 class MultipleLeadSerializer(serializers.ListSerializer):
     def create(self, validated_data):
         return [Lead.objects.create(**item) for item in validated_data]
-        
+
     def update(self, instance, validated_data):
-        pass 
+        pass
+
 
 class LeadListSerializer(LeadSerializer):
     class Meta:
         model = Lead
         fields = '__all__'
         list_serializer_class = MultipleLeadSerializer
-
 
 
 class WhatsAppSerializer(serializers.ModelSerializer):
@@ -60,11 +59,11 @@ class EstadoLeadSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-
 class EventoSerializer(serializers.ModelSerializer):
     class Meta:
         model = Evento
         fields = '__all__'
+
 
 class TipoEventoSerializer(serializers.ModelSerializer):
     class Meta:
@@ -83,6 +82,7 @@ class ProductoSerializer(serializers.ModelSerializer):
         model = Producto
         fields = '__all__'
 
+
 class TipoCotizacionSerializer(serializers.ModelSerializer):
     class Meta:
         model = TipoCotizacion
@@ -93,6 +93,7 @@ class CotizacionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Cotizacion
         fields = '__all__'
+
 
 class TipoCuotaSerializer(serializers.ModelSerializer):
     class Meta:
@@ -105,15 +106,18 @@ class CuotaSerializer(serializers.ModelSerializer):
         model = Cuota
         fields = '__all__'
 
+
 class PrecioSerializer(serializers.ModelSerializer):
     class Meta:
         model = Precio
         fields = '__all__'
 
+
 class ProyectoTipoProductoSerializer(serializers.ModelSerializer):
     class Meta:
         model = ProyectoTipoProducto
         fields = '__all__'
+
 
 class HistoricoLeadAsesorSerlializer(serializers.ModelSerializer):
     class Meta:

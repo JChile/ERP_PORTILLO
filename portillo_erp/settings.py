@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'cuenta.apps.CuentaConfig',
     'marketing.apps.MarketingConfig',
     'ventas.apps.VentasConfig',
+    'multimedia.apps.MultimediaConfig',
     'rest_framework',
     'corsheaders',
     'rest_framework_simplejwt.token_blacklist',

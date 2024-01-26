@@ -303,14 +303,14 @@ export const DetailLead = () => {
           </div>
 
           <div className="flex gap-2">
-            {/* <Button
+            <Button
               variant="contained"
               color="success"
               sx={{ textTransform: "capitalize", borderRadius: 0 }}
               onClick={() => setShowDialog(true)}
             >
               Crear Evento
-            </Button> */}
+            </Button>
             {/* <Button
               variant="contained"
               color="info"

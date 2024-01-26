@@ -7,12 +7,13 @@ import {
   DialogTitle,
   FormControl,
   TextField,
+  TextareaAutosize,
   Typography,
 } from "@mui/material";
 import { useForm } from "../hooks";
 import { createEvent } from "../helpers/eventCases";
 import { useState } from "react";
-import { FilterProyectos } from "../../../components";
+import { CustomTextArea, FilterProyectos } from "../../../components";
 import { FilterTipoEvento } from "../../../components/filters/tipoEvento/FilterTipoEvento";
 
 export const DialogForm = ({ isOpen, onClose, lead, token, user }) => {
@@ -41,6 +42,7 @@ export const DialogForm = ({ isOpen, onClose, lead, token, user }) => {
         tipo: tipo,
         usuarioCreador: user,
         usuarioActualizador: user,
+        estadoEvento: "estado_event" 
       };
       console.log({ eventSave });
       const result = await createEvent(eventSave, token);
@@ -96,38 +98,24 @@ export const DialogForm = ({ isOpen, onClose, lead, token, user }) => {
         onClose={onClose}
         PaperProps={{ sx: { borderRadius: "0px" } }}
       >
-        <DialogTitle className="text-white font-bold text-center bg-[#282828]">
-          Registrar Evento
-        </DialogTitle>
-        <DialogContent className="flex flex-col gap-y-2">
+        <DialogTitle>Registrar Evento</DialogTitle>
+
+        <DialogContent className="flex flex-col gap-y-2" dividers>
           <FormControl>
-            <div className="flex gap-x-4 mt-4">
-              <div className="flex flex-col gap-y-4">
-                <TextField
-                  size="small"
-                  label="Título"
-                  placeholder="Titulo del evento"
-                  value={titulo}
-                  onChange={handleChangeForm}
-                  name="titulo"
-                />
+            <div className="flex flex-col gap-y-4">
+              <TextField
+                size="small"
+                label="Título"
+                placeholder="Titulo del evento"
+                value={titulo}
+                onChange={handleChangeForm}
+                name="titulo"
+              />
+              <div className="grid grid-cols-2 gap-y-4 gap-x-4">
                 <FilterTipoEvento
                   defaultValue={null}
                   onNewInput={onAddTipoEvento}
                 />
-                <TextField
-                  size="small"
-                  label="Observación"
-                  placeholder="Observación"
-                  value={observacion}
-                  onChange={handleChangeForm}
-                  name="observacion"
-                  rows={2}
-                  minRows={2}
-                />
-              </div>
-
-              <div className="flex flex-col gap-y-4">
                 <TextField
                   size="small"
                   type="date"
@@ -162,6 +150,7 @@ export const DialogForm = ({ isOpen, onClose, lead, token, user }) => {
                   size="small"
                 />
               </div>
+              <TextField type="text" multiline label="Observaciones" />
             </div>
           </FormControl>
           {/* Mostrar mensajes de error debajo de los campos del formulario */}
@@ -171,7 +160,7 @@ export const DialogForm = ({ isOpen, onClose, lead, token, user }) => {
             </Typography>
           ))}
         </DialogContent>
-        <DialogActions className="bg-dark-purple">
+        <DialogActions>
           <Button
             variant="contained"
             color="inherit"
@@ -185,7 +174,7 @@ export const DialogForm = ({ isOpen, onClose, lead, token, user }) => {
           </Button>
           <Button
             variant="contained"
-            color="info"
+            color="success"
             sx={{
               textTransform: "capitalize",
               borderRadius: 0,

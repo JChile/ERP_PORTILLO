@@ -13,6 +13,7 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { FilterAsesor } from "../../../../components/filters/asesor/FilterAsesor";
 import { ViewLeadsNoAsignados } from "./ViewLeadsNoAsignados";
 import styled from "@emotion/styled";
+import ViewLeadAsignados from "./ViewLeadAsignados";
 
 const headers = [
   { name: "Acciones", width: 20 },
@@ -70,28 +71,6 @@ const ListJefeVentasLead = ({ credentials }) => {
     setFilteredLeads(filter);
   };
 
-  /** Filters functions */
-  const onAddProject = (project) => {
-    setFilterState((prev) => ({
-      ...prev,
-      proyecto: project.id,
-    }));
-  };
-
-  const onAddAsesor = (asesor) => {
-    setFilterState((prev) => ({
-      ...prev,
-      asesor: asesor.id,
-    }));
-  };
-
-  const onAddEstadoLead = (estadoLead) => {
-    setFilterState((prev) => ({
-      ...prev,
-      estadoLead: estadoLead.id,
-    }));
-  };
-
   const fetchData = async (token) => {
     try {
       const leads = await getLeadsActivos(token);
@@ -105,27 +84,6 @@ const ListJefeVentasLead = ({ credentials }) => {
 
   const onHandleFilterClick = () => {
     const filtered = leads.filter((lead) => {
-      // Filtrar por asesor
-      if (filterState.asesor && lead.asesor.id !== filterState.asesor) {
-        return false;
-      }
-
-      // Filtrar por proyecto
-      if (
-        filterState.proyecto &&
-        lead.campania.proyecto !== filterState.proyecto
-      ) {
-        return false;
-      }
-
-      // Filtrar por estadoLead
-      if (
-        filterState.estadoLead &&
-        lead.estadoLead !== filterState.estadoLead
-      ) {
-        return false;
-      }
-
       // Filtrar por fecha de inicio
       if (filterState.startDate) {
         const startDate = new Date(filterState.startDate);
@@ -134,7 +92,6 @@ const ListJefeVentasLead = ({ credentials }) => {
           return false;
         }
       }
-
       // Filtrar por fecha de fin
       if (filterState.endDate) {
         const endDate = new Date(filterState.endDate);
@@ -149,12 +106,22 @@ const ListJefeVentasLead = ({ credentials }) => {
     setFilteredLeads(filtered);
   };
 
+  const onHandleCleanFilter = () => {
+    setFilterState(() => {
+      onHandleFilterClick();
+      return {
+        proyecto: 0,
+        asesor: 0,
+        estadoLead: null,
+        startDate: null,
+        endDate: null,
+      };
+    });
+  };
+
   useEffect(() => {
     fetchData(credentials);
   }, []);
-
-  console.log(leads);
-  console.log(filterState);
 
   const showContent = !error ? (
     <CustomTable headerData={headers} rowData={filteredLeads} />
@@ -166,57 +133,55 @@ const ListJefeVentasLead = ({ credentials }) => {
     <React.Fragment>
       <div className="flex flex-col gap-y-4">
         <h1 className="font-semibold text-2xl">
-          Gestion de leads - Jefe de Ventas
+          Gestion de leads - Administrador
         </h1>
       </div>
-
       <div className="mt-3 flex flex-col gap-y-3">
-        <CustomInputBase
-          placeholder="Buscar lead"
-          onSearch={handleSearchButton}
-        />
-
         <div className="flex flex-col gap-y-4">
-          <h2 className="font-bold">Filtrar leads</h2>
-          <form className="flex gap-x-3">
-            <FilterProyectos label="Proyecto" onNewInput={onAddProject} />
-            <FilterAsesor label="Asesor" onNewInput={onAddAsesor} />
-            <FilterEstadoLead label="Estado" onNewInput={onAddEstadoLead} />
-            <LocalizationProvider dateAdapter={AdapterDayjs}>
-              <DatePicker
-                sx={{
-                  width: "9rem",
-                }}
-                label="Desde"
-                value={filterState.startDate}
-                onChange={(newValue) => {
-                  setFilterState((prev) => ({ ...prev, startDate: newValue }));
-                }}
-                TextField={(params) => <TextField {...params} />}
-              />
-              <DatePicker
-                sx={{
-                  width: "9rem",
-                }}
-                label="Hasta"
-                value={filterState.endDate}
-                onChange={(newValue) => {
-                  setFilterState((prev) => ({ ...prev, endDate: newValue }));
-                }}
-                TextField={(params) => <TextField {...params} />}
-              />
-            </LocalizationProvider>
-            <Button
-              variant="contained"
-              sx={{ borderRadius: "0px", textTransform: "capitalize" }}
-              onClick={onHandleFilterClick}
-            >
-              Filtrar
-            </Button>
+          <form className="flex flex-col gap-y-3">
+            <div className="row gap-x-6 gap-y-6 justify-center">
+              <LocalizationProvider dateAdapter={AdapterDayjs}>
+                <DatePicker
+                  label="Desde"
+                  value={filterState.startDate}
+                  onChange={(newValue) => {
+                    setFilterState((prev) => ({
+                      ...prev,
+                      startDate: newValue,
+                    }));
+                  }}
+                  TextField={(params) => <TextField {...params} />}
+                />
+                <DatePicker
+                  label="Hasta"
+                  value={filterState.endDate}
+                  onChange={(newValue) => {
+                    setFilterState((prev) => ({ ...prev, endDate: newValue }));
+                  }}
+                  TextField={(params) => <TextField {...params} />}
+                />
+              </LocalizationProvider>
+              <Button
+                size="large"
+                variant="contained"
+                sx={{ textTransform: "capitalize" }}
+                onClick={onHandleCleanFilter}
+              >
+                Limpiar
+              </Button>
+              <Button
+                size="large"
+                variant="contained"
+                sx={{ textTransform: "capitalize" }}
+                onClick={onHandleFilterClick}
+              >
+                Filtrar
+              </Button>
+            </div>
           </form>
         </div>
 
-        <Box sx={{ width: "100%" }}>
+        <Box sx={{}}>
           <Tabs
             aria-label="basic tabs"
             value={value}
@@ -230,7 +195,7 @@ const ListJefeVentasLead = ({ credentials }) => {
                 color: "black",
                 fontSize: "0.9rem",
               }}
-              label="Leads"
+              label="Leads asignados"
             />
             <Tab
               sx={{
@@ -245,7 +210,7 @@ const ListJefeVentasLead = ({ credentials }) => {
         </Box>
 
         <CustomTabPanel value={value} index={0}>
-          {showContent}
+          <ViewLeadAsignados />
         </CustomTabPanel>
         <CustomTabPanel value={value} index={1}>
           <ViewLeadsNoAsignados />

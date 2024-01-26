@@ -1,9 +1,14 @@
 import axios from "axios";
 
-export const getLeads = async () => {
+export const getLeads = async (token, query) => {
   const DOMAIN = process.env.VITE_BACKEND_URL;
-  const URL = `${DOMAIN}/api/lead/`;
-  const { data } = await axios.get(URL);
+  const URL = `${DOMAIN}/api/lead/?${query}`;
+  const config = {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    }
+  }
+  const { data } = await axios.get(URL, config);
   return data;
 };
 

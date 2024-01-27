@@ -8,7 +8,11 @@ const defaultOption = {
   id: null,
 };
 
-export const FilterTipoEvento = ({ defaultValue = null, onNewInput }) => {
+export const FilterTipoEvento = ({
+  defaultValue = null,
+  onNewInput,
+  size = "medium",
+}) => {
   const [options, setOptions] = useState([defaultOption]);
   const [value, setValue] = useState(defaultOption);
 
@@ -54,7 +58,7 @@ export const FilterTipoEvento = ({ defaultValue = null, onNewInput }) => {
       onChange={handleChange}
       isOptionEqualToValue={(option, value) => option.id == value.id}
       renderInput={(params) => (
-        <TextField label="Tipo Evento" {...params} size="small" />
+        <TextField label="Tipo Evento" {...params} size={size} />
       )}
     />
   );

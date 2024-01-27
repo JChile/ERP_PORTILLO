@@ -14,7 +14,8 @@ from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import permission_classes
 from .consts import *
-
+from multimedia.models import VideoProducto, ImagenProducto
+from multimedia.serializers import VideoProductoSerializer, ImagenProductoSerializer
 
 def get_or_none(classmodel, **kwargs):
     try:
@@ -510,8 +511,15 @@ class ProductoList(generics.ListCreateAPIView):
 
             i["tipo"] = tipoProductoSerializer.data if tipoProductoSerializer else {}
             i["proyecto"] = proyectoSerializer.data if proyectoSerializer else {}
+            i["videos"] =VideoProductoSerializer(VideoProducto.objects.filter(producto = i["id"]), many = True).data
+            i["imagenes"] = ImagenProductoSerializer(ImagenProducto.objects.filter(producto = i["id"]), many = True).data
+
+            
 
         return Response(producto_datajson)
+
+
+
 
 
 class ProductoListSinFiltros(ProductoList):
@@ -573,6 +581,9 @@ class ProductoDetail(generics.RetrieveUpdateDestroyAPIView):
         }
         producto_datajson["proyecto"] = proyectoSerializer.data if proyectoSerializer else {
         }
+
+        producto_datajson["videos"] =VideoProductoSerializer(VideoProducto.objects.filter(producto = producto_datajson["id"]), many = True).data
+        producto_datajson["imagenes"] = ImagenProductoSerializer(ImagenProducto.objects.filter(producto = producto_datajson["id"]), many = True).data
 
         return Response(producto_datajson)
 

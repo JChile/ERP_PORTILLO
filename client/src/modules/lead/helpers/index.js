@@ -12,3 +12,4 @@ export * from "./llamada/createLlamada";
 export * from "./whatsapp/createWhatsapp";
 export * from "./llamada/updateLlamada";
 export * from "./whatsapp/updateWhatsapp";
+export * from "./acciones/asignarAsesorToLeads";

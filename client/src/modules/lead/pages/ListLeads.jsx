@@ -69,8 +69,6 @@ export const ListLeads = () => {
         feedback_description_error: pilaError,
       });
       handleClickFeedback();
-      // cerramos el loader
-      setVisibleProgress(false);
     }
   };
 

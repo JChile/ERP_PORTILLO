@@ -6,8 +6,8 @@ export const getLeads = async (token, query) => {
   const config = {
     headers: {
       Authorization: `Bearer ${token}`,
-    }
-  }
+    },
+  };
   const { data } = await axios.get(URL, config);
   return data;
 };

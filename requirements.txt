@@ -6,4 +6,5 @@ pyscopg2==66.0.2
 django-cors-headers==4.1.0
 django-filter==23.3
 requests==2.31.0
-
+django-crontab==0.7.1
+pillow==10.2.0

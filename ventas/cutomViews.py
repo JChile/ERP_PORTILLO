@@ -491,7 +491,7 @@ class AsignacionMasivaAsesorLeadById(APIView):
                 lead = lead_queryset.get(id=i)
                 user = user_queryset.get(id=arrAsesor[iter])
                 lead.asesor = user
-                lead.fecha_actualizacion = datetime.datetime.now()
+                lead.fecha_actualizacion = timezone.now()
                 lead.save()
                 HistoricoLeadAsesor.objects.create(lead=lead, usuario=user)
             except:

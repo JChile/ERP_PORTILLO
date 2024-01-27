@@ -14,7 +14,8 @@ from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import permission_classes
 from .consts import *
-
+from multimedia.models import VideoProducto, ImagenProducto
+from multimedia.serializers import VideoProductoSerializer, ImagenProductoSerializer
 
 def get_or_none(classmodel, **kwargs):
     try:
@@ -76,6 +77,31 @@ class LeadList(generics.ListCreateAPIView):
             i["objecion"] = objecionSerializer.data if objecionSerializer else {}
 
         return Response(leadData)
+
+    def perform_create(self, serializer):
+        asesor_id = self.request.data.get('asesor')
+        campania = get_or_none(Campania, id=self.request.data.get("campania"), estado="A")
+
+        if campania is None:
+            return Response({"message": "No se proporciono la campaña."}, status=403)
+        
+        proyecto_id = campania.proyecto.id        
+        thirty_days = datetime.now() - timedelta(days=60)
+        phone_numbers = set(
+            Lead.objects.filter(horaRecepcion__gte=thirty_days,
+                                estado="A", campania__proyecto__id=proyecto_id)
+            .values_list('celular', flat=True)
+            .distinct()
+        )
+
+        celular = self.request.data.get("celular")
+        if celular in phone_numbers:
+            return Response({"message": "Este numero de celular ya esta registrado en el proyecto en un plazo de 60 dias."}, status=403)
+
+        serializer.save()
+        if asesor_id:
+            user_data = get_or_none(User, id=asesor_id)
+            HistoricoLeadAsesor.objects.create(lead=serializer.instance, usuario=user_data)
 
 # @permission_classes([IsAuthenticated])
 # class LeadListSinFiltros(LeadList):
@@ -212,6 +238,35 @@ class LeadDetail(generics.RetrieveUpdateDestroyAPIView):
             Evento.objects.filter(lead=lead.pk), many=True).data
 
         return Response(lead_data)
+        
+    def perform_update(self, serializer):        
+        campania = get_or_none(Campania, id=self.request.data.get("campania"), estado="A")
+        if campania is None:
+            return Response({"message": "No se proporciono la campaña."}, status=403)
+        
+        proyecto_id = campania.proyecto.id        
+        thirty_days = datetime.now() - timedelta(days=60)
+        
+        lead_id_actual = self.kwargs.get("pk")
+        phone_numbers = set(
+            Lead.objects.filter(horaRecepcion__gte=thirty_days,
+                                estado="A", campania__proyecto__id=proyecto_id)
+            .exclude(id=lead_id_actual)
+            .values_list('celular', flat=True)
+            .distinct()
+        )
+
+        celular = self.request.data.get("celular")
+        if celular in phone_numbers:
+            return Response({"message": "Este numero de celular ya esta registrado en el proyecto en un plazo de 60 dias."}, status=403)
+                
+        asesor_id_nuevo = self.request.data.get('asesor', None)
+        asesor_id_antiguo = serializer.instance.asesor.id if serializer.instance.asesor else None
+        
+        super(LeadDetail, self).perform_update(serializer)
+        if asesor_id_nuevo and serializer.instance.estado.estado == 'A' and asesor_id_antiguo != asesor_id_nuevo:
+            user_data = get_or_none(User, id=asesor_id_nuevo)
+            HistoricoLeadAsesor.objects.create(lead=serializer.instance, usuario=user_data)
 
 
 @permission_classes([IsAuthenticated])
@@ -510,8 +565,15 @@ class ProductoList(generics.ListCreateAPIView):
 
             i["tipo"] = tipoProductoSerializer.data if tipoProductoSerializer else {}
             i["proyecto"] = proyectoSerializer.data if proyectoSerializer else {}
+            i["videos"] =VideoProductoSerializer(VideoProducto.objects.filter(producto = i["id"]), many = True).data
+            i["imagenes"] = ImagenProductoSerializer(ImagenProducto.objects.filter(producto = i["id"]), many = True).data
+
+            
 
         return Response(producto_datajson)
+
+
+
 
 
 class ProductoListSinFiltros(ProductoList):
@@ -573,6 +635,9 @@ class ProductoDetail(generics.RetrieveUpdateDestroyAPIView):
         }
         producto_datajson["proyecto"] = proyectoSerializer.data if proyectoSerializer else {
         }
+
+        producto_datajson["videos"] =VideoProductoSerializer(VideoProducto.objects.filter(producto = producto_datajson["id"]), many = True).data
+        producto_datajson["imagenes"] = ImagenProductoSerializer(ImagenProducto.objects.filter(producto = producto_datajson["id"]), many = True).data
 
         return Response(producto_datajson)
 
@@ -851,3 +916,15 @@ class DesasignacionLeadAsesorList(generics.ListCreateAPIView):
                 pk=i["usuario"]).first(), fields=["username", "first_name", "last_name"]).data
 
         return Response(dataJson)
+
+
+class EstadoEventoList(generics.ListCreateAPIView):
+    serializer_class = EstadoEventoSerializer
+    queryset = EstadoEvento.objects.all()
+
+
+
+
+class EstadoEventoDetail(generics.RetrieveUpdateDestroyAPIView):
+    serializer_class = EstadoEventoSerializer
+    queryset = EstadoEvento.objects.all()

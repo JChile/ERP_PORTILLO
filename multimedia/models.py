@@ -14,19 +14,19 @@ def validate_video(value):
 
 
 class VideoProyecto(models.Model):
-    video = models.FileField(upload_to='videos/', validators=[validate_video], null=True, blank=True)
+    video = models.FileField(upload_to='media/videos/', validators=[validate_video], null=True, blank=True)
     proyecto = models.ForeignKey(Proyecto, on_delete=models.CASCADE)
 
 class VideoProducto(models.Model):
-    video = models.FileField(upload_to='videos/', validators=[validate_video], null=True, blank=True)
+    video = models.FileField(upload_to='media/videos/', validators=[validate_video], null=True, blank=True)
     producto = models.ForeignKey(Producto, on_delete=models.CASCADE)
 
 
 class ImagenProyecto(models.Model):
-    imagen = models.ImageField(upload_to='imagenes/', validators=[validate_image], null=True, blank=True)
+    imagen = models.ImageField(upload_to='media/imagenes/', validators=[validate_image], null=True, blank=True)
     proyecto = models.ForeignKey(Proyecto, on_delete=models.CASCADE)
 
 
 class ImagenProducto(models.Model):
-    imagen = models.ImageField(upload_to='imagenes/', validators=[validate_image], null=True, blank=True)
+    imagen = models.ImageField(upload_to='media/imagenes/', validators=[validate_image], null=True, blank=True)
     producto = models.ForeignKey(Producto, on_delete=models.CASCADE)

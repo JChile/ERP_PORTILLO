@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'corsheaders',
     'rest_framework_simplejwt.token_blacklist',
+    'django_crontab',
 ]
 
 
@@ -200,4 +201,9 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 CORS_ALLOWED_ORIGINS = [
     'http://localhost:5173'
+]
+
+
+CRONJOBS = [
+    ('*/1 * * * *', 'ventas.cron.my_scheduled_job','>> /home/briang/portillo2/ERP_PORTILLO/log/django/file.log')
 ]

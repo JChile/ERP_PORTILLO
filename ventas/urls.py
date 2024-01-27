@@ -98,5 +98,8 @@ urlpatterns = [
 
     re_path(r'^desasignacionLeadAsesor/$', views.DesasignacionLeadAsesorList.as_view()),
 
+
+    re_path(r'^estadoEvento/$', views.EstadoEventoList.as_view()),
+    re_path(r'^estadoEvento/(?P<pk>[\w-]+)$', views.EstadoEventoDetail.as_view()),
     
 ]

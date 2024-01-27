@@ -12,6 +12,9 @@ from rest_framework.decorators import permission_classes
 from ventas.consts import *
 from ventas.models import Lead
 from ventas.serializers import LeadSerializer
+from multimedia.models import *
+from multimedia.serializers import *
+
 
 def get_or_none(classmodel, **kwargs):
     try:
@@ -23,6 +26,18 @@ def get_or_none(classmodel, **kwargs):
 class ProyectoList(generics.ListCreateAPIView):
     serializer_class = ProyectoSerializer
     queryset = Proyecto.objects.all()
+    
+
+    def get(self, request):
+        proyecto_queryset = Proyecto.objects.all()
+        dataJson = ProyectoSerializer(proyecto_queryset, many = True).data
+
+        for i in dataJson:
+            i["videos"] =VideoProyectoSerializer(VideoProyecto.objects.filter(proyecto = i["id"]), many = True).data
+            i["imagenes"] = ImagenProyectoSerializer(ImagenProyecto.objects.filter(proyecto = i["id"]), many = True).data
+
+        return Response(dataJson)
+
 
 
 @permission_classes([IsAuthenticated])
@@ -47,7 +62,8 @@ class ProyectoDetail(generics.RetrieveUpdateDestroyAPIView):
         userCreador_data = get_or_none(User, id=proyecto_data["usuarioCreador"])
         userActualizador_data = get_or_none(User, id=proyecto_data["usuarioActualizador"])
         
-
+        proyecto_data["videos"] =VideoProyectoSerializer(VideoProyecto.objects.filter(proyecto = pk), many = True).data
+        proyecto_data["imagenes"] = ImagenProyectoSerializer(ImagenProyecto.objects.filter(proyecto = pk), many = True).data
         try : 
             campania_queryset = Campania.objects.filter(proyecto = proyecto.pk)
             campania_id_list = [int(campania.pk) for campania in campania_queryset]

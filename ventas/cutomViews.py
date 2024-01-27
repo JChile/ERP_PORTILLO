@@ -503,3 +503,27 @@ class AsignacionMasivaAsesorLeadById(APIView):
 
         print(arrAsesor)
         return Response({"Leads no asignados": error})
+
+class DesAsignacionMasivaLeadsById(APIView):
+    def post(self, request):
+        request_data = request.data
+        arrLead = request_data["lead"]
+
+        user_queryset = User.objects.all()
+        lead_queryset = Lead.objects.all()
+
+        error = []
+        for i in arrLead:
+            try:
+                lead = lead_queryset.get(id=i)
+                user = user_queryset.get(id=lead.asesor.pk)
+                lead.asesor = None
+                lead.asignado = False
+                lead.fecha_actualizacion = datetime.datetime.now()
+                lead.save()
+                DesasignacionLeadAsesor.objects.create(lead=lead, usuario=user)
+            except:
+                error.append(i)
+                pass
+
+        return Response({"Leads no desasignados": error})

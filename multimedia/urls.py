@@ -14,3 +14,5 @@ urlpatterns = [
     re_path(r'^imagenProyecto/$', views.ImagenProyectoList.as_view()),
     re_path(r'^imagenProyecto/(?P<pk>[0-9]+)$', views.ImagenProyectoDetail.as_view()),
 ]
+
+

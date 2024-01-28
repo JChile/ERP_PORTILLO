@@ -15,6 +15,7 @@ export const CreateProyecto = () => {
     descripcion: "",
     estado: "A",
   });
+  const [imageList, setImageList] = useState([]); 
 
   const { nombre, ubicacion, descripcion, estado } = project;
 
@@ -75,6 +76,7 @@ export const CreateProyecto = () => {
           usuarioActualizador: currentUser["user_id"],
         };
         const result = await createProyecto(formatData, authTokens["access"]);
+        console.log(imageList);
         setVisibleProgress(false);
         onNavigateBack();
       } catch (error) {
@@ -90,48 +92,48 @@ export const CreateProyecto = () => {
   };
 
   const handleFileSelect = (event) => {
-    const previewContainer = document.getElementById('preview-container');
+    const previewContainer = document.getElementById("preview-containerImage");
     const files = event.target.files;
-  
+
     for (const file of files) {
       const reader = new FileReader();
-  
+
       reader.onload = function (e) {
-        const previewImage = document.createElement('div');
-        previewImage.className = 'relative w-16 h-16 border border-gray-300 rounded overflow-hidden';
-  
-        if (file.type.includes('image')) {
-          const img = document.createElement('img');
+        const previewImage = document.createElement("div");
+        previewImage.className =
+          "relative w-16 h-16 border border-gray-300 rounded overflow-hidden";
+
+        if (file.type.includes("image")) {
+          const img = document.createElement("img");
           img.src = e.target.result;
-          img.className = 'w-full h-full object-cover';
+          img.className = "w-full h-full object-cover";
           previewImage.appendChild(img);
-        } else if (file.type.includes('video')) {
+          
+          // Agregar la imagen a la lista
+          setImageList(prevList => [...prevList, file]);
+        } else if (file.type.includes("video")) {
           // Puedes agregar lógica para videos si lo necesitas
         }
-  
-        const closeIcon = document.createElement('div');
-        closeIcon.className = 'absolute top-0 right-0 cursor-pointer p-1 bg-red-500 text-white';
-        closeIcon.innerHTML = 'x';
-        closeIcon.addEventListener('click', () => {
+
+        const closeIcon = document.createElement("div");
+        closeIcon.className =
+          "absolute top-0 right-0 cursor-pointer p-1 bg-red-500 text-white";
+        closeIcon.innerHTML = "x";
+        closeIcon.addEventListener("click", () => {
           // Eliminar la previsualización al hacer clic en la "X"
           previewContainer.removeChild(previewImage);
-  
-          // Limpiar el input de tipo archivo correspondiente al archivo eliminado
-          const fileInput = document.getElementById('fileImage');
-          fileInput.value = '';
-          const newFiles = Array.from(fileInput.files).filter((f) => f !== file);
-          fileInput.files = new FileList({ length: newFiles.length, item: (index) => newFiles[index] });
-          
+
+          // Eliminar la imagen de la lista
+          setImageList(prevList => prevList.filter(img => img !== file));
         });
-  
+
         previewImage.appendChild(closeIcon);
         previewContainer.appendChild(previewImage);
       };
-  
+
       reader.readAsDataURL(file);
     }
   };
-  
 
   return (
     <>
@@ -196,36 +198,51 @@ export const CreateProyecto = () => {
               />
             </label>
           </div>
-          <div className="w-6/12 flex flex-col gap-y-6">
-            <label htmlFor="file" className="flex flex-col gap-y-1">
-              <span className="after:content-['*'] after:ml-0.5 after:text-yellow-500 block text-sm font-medium">
-                Imágenes
-              </span>
-              <input
-                type="file"
-                name="file"
-                id="fileImage"
-                accept="image/*"
-                className="mt-1 px-3 py-2 bg-white border shadow-sm border-slate-300 placeholder-slate-400 focus:outline-none focus:border-sky-500 focus:ring-sky-500 block w-full rounded-md sm:text-sm focus:ring-1"
-                onChange={handleFileSelect}
-              />
-            </label>
-          </div>
-          <div className="flex gap-10 mt-4" id="preview-container"></div>
-          <div className="w-6/12 flex flex-col gap-y-6">
-            <label htmlFor="file" className="flex flex-col gap-y-1">
-              <span className="after:content-['*'] after:ml-0.5 after:text-yellow-500 block text-sm font-medium">
-                Video
-              </span>
-              <input
-                type="file"
-                name="file"
-                id="fileVideo"
-                accept="video/*"
-                className="mt-1 px-3 py-2 bg-white border shadow-sm border-slate-300 placeholder-slate-400 focus:outline-none focus:border-sky-500 focus:ring-sky-500 block w-full rounded-md sm:text-sm focus:ring-1"
-                onChange={handledForm}
-              />
-            </label>
+          <div className="flex flex-row gap-y-6 gap-x-8">
+            <div className="w-6/12 flex flex-col gap-y-5">
+              <div className="w-6/12 flex flex-col gap-y-6">
+                <label htmlFor="file" className="flex flex-col gap-y-1">
+                  <span className="after:content-['*'] after:ml-0.5 after:text-yellow-500 block text-sm font-medium">
+                    Imágenes
+                  </span>
+                  <input
+                    type="file"
+                    name="file"
+                    id="fileImage"
+                    accept="image/*"
+                    multiple
+                    className="mt-1 px-3 py-2 bg-white border shadow-sm border-slate-300 placeholder-slate-400 focus:outline-none focus:border-sky-500 focus:ring-sky-500 block w-full rounded-md sm:text-sm focus:ring-1"
+                    onChange={handleFileSelect}
+                  />
+                </label>
+              </div>
+              <div
+                className="flex gap-10 mt-4"
+                id="preview-containerImage"
+              ></div>
+            </div>
+
+            <div className="w-6/12 flex flex-col gap-y-5">
+              <div className="w-6/12 flex flex-col gap-y-6">
+                <label htmlFor="file" className="flex flex-col gap-y-1">
+                  <span className="after:content-['*'] after:ml-0.5 after:text-yellow-500 block text-sm font-medium">
+                    Video
+                  </span>
+                  <input
+                    type="file"
+                    name="file"
+                    id="fileVideo"
+                    accept="video/*"
+                    className="mt-1 px-3 py-2 bg-white border shadow-sm border-slate-300 placeholder-slate-400 focus:outline-none focus:border-sky-500 focus:ring-sky-500 block w-full rounded-md sm:text-sm focus:ring-1"
+                    onChange={handledForm}
+                  />
+                </label>
+              </div>
+              <div
+                className="flex gap-10 mt-4"
+                id="preview-containerVideo"
+              ></div>
+            </div>
           </div>
         </form>
       </div>

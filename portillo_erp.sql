@@ -2,8 +2,8 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 15.4
--- Dumped by pg_dump version 15.4
+-- Dumped from database version 14.10 (Ubuntu 14.10-0ubuntu0.22.04.1)
+-- Dumped by pg_dump version 14.10 (Ubuntu 14.10-0ubuntu0.22.04.1)
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -47,21 +47,31 @@ COPY public.django_content_type (id, app_label, model) FROM stdin;
 12	ventas	cotizacion
 13	ventas	estadolead
 14	ventas	lead
-15	ventas	whatsapp
-16	ventas	tipoproducto
-17	ventas	tipoevento
-18	ventas	tipocuota
-19	ventas	tipocotizacion
-20	ventas	proyectotipoproducto
-21	ventas	producto
-22	ventas	precio
-23	ventas	objecion
+15	ventas	objecion
+16	ventas	whatsapp
+17	ventas	tipoproducto
+18	ventas	tipoevento
+19	ventas	tipocuota
+20	ventas	tipocotizacion
+21	ventas	proyectotipoproducto
+22	ventas	producto
+23	ventas	precio
 24	ventas	llamada
 25	ventas	historicoleadasesor
 26	ventas	evento
 27	ventas	cuota
 28	token_blacklist	blacklistedtoken
 29	token_blacklist	outstandingtoken
+31	ventas	estadoevento
+32	ventas	desasignacionleadasesor
+33	ventas	videoproyecto
+34	ventas	imagenproducto
+35	ventas	videoproducto
+36	ventas	imagenproyecto
+37	multimedia	videoproducto
+38	multimedia	imagenproducto
+39	multimedia	videoproyecto
+40	multimedia	imagenproyecto
 \.
 
 
@@ -126,42 +136,42 @@ COPY public.auth_permission (id, name, content_type_id, codename) FROM stdin;
 54	Can change lead	14	change_lead
 55	Can delete lead	14	delete_lead
 56	Can view lead	14	view_lead
-57	Can add whats app	15	add_whatsapp
-58	Can change whats app	15	change_whatsapp
-59	Can delete whats app	15	delete_whatsapp
-60	Can view whats app	15	view_whatsapp
-61	Can add tipo producto	16	add_tipoproducto
-62	Can change tipo producto	16	change_tipoproducto
-63	Can delete tipo producto	16	delete_tipoproducto
-64	Can view tipo producto	16	view_tipoproducto
-65	Can add tipo evento	17	add_tipoevento
-66	Can change tipo evento	17	change_tipoevento
-67	Can delete tipo evento	17	delete_tipoevento
-68	Can view tipo evento	17	view_tipoevento
-69	Can add tipo cuota	18	add_tipocuota
-70	Can change tipo cuota	18	change_tipocuota
-71	Can delete tipo cuota	18	delete_tipocuota
-72	Can view tipo cuota	18	view_tipocuota
-73	Can add tipo cotizacion	19	add_tipocotizacion
-74	Can change tipo cotizacion	19	change_tipocotizacion
-75	Can delete tipo cotizacion	19	delete_tipocotizacion
-76	Can view tipo cotizacion	19	view_tipocotizacion
-77	Can add proyecto tipo producto	20	add_proyectotipoproducto
-78	Can change proyecto tipo producto	20	change_proyectotipoproducto
-79	Can delete proyecto tipo producto	20	delete_proyectotipoproducto
-80	Can view proyecto tipo producto	20	view_proyectotipoproducto
-81	Can add producto	21	add_producto
-82	Can change producto	21	change_producto
-83	Can delete producto	21	delete_producto
-84	Can view producto	21	view_producto
-85	Can add precio	22	add_precio
-86	Can change precio	22	change_precio
-87	Can delete precio	22	delete_precio
-88	Can view precio	22	view_precio
-89	Can add objecion	23	add_objecion
-90	Can change objecion	23	change_objecion
-91	Can delete objecion	23	delete_objecion
-92	Can view objecion	23	view_objecion
+57	Can add objecion	15	add_objecion
+58	Can change objecion	15	change_objecion
+59	Can delete objecion	15	delete_objecion
+60	Can view objecion	15	view_objecion
+61	Can add whats app	16	add_whatsapp
+62	Can change whats app	16	change_whatsapp
+63	Can delete whats app	16	delete_whatsapp
+64	Can view whats app	16	view_whatsapp
+65	Can add tipo producto	17	add_tipoproducto
+66	Can change tipo producto	17	change_tipoproducto
+67	Can delete tipo producto	17	delete_tipoproducto
+68	Can view tipo producto	17	view_tipoproducto
+69	Can add tipo evento	18	add_tipoevento
+70	Can change tipo evento	18	change_tipoevento
+71	Can delete tipo evento	18	delete_tipoevento
+72	Can view tipo evento	18	view_tipoevento
+73	Can add tipo cuota	19	add_tipocuota
+74	Can change tipo cuota	19	change_tipocuota
+75	Can delete tipo cuota	19	delete_tipocuota
+76	Can view tipo cuota	19	view_tipocuota
+77	Can add tipo cotizacion	20	add_tipocotizacion
+78	Can change tipo cotizacion	20	change_tipocotizacion
+79	Can delete tipo cotizacion	20	delete_tipocotizacion
+80	Can view tipo cotizacion	20	view_tipocotizacion
+81	Can add proyecto tipo producto	21	add_proyectotipoproducto
+82	Can change proyecto tipo producto	21	change_proyectotipoproducto
+83	Can delete proyecto tipo producto	21	delete_proyectotipoproducto
+84	Can view proyecto tipo producto	21	view_proyectotipoproducto
+85	Can add producto	22	add_producto
+86	Can change producto	22	change_producto
+87	Can delete producto	22	delete_producto
+88	Can view producto	22	view_producto
+89	Can add precio	23	add_precio
+90	Can change precio	23	change_precio
+91	Can delete precio	23	delete_precio
+92	Can view precio	23	view_precio
 93	Can add llamada	24	add_llamada
 94	Can change llamada	24	change_llamada
 95	Can delete llamada	24	delete_llamada
@@ -186,6 +196,46 @@ COPY public.auth_permission (id, name, content_type_id, codename) FROM stdin;
 114	Can change outstanding token	29	change_outstandingtoken
 115	Can delete outstanding token	29	delete_outstandingtoken
 116	Can view outstanding token	29	view_outstandingtoken
+121	Can add estado evento	31	add_estadoevento
+122	Can change estado evento	31	change_estadoevento
+123	Can delete estado evento	31	delete_estadoevento
+124	Can view estado evento	31	view_estadoevento
+125	Can add desasignacion lead asesor	32	add_desasignacionleadasesor
+126	Can change desasignacion lead asesor	32	change_desasignacionleadasesor
+127	Can delete desasignacion lead asesor	32	delete_desasignacionleadasesor
+128	Can view desasignacion lead asesor	32	view_desasignacionleadasesor
+129	Can add video proyecto	33	add_videoproyecto
+130	Can change video proyecto	33	change_videoproyecto
+131	Can delete video proyecto	33	delete_videoproyecto
+132	Can view video proyecto	33	view_videoproyecto
+133	Can add imagen producto	34	add_imagenproducto
+134	Can change imagen producto	34	change_imagenproducto
+135	Can delete imagen producto	34	delete_imagenproducto
+136	Can view imagen producto	34	view_imagenproducto
+137	Can add video producto	35	add_videoproducto
+138	Can change video producto	35	change_videoproducto
+139	Can delete video producto	35	delete_videoproducto
+140	Can view video producto	35	view_videoproducto
+141	Can add imagen proyecto	36	add_imagenproyecto
+142	Can change imagen proyecto	36	change_imagenproyecto
+143	Can delete imagen proyecto	36	delete_imagenproyecto
+144	Can view imagen proyecto	36	view_imagenproyecto
+145	Can add video producto	37	add_videoproducto
+146	Can change video producto	37	change_videoproducto
+147	Can delete video producto	37	delete_videoproducto
+148	Can view video producto	37	view_videoproducto
+149	Can add imagen producto	38	add_imagenproducto
+150	Can change imagen producto	38	change_imagenproducto
+151	Can delete imagen producto	38	delete_imagenproducto
+152	Can view imagen producto	38	view_imagenproducto
+153	Can add video proyecto	39	add_videoproyecto
+154	Can change video proyecto	39	change_videoproyecto
+155	Can delete video proyecto	39	delete_videoproyecto
+156	Can view video proyecto	39	view_videoproyecto
+157	Can add imagen proyecto	40	add_imagenproyecto
+158	Can change imagen proyecto	40	change_imagenproyecto
+159	Can delete imagen proyecto	40	delete_imagenproyecto
+160	Can view imagen proyecto	40	view_imagenproyecto
 \.
 
 
@@ -273,12 +323,13 @@ COPY public.cuenta_modulo (id, nombre, url, "contentType_id", estado_id) FROM st
 
 COPY public.cuenta_user (id, password, last_login, is_superuser, username, first_name, last_name, email, is_staff, is_active, date_joined, "codigoAsesor", "isAdmin", estado_id) FROM stdin;
 4	pbkdf2_sha256$600000$YMRUCRdJBJEVYauyw9WQAE$g68ooYvf5/vuJpdaTzIMpqE0NDXFEFc0fm0sFGygj8Y=	\N	f	ingcocoliso	Cocoliso Javier	Luna Mendoza	ingecocoliso@gmail.com	f	f	2024-01-08 03:15:13.775409-05	\N	t	A
-2	pbkdf2_sha256$600000$Ntgg4ISllhxBbS1dKBkaxF$NDEQuIj95L9YZlaRkumq6mh4nhjUnNnndDsjMahaQj8=	\N	t	qwerty	Brian	Gomez Velasco	bgomezvel@unsa.edu.pe	t	f	2023-12-29 14:19:38-05	\N	t	A
 8	pbkdf2_sha256$600000$rVJXkccBURbesrplFCaMFw$ZORjOdYQaYmONboyDbUyFy1v0taXh6ECjNp3j5crk3M=	\N	f	Testing123	Testing	Testingtest	test@gmail.com	f	f	2024-01-14 12:37:53.098732-05	asesor_c	t	A
 3	pbkdf2_sha256$600000$klVf2T6ADjhRpycBvEt8mp$AqHTHE0zXd/LS2/HgIt5bp7hsUGFWm0qJuRp7xPbz9A=	\N	f	jesus	Jesus	begazo	jbegazoti@unsa.edu.pe	t	t	2024-01-05 14:56:34.558953-05	\N	f	\N
 5	pbkdf2_sha256$600000$eFY64burZuoRW4a8iFyxbz$2haFq4kNsK3VmT8ejkH9IJY0d5oWM8A0xrA6QQ5VoJg=	\N	f	Frego	Fredy	Gonzales	frego@unsa.edu.pe	f	t	2024-01-10 01:51:38.863717-05	\N	t	A
-1	pbkdf2_sha256$600000$BMJ8LF8DGDtK75g1jlAJbH$pvS/k25Y+f0BUQQBOycCYkIImuQJm/vZkxb3UI3Qpzg=	2024-01-06 07:58:12.430782-05	t	andrew	Andrew	Jacobo Castillo	ajacoboc@unsa.edu.pe	t	t	2023-12-29 14:19:22-05	\N	t	A
 6	pbkdf2_sha256$600000$2HH7y5sjG3wcF33dPaS8nd$pU+VxzzAO0L6TzU/3uoduphmvMbpHI5dOZ9LcoBtOyA=	\N	f	diegoportillo	Diego Moises	Chuctaya Ruiz	diego@unsa.edu.pe	f	t	2024-01-10 01:52:32.216899-05	\N	t	A
+1	pbkdf2_sha256$600000$BMJ8LF8DGDtK75g1jlAJbH$pvS/k25Y+f0BUQQBOycCYkIImuQJm/vZkxb3UI3Qpzg=	2024-01-24 23:18:00.789623-05	t	andrew	Andrew	Jacobo Castillo	ajacoboc@unsa.edu.pe	t	t	2023-12-29 14:19:22-05	\N	t	A
+2	pbkdf2_sha256$600000$Ntgg4ISllhxBbS1dKBkaxF$NDEQuIj95L9YZlaRkumq6mh4nhjUnNnndDsjMahaQj8=	2024-01-24 23:20:23.360813-05	t	qwerty	Brian	Gomez Velasco	bgomezvel@unsa.edu.pe	t	t	2023-12-29 14:19:38-05	\N	t	A
+9	pbkdf2_sha256$600000$W644Q9TiajsQx9aYK2zlXA$r5oxIWJrZH7ihley5Z8NJhlompoLqwHGzinCxpc5n/8=	\N	f	julian				f	t	2024-01-25 13:57:28.296243-05	\N	f	A
 \.
 
 
@@ -416,6 +467,34 @@ COPY public.django_admin_log (id, action_time, object_id, object_repr, action_fl
 104	2024-01-14 12:44:37.082539-05	2	qwerty	2	[{"changed": {"fields": ["CodigoAsesor"]}}]	8	1
 105	2024-01-14 12:47:14.259695-05	2	qwerty	2	[{"changed": {"fields": ["CodigoAsesor"]}}]	8	1
 106	2024-01-14 12:50:30.758331-05	2	qwerty	2	[{"changed": {"fields": ["CodigoAsesor"]}}]	8	1
+107	2024-01-24 21:38:33.445805-05	2	qwerty	2	[{"changed": {"fields": ["Active"]}}]	8	1
+108	2024-01-24 21:39:23.809748-05	1	Llamada object (1)	1	[{"added": {}}]	24	2
+109	2024-01-24 21:39:47.187168-05	2	Llamada object (2)	1	[{"added": {}}]	24	2
+110	2024-01-24 21:40:16.995839-05	1	WhatsApp object (1)	1	[{"added": {}}]	16	2
+111	2024-01-24 21:40:36.423214-05	2	WhatsApp object (2)	1	[{"added": {}}]	16	2
+112	2024-01-24 21:50:19.618964-05	2	Llamada object (2)	2	[{"changed": {"fields": ["Objeciones"]}}]	24	2
+113	2024-01-24 21:51:42.900189-05	1	Llamada object (1)	2	[{"changed": {"fields": ["Objeciones"]}}]	24	2
+114	2024-01-24 21:51:47.591075-05	2	Llamada object (2)	2	[{"changed": {"fields": ["Objeciones"]}}]	24	2
+115	2024-01-24 22:42:26.512066-05	En curso	En curso	1	[{"added": {}}]	31	2
+116	2024-01-24 22:42:28.552784-05	1	Firma del contrato de socabaya	2	[{"changed": {"fields": ["EstadoEvento"]}}]	26	2
+117	2024-01-24 22:42:50.973258-05	1	Firma del contrato de socabaya	2	[{"changed": {"fields": ["Fecha visita"]}}]	26	2
+118	2024-01-25 15:21:13.488269-05	1	BRIAN-935488033	2	[{"changed": {"fields": ["Asesor"]}}]	14	2
+119	2024-01-25 15:22:02.733778-05	1	BRIAN-935488033	2	[{"changed": {"fields": ["Asesor", "UsuarioCreador"]}}]	14	2
+120	2024-01-25 15:22:25.67813-05	1	BRIAN-935488033	2	[{"changed": {"fields": ["Asesor"]}}]	14	2
+121	2024-01-25 15:22:32.05608-05	1	BRIAN-935488033	2	[]	14	2
+122	2024-01-25 15:23:35.506403-05	9	Jesus-958742315	2	[{"changed": {"fields": ["Asesor"]}}]	14	2
+123	2024-01-25 15:23:45.105752-05	10	-934789123	2	[{"changed": {"fields": ["Asesor"]}}]	14	2
+124	2024-01-25 15:24:02.379487-05	3	Jesus-958742315	2	[{"changed": {"fields": ["Asesor"]}}]	14	2
+125	2024-01-26 18:50:36.62953-05	1	ImagenProyecto object (1)	1	[{"added": {}}]	40	2
+126	2024-01-26 18:58:37.053816-05	1	ImagenProducto object (1)	1	[{"added": {}}]	38	2
+127	2024-01-26 18:58:45.850536-05	2	ImagenProducto object (2)	1	[{"added": {}}]	38	2
+128	2024-01-26 18:58:52.884382-05	2	ImagenProducto object (2)	2	[]	38	2
+129	2024-01-26 18:58:56.476696-05	1	ImagenProducto object (1)	2	[]	38	2
+130	2024-01-26 19:05:46.591833-05	2	ImagenProducto object (2)	2	[{"changed": {"fields": ["Imagen"]}}]	38	2
+131	2024-01-26 19:05:56.150982-05	1	ImagenProducto object (1)	2	[{"changed": {"fields": ["Imagen"]}}]	38	2
+132	2024-01-26 19:07:41.283994-05	1	ImagenProyecto object (1)	2	[{"changed": {"fields": ["Imagen"]}}]	40	2
+133	2024-01-26 19:07:49.321214-05	1	ImagenProyecto object (1)	2	[{"changed": {"fields": ["Imagen"]}}]	40	2
+134	2024-01-26 19:24:58.468695-05	1	ImagenProducto object (1)	2	[{"changed": {"fields": ["Imagen"]}}]	38	2
 \.
 
 
@@ -424,38 +503,53 @@ COPY public.django_admin_log (id, action_time, object_id, object_repr, action_fl
 --
 
 COPY public.django_migrations (id, app, name, applied) FROM stdin;
-1	contenttypes	0001_initial	2024-01-06 07:50:27.563469-05
-2	contenttypes	0002_remove_content_type_name	2024-01-06 07:50:27.577437-05
-3	auth	0001_initial	2024-01-06 07:50:27.641077-05
-4	auth	0002_alter_permission_name_max_length	2024-01-06 07:50:27.641757-05
-5	auth	0003_alter_user_email_max_length	2024-01-06 07:50:27.641757-05
-6	auth	0004_alter_user_username_opts	2024-01-06 07:50:27.657709-05
-7	auth	0005_alter_user_last_login_null	2024-01-06 07:50:27.664575-05
-8	auth	0006_require_contenttypes_0002	2024-01-06 07:50:27.664575-05
-9	auth	0007_alter_validators_add_error_messages	2024-01-06 07:50:27.672712-05
-10	auth	0008_alter_user_username_max_length	2024-01-06 07:50:27.680375-05
-11	auth	0009_alter_user_last_name_max_length	2024-01-06 07:50:27.682761-05
-12	auth	0010_alter_group_name_max_length	2024-01-06 07:50:27.69795-05
-13	auth	0011_update_proxy_permissions	2024-01-06 07:50:27.70587-05
-14	auth	0012_alter_user_first_name_max_length	2024-01-06 07:50:27.712048-05
-15	cuenta	0001_initial	2024-01-06 07:50:27.816605-05
-16	admin	0001_initial	2024-01-06 07:50:27.84667-05
-17	admin	0002_logentry_remove_auto_add	2024-01-06 07:50:27.855468-05
-18	admin	0003_logentry_add_action_flag_choices	2024-01-06 07:50:27.862513-05
-19	marketing	0001_initial	2024-01-06 07:50:27.968462-05
-20	sessions	0001_initial	2024-01-06 07:50:27.984694-05
-21	token_blacklist	0001_initial	2024-01-06 07:50:28.029473-05
-22	token_blacklist	0002_outstandingtoken_jti_hex	2024-01-06 07:50:28.041113-05
-23	token_blacklist	0003_auto_20171017_2007	2024-01-06 07:50:28.057325-05
-24	token_blacklist	0004_auto_20171017_2013	2024-01-06 07:50:28.075927-05
-25	token_blacklist	0005_remove_outstandingtoken_jti	2024-01-06 07:50:28.089611-05
-26	token_blacklist	0006_auto_20171017_2113	2024-01-06 07:50:28.103091-05
-27	token_blacklist	0007_auto_20171017_2214	2024-01-06 07:50:28.138577-05
-28	token_blacklist	0008_migrate_to_bigautofield	2024-01-06 07:50:28.19906-05
-29	token_blacklist	0010_fix_migrate_to_bigautofield	2024-01-06 07:50:28.221896-05
-30	token_blacklist	0011_linearizes_history	2024-01-06 07:50:28.22494-05
-31	token_blacklist	0012_alter_outstandingtoken_user	2024-01-06 07:50:28.232009-05
-32	ventas	0001_initial	2024-01-06 07:50:28.81983-05
+1	contenttypes	0001_initial	2024-01-24 18:17:25.5109-05
+2	contenttypes	0002_remove_content_type_name	2024-01-24 18:17:25.544191-05
+3	auth	0001_initial	2024-01-24 18:17:25.643079-05
+4	auth	0002_alter_permission_name_max_length	2024-01-24 18:17:25.654904-05
+5	auth	0003_alter_user_email_max_length	2024-01-24 18:17:25.679439-05
+6	auth	0004_alter_user_username_opts	2024-01-24 18:17:25.703297-05
+7	auth	0005_alter_user_last_login_null	2024-01-24 18:17:25.715318-05
+8	auth	0006_require_contenttypes_0002	2024-01-24 18:17:25.719815-05
+9	auth	0007_alter_validators_add_error_messages	2024-01-24 18:17:25.732903-05
+10	auth	0008_alter_user_username_max_length	2024-01-24 18:17:25.764184-05
+11	auth	0009_alter_user_last_name_max_length	2024-01-24 18:17:25.796693-05
+12	auth	0010_alter_group_name_max_length	2024-01-24 18:17:25.822708-05
+13	auth	0011_update_proxy_permissions	2024-01-24 18:17:25.860756-05
+14	auth	0012_alter_user_first_name_max_length	2024-01-24 18:17:25.8819-05
+15	cuenta	0001_initial	2024-01-24 18:17:26.048518-05
+16	admin	0001_initial	2024-01-24 18:17:26.127487-05
+17	admin	0002_logentry_remove_auto_add	2024-01-24 18:17:26.165133-05
+18	admin	0003_logentry_add_action_flag_choices	2024-01-24 18:17:26.195542-05
+19	marketing	0001_initial	2024-01-24 18:17:26.370292-05
+20	sessions	0001_initial	2024-01-24 18:17:26.392324-05
+21	token_blacklist	0001_initial	2024-01-24 18:17:26.467476-05
+22	token_blacklist	0002_outstandingtoken_jti_hex	2024-01-24 18:17:26.492255-05
+23	token_blacklist	0003_auto_20171017_2007	2024-01-24 18:17:26.528706-05
+24	token_blacklist	0004_auto_20171017_2013	2024-01-24 18:17:26.568364-05
+25	token_blacklist	0005_remove_outstandingtoken_jti	2024-01-24 18:17:26.611666-05
+26	token_blacklist	0006_auto_20171017_2113	2024-01-24 18:17:26.643904-05
+27	token_blacklist	0007_auto_20171017_2214	2024-01-24 18:17:26.723711-05
+28	token_blacklist	0008_migrate_to_bigautofield	2024-01-24 18:17:26.831942-05
+29	token_blacklist	0010_fix_migrate_to_bigautofield	2024-01-24 18:17:26.873826-05
+30	token_blacklist	0011_linearizes_history	2024-01-24 18:17:26.876882-05
+31	token_blacklist	0012_alter_outstandingtoken_user	2024-01-24 18:17:26.976377-05
+32	ventas	0001_initial	2024-01-24 18:17:27.916617-05
+41	ventas	0002_estadoevento_evento_estadoevento	2024-01-24 18:18:51.895231-05
+42	ventas	0003_remove_evento_proyecto_remove_evento_ubicacion	2024-01-24 18:19:16.526529-05
+43	ventas	0004_rename_objeciones_llamada_objecion_and_more	2024-01-24 21:54:44.083442-05
+44	ventas	0005_rename_descripcion_evento_observacion	2024-01-24 22:20:46.171445-05
+45	ventas	0006_evento_separado	2024-01-24 22:26:07.218902-05
+46	ventas	0007_alter_estadoevento_nombre	2024-01-24 22:42:05.253018-05
+47	ventas	0008_desasignacionleadasesor	2024-01-24 22:49:22.126577-05
+48	ventas	0009_videoproyecto_videoproducto_imagenproyecto_and_more	2024-01-25 19:23:33.563318-05
+49	ventas	0010_delete_imagenproducto	2024-01-25 19:25:45.037065-05
+50	ventas	0011_remove_videoproducto_producto_and_more	2024-01-25 19:25:45.129612-05
+51	multimedia	0001_initial	2024-01-25 19:34:55.424175-05
+52	multimedia	0002_alter_imagenproducto_imagen_and_more	2024-01-26 19:04:59.290762-05
+53	multimedia	0003_alter_imagenproducto_imagen_and_more	2024-01-26 19:23:42.769245-05
+54	ventas	0002_lead_fecha_asginado	2024-01-27 18:14:08.044371-05
+55	ventas	0003_remove_lead_fecha_asginado	2024-01-27 18:39:47.215579-05
 \.
 
 
@@ -466,6 +560,7 @@ COPY public.django_migrations (id, app, name, applied) FROM stdin;
 COPY public.django_session (session_key, session_data, expire_date) FROM stdin;
 venlcd4mrtw4xx6bfmwqshwjmwbnt8w4	.eJxVjDsOwjAQBe_iGln-JV5T0nOGaL27IQFkS3FSIe4OkVJA-2bmvdSA2zoNW5NlmFmdlVWn3y0jPaTsgO9YblVTLesyZ70r-qBNXyvL83K4fwcTtulbZ0tiEjFEL9GnPmGMPdDIjjN00UGGFIC8dzaK4wA9BkMmWOjGUQyr9wfdYjeP:1rLoO3:LBbHkRdwwW8Ru7nIa6hjsYCFCG-piMilSJ5ewqEQIYA	2024-01-19 12:53:39.63397-05
 ic83asz0faoq6oa9p1lv9xlbltm9mrrw	.eJxVjDsOwjAQBe_iGln-JV5T0nOGaL27IQFkS3FSIe4OkVJA-2bmvdSA2zoNW5NlmFmdlVWn3y0jPaTsgO9YblVTLesyZ70r-qBNXyvL83K4fwcTtulbZ0tiEjFEL9GnPmGMPdDIjjN00UGGFIC8dzaK4wA9BkMmWOjGUQyr9wfdYjeP:1rM6Fg:0Luj5J_Q2_qDZciCr9ENxgAC6SMZ0d5HD3HvTIufz_M	2024-01-20 07:58:12.43285-05
+a10ed6r80f03b511burqx3bxkyyp3irh	.eJxVjDsOwjAQBe_iGlnxP6ak5wzWZneNA8iW4qRC3B0ipYD2zcx7iQTbWtLWeUkzibPQ4vS7TYAPrjugO9Rbk9jqusyT3BV50C6vjfh5Ody_gwK9fOuoRg5ORySyYHVgT07lTMpkcsgUCA2GaCDoPGD2HDWOExkbwQcasnh_AP9sONw:1rSrDz:iPyd-GBIBkofC0ZzzHoHPIBL5UHGjfr7mY5026ouaxs	2024-02-07 23:20:23.363206-05
 \.
 
 
@@ -498,6 +593,59 @@ COPY public.marketing_campania (id, nombre, codigo, fecha_creacion, fecha_estima
 3	Socabaya fisico	fisico_socabaya	2023-12-29 18:27:33.332633-05	2023-12-29	2023-12-29	0	0		2023-12-29 18:27:32-05	2	A	1	2	2
 4	Campaña fisica Alamos	campañafisicaalamos_fisico_1_4	2024-01-10 03:51:57.485892-05	2024-01-10	2024-01-31	1401.45	1889.45	Campaña física para el proyecto Alamos	\N	2	A	2	\N	\N
 1	Socabaya Faceook	facebook_socabaya	2024-01-14 00:33:02.791326-05	2023-12-29	2023-12-29	67.45	90.5	Esta campaña esta enfocada en la recolección de lead para el proyecto Socabaya por medio de la red social Facebook	2024-01-14 00:33:02-05	1	A	1	3	1
+\.
+
+
+--
+-- Data for Name: ventas_tipoproducto; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.ventas_tipoproducto (id, nombre, estado_id) FROM stdin;
+1	Departamento	A
+\.
+
+
+--
+-- Data for Name: ventas_producto; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.ventas_producto (id, nombre, codigo, numero, area, fecha_creacion, fecha_actualizacion, estado_id, proyecto_id, tipo_id, "usuarioActualizador_id", "usuarioCreador_id") FROM stdin;
+1	Departamento socabaya	001	2	4	2024-01-03	2024-01-03 10:50:57-05	A	1	1	2	2
+\.
+
+
+--
+-- Data for Name: multimedia_imagenproducto; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.multimedia_imagenproducto (id, imagen, producto_id) FROM stdin;
+2	static/imagenes/468739_1.jpg	1
+1	media/imagenes/104119.png	1
+\.
+
+
+--
+-- Data for Name: multimedia_imagenproyecto; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.multimedia_imagenproyecto (id, imagen, proyecto_id) FROM stdin;
+1	static/imagenes/schtgJ.jpg	2
+\.
+
+
+--
+-- Data for Name: multimedia_videoproducto; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.multimedia_videoproducto (id, video, producto_id) FROM stdin;
+\.
+
+
+--
+-- Data for Name: multimedia_videoproyecto; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.multimedia_videoproyecto (id, video, proyecto_id) FROM stdin;
 \.
 
 
@@ -605,6 +753,13 @@ COPY public.token_blacklist_outstandingtoken (id, token, created_at, expires_at,
 97	eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTcwNDkyNTU3NSwiaWF0IjoxNzA0OTExMTc1LCJqdGkiOiJiODA5YjU3M2VhZTk0NGU2OGUxMjBlNDBmNTAwZmFmYSIsInVzZXJfaWQiOjN9.0TNtEHC7xOW2yVpLCTmXgglbFP-9gu-07pXPa0LlgGA	2024-01-10 13:26:15.812411-05	2024-01-10 17:26:15-05	3	b809b573eae944e68e120e40f500fafa
 98	eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTcwNTIyNDcyOSwiaWF0IjoxNzA1MjEwMzI5LCJqdGkiOiJjYmZiODZhM2VlNjc0M2UxOTI1MzMyODU0YTVjOTA1OSIsInVzZXJfaWQiOjN9.QfBKY2TNR-PgBdzKgOxa9aKadSpPjA_-ZlRv_6vf4R4	2024-01-14 00:32:09.27196-05	2024-01-14 04:32:09-05	3	cbfb86a3ee6743e1925332854a5c9059
 99	eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTcwNTI2MjYxOSwiaWF0IjoxNzA1MjQ4MjE5LCJqdGkiOiI1MDcyMzAwYzg4NWE0ZGJmOTA2MTUzMTM2NjhmMTI1NyIsInVzZXJfaWQiOjN9.ozHNoAj8zveFC2GCATcrhnIg0ZtBbsWuqTTXVsjZtHY	2024-01-14 11:03:39.383788-05	2024-01-14 15:03:39-05	3	5072300c885a4dbf90615313668f1257
+100	eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTcwNjE1Mjc5NCwiaWF0IjoxNzA2MTM4Mzk0LCJqdGkiOiIxMTAwNmEwZmZjMmM0MTlhODIyZmE5N2M1Zjc4NmI4OSIsInVzZXJfaWQiOjF9.zud0xwTqQlnLFgwKvlNKiNJECUtneAx1D6bDvKhKJgg	2024-01-24 18:19:54.960136-05	2024-01-24 22:19:54-05	1	11006a0ffc2c419a822fa97c5f786b89
+101	eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTcwNjE2NzMwNSwiaWF0IjoxNzA2MTUyOTA1LCJqdGkiOiIyNTZjYzgzNmIxOGM0M2E5OGM0MDhhZmFkOWU2ZWVkYyIsInVzZXJfaWQiOjJ9.g7IKMm-Tl05j_jxih2BIXque8nuGBIT2ynjki9GVIdA	2024-01-24 22:21:45.336569-05	2024-01-25 02:21:45-05	2	256cc836b18c43a98c408afad9e6eedc
+102	eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTcwNjE3MDc3NCwiaWF0IjoxNzA2MTU2Mzc0LCJqdGkiOiI4MzI4ZGJhYjA5ZGQ0NzA1YjlmODczOWZiYzYyMGEzYSIsInVzZXJfaWQiOjF9.XnRHYBzq2g5LlacMcZZNZDHh2-Kw8tmqCwRNUDsqPC8	2024-01-24 23:19:34.030639-05	2024-01-25 03:19:34-05	1	8328dbab09dd4705b9f8739fbc620a3a
+103	eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTcwNjIyMzMyMiwiaWF0IjoxNzA2MjA4OTIyLCJqdGkiOiJjMjllZmVhMTIxMTY0MDcxODg5NjUzZTEwY2JkOWM4ZiIsInVzZXJfaWQiOjJ9.YGTskh8EZz3_DylaL2SddGaHvKdpG5ix9OVNLRFDnQM	2024-01-25 13:55:22.29506-05	2024-01-25 17:55:22-05	2	c29efea121164071889653e10cbd9c8f
+104	eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTcwNjMwOTYyMiwiaWF0IjoxNzA2Mjk1MjIyLCJqdGkiOiJlYTA2NDhlYzQ4ZDY0MjMwYmJiNGEwZjZjOWRiYmQ2MCIsInVzZXJfaWQiOjJ9.y1tr6J6vlCeAEQ4uqb-Oh725j4Y4VY1BOUlK5L84EXM	2024-01-26 13:53:42.109068-05	2024-01-26 17:53:42-05	2	ea0648ec48d64230bbb4a0f6c9dbbd60
+105	eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTcwNjMyNzMzNCwiaWF0IjoxNzA2MzEyOTM0LCJqdGkiOiIyY2RmOTFlYzYyZDk0Mjk2OThhNWViMWY1YzFkZGYyMyIsInVzZXJfaWQiOjJ9.fisU6yv5Jzia-3s5_sIJ39JVa8Nju0VpVWFEZrfhR-U	2024-01-26 18:48:54.739983-05	2024-01-26 22:48:54-05	2	2cdf91ec62d9429698a5eb1f5c1ddf23
+106	eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTcwNjQxMDEwNywiaWF0IjoxNzA2Mzk1NzA3LCJqdGkiOiJmYjEzNWYyOGVmODk0MThjOWFkMTdkYjNkYjg5YzAyNCIsInVzZXJfaWQiOjJ9.Qhx3PlfEepO-_4Nnbu_RuCVkA0LwcTTJjM1SriV5rUM	2024-01-27 17:48:27.755864-05	2024-01-27 21:48:27-05	2	fb135f28ef89418c9ad17db3db89c024
 \.
 
 
@@ -688,16 +843,37 @@ COPY public.ventas_objecion (id, nombre, estado_id) FROM stdin;
 --
 
 COPY public.ventas_lead (id, nombre, apellido, asignado, celular, celular2, comentario, "horaRecepcion", llamar, "recienCreado", fecha_creacion, fecha_actualizacion, asesor_id, campania_id, estado_id, "estadoLead_id", objecion_id, "usuarioActualizador_id", "usuarioCreador_id") FROM stdin;
-1	BRIAN	VELASCO	t	935488033			2023-12-29 15:54:52-05	t	t	2023-12-29	\N	2	1	A	NR	1	1	1
-3	Jesus		f	958742315			2023-12-29 18:33:45.907257-05	t	t	2023-12-29	\N	\N	2	A	EP	1	1	1
-2	aaaa	aaaaaaa	f	999875468		Pidio un asesor personal	2023-10-04 00:00:00-05	t	t	2024-01-10	\N	\N	1	A	EP	1	1	1
-4			f	934789123			2023-12-29 18:33:45.920404-05	t	t	2024-01-10	\N	\N	3	A	EP	1	1	1
 5	aaaa	aaaaaaa	f	999875468		Pidio un asesor personal	2023-10-04 00:00:00-05	t	t	2024-01-10	\N	\N	1	A	EP	1	1	1
 7			f	934789123			2023-12-29 18:34:47.930827-05	t	t	2024-01-10	\N	\N	3	A	EP	1	1	1
-10			f	934789123			2023-12-29 18:35:30.289934-05	t	t	2024-01-10	\N	\N	3	A	EP	1	1	1
-8	Juan	Reynoso	f	987564231		Pidio un asesor personal	2023-10-04 00:00:00-05	t	t	2024-01-10	\N	\N	1	A	EP	1	1	1
-9	Jesus		f	958742315			2023-12-29 18:35:30.279107-05	t	t	2024-01-10	\N	\N	2	A	EP	1	1	1
-6	Jesus		f	958742315			2023-12-29 18:34:47.913955-05	t	t	2024-01-10	\N	\N	2	A	EP	1	1	1
+10			f	934789123			2023-12-29 18:35:30-05	t	t	2024-01-25	2024-01-25 15:28:16.36108-05	\N	3	A	EP	1	1	1
+4			t	934789123			2023-12-29 18:33:45.920404-05	t	t	2024-01-27	2024-01-27 18:00:04.028532-05	1	3	A	EP	1	1	1
+6	Jesus		t	958742315			2023-12-29 18:34:47.913955-05	t	t	2024-01-27	2024-01-27 18:00:04.033712-05	2	2	A	EP	1	1	1
+9	Jesus		t	958742315			2023-12-29 18:35:30-05	t	t	2024-01-27	2024-01-27 18:00:04.043648-05	1	2	A	EP	1	1	1
+8	Juan	Reynoso	t	987564231		Pidio un asesor personal	2023-10-04 00:00:00-05	t	t	2024-01-27	2024-01-27 18:00:04.048662-05	2	1	A	EP	1	1	1
+2	aaaa	aaaaaaa	t	999875468		Pidio un asesor personal	2023-10-04 00:00:00-05	t	t	2024-01-27	2024-01-27 18:00:04.06136-05	1	1	A	EP	1	1	1
+3	Jesus		t	958742315			2023-12-29 18:33:45-05	t	t	2024-01-27	2024-01-27 18:00:04.069779-05	2	2	A	EP	1	1	1
+1	BRIAN	VELASCO	t	935488033			2023-12-29 15:54:52-05	t	t	2024-01-27	2024-01-27 18:03:50.626188-05	1	1	A	NR	1	1	4
+\.
+
+
+--
+-- Data for Name: ventas_desasignacionleadasesor; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.ventas_desasignacionleadasesor (id, fecha, lead_id, usuario_id) FROM stdin;
+1	2024-01-24	1	2
+2	2024-01-25	1	3
+3	2024-01-25	9	4
+4	2024-01-25	10	8
+\.
+
+
+--
+-- Data for Name: ventas_estadoevento; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.ventas_estadoevento (nombre, descripcion, estado_id) FROM stdin;
+En curso	En curso	A
 \.
 
 
@@ -715,8 +891,8 @@ COPY public.ventas_tipoevento (id, nombre, estado_id) FROM stdin;
 -- Data for Name: ventas_evento; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public.ventas_evento (id, titulo, duracion, fecha_visita, ubicacion, descripcion, fecha_creacion, fecha_actualizacion, asesor_id, estado_id, lead_id, proyecto_id, tipo_id, "usuarioActualizador_id", "usuarioCreador_id") FROM stdin;
-1	Firma del contrato de socabaya	50	2023-12-29 22:12:30-05	socabaya		2024-01-05	2023-12-29 22:13:24-05	2	A	1	1	1	2	1
+COPY public.ventas_evento (id, titulo, duracion, fecha_visita, observacion, fecha_creacion, fecha_actualizacion, asesor_id, estado_id, lead_id, tipo_id, "usuarioActualizador_id", "usuarioCreador_id", "estadoEvento_id", separado) FROM stdin;
+1	Firma del contrato de socabaya	50	2023-12-30 22:12:30-05		2024-01-24	2023-12-29 22:13:24-05	2	A	1	1	2	1	En curso	f
 \.
 
 
@@ -725,6 +901,48 @@ COPY public.ventas_evento (id, titulo, duracion, fecha_visita, ubicacion, descri
 --
 
 COPY public.ventas_historicoleadasesor (id, fecha_creacion, lead_id, usuario_id) FROM stdin;
+1	2024-01-25	1	5
+2	2024-01-25	2	5
+3	2024-01-25	3	5
+4	2024-01-25	1	4
+5	2024-01-25	2	4
+6	2024-01-25	3	4
+7	2024-01-25	1	1
+8	2024-01-25	2	1
+9	2024-01-25	3	1
+10	2024-01-27	9	1
+11	2024-01-27	6	2
+12	2024-01-27	4	1
+13	2024-01-27	6	2
+14	2024-01-27	9	1
+15	2024-01-27	8	2
+16	2024-01-27	2	1
+17	2024-01-27	3	2
+18	2024-01-27	9	1
+19	2024-01-27	6	2
+20	2024-01-27	4	1
+21	2024-01-27	6	2
+22	2024-01-27	9	1
+23	2024-01-27	8	2
+24	2024-01-27	2	1
+25	2024-01-27	3	2
+26	2024-01-27	9	1
+27	2024-01-27	6	2
+28	2024-01-27	4	1
+29	2024-01-27	6	2
+30	2024-01-27	9	1
+31	2024-01-27	8	2
+32	2024-01-27	2	1
+33	2024-01-27	3	2
+34	2024-01-27	9	1
+35	2024-01-27	6	2
+36	2024-01-27	4	1
+37	2024-01-27	6	2
+38	2024-01-27	9	1
+39	2024-01-27	8	2
+40	2024-01-27	2	1
+41	2024-01-27	3	2
+42	2024-01-27	1	1
 \.
 
 
@@ -732,16 +950,9 @@ COPY public.ventas_historicoleadasesor (id, fecha_creacion, lead_id, usuario_id)
 -- Data for Name: ventas_llamada; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public.ventas_llamada (id, detalle, fecha_creacion, fecha_actualizacion, estado_id, lead_id, "usuarioActualizador_id", "usuarioCreador_id") FROM stdin;
-\.
-
-
---
--- Data for Name: ventas_tipoproducto; Type: TABLE DATA; Schema: public; Owner: postgres
---
-
-COPY public.ventas_tipoproducto (id, nombre, estado_id) FROM stdin;
-1	Departamento	A
+COPY public.ventas_llamada (id, detalle, contesto, fecha_creacion, fecha_actualizacion, estado_id, lead_id, objecion_id, "usuarioActualizador_id", "usuarioCreador_id") FROM stdin;
+1	Mucho texto	t	2024-01-24	2024-01-24 21:39:22-05	A	1	10	4	4
+2	Mas texto	f	2024-01-24	2024-01-24 21:39:45-05	A	1	10	4	4
 \.
 
 
@@ -750,15 +961,6 @@ COPY public.ventas_tipoproducto (id, nombre, estado_id) FROM stdin;
 --
 
 COPY public.ventas_precio (id, precio, cotizacion_id, estado_id, "tipoProducto_id") FROM stdin;
-\.
-
-
---
--- Data for Name: ventas_producto; Type: TABLE DATA; Schema: public; Owner: postgres
---
-
-COPY public.ventas_producto (id, nombre, codigo, numero, area, fecha_creacion, fecha_actualizacion, estado_id, proyecto_id, tipo_id, "usuarioActualizador_id", "usuarioCreador_id") FROM stdin;
-1	Departamento socabaya	001	2	4	2024-01-03	2024-01-03 10:50:57-05	A	1	1	2	2
 \.
 
 
@@ -774,7 +976,9 @@ COPY public.ventas_proyectotipoproducto (id, proyecto_id, tipo_producto_id) FROM
 -- Data for Name: ventas_whatsapp; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public.ventas_whatsapp (id, detalle, fecha_creacion, fecha_actualizacion, estado_id, lead_id, "usuarioActualizador_id", "usuarioCreador_id") FROM stdin;
+COPY public.ventas_whatsapp (id, detalle, respondio, fecha_creacion, fecha_actualizacion, estado_id, lead_id, objecion_id, "usuarioActualizador_id", "usuarioCreador_id") FROM stdin;
+1	Demastiado texto	f	2024-01-24	2024-01-24 21:40:14-05	A	1	6	4	4
+2	Mas texto	t	2024-01-24	2024-01-24 21:40:35-05	A	1	4	4	3
 \.
 
 
@@ -796,7 +1000,7 @@ SELECT pg_catalog.setval('public.auth_group_permissions_id_seq', 63, true);
 -- Name: auth_permission_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.auth_permission_id_seq', 120, true);
+SELECT pg_catalog.setval('public.auth_permission_id_seq', 160, true);
 
 
 --
@@ -817,7 +1021,7 @@ SELECT pg_catalog.setval('public.cuenta_user_groups_id_seq', 37, true);
 -- Name: cuenta_user_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.cuenta_user_id_seq', 8, true);
+SELECT pg_catalog.setval('public.cuenta_user_id_seq', 9, true);
 
 
 --
@@ -831,21 +1035,21 @@ SELECT pg_catalog.setval('public.cuenta_user_user_permissions_id_seq', 3, true);
 -- Name: django_admin_log_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.django_admin_log_id_seq', 106, true);
+SELECT pg_catalog.setval('public.django_admin_log_id_seq', 134, true);
 
 
 --
 -- Name: django_content_type_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.django_content_type_id_seq', 30, true);
+SELECT pg_catalog.setval('public.django_content_type_id_seq', 40, true);
 
 
 --
 -- Name: django_migrations_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.django_migrations_id_seq', 40, true);
+SELECT pg_catalog.setval('public.django_migrations_id_seq', 55, true);
 
 
 --
@@ -870,6 +1074,34 @@ SELECT pg_catalog.setval('public.marketing_proyecto_id_seq', 2, true);
 
 
 --
+-- Name: multimedia_imagenproducto_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.multimedia_imagenproducto_id_seq', 2, true);
+
+
+--
+-- Name: multimedia_imagenproyecto_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.multimedia_imagenproyecto_id_seq', 1, true);
+
+
+--
+-- Name: multimedia_videoproducto_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.multimedia_videoproducto_id_seq', 1, false);
+
+
+--
+-- Name: multimedia_videoproyecto_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.multimedia_videoproyecto_id_seq', 1, false);
+
+
+--
 -- Name: token_blacklist_blacklistedtoken_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
@@ -880,7 +1112,7 @@ SELECT pg_catalog.setval('public.token_blacklist_blacklistedtoken_id_seq', 1, fa
 -- Name: token_blacklist_outstandingtoken_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.token_blacklist_outstandingtoken_id_seq', 99, true);
+SELECT pg_catalog.setval('public.token_blacklist_outstandingtoken_id_seq', 106, true);
 
 
 --
@@ -898,6 +1130,13 @@ SELECT pg_catalog.setval('public.ventas_cuota_id_seq', 1, false);
 
 
 --
+-- Name: ventas_desasignacionleadasesor_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.ventas_desasignacionleadasesor_id_seq', 4, true);
+
+
+--
 -- Name: ventas_evento_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
@@ -908,7 +1147,7 @@ SELECT pg_catalog.setval('public.ventas_evento_id_seq', 1, true);
 -- Name: ventas_historicoleadasesor_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.ventas_historicoleadasesor_id_seq', 1, false);
+SELECT pg_catalog.setval('public.ventas_historicoleadasesor_id_seq', 42, true);
 
 
 --
@@ -922,7 +1161,7 @@ SELECT pg_catalog.setval('public.ventas_lead_id_seq', 10, true);
 -- Name: ventas_llamada_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.ventas_llamada_id_seq', 1, false);
+SELECT pg_catalog.setval('public.ventas_llamada_id_seq', 2, true);
 
 
 --
@@ -985,7 +1224,7 @@ SELECT pg_catalog.setval('public.ventas_tipoproducto_id_seq', 1, true);
 -- Name: ventas_whatsapp_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.ventas_whatsapp_id_seq', 1, false);
+SELECT pg_catalog.setval('public.ventas_whatsapp_id_seq', 2, true);
 
 
 --

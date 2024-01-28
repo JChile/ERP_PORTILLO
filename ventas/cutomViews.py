@@ -15,6 +15,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import permission_classes
 from .consts import *
 from django.utils import timezone
+from django.utils.timezone import make_aware
 
 
 
@@ -171,9 +172,9 @@ class leadCreation:
                     
     def check_date(self):
         try:
-            self.data["horaRecepcion"] = datetime.strptime(self.data["horaRecepcion"], "%d/%m/%Y")
+            self.data["horaRecepcion"] = make_aware(datetime.strptime(self.data["horaRecepcion"], "%d/%m/%Y"))
         except (ValueError, KeyError):
-            self.data["horaRecepcion"] = datetime.now()
+            self.data["horaRecepcion"] = timezone.now()
     
     def put_asesor(self, asesor):
         if asesor is not None:

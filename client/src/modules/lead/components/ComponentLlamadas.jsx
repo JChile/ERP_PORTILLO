@@ -224,7 +224,7 @@ const DialogRegistrarLlamada = ({ onCreateRegistroLlamada }) => {
         Nuevo registro
       </button>
       <BootstrapDialog
-        maxWidth={"lg"}
+        maxWidth={"xs"}
         onClose={handleClose}
         aria-labelledby="customized-dialog-title"
         open={open}
@@ -233,50 +233,37 @@ const DialogRegistrarLlamada = ({ onCreateRegistroLlamada }) => {
           Registrar Llamada
         </DialogTitle>
         <DialogContent dividers>
-          {/* Checkbox de contesto */}
-          <div className="mb-4 ml-0">
-            <FormControlLabel
-              control={
-                <Checkbox
-                  checked={contesto}
-                  onChange={handleChangeCheckBoxcontesto}
-                  inputProps={{ "aria-label": "controlled" }}
-                />
-              }
-              label="¿Contestó?"
-              labelPlacement="start"
-            />
-          </div>
-          {/* SELECCION DE OBJECION */}
-          <div className="mb-3">
-            <label htmlFor="detalle" className="form-label">
-              Objeción:
-            </label>
-            <FilterObjecion
-              onNewInput={onAddObjecion}
-              defaultValue={objecion}
-            />
-          </div>
-          {/* DETALLE DE OPERACION */}
-          <div className="mb-3">
-            <label htmlFor="detalle" className="form-label">
-              Detalle:
-            </label>
-            <textarea
-              id="detalle"
-              className="form-control"
-              name="detalle"
-              value={detalle}
-              onChange={handleInputValue}
-              style={{
-                width: "100%",
-                backgroundColor: "#fcf6f1", // Color de fondo verde muy claro
-                border: "1px solid #a69482", // Borde verde claro
-                borderRadius: "0.25rem", // Bordes ligeramente redondeados
-                padding: "0.5rem", // Relleno interno
-              }}
-            ></textarea>
-          </div>
+          <Grid container spacing={2}>
+            <Grid item xs={10}>
+              <Typography variant="subtitle1" sx={{ fontWeight: "bold" }}>
+                Contestó:
+              </Typography>
+              <Checkbox
+                checked={contesto}
+                onChange={handleChangeCheckBoxcontesto}
+                inputProps={{ "aria-label": "controlled" }}
+              />
+            </Grid>
+            <Grid item xs={10}>
+              <Typography variant="subtitle1" sx={{ fontWeight: "bold" }}>
+                Detalle:
+              </Typography>
+              <CustomTextArea
+                value={detalle}
+                name="detalle"
+                onChangeValue={handleInputValue}
+              />
+            </Grid>
+            <Grid item xs={10}>
+              <Typography variant="subtitle1" sx={{ fontWeight: "bold" }}>
+                Objeción:
+              </Typography>
+              <FilterObjecion
+                defaultValue={objecion}
+                onNewInput={onAddObjecion}
+              />
+            </Grid>
+          </Grid>
         </DialogContent>
         <DialogActions>
           <Button variant="contained" color="inherit" onClick={handleClose}>
@@ -284,7 +271,7 @@ const DialogRegistrarLlamada = ({ onCreateRegistroLlamada }) => {
           </Button>
           <Button
             variant="contained"
-            color="success"
+            color="primary"
             autoFocus
             onClick={() => {
               // registramos un nuevo mensaje

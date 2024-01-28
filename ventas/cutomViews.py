@@ -520,7 +520,7 @@ class DesAsignacionMasivaLeadsById(APIView):
                 user = user_queryset.get(id=lead.asesor.pk)
                 lead.asesor = None
                 lead.asignado = False
-                lead.fecha_actualizacion = datetime.datetime.now()
+                lead.fecha_actualizacion = timezone.now()
                 lead.save()
                 DesasignacionLeadAsesor.objects.create(lead=lead, usuario=user)
             except:

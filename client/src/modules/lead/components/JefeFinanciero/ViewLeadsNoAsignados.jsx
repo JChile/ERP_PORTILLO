@@ -18,7 +18,10 @@ import { RowItemLeadNoAsignado } from "./RowItemLeadNoAsignado";
 import { MdClose, MdSearch } from "react-icons/md";
 import { CustomAlert, CustomCircularProgress } from "../../../../components";
 import { useAlertMUI, useCustomTablePagination } from "../../../../hooks";
-import { SelectProyecto } from "../../../../components/select";
+import {
+  SelectEstadoLead,
+  SelectProyecto,
+} from "../../../../components/select";
 import { MassActionsViewLeadsNoAsignados } from "./acciones-masivas/MassActionsViewLeadsNoAsignados";
 import { combinarErrores } from "../../../../utils";
 
@@ -39,7 +42,7 @@ export const ViewLeadsNoAsignados = () => {
     proyecto: "",
     estadoLead: "",
   });
-  const { celular, nombre, apellido, proyecto, estado } = filterData;
+  const { celular, nombre, apellido } = filterData;
 
   // flag reset
   const [flagReset, setFlagReset] = useState(false);
@@ -174,6 +177,12 @@ export const ViewLeadsNoAsignados = () => {
     setAuxLeadsNoAsignados(dataItemChecked);
     // si hay algun cambio, el checkall pasa a false
     setChecked(false);
+    // actualizamos el counter
+    if (event.target.checked) {
+      setCountSelectedElements((c) => c + 1);
+    } else {
+      setCountSelectedElements((c) => c - 1);
+    }
   };
 
   // traer informacion de leads no asociados
@@ -222,6 +231,12 @@ export const ViewLeadsNoAsignados = () => {
           setVisibleProgress={setVisibleProgress}
           onLoadData={traerInformacionLeadNoAsociados}
         />
+        <div className="flex items-center bg-green-100 rounded p-2">
+          <p className="text-green-500 font-bold mr-2">
+            Numero de items seleccionados:
+          </p>
+          <p className="text-green-500 font-bold">{countSelectedElements}</p>
+        </div>
       </div>
       <Paper sx={{ borderRadius: "0px" }}>
         <TableContainer
@@ -260,7 +275,7 @@ export const ViewLeadsNoAsignados = () => {
                 <TableCell>Nombre</TableCell>
                 <TableCell>Apellido</TableCell>
                 <TableCell>Proyecto</TableCell>
-                <TableCell>Estado</TableCell>
+                <TableCell>Estado lead</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -334,13 +349,9 @@ export const ViewLeadsNoAsignados = () => {
                   />
                 </TableCell>
                 <TableCell>
-                  <TextField
-                    variant="outlined"
-                    placeholder="Estado"
+                  <SelectEstadoLead
+                    onNewInput={handledFilterSelectValues}
                     size="small"
-                    type="text"
-                    name="estado"
-                    value={estado}
                   />
                 </TableCell>
               </TableRow>

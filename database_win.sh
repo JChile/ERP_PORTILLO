@@ -7,6 +7,7 @@ createdb -h localhost -p 5432 -U postgres portillo_erp
 psql -h localhost -p 5432 -U postgres --list
 
 
+
 ./fixapp.sh cuenta
 ./fixapp.sh ventas
 ./fixapp.sh marketing
@@ -17,7 +18,6 @@ python manage.py makemigrations marketing
 python manage.py makemigrations ventas
 python manage.py makemigrations multimedia
 python manage.py migrate
-
 
 #psql -h localhost -p 5432 -U postgres portillo_erp -c "\dt"
 

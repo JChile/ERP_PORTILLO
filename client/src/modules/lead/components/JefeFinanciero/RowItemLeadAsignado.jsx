@@ -2,25 +2,13 @@ import { Checkbox, TableCell, TableRow } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { CustomMoreVerticalActions } from "../../../../components";
 
-const RowItemLeadAsignado = ({ item, index, updateLeadAsignado }) => {
-  const [checked, setChecked] = useState(item["isSelected"]);
-
-  const handleChange = (event) => {
-    const state = event.target.checked;
-    setChecked(state);
-    updateLeadAsignado(index, state);
-  };
-
-  useEffect(() => {
-    setChecked(item["isSelected"]);
-  }, [item]);
-
+const RowItemLeadAsignado = ({ item, checkedElement }) => {
   return (
     <TableRow>
       <TableCell>
         <Checkbox
-          checked={checked}
-          onChange={handleChange}
+          checked={item["isSelected"]}
+          onChange={(e) => checkedElement(e, item.id)}
           inputProps={{ "aria-label": "controlled" }}
         />
         <CustomMoreVerticalActions />

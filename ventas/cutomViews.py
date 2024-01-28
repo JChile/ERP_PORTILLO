@@ -518,6 +518,7 @@ class DesAsignacionMasivaLeadsById(APIView):
             try:
                 lead = lead_queryset.get(id=i)
                 user = user_queryset.get(id=lead.asesor.pk)
+                #print(lead, user)
                 lead.asesor = None
                 lead.asignado = False
                 lead.fecha_actualizacion = datetime.datetime.now()

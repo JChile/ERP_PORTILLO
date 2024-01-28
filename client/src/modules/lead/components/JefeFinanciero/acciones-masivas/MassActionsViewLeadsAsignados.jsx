@@ -10,11 +10,7 @@ import {
   Menu,
   MenuItem,
 } from "@mui/material";
-import {
-  FiChevronRight,
-  FiChevronsRight,
-  FiMoreVertical,
-} from "react-icons/fi";
+import { FiChevronsRight, FiMoreVertical } from "react-icons/fi";
 import { quitarLeads } from "../../../helpers/desasignarLeads";
 import { combinarErrores } from "../../../../../utils";
 
@@ -29,6 +25,7 @@ const MassActionsViewLeadsAsignados = ({
 }) => {
   const { authTokens } = useContext(AuthContext);
   const [anchorEl, setAnchorEl] = useState(null);
+  const [openDialog, setOpenDialog] = useState(false);
   const open = Boolean(anchorEl);
 
   const handleClick = (event) => {
@@ -43,32 +40,30 @@ const MassActionsViewLeadsAsignados = ({
     setVisibleProgress(true);
     try {
       const formatData = data.map((lead) => lead.id);
-      console.log({ lead: formatData });
       const result = await quitarLeads(authTokens["access"], {
         lead: formatData,
       });
-      console.log(result);
-      // volcemos a cargar los datos
+      handleClose();
       onLoadData();
       setFeedbackMessages({
         style_message: "success",
         feedback_description_error: "Se desasigno correctamente",
       });
       handleClickFeedback();
-      setVisibleProgress(false);
-      handleClose();
+      //setVisibleProgress(false);
     } catch (error) {
       const pilaError = combinarErrores(error);
-      // mostramos feedback de error
       setFeedbackMessages({
         style_message: "error",
         feedback_description_error: pilaError,
       });
       handleClickFeedback();
-      // ocultar el progress
       setVisibleProgress(false);
     }
   };
+
+  const handleClickOpenDialog = () => setOpenDialog(true);
+  const handleCloseDialog = () => setOpenDialog(false);
 
   return (
     <React.Fragment>
@@ -97,8 +92,13 @@ const MassActionsViewLeadsAsignados = ({
           },
         }}
       >
+        <MenuItem key="eliminar" onClick={handleClickOpenDialog}>
+          <FiChevronsRight />
+          <span className="ps-2">Desasignar</span>
+        </MenuItem>
         <DialogQuitarAsignacion
-          onCloseMenu={handleClose}
+          open={openDialog}
+          onClose={handleCloseDialog} // pasar una función que cierre el menú
           handleConfirm={desasignarLeads}
         />
       </Menu>
@@ -106,45 +106,27 @@ const MassActionsViewLeadsAsignados = ({
   );
 };
 
-const DialogQuitarAsignacion = ({ handleConfirm, onCloseMenu }) => {
-  const [open, setOpen] = useState(false);
-  const handleClickOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
-
+const DialogQuitarAsignacion = ({ open, handleConfirm, onClose }) => {
   return (
-    <React.Fragment>
-      <MenuItem key={"eliminar"} onClick={handleClickOpen}>
-        <FiChevronsRight />
-        <span className="ps-2">Desasignar</span>
-      </MenuItem>
-      <Dialog open={open} onClose={handleClose}>
-        <DialogTitle>Desasignar Leads</DialogTitle>
-        <DialogContent>
-          Mediante esta acción usted desasinara los leads seleccionados de los
-          asesores asigandos
-        </DialogContent>
-        <DialogActions>
-          <Button
-            onClick={() => {
-              handleClose();
-              onCloseMenu();
-            }}
-            variant="contained"
-            color="inherit"
-          >
-            Cancelar
-          </Button>
-          <Button
-            onClick={handleConfirm}
-            variant="contained"
-            color="error"
-            autoFocus
-          >
-            Confirmar
-          </Button>
-        </DialogActions>
-      </Dialog>
-    </React.Fragment>
+    <Dialog open={open} onClose={onClose}>
+      <DialogTitle>Desasignar Leads</DialogTitle>
+      <DialogContent>
+        Mediante esta acción usted desasignara los leads seleccionados
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={onClose} variant="contained" color="inherit">
+          Cancelar
+        </Button>
+        <Button
+          onClick={handleConfirm}
+          variant="contained"
+          color="error"
+          autoFocus
+        >
+          Confirmar
+        </Button>
+      </DialogActions>
+    </Dialog>
   );
 };
 

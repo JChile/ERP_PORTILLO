@@ -5,7 +5,7 @@ import "./../components/calendar.css";
 import moment from "moment";
 import { CustomToolbar, CustomEvent, CustomEventWrapper } from "../components";
 import { DialogForm } from "../components/DialogForm";
-import { DialogDetail } from "../components/DialogDetail";
+import { DialogDetailEvento } from "../components/DialogDetailEvento";
 import { getEvents } from "../helpers/eventCases";
 import { getTipoEventos } from "../helpers/typeEventCases";
 import { CustomCircularProgress } from "../../../components";
@@ -87,7 +87,6 @@ export const CalendarView = () => {
 
   // temporary viewr
 
-
   const handleTempFilters = (event) => {
     const { name, checked } = event.target;
     const updatedFilters = {
@@ -96,7 +95,6 @@ export const CalendarView = () => {
     };
     setTempFilters(updatedFilters);
   };
-
 
   const applyFilters = () => {
     const filtered = originalEvents.filter(
@@ -110,7 +108,6 @@ export const CalendarView = () => {
     try {
       const events = await getEvents(authTokens);
       const typeEvents = await getTipoEventos();
-
 
       if (Object.keys(selectedFilters).length === 0) {
         const initialFilters = {};
@@ -248,24 +245,13 @@ export const CalendarView = () => {
         />
 
         {state.selectState && (
-          <DialogDetail
+          <DialogDetailEvento
             selectedEvent={selectedEvent}
             onClose={() => {
               dispatch({ type: "base_state" });
               setSelectedEvent(null);
             }}
             isOpen={state.selectState}
-          />
-        )}
-
-        {state.createState && (
-          <DialogForm
-            typeEvents={typeEvents}
-            onClose={() => {
-              dispatch({ type: "loading_state" });
-              setFlagLoader((prev) => !prev);
-            }}
-            isOpen={state.createState}
           />
         )}
       </div>

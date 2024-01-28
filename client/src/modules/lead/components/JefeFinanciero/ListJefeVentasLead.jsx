@@ -1,85 +1,22 @@
 import React, { useEffect, useState } from "react";
-import {
-  CustomCircularProgress,
-  FilterEstadoLead,
-  FilterProyectos,
-} from "../../../../components";
-import { CustomTable } from "../../../../components/CustomLeadTable";
-import { CustomInputBase } from "../../../../components/CustomInputBase";
-import { Box, Button, Tab, Tabs, TextField } from "@mui/material";
+import { Button, Tab, Tabs, TextField } from "@mui/material";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { FilterAsesor } from "../../../../components/filters/asesor/FilterAsesor";
 import { ViewLeadsNoAsignados } from "./ViewLeadsNoAsignados";
-import styled from "@emotion/styled";
 import ViewLeadAsignados from "./ViewLeadAsignados";
-
-const headers = [
-  { name: "Acciones", width: 20 },
-  { name: "Nombre", width: 120 },
-  { name: "Celular", width: 100 },
-  { name: "Estado", width: 40 },
-  { name: "Campaña", width: 120 },
-  { name: "Entrega", width: 50 },
-];
+import { MdClear, MdFilterList } from "react-icons/md";
 
 const ListJefeVentasLead = ({ credentials }) => {
-  const [visibleProgress, setVisibleProgress] = useState(true);
   const [error, setError] = useState(false);
   const [value, setValue] = useState(0);
-  const [projectData, setprojectData] = useState(null);
-  const [leads, setLeads] = useState([]);
-  const [leadsNotAsigned, setLeadsNotAsigned] = useState([]);
-  const [filteredLeads, setFilteredLeads] = useState([]);
   const [filterState, setFilterState] = useState({
-    proyecto: 0,
-    asesor: 0,
-    estadoLead: null,
     startDate: null,
     endDate: null,
   });
-  const [startDate, setStartDate] = useState(null);
-  const [endDate, setEndDate] = useState(null);
 
-  const handleChange = (event, newValue) => {
-    setValue(newValue);
-    switch (newValue) {
-      case 0: {
-        setFilteredLeads(projectData.lead);
-        break;
-      }
-      case 1: {
-        setFilteredLeads(leadsNotAsigned);
-        break;
-      }
-    }
-  };
+  const handleChange = (event, newValue) => setValue(newValue);
 
-  const handleSearchButton = (searchText) => {
-    const filter = leads
-      ? leads.filter((lead) => {
-          return (
-            lead.nombre.toLowerCase().includes(searchText.toLowerCase()) ||
-            lead.apellido.toLowerCase().includes(searchText.toLowerCase()) ||
-            lead.celular.includes(searchText) ||
-            lead.celular2.includes(searchText) ||
-            lead.estadoLead.toLowerCase().includes(searchText.toLowerCase())
-          );
-        })
-      : [];
-    setFilteredLeads(filter);
-  };
-
-  const fetchData = async (token) => {
-    try {
-      const leads = await getLeadsActivos(token);
-      setLeads(leads);
-      setFilteredLeads(leads);
-    } catch (error) {
-      setError(true);
-    }
-    setVisibleProgress(false);
-  };
+  const handleSearchButton = (searchText) => {};
 
   const onHandleFilterClick = () => {
     const filtered = leads.filter((lead) => {
@@ -99,7 +36,6 @@ const ListJefeVentasLead = ({ credentials }) => {
           return false;
         }
       }
-
       return true;
     });
     setFilteredLeads(filtered);
@@ -109,104 +45,92 @@ const ListJefeVentasLead = ({ credentials }) => {
     setFilterState(() => {
       onHandleFilterClick();
       return {
-        proyecto: 0,
-        asesor: 0,
-        estadoLead: null,
         startDate: null,
         endDate: null,
       };
     });
   };
 
-  useEffect(() => {
-    fetchData(credentials);
-  }, []);
-
-  const showContent = !error ? (
-    <CustomTable headerData={headers} rowData={filteredLeads} />
-  ) : (
-    <div>No leads por cargar</div>
-  );
-
   return (
     <React.Fragment>
-      <div className="flex flex-col gap-y-4">
-        <h1 className="font-semibold text-2xl">
-          Gestion de leads - Administrador
-        </h1>
-      </div>
-      <div className="mt-3 flex flex-col gap-y-3">
-        <div className="flex flex-col gap-y-4">
-          <form className="flex flex-col gap-y-3">
-            <div className="row gap-x-6 gap-y-6 justify-center">
-              <LocalizationProvider dateAdapter={AdapterDayjs}>
-                <DatePicker
-                  label="Desde"
-                  value={filterState.startDate}
-                  onChange={(newValue) => {
-                    setFilterState((prev) => ({
-                      ...prev,
-                      startDate: newValue,
-                    }));
-                  }}
-                  TextField={(params) => <TextField {...params} />}
-                />
-                <DatePicker
-                  label="Hasta"
-                  value={filterState.endDate}
-                  onChange={(newValue) => {
-                    setFilterState((prev) => ({ ...prev, endDate: newValue }));
-                  }}
-                  TextField={(params) => <TextField {...params} />}
-                />
-              </LocalizationProvider>
-              <Button
-                size="large"
-                variant="contained"
-                sx={{ textTransform: "capitalize" }}
-                onClick={onHandleCleanFilter}
-              >
-                Limpiar
-              </Button>
-              <Button
-                size="large"
-                variant="contained"
-                sx={{ textTransform: "capitalize" }}
-                onClick={onHandleFilterClick}
-              >
-                Filtrar
-              </Button>
+      <h1 className="font-semibold text-2xl mt-2">
+        Gestion de leads - Administrador
+      </h1>
+      <div className="mt-6 flex flex-col gap-y-3">
+        <form className="flex flex-col gap-y-3">
+          <LocalizationProvider dateAdapter={AdapterDayjs}>
+            <div className="flex gap-x-6">
+              <DatePicker
+                label="Desde"
+                value={filterState.startDate}
+                onChange={(newValue) => {
+                  setFilterState((prev) => ({
+                    ...prev,
+                    startDate: newValue,
+                  }));
+                }}
+                sx={{ width: 160 }}
+                TextField={(params) => <TextField {...params} size="medium" />}
+              />
+              <DatePicker
+                label="Hasta"
+                value={filterState.endDate}
+                onChange={(newValue) => {
+                  setFilterState((prev) => ({ ...prev, endDate: newValue }));
+                }}
+                sx={{ width: 160 }}
+                TextField={(params) => <TextField {...params} size="medium" />}
+              />
             </div>
-          </form>
-        </div>
+          </LocalizationProvider>
 
-        <Box sx={{}}>
-          <Tabs
-            aria-label="basic tabs"
-            value={value}
-            onChange={handleChange}
-            sx={{ marginY: 2 }}
-          >
-            <Tab
-              sx={{
-                textTransform: "capitalize",
-                fontWeight: "semibold",
-                color: "black",
-                fontSize: "0.9rem",
-              }}
-              label="Leads asignados"
-            />
-            <Tab
-              sx={{
-                textTransform: "capitalize",
-                fontWeight: "semibold",
-                color: "black",
-                fontSize: "0.9rem",
-              }}
-              label="Leads no asignados"
-            />
-          </Tabs>
-        </Box>
+          <div className="flex gap-x-4">
+            <Button
+              startIcon={<MdClear size={16} />}
+              size="large"
+              variant="contained"
+              sx={{ textTransform: "capitalize", width: 80, paddingX: 5 }}
+              onClick={onHandleCleanFilter}
+            >
+              Limpiar
+            </Button>
+            <Button
+              startIcon={<MdFilterList size={16} />}
+              size="large"
+              variant="contained"
+              sx={{ textTransform: "capitalize", width: 80, paddingX: 5 }}
+              onClick={onHandleFilterClick}
+            >
+              Filtrar
+            </Button>
+          </div>
+        </form>
+
+        <Tabs
+          aria-label="basic tabs"
+          value={value}
+          onChange={handleChange}
+          sx={{ marginTop: 3 }}
+        >
+          <Tab
+            sx={{
+              textTransform: "capitalize",
+              fontWeight: "semibold",
+              color: "black",
+              fontSize: "0.9rem",
+            }}
+            label="Leads asignados"
+          />
+          <Tab
+            sx={{
+              textTransform: "capitalize",
+              fontWeight: "semibold",
+              color: "black",
+              fontSize: "0.9rem",
+            }}
+            label="Leads no asignados"
+          />
+        </Tabs>
 
         <CustomTabPanel value={value} index={0}>
           <ViewLeadAsignados />
@@ -215,7 +139,6 @@ const ListJefeVentasLead = ({ credentials }) => {
           <ViewLeadsNoAsignados />
         </CustomTabPanel>
       </div>
-      {visibleProgress && <CustomCircularProgress />}
     </React.Fragment>
   );
 };

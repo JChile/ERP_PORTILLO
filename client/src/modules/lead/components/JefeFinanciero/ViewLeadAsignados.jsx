@@ -198,6 +198,7 @@ const ViewLeadAsignados = () => {
 
   const traerLeadAsiganados = async () => {
     setVisibleProgress(true);
+    setCountSelectedElements(0);
     try {
       const rowData = await getLeads(authTokens["access"], "asignado=True");
       const formatData = rowData.map((element) => {
@@ -209,7 +210,8 @@ const ViewLeadAsignados = () => {
       setLeadsAsignados(formatData);
       setAuxLeadsAsignados(formatData);
       setVisibleProgress(false);
-    } catch (e) {
+    } 
+    catch (e) {
       const pilaError = combinarErrores(error);
       setFeedbackMessages({
         style_message: "error",

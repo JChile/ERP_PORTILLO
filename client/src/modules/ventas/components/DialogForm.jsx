@@ -33,11 +33,11 @@ export const DialogForm = ({ isOpen, onClose, lead, token, user }) => {
     observacion: "",
     tipo: null,
     horaInicio: dayjs(),
-    estadoEvento: null,
+    estadoEvento: "Por iniciar",
   });
   const [formErrors, setFormErrors] = useState({});
 
-  const { titulo, tipo, observacion, fecha, horaInicio, duracion } = form;
+  const { titulo, tipo, observacion, fecha, horaInicio, duracion, estadoEvento } = form;
 
   const handleSave = async () => {
     const errors = checkInputForm();
@@ -52,11 +52,9 @@ export const DialogForm = ({ isOpen, onClose, lead, token, user }) => {
         tipo: tipo,
         usuarioCreador: user,
         usuarioActualizador: user,
-        estadoEvento: 1,
+        estadoEvento: estadoEvento,
       };
-      console.log({ eventSave });
       const result = await createEvent(eventSave, token);
-      console.log(result);
       onClose();
     } else {
       setFormErrors(errors);

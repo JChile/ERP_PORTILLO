@@ -198,7 +198,7 @@ export const ViewLeadsNoAsignados = () => {
           isSelected: false,
         };
       });
-      setLeadsNoAsignados(result);
+      setLeadsNoAsignados(formatData);
       setAuxLeadsNoAsignados(formatData);
       // ocultar el progress
       setVisibleProgress(false);

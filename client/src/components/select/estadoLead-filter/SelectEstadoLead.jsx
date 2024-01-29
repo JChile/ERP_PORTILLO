@@ -10,7 +10,6 @@ export const SelectEstadoLead = ({ onNewInput, size = "small" }) => {
 
   const obtenerEstadoLeads = async () => {
     const result = await getEstadoLead(authTokens["access"]);
-    console.log(result);
     const formatSelect = result.map((element) => {
       return {
         value: element.nombre,

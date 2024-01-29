@@ -29,7 +29,6 @@ export const MassActionsViewLeadsNoAsignados = ({
   setVisibleProgress,
   onLoadData,
 }) => {
-  console.log("SE CONSTRUYE");
   const { authTokens } = useContext(AuthContext);
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
@@ -47,13 +46,11 @@ export const MassActionsViewLeadsNoAsignados = ({
       asesor: asesores.map((element) => element.id),
       lead: data.map((element) => element.id),
     };
-    console.log(formatData);
     try {
       const result = await asignarAsesorToLeads(
         formatData,
         authTokens["access"]
       );
-      console.log(result);
       // volvemos a cargar la información
       onLoadData();
       // mostramos feedback de error
@@ -66,7 +63,6 @@ export const MassActionsViewLeadsNoAsignados = ({
       setVisibleProgress(false);
     } catch (error) {
       const pilaError = combinarErrores(error);
-      console.log(pilaError);
       // mostramos feedback de error
       setFeedbackMessages({
         style_message: "error",
@@ -117,8 +113,13 @@ export const MassActionsViewLeadsNoAsignados = ({
         <DialogAsignacionAsesorMasiva
           handleConfirm={asignarAsesorLeadsSeleccionado}
           onCloseMenu={handleClose}
+          disabled={data.length === 0}
         />
-        <MenuItem key={"exportar"} onClick={exportLeadsSeleccionados}>
+        <MenuItem
+          key={"exportar"}
+          onClick={exportLeadsSeleccionados}
+          disabled={data.length === 0}
+        >
           <FaFileExcel />
           <span className="ps-2">Exportar</span>
         </MenuItem>
@@ -127,8 +128,11 @@ export const MassActionsViewLeadsNoAsignados = ({
   );
 };
 
-const DialogAsignacionAsesorMasiva = ({ handleConfirm, onCloseMenu }) => {
-  console.log("Se vuelve a hacer una peticion");
+const DialogAsignacionAsesorMasiva = ({
+  handleConfirm,
+  onCloseMenu,
+  disabled,
+}) => {
   const [open, setOpen] = React.useState(false);
   const [asesoresActivos, setAsesoresActivos] = useState([]);
   const { authTokens } = useContext(AuthContext);
@@ -206,6 +210,7 @@ const DialogAsignacionAsesorMasiva = ({ handleConfirm, onCloseMenu }) => {
         onClick={() => {
           handleClickOpen();
         }}
+        disabled={disabled}
       >
         <FiChevronsRight />
         <span className="ps-2">Asignar asesor</span>

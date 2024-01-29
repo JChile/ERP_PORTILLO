@@ -114,7 +114,7 @@ class Llamada(models.Model):
 
 
 class EstadoEvento(models.Model):
-    nombre = models.CharField(max_length=20, primary_key=True)
+    nombre = models.CharField(max_length=20)
     descripcion = models.CharField(max_length=50, null=True, default=None)
     estado = models.ForeignKey(
         EstadoRegistro, on_delete=models.SET_NULL, default='A', null=True)

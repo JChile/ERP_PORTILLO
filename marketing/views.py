@@ -28,8 +28,16 @@ class ProyectoList(generics.ListCreateAPIView):
     queryset = Proyecto.objects.all()
     
 
+    
+
     def get(self, request):
+        estado = request.query_params.get('estado')
         proyecto_queryset = Proyecto.objects.all()
+
+
+        if estado:
+            proyecto_queryset = proyecto_queryset.filter(estado=estado)
+        
         dataJson = ProyectoSerializer(proyecto_queryset, many = True).data
 
         for i in dataJson:

@@ -77,6 +77,7 @@ class Lead(models.Model):
 
 class WhatsApp(models.Model):
     lead = models.ForeignKey(Lead, on_delete=models.SET_NULL, null=True)
+    asesor = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
     detalle = models.TextField(max_length=200, null=True, blank=True)
     estado = models.ForeignKey(
         EstadoRegistro, on_delete=models.SET_NULL, default='A', null=True)
@@ -99,6 +100,7 @@ class HistoricoLeadAsesor(models.Model):
 
 class Llamada(models.Model):
     lead = models.ForeignKey(Lead, on_delete=models.SET_NULL, null=True)
+    asesor = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
     detalle = models.TextField(max_length=200, null=True, blank=True)
     estado = models.ForeignKey(
         EstadoRegistro, on_delete=models.SET_NULL, default='A', null=True)

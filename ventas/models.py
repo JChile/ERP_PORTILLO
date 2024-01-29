@@ -53,7 +53,8 @@ class Lead(models.Model):
         EstadoRegistro, on_delete=models.SET_NULL, default='A', null=True)
     estadoLead = models.ForeignKey(
         EstadoLead, on_delete=models.SET_NULL, null=True, blank=True, default="EP")
-
+    fecha_asignacion = models.DateTimeField(blank=True, null=True)
+    fecha_desasignacion = models.DateTimeField(blank=True, null=True)
     recienCreado = models.BooleanField(default=True)
     usuarioCreador = models.ForeignKey(
         User, on_delete=models.SET_NULL, null=True, related_name='usuarioCreadorLead')

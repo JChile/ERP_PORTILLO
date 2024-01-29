@@ -908,10 +908,17 @@ class DesasignacionLeadAsesorList(generics.ListCreateAPIView):
     queryset = DesasignacionLeadAsesor.objects.all()
 
     def list(self, request):
+        desde = request.query_params.get('desde')
+        hasta = request.query_params.get('hasta')
+
         queryset = DesasignacionLeadAsesor.objects.all()
         lead_queryset = Lead.objects.all()
         user_queryset = User.objects.all()
+
+        if desde and hasta:
+            queryset = queryset.filter(fecha__range=[desde, hasta])
         dataJson = DesasignacionLeadAsesorSerlializer(queryset, many=True).data
+
 
         for i in dataJson:
             i["lead"] = LeadSerializer(lead_queryset.filter(pk=i["lead"]).first(), fields=[

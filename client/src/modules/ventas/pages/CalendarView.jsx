@@ -18,7 +18,6 @@ import {
   ListItemSecondaryAction,
   ListItemText,
 } from "@mui/material";
-import { transformToEvent } from "../utils/util";
 import { AuthContext } from "../../../auth";
 
 const localizer = momentLocalizer(moment);
@@ -258,4 +257,22 @@ export const CalendarView = () => {
       {state.loadState && <CustomCircularProgress />}
     </React.Fragment>
   );
+};
+
+const transformToEvent = (oldEvent) => {
+  console.log(oldEvent)
+  const startEvent = new Date(oldEvent.fecha_visita);
+  const durationMilliseconds = oldEvent.duracion * 60000;
+  const endEvent = new Date(startEvent.getTime() + durationMilliseconds);
+  return {
+    title: oldEvent.titulo,
+    start: startEvent,
+    end: endEvent,
+    tipo: oldEvent.tipo,
+    observacion: oldEvent.observacion,
+    estado: oldEvent.estado,
+    id: oldEvent.id,
+    asesor: oldEvent.asesor,
+    duracion: oldEvent.duracion,
+  };
 };

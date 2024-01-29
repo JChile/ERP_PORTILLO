@@ -27,6 +27,8 @@ export const DialogDetailEvento = ({
 
   const [editData, setEditData] = useState(false);
 
+  console.log(dataAuxEvento)
+
   const handleChangeValue = ({ target }) => {
     const { value, name } = target;
     setDataAuxEvento({
@@ -101,7 +103,9 @@ export const DialogDetailEvento = ({
             inputProps={{ "aria-label": "controlled" }}
           />
         </Grid>
-        <Grid item xs={10}></Grid>
+        <Grid item xs={10}>
+
+        </Grid>
       </DialogContent>
       <DialogActions className="bg-dark-purple" sx={{}}>
         <Button

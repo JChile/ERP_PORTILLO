@@ -198,16 +198,6 @@ export const DetailLead = () => {
 
   return (
     <>
-      {showDialog ? (
-        <DialogForm
-          lead={idLead}
-          isOpen={showDialog}
-          onClose={() => setShowDialog(false)}
-          token={authTokens.access}
-          user={currentUser.user_id}
-        />
-      ) : null}
-
       <div className="flex flex-col gap-y-4">
         <div className="p-3 border-[1px] flex flex-col gap-x-5">
           <h1 className="text-lg font-bold">Detalle Lead</h1>
@@ -339,6 +329,15 @@ export const DetailLead = () => {
                   onUpdatedataLlamada={updateLlamadaLead}
                   onCreatedataLlamada={createLlamadaLead}
                 />
+                {showDialog ? (
+                  <DialogForm
+                    lead={idLead}
+                    isOpen={showDialog}
+                    onClose={() => setShowDialog(false)}
+                    token={authTokens["access"]}
+                    user={currentUser.user_id}
+                  />
+                ) : null}
               </div>
             </>
           )}

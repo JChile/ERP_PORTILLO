@@ -1,14 +1,14 @@
-import React, { useState, useEffect } from "react";
-import { getTipoEventos } from "../../../modules/ventas/helpers/typeEventCases";
+import React, { useEffect, useState } from "react";
+import { getEstadoEvento } from "./getEstadoEvento";
 import { Autocomplete, TextField } from "@mui/material";
 
 const defaultOption = {
   value: 0,
-  label: "Seleccione un tipo evento",
+  label: "Selecione un estado",
   id: null,
 };
 
-export const FilterTipoEvento = ({
+const FilterEstadoEvento = ({
   defaultValue = null,
   onNewInput,
   size = "medium",
@@ -18,8 +18,8 @@ export const FilterTipoEvento = ({
   const [options, setOptions] = useState([defaultOption]);
   const [value, setValue] = useState(defaultOption);
 
-  const obtenerTipoEventos = async () => {
-    const result = await getTipoEventos();
+  const obtenerEstadoEventos = async () => {
+    const result = await getEstadoEvento();
     const formatSelect = [
       defaultOption,
       ...result.map((element) => {
@@ -46,19 +46,17 @@ export const FilterTipoEvento = ({
   };
 
   useEffect(() => {
-    const controller = new AbortController();
-    obtenerTipoEventos();
-    return () => controller.abort();
+    obtenerEstadoEventos();
   }, [defaultValue]);
 
   return (
     <Autocomplete
+      disabled={disabled}
       options={options}
       value={value}
-      disabled={disabled}
       disableClearable
       getOptionLabel={(option) => option.label}
-      onChange={handleChange}
+      onAbort={handleChange}
       isOptionEqualToValue={(option, value) => option.id == value.id}
       renderInput={(params) => (
         <TextField label={label} {...params} size={size} />
@@ -66,3 +64,5 @@ export const FilterTipoEvento = ({
     />
   );
 };
+
+export default FilterEstadoEvento;

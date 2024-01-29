@@ -134,6 +134,8 @@ export const CalendarView = () => {
     }
   };
 
+  const updateEvent = (id, event) => {};
+
   useEffect(() => {
     const controller = new AbortController();
     getCalendarData(authTokens.access);
@@ -251,6 +253,7 @@ export const CalendarView = () => {
               setSelectedEvent(null);
             }}
             isOpen={state.selectState}
+            onUpdateEvent={updateEvent}
           />
         )}
       </div>
@@ -260,19 +263,19 @@ export const CalendarView = () => {
 };
 
 const transformToEvent = (oldEvent) => {
-  console.log(oldEvent)
+  console.log(oldEvent);
   const startEvent = new Date(oldEvent.fecha_visita);
   const durationMilliseconds = oldEvent.duracion * 60000;
   const endEvent = new Date(startEvent.getTime() + durationMilliseconds);
   return {
+    separado: oldEvent.separado,
     title: oldEvent.titulo,
+    lead: oldEvent.lead,
     start: startEvent,
     end: endEvent,
-    tipo: oldEvent.tipo,
-    observacion: oldEvent.observacion,
-    estado: oldEvent.estado,
-    id: oldEvent.id,
-    asesor: oldEvent.asesor,
     duracion: oldEvent.duracion,
+    tipoEvento: oldEvent.tipo,
+    observacion: oldEvent.observacion,
+    estadoEvento: oldEvent.estadoEvento,
   };
 };

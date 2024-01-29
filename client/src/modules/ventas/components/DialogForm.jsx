@@ -33,11 +33,19 @@ export const DialogForm = ({ isOpen, onClose, lead, token, user }) => {
     observacion: "",
     tipo: null,
     horaInicio: dayjs(),
-    estadoEvento: "Por iniciar",
+    estadoEvento: 1,
   });
   const [formErrors, setFormErrors] = useState({});
 
-  const { titulo, tipo, observacion, fecha, horaInicio, duracion, estadoEvento } = form;
+  const {
+    titulo,
+    tipo,
+    observacion,
+    fecha,
+    horaInicio,
+    duracion,
+    estadoEvento,
+  } = form;
 
   const handleSave = async () => {
     const errors = checkInputForm();
@@ -54,6 +62,8 @@ export const DialogForm = ({ isOpen, onClose, lead, token, user }) => {
         usuarioActualizador: user,
         estadoEvento: estadoEvento,
       };
+
+      console.log(duracion);
       const result = await createEvent(eventSave, token);
       onClose();
     } else {
@@ -77,15 +87,6 @@ export const DialogForm = ({ isOpen, onClose, lead, token, user }) => {
     }
 
     return errors;
-  };
-
-  const onAddProyecto = (item) => {
-    handleChangeForm({
-      target: {
-        name: "proyecto",
-        value: item.id,
-      },
-    });
   };
 
   const onAddTipoEvento = (item) => {
@@ -160,7 +161,14 @@ export const DialogForm = ({ isOpen, onClose, lead, token, user }) => {
                     name="duracion"
                   />
                 </div>
-                <TextField type="text" multiline label="Observaciones" />
+                <TextField
+                  type="text"
+                  multiline
+                  label="Observaciones"
+                  name="observacion"
+                  value={observacion}
+                  onChange={handleChangeForm}
+                />
               </LocalizationProvider>
             </div>
           </FormControl>

@@ -1,0 +1,77 @@
+###########
+# BUILDER #
+###########
+
+# pull official base image
+FROM python:3.11.4-slim-buster as builder
+
+# set work directory
+WORKDIR /usr/src/ERP_PORTILLO
+
+# set environment variables
+ENV PYTHONDONTWRITEBYTECODE 1
+ENV PYTHONUNBUFFERED 1
+
+# install system dependencies
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends gcc
+
+# lint
+RUN pip install --upgrade pip
+RUN pip install flake8==6.0.0
+COPY . /usr/src/ERP_PORTILLO/
+
+# install python dependencies
+COPY ./requirements.txt .
+RUN pip wheel --no-cache-dir --no-deps --wheel-dir /usr/src/ERP_PORTILLO/wheels -r requirements.txt
+
+
+#########
+# FINAL #
+#########
+
+# pull official base image
+FROM python:3.11.4-slim-buster
+
+# create directory for the app user
+RUN mkdir -p /home/ERP_PORTILLO
+
+# create the app user
+RUN addgroup --system --force-badname ERP_PORTILLO && adduser --system --group --force-badname ERP_PORTILLO
+
+
+# create the appropriate directories
+ENV HOME=/home/ERP_PORTILLO
+ENV APP_HOME=/home/ERP_PORTILLO/web
+RUN mkdir $APP_HOME
+RUN mkdir /staticfiles
+RUN chown ERP_PORTILLO:ERP_PORTILLO /staticfiles
+
+WORKDIR $APP_HOME
+
+
+# install dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends netcat
+RUN apt-get update && apt-get install -y postgresql-client
+
+COPY --from=builder /usr/src/ERP_PORTILLO/wheels /wheels
+COPY --from=builder /usr/src/ERP_PORTILLO/requirements.txt .
+RUN pip install --upgrade pip
+RUN pip install --no-cache /wheels/*
+
+# copy entrypoint.prod.sh
+COPY ./entrypoint.prod.sh .
+RUN sed -i 's/\r$//g'  $APP_HOME/entrypoint.prod.sh
+RUN chmod +x  $APP_HOME/entrypoint.prod.sh
+
+# copy project
+COPY . $APP_HOME
+
+# chown all the files to the app user
+RUN chown -R ERP_PORTILLO:ERP_PORTILLO $APP_HOME
+
+# change to the app user
+USER ERP_PORTILLO
+
+# run entrypoint.prod.sh
+ENTRYPOINT ["/home/ERP_PORTILLO/web/entrypoint.prod.sh"]

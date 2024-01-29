@@ -1,0 +1,8 @@
+.rbc-event {
+  background-color: inherit !important;
+}
+
+.rbc-event,
+.rbc-background-event {
+  border: 1px solid inherit;
+}

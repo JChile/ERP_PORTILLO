@@ -2,14 +2,20 @@ import * as React from "react";
 import { TextareaAutosize as BaseTextareaAutosize } from "@mui/base/TextareaAutosize";
 import { styled } from "@mui/system";
 
-export const CustomTextArea = ({ value, onChangeValue, name, active }) => {
+export const CustomTextArea = ({
+  value,
+  onChangeValue,
+  name,
+  active,
+  placeholder = "Empty",
+}) => {
   return (
     <TextareaAutosize
       disabled={active}
       readOnly={active}
       aria-label="empty textarea"
       name={name}
-      placeholder="Empty"
+      placeholder={placeholder}
       value={value}
       onChange={onChangeValue}
     />

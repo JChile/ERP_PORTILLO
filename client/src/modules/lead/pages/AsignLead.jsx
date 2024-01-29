@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import { getLeadsNoAsignados, multipleAsingAsesor } from "../helpers";
+import { multipleAsingAsesor } from "../helpers";
 import { CustomAlert, CustomCircularProgress } from "../../../components";
 import { CustomInputBase } from "../../../components/CustomInputBase";
 import {

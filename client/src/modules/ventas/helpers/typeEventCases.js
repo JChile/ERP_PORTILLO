@@ -32,10 +32,22 @@ const updateTipoEvento = async (id, event) => {
   return data;
 };
 
+const getEstadoEvento = async (token) => {
+  const URL = `${DOMAIN}/api/estadoEvento/`;
+  const config = {
+    headers: {
+      Authorization: `Bearear ${token}`,
+    },
+  };
+  const { data } = await axios.get(URL, config);
+  return data;
+};
+
 export {
   getTipoEvento,
   getTipoEventos,
   createTipoEvento,
   deleteTipoEvento,
   updateTipoEvento,
+  getEstadoEvento
 };

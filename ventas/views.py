@@ -47,7 +47,7 @@ class LeadList(generics.ListCreateAPIView):
             lead_queryset = lead_queryset.filter(estado=estado)
         if desde and hasta:
             lead_queryset = lead_queryset.filter(
-                horaRecepcion__range=[desde, hasta])
+                fecha_asignacion__range=[desde, hasta])
 
         leadSerializer = LeadSerializer(lead_queryset, many=True)
 

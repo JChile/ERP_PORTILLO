@@ -45,33 +45,29 @@ COPY public.django_content_type (id, app_label, model) FROM stdin;
 10	marketing	categoria
 11	marketing	campania
 12	ventas	cotizacion
-13	ventas	estadolead
-14	ventas	lead
-15	ventas	objecion
-16	ventas	whatsapp
-17	ventas	tipoproducto
-18	ventas	tipoevento
-19	ventas	tipocuota
-20	ventas	tipocotizacion
-21	ventas	proyectotipoproducto
-22	ventas	producto
-23	ventas	precio
-24	ventas	llamada
-25	ventas	historicoleadasesor
-26	ventas	evento
-27	ventas	cuota
-28	token_blacklist	blacklistedtoken
-29	token_blacklist	outstandingtoken
-31	ventas	estadoevento
-32	ventas	desasignacionleadasesor
-33	ventas	videoproyecto
-34	ventas	imagenproducto
-35	ventas	videoproducto
-36	ventas	imagenproyecto
-37	multimedia	videoproducto
-38	multimedia	imagenproducto
-39	multimedia	videoproyecto
-40	multimedia	imagenproyecto
+13	ventas	estadoevento
+14	ventas	estadolead
+15	ventas	lead
+16	ventas	objecion
+17	ventas	whatsapp
+18	ventas	tipoproducto
+19	ventas	tipoevento
+20	ventas	tipocuota
+21	ventas	tipocotizacion
+22	ventas	proyectotipoproducto
+23	ventas	producto
+24	ventas	precio
+25	ventas	llamada
+26	ventas	historicoleadasesor
+27	ventas	evento
+28	ventas	desasignacionleadasesor
+29	ventas	cuota
+30	multimedia	videoproyecto
+31	multimedia	videoproducto
+32	multimedia	imagenproyecto
+33	multimedia	imagenproducto
+34	token_blacklist	blacklistedtoken
+35	token_blacklist	outstandingtoken
 \.
 
 
@@ -128,114 +124,98 @@ COPY public.auth_permission (id, name, content_type_id, codename) FROM stdin;
 46	Can change cotizacion	12	change_cotizacion
 47	Can delete cotizacion	12	delete_cotizacion
 48	Can view cotizacion	12	view_cotizacion
-49	Can add estado lead	13	add_estadolead
-50	Can change estado lead	13	change_estadolead
-51	Can delete estado lead	13	delete_estadolead
-52	Can view estado lead	13	view_estadolead
-53	Can add lead	14	add_lead
-54	Can change lead	14	change_lead
-55	Can delete lead	14	delete_lead
-56	Can view lead	14	view_lead
-57	Can add objecion	15	add_objecion
-58	Can change objecion	15	change_objecion
-59	Can delete objecion	15	delete_objecion
-60	Can view objecion	15	view_objecion
-61	Can add whats app	16	add_whatsapp
-62	Can change whats app	16	change_whatsapp
-63	Can delete whats app	16	delete_whatsapp
-64	Can view whats app	16	view_whatsapp
-65	Can add tipo producto	17	add_tipoproducto
-66	Can change tipo producto	17	change_tipoproducto
-67	Can delete tipo producto	17	delete_tipoproducto
-68	Can view tipo producto	17	view_tipoproducto
-69	Can add tipo evento	18	add_tipoevento
-70	Can change tipo evento	18	change_tipoevento
-71	Can delete tipo evento	18	delete_tipoevento
-72	Can view tipo evento	18	view_tipoevento
-73	Can add tipo cuota	19	add_tipocuota
-74	Can change tipo cuota	19	change_tipocuota
-75	Can delete tipo cuota	19	delete_tipocuota
-76	Can view tipo cuota	19	view_tipocuota
-77	Can add tipo cotizacion	20	add_tipocotizacion
-78	Can change tipo cotizacion	20	change_tipocotizacion
-79	Can delete tipo cotizacion	20	delete_tipocotizacion
-80	Can view tipo cotizacion	20	view_tipocotizacion
-81	Can add proyecto tipo producto	21	add_proyectotipoproducto
-82	Can change proyecto tipo producto	21	change_proyectotipoproducto
-83	Can delete proyecto tipo producto	21	delete_proyectotipoproducto
-84	Can view proyecto tipo producto	21	view_proyectotipoproducto
-85	Can add producto	22	add_producto
-86	Can change producto	22	change_producto
-87	Can delete producto	22	delete_producto
-88	Can view producto	22	view_producto
-89	Can add precio	23	add_precio
-90	Can change precio	23	change_precio
-91	Can delete precio	23	delete_precio
-92	Can view precio	23	view_precio
-93	Can add llamada	24	add_llamada
-94	Can change llamada	24	change_llamada
-95	Can delete llamada	24	delete_llamada
-96	Can view llamada	24	view_llamada
-97	Can add historico lead asesor	25	add_historicoleadasesor
-98	Can change historico lead asesor	25	change_historicoleadasesor
-99	Can delete historico lead asesor	25	delete_historicoleadasesor
-100	Can view historico lead asesor	25	view_historicoleadasesor
-101	Can add evento	26	add_evento
-102	Can change evento	26	change_evento
-103	Can delete evento	26	delete_evento
-104	Can view evento	26	view_evento
-105	Can add cuota	27	add_cuota
-106	Can change cuota	27	change_cuota
-107	Can delete cuota	27	delete_cuota
-108	Can view cuota	27	view_cuota
-109	Can add blacklisted token	28	add_blacklistedtoken
-110	Can change blacklisted token	28	change_blacklistedtoken
-111	Can delete blacklisted token	28	delete_blacklistedtoken
-112	Can view blacklisted token	28	view_blacklistedtoken
-113	Can add outstanding token	29	add_outstandingtoken
-114	Can change outstanding token	29	change_outstandingtoken
-115	Can delete outstanding token	29	delete_outstandingtoken
-116	Can view outstanding token	29	view_outstandingtoken
-121	Can add estado evento	31	add_estadoevento
-122	Can change estado evento	31	change_estadoevento
-123	Can delete estado evento	31	delete_estadoevento
-124	Can view estado evento	31	view_estadoevento
-125	Can add desasignacion lead asesor	32	add_desasignacionleadasesor
-126	Can change desasignacion lead asesor	32	change_desasignacionleadasesor
-127	Can delete desasignacion lead asesor	32	delete_desasignacionleadasesor
-128	Can view desasignacion lead asesor	32	view_desasignacionleadasesor
-129	Can add video proyecto	33	add_videoproyecto
-130	Can change video proyecto	33	change_videoproyecto
-131	Can delete video proyecto	33	delete_videoproyecto
-132	Can view video proyecto	33	view_videoproyecto
-133	Can add imagen producto	34	add_imagenproducto
-134	Can change imagen producto	34	change_imagenproducto
-135	Can delete imagen producto	34	delete_imagenproducto
-136	Can view imagen producto	34	view_imagenproducto
-137	Can add video producto	35	add_videoproducto
-138	Can change video producto	35	change_videoproducto
-139	Can delete video producto	35	delete_videoproducto
-140	Can view video producto	35	view_videoproducto
-141	Can add imagen proyecto	36	add_imagenproyecto
-142	Can change imagen proyecto	36	change_imagenproyecto
-143	Can delete imagen proyecto	36	delete_imagenproyecto
-144	Can view imagen proyecto	36	view_imagenproyecto
-145	Can add video producto	37	add_videoproducto
-146	Can change video producto	37	change_videoproducto
-147	Can delete video producto	37	delete_videoproducto
-148	Can view video producto	37	view_videoproducto
-149	Can add imagen producto	38	add_imagenproducto
-150	Can change imagen producto	38	change_imagenproducto
-151	Can delete imagen producto	38	delete_imagenproducto
-152	Can view imagen producto	38	view_imagenproducto
-153	Can add video proyecto	39	add_videoproyecto
-154	Can change video proyecto	39	change_videoproyecto
-155	Can delete video proyecto	39	delete_videoproyecto
-156	Can view video proyecto	39	view_videoproyecto
-157	Can add imagen proyecto	40	add_imagenproyecto
-158	Can change imagen proyecto	40	change_imagenproyecto
-159	Can delete imagen proyecto	40	delete_imagenproyecto
-160	Can view imagen proyecto	40	view_imagenproyecto
+49	Can add estado evento	13	add_estadoevento
+50	Can change estado evento	13	change_estadoevento
+51	Can delete estado evento	13	delete_estadoevento
+52	Can view estado evento	13	view_estadoevento
+53	Can add estado lead	14	add_estadolead
+54	Can change estado lead	14	change_estadolead
+55	Can delete estado lead	14	delete_estadolead
+56	Can view estado lead	14	view_estadolead
+57	Can add lead	15	add_lead
+58	Can change lead	15	change_lead
+59	Can delete lead	15	delete_lead
+60	Can view lead	15	view_lead
+61	Can add objecion	16	add_objecion
+62	Can change objecion	16	change_objecion
+63	Can delete objecion	16	delete_objecion
+64	Can view objecion	16	view_objecion
+65	Can add whats app	17	add_whatsapp
+66	Can change whats app	17	change_whatsapp
+67	Can delete whats app	17	delete_whatsapp
+68	Can view whats app	17	view_whatsapp
+69	Can add tipo producto	18	add_tipoproducto
+70	Can change tipo producto	18	change_tipoproducto
+71	Can delete tipo producto	18	delete_tipoproducto
+72	Can view tipo producto	18	view_tipoproducto
+73	Can add tipo evento	19	add_tipoevento
+74	Can change tipo evento	19	change_tipoevento
+75	Can delete tipo evento	19	delete_tipoevento
+76	Can view tipo evento	19	view_tipoevento
+77	Can add tipo cuota	20	add_tipocuota
+78	Can change tipo cuota	20	change_tipocuota
+79	Can delete tipo cuota	20	delete_tipocuota
+80	Can view tipo cuota	20	view_tipocuota
+81	Can add tipo cotizacion	21	add_tipocotizacion
+82	Can change tipo cotizacion	21	change_tipocotizacion
+83	Can delete tipo cotizacion	21	delete_tipocotizacion
+84	Can view tipo cotizacion	21	view_tipocotizacion
+85	Can add proyecto tipo producto	22	add_proyectotipoproducto
+86	Can change proyecto tipo producto	22	change_proyectotipoproducto
+87	Can delete proyecto tipo producto	22	delete_proyectotipoproducto
+88	Can view proyecto tipo producto	22	view_proyectotipoproducto
+89	Can add producto	23	add_producto
+90	Can change producto	23	change_producto
+91	Can delete producto	23	delete_producto
+92	Can view producto	23	view_producto
+93	Can add precio	24	add_precio
+94	Can change precio	24	change_precio
+95	Can delete precio	24	delete_precio
+96	Can view precio	24	view_precio
+97	Can add llamada	25	add_llamada
+98	Can change llamada	25	change_llamada
+99	Can delete llamada	25	delete_llamada
+100	Can view llamada	25	view_llamada
+101	Can add historico lead asesor	26	add_historicoleadasesor
+102	Can change historico lead asesor	26	change_historicoleadasesor
+103	Can delete historico lead asesor	26	delete_historicoleadasesor
+104	Can view historico lead asesor	26	view_historicoleadasesor
+105	Can add evento	27	add_evento
+106	Can change evento	27	change_evento
+107	Can delete evento	27	delete_evento
+108	Can view evento	27	view_evento
+109	Can add desasignacion lead asesor	28	add_desasignacionleadasesor
+110	Can change desasignacion lead asesor	28	change_desasignacionleadasesor
+111	Can delete desasignacion lead asesor	28	delete_desasignacionleadasesor
+112	Can view desasignacion lead asesor	28	view_desasignacionleadasesor
+113	Can add cuota	29	add_cuota
+114	Can change cuota	29	change_cuota
+115	Can delete cuota	29	delete_cuota
+116	Can view cuota	29	view_cuota
+117	Can add video proyecto	30	add_videoproyecto
+118	Can change video proyecto	30	change_videoproyecto
+119	Can delete video proyecto	30	delete_videoproyecto
+120	Can view video proyecto	30	view_videoproyecto
+121	Can add video producto	31	add_videoproducto
+122	Can change video producto	31	change_videoproducto
+123	Can delete video producto	31	delete_videoproducto
+124	Can view video producto	31	view_videoproducto
+125	Can add imagen proyecto	32	add_imagenproyecto
+126	Can change imagen proyecto	32	change_imagenproyecto
+127	Can delete imagen proyecto	32	delete_imagenproyecto
+128	Can view imagen proyecto	32	view_imagenproyecto
+129	Can add imagen producto	33	add_imagenproducto
+130	Can change imagen producto	33	change_imagenproducto
+131	Can delete imagen producto	33	delete_imagenproducto
+132	Can view imagen producto	33	view_imagenproducto
+133	Can add blacklisted token	34	add_blacklistedtoken
+134	Can change blacklisted token	34	change_blacklistedtoken
+135	Can delete blacklisted token	34	delete_blacklistedtoken
+136	Can view blacklisted token	34	view_blacklistedtoken
+137	Can add outstanding token	35	add_outstandingtoken
+138	Can change outstanding token	35	change_outstandingtoken
+139	Can delete outstanding token	35	delete_outstandingtoken
+140	Can view outstanding token	35	view_outstandingtoken
 \.
 
 
@@ -361,140 +341,6 @@ COPY public.cuenta_user_user_permissions (id, user_id, permission_id) FROM stdin
 --
 
 COPY public.django_admin_log (id, action_time, object_id, object_repr, action_flag, change_message, content_type_id, user_id) FROM stdin;
-1	2023-12-29 14:20:10.353627-05	4	Gestión de asesores	3		7	2
-2	2023-12-29 14:26:33.410287-05	4	Jefe de Ventas	2	[]	3	2
-3	2023-12-29 14:29:18.974981-05	4	Jefe de Ventas	2	[{"changed": {"fields": ["Permissions"]}}]	3	2
-4	2023-12-29 14:33:11.783996-05	4	Jefe de Ventas	2	[{"changed": {"fields": ["Permissions"]}}]	3	2
-5	2023-12-29 14:33:56.967211-05	3	Jefe de Recursos Humanos	2	[{"changed": {"fields": ["Permissions"]}}]	3	2
-6	2023-12-29 14:34:26.119902-05	4	Jefe de Ventas	2	[]	3	2
-7	2023-12-29 14:35:19.008283-05	2	Asistente de marketing	2	[{"changed": {"fields": ["Permissions"]}}]	3	2
-8	2023-12-29 14:36:14.198162-05	1	Jefe de Marketing	3		3	2
-9	2023-12-29 14:36:36.9574-05	1	Asesor	1	[{"added": {}}]	3	2
-10	2023-12-29 14:36:46.914828-05	3	Recursos Humanos	2	[{"changed": {"fields": ["Name"]}}]	3	2
-11	2023-12-29 14:36:57.750479-05	2	Marketing	2	[{"changed": {"fields": ["Name"]}}]	3	2
-12	2023-12-29 14:37:26.181598-05	1	Asesor	2	[{"changed": {"fields": ["Permissions"]}}]	3	2
-13	2023-12-29 14:37:46.919622-05	3	Recursos Humanos	2	[]	3	2
-14	2023-12-29 15:52:54.384857-05	1	socabaya	1	[{"added": {}}]	9	2
-15	2023-12-29 15:53:19.570236-05	1	Facebook	1	[{"added": {}}]	10	2
-16	2023-12-29 15:53:40.804419-05	1	Socabaya	1	[{"added": {}}]	11	2
-17	2023-12-29 15:55:33.434991-05	1	BRIAN	1	[{"added": {}}]	15	2
-18	2023-12-29 15:56:37.561293-05	1	BRIAN	2	[{"changed": {"fields": ["EstadoLead"]}}]	15	2
-19	2023-12-29 16:00:44.328868-05	1	BRIAN	2	[{"changed": {"fields": ["Asesor", "Campania"]}}]	15	2
-20	2023-12-29 16:04:30.444975-05	1	BRIAN	2	[{"changed": {"fields": ["Asesor"]}}]	15	2
-21	2023-12-29 16:11:53.038879-05	1	BRIAN	2	[{"changed": {"fields": ["Asesor"]}}]	15	2
-22	2023-12-29 16:13:18.426993-05	1	BRIAN	2	[{"changed": {"fields": ["Asesor"]}}]	15	2
-23	2023-12-29 16:13:53.381235-05	1	BRIAN	2	[{"changed": {"fields": ["Asesor"]}}]	15	2
-24	2023-12-29 16:36:37.839378-05	1	BRIAN	2	[{"changed": {"fields": ["Asesor"]}}]	15	2
-25	2023-12-29 18:25:53.132373-05	1	Socabaya Faceook	2	[{"changed": {"fields": ["Nombre", "Codigo"]}}]	11	2
-26	2023-12-29 18:26:29.851093-05	2	Alamos	1	[{"added": {}}]	9	2
-27	2023-12-29 18:26:49.432248-05	2	Alamos Facebook	1	[{"added": {}}]	11	2
-28	2023-12-29 18:27:25.133636-05	2	Fisico	1	[{"added": {}}]	10	2
-29	2023-12-29 18:27:33.333612-05	3	Socabaya fisico	1	[{"added": {}}]	11	2
-30	2023-12-29 19:19:10.632712-05	2	qwerty	2	[{"changed": {"fields": ["Groups", "CodigoAsesor"]}}]	8	2
-31	2023-12-29 19:19:14.755092-05	1	andrew	2	[]	8	2
-32	2023-12-29 19:19:48.207118-05	1	andrew	2	[{"changed": {"fields": ["Groups"]}}]	8	2
-33	2023-12-29 19:19:48.23085-05	1	andrew	2	[]	8	2
-34	2023-12-29 19:22:34.697561-05	3	Recursos Humanos	2	[]	3	2
-35	2023-12-29 19:22:55.20508-05	3	Recursos Humanos	2	[{"changed": {"fields": ["Permissions"]}}]	3	2
-36	2023-12-29 19:24:35.757069-05	2	qwerty	2	[{"changed": {"fields": ["First name", "Last name", "CodigoAsesor"]}}]	8	2
-37	2023-12-29 19:26:10.978975-05	3	Recursos Humanos	2	[{"changed": {"fields": ["Permissions"]}}]	3	2
-38	2023-12-29 19:27:19.048066-05	3	Recursos Humanos	2	[{"changed": {"fields": ["Permissions"]}}]	3	2
-39	2023-12-29 19:27:19.084828-05	3	Recursos Humanos	2	[]	3	2
-40	2023-12-29 21:00:30.695714-05	4	JEFE_VENTAS	2	[{"changed": {"fields": ["Name"]}}]	3	2
-41	2023-12-29 21:00:49.544953-05	2	marketing	2	[{"changed": {"fields": ["Name"]}}]	3	2
-42	2023-12-29 21:00:59.768883-05	3	recursos_humanos	2	[{"changed": {"fields": ["Name"]}}]	3	2
-43	2023-12-29 21:01:08.006147-05	4	jefe_ventas	2	[{"changed": {"fields": ["Name"]}}]	3	2
-44	2023-12-29 21:01:12.161765-05	1	asesor	2	[{"changed": {"fields": ["Name"]}}]	3	2
-45	2023-12-29 21:15:44.637866-05	2	qwerty	2	[{"changed": {"fields": ["Groups"]}}]	8	2
-46	2023-12-29 21:15:49.504322-05	1	andrew	2	[{"changed": {"fields": ["Groups"]}}]	8	2
-47	2023-12-29 21:18:44.294518-05	2	qwerty	2	[{"changed": {"fields": ["Groups"]}}]	8	2
-48	2023-12-29 22:12:41.924153-05	1	Firma de contrato	1	[{"added": {}}]	18	2
-49	2023-12-29 22:12:49.755795-05	2	Visita	1	[{"added": {}}]	18	2
-50	2023-12-29 22:13:25.41477-05	1	Firma del contrato de socabaya	1	[{"added": {}}]	27	2
-51	2023-12-30 10:49:15.996697-05	1	Firma del contrato de socabaya	2	[{"changed": {"fields": ["Asesor"]}}]	27	2
-52	2023-12-30 10:59:32.395412-05	2	qwerty	2	[{"changed": {"fields": ["Groups"]}}]	8	2
-53	2023-12-30 10:59:53.809238-05	2	qwerty	2	[{"changed": {"fields": ["Groups"]}}]	8	2
-54	2024-01-02 22:46:43.170372-05	2	qwerty	2	[{"changed": {"fields": ["Proyecto"]}}]	8	2
-55	2024-01-02 22:46:47.330962-05	1	andrew	2	[{"changed": {"fields": ["Proyecto"]}}]	8	2
-56	2024-01-03 10:46:31.557664-05	1	Pago Contado	1	[{"added": {}}]	19	2
-57	2024-01-03 10:46:42.195088-05	1	Pago Contado Socabay	1	[{"added": {}}]	12	2
-58	2024-01-03 10:46:53.750821-05	1	Pago Contado Socabaya	2	[{"changed": {"fields": ["Nombre", "Fecha", "Duracion"]}}]	12	2
-59	2024-01-03 10:50:46.333158-05	1	Departamento	1	[{"added": {}}]	16	2
-60	2024-01-03 10:50:57.756241-05	1	Departamento socabaya	1	[{"added": {}}]	21	2
-61	2024-01-05 12:52:56.098364-05	2	qwerty	2	[{"changed": {"fields": ["Superuser status"]}}]	8	2
-62	2024-01-05 12:54:09.13136-05	1	asesor	2	[{"changed": {"fields": ["Permissions"]}}]	3	1
-63	2024-01-05 12:54:56.215115-05	4	jefe_ventas	2	[{"changed": {"fields": ["Permissions"]}}]	3	1
-64	2024-01-05 12:55:45.879304-05	2	qwerty	2	[{"changed": {"fields": ["User permissions"]}}]	8	1
-65	2024-01-05 13:08:50.236206-05	4	jefe_ventas	2	[{"changed": {"fields": ["Permissions"]}}]	3	1
-66	2024-01-05 13:09:17.675614-05	4	jefe_ventas	2	[{"changed": {"fields": ["Permissions"]}}]	3	1
-67	2024-01-05 13:57:39.181609-05	2	qwerty	2	[{"changed": {"fields": ["IsAdmin"]}}]	8	1
-68	2024-01-05 13:58:14.896279-05	4	jefe_ventas	2	[{"changed": {"fields": ["Permissions"]}}]	3	1
-69	2024-01-05 13:59:02.705732-05	4	jefe_ventas	2	[{"changed": {"fields": ["Permissions"]}}]	3	1
-70	2024-01-05 13:59:23.177854-05	2	qwerty	2	[{"changed": {"fields": ["IsAdmin"]}}]	8	1
-71	2024-01-05 14:01:30.285339-05	2	qwerty	2	[{"changed": {"fields": ["Superuser status"]}}]	8	1
-72	2024-01-05 14:01:47.649552-05	2	qwerty	2	[{"changed": {"fields": ["IsAdmin"]}}]	8	1
-73	2024-01-05 14:02:52.213134-05	4	jefe_ventas	2	[{"changed": {"fields": ["Permissions"]}}]	3	1
-74	2024-01-05 14:09:28.871164-05	2	qwerty	2	[{"changed": {"fields": ["Superuser status"]}}]	8	1
-75	2024-01-05 14:10:05.057022-05	4	jefe_ventas	2	[{"changed": {"fields": ["Permissions"]}}]	3	1
-76	2024-01-05 14:10:46.751912-05	2	qwerty	2	[{"changed": {"fields": ["Superuser status"]}}]	8	1
-77	2024-01-05 14:10:59.470942-05	2	qwerty	2	[{"changed": {"fields": ["IsAdmin"]}}]	8	1
-78	2024-01-05 14:11:12.880363-05	2	qwerty	2	[{"changed": {"fields": ["Superuser status"]}}]	8	1
-79	2024-01-05 14:11:24.531448-05	2	qwerty	2	[{"changed": {"fields": ["Superuser status", "Groups"]}}]	8	1
-80	2024-01-05 14:11:37.811745-05	2	qwerty	2	[{"changed": {"fields": ["Superuser status"]}}]	8	1
-81	2024-01-05 14:11:50.101689-05	2	qwerty	2	[{"changed": {"fields": ["Groups"]}}]	8	1
-82	2024-01-05 14:12:01.630879-05	2	qwerty	2	[{"changed": {"fields": ["IsAdmin"]}}]	8	1
-83	2024-01-05 14:12:11.213272-05	2	qwerty	2	[{"changed": {"fields": ["Superuser status"]}}]	8	1
-84	2024-01-05 14:32:11.284433-05	2	qwerty	2	[{"changed": {"fields": ["IsAdmin"]}}]	8	1
-85	2024-01-05 14:33:05.318089-05	1	asesor	2	[{"changed": {"fields": ["Permissions"]}}]	3	1
-86	2024-01-05 14:33:28.842261-05	2	qwerty	2	[{"changed": {"fields": ["Superuser status"]}}]	8	1
-87	2024-01-05 14:34:06.72347-05	1	asesor	2	[{"changed": {"fields": ["Permissions"]}}]	3	1
-88	2024-01-05 14:39:14.510335-05	2	qwerty	2	[{"changed": {"fields": ["IsAdmin"]}}]	8	1
-89	2024-01-05 14:45:30.613673-05	2	qwerty	2	[{"changed": {"fields": ["Superuser status"]}}]	8	1
-90	2024-01-05 14:46:34.31225-05	2	qwerty	2	[{"changed": {"fields": ["IsAdmin"]}}]	8	1
-91	2024-01-05 14:47:18.242923-05	1	Firma del contrato de socabaya	2	[{"changed": {"fields": ["Asesor"]}}]	26	1
-92	2024-01-05 14:47:32.569914-05	1	Firma del contrato de socabaya	2	[{"changed": {"fields": ["Asesor"]}}]	26	1
-93	2024-01-05 14:57:43.438211-05	2	qwerty	2	[{"changed": {"fields": ["Superuser status"]}}]	8	1
-94	2024-01-05 14:57:58.264727-05	2	qwerty	2	[{"changed": {"fields": ["IsAdmin"]}}]	8	1
-95	2024-01-05 14:58:20.742686-05	2	qwerty	2	[{"changed": {"fields": ["Groups"]}}]	8	1
-96	2024-01-05 14:58:53.216346-05	4	jefe_ventas	2	[{"changed": {"fields": ["Permissions"]}}]	3	1
-97	2024-01-05 14:59:23.221808-05	2	qwerty	2	[{"changed": {"fields": ["IsAdmin"]}}]	8	1
-98	2024-01-05 15:02:09.640605-05	2	qwerty	2	[{"changed": {"fields": ["Superuser status", "IsAdmin"]}}]	8	1
-99	2024-01-08 04:43:01.549884-05	2	qwerty	2	[{"changed": {"fields": ["Superuser status"]}}]	8	1
-100	2024-01-08 04:43:20.009885-05	2	qwerty	2	[{"changed": {"fields": ["Superuser status"]}}]	8	1
-101	2024-01-10 13:10:29.419097-05	1	Gestión de proyectos	1	[{"added": {}}]	7	1
-102	2024-01-10 13:11:50.905269-05	4	Gestión de productos	1	[{"added": {}}]	7	1
-103	2024-01-14 12:24:09.360259-05	7	testing	3		8	1
-104	2024-01-14 12:44:37.082539-05	2	qwerty	2	[{"changed": {"fields": ["CodigoAsesor"]}}]	8	1
-105	2024-01-14 12:47:14.259695-05	2	qwerty	2	[{"changed": {"fields": ["CodigoAsesor"]}}]	8	1
-106	2024-01-14 12:50:30.758331-05	2	qwerty	2	[{"changed": {"fields": ["CodigoAsesor"]}}]	8	1
-107	2024-01-24 21:38:33.445805-05	2	qwerty	2	[{"changed": {"fields": ["Active"]}}]	8	1
-108	2024-01-24 21:39:23.809748-05	1	Llamada object (1)	1	[{"added": {}}]	24	2
-109	2024-01-24 21:39:47.187168-05	2	Llamada object (2)	1	[{"added": {}}]	24	2
-110	2024-01-24 21:40:16.995839-05	1	WhatsApp object (1)	1	[{"added": {}}]	16	2
-111	2024-01-24 21:40:36.423214-05	2	WhatsApp object (2)	1	[{"added": {}}]	16	2
-112	2024-01-24 21:50:19.618964-05	2	Llamada object (2)	2	[{"changed": {"fields": ["Objeciones"]}}]	24	2
-113	2024-01-24 21:51:42.900189-05	1	Llamada object (1)	2	[{"changed": {"fields": ["Objeciones"]}}]	24	2
-114	2024-01-24 21:51:47.591075-05	2	Llamada object (2)	2	[{"changed": {"fields": ["Objeciones"]}}]	24	2
-115	2024-01-24 22:42:26.512066-05	En curso	En curso	1	[{"added": {}}]	31	2
-116	2024-01-24 22:42:28.552784-05	1	Firma del contrato de socabaya	2	[{"changed": {"fields": ["EstadoEvento"]}}]	26	2
-117	2024-01-24 22:42:50.973258-05	1	Firma del contrato de socabaya	2	[{"changed": {"fields": ["Fecha visita"]}}]	26	2
-118	2024-01-25 15:21:13.488269-05	1	BRIAN-935488033	2	[{"changed": {"fields": ["Asesor"]}}]	14	2
-119	2024-01-25 15:22:02.733778-05	1	BRIAN-935488033	2	[{"changed": {"fields": ["Asesor", "UsuarioCreador"]}}]	14	2
-120	2024-01-25 15:22:25.67813-05	1	BRIAN-935488033	2	[{"changed": {"fields": ["Asesor"]}}]	14	2
-121	2024-01-25 15:22:32.05608-05	1	BRIAN-935488033	2	[]	14	2
-122	2024-01-25 15:23:35.506403-05	9	Jesus-958742315	2	[{"changed": {"fields": ["Asesor"]}}]	14	2
-123	2024-01-25 15:23:45.105752-05	10	-934789123	2	[{"changed": {"fields": ["Asesor"]}}]	14	2
-124	2024-01-25 15:24:02.379487-05	3	Jesus-958742315	2	[{"changed": {"fields": ["Asesor"]}}]	14	2
-125	2024-01-26 18:50:36.62953-05	1	ImagenProyecto object (1)	1	[{"added": {}}]	40	2
-126	2024-01-26 18:58:37.053816-05	1	ImagenProducto object (1)	1	[{"added": {}}]	38	2
-127	2024-01-26 18:58:45.850536-05	2	ImagenProducto object (2)	1	[{"added": {}}]	38	2
-128	2024-01-26 18:58:52.884382-05	2	ImagenProducto object (2)	2	[]	38	2
-129	2024-01-26 18:58:56.476696-05	1	ImagenProducto object (1)	2	[]	38	2
-130	2024-01-26 19:05:46.591833-05	2	ImagenProducto object (2)	2	[{"changed": {"fields": ["Imagen"]}}]	38	2
-131	2024-01-26 19:05:56.150982-05	1	ImagenProducto object (1)	2	[{"changed": {"fields": ["Imagen"]}}]	38	2
-132	2024-01-26 19:07:41.283994-05	1	ImagenProyecto object (1)	2	[{"changed": {"fields": ["Imagen"]}}]	40	2
-133	2024-01-26 19:07:49.321214-05	1	ImagenProyecto object (1)	2	[{"changed": {"fields": ["Imagen"]}}]	40	2
-134	2024-01-26 19:24:58.468695-05	1	ImagenProducto object (1)	2	[{"changed": {"fields": ["Imagen"]}}]	38	2
 \.
 
 
@@ -503,53 +349,39 @@ COPY public.django_admin_log (id, action_time, object_id, object_repr, action_fl
 --
 
 COPY public.django_migrations (id, app, name, applied) FROM stdin;
-1	contenttypes	0001_initial	2024-01-24 18:17:25.5109-05
-2	contenttypes	0002_remove_content_type_name	2024-01-24 18:17:25.544191-05
-3	auth	0001_initial	2024-01-24 18:17:25.643079-05
-4	auth	0002_alter_permission_name_max_length	2024-01-24 18:17:25.654904-05
-5	auth	0003_alter_user_email_max_length	2024-01-24 18:17:25.679439-05
-6	auth	0004_alter_user_username_opts	2024-01-24 18:17:25.703297-05
-7	auth	0005_alter_user_last_login_null	2024-01-24 18:17:25.715318-05
-8	auth	0006_require_contenttypes_0002	2024-01-24 18:17:25.719815-05
-9	auth	0007_alter_validators_add_error_messages	2024-01-24 18:17:25.732903-05
-10	auth	0008_alter_user_username_max_length	2024-01-24 18:17:25.764184-05
-11	auth	0009_alter_user_last_name_max_length	2024-01-24 18:17:25.796693-05
-12	auth	0010_alter_group_name_max_length	2024-01-24 18:17:25.822708-05
-13	auth	0011_update_proxy_permissions	2024-01-24 18:17:25.860756-05
-14	auth	0012_alter_user_first_name_max_length	2024-01-24 18:17:25.8819-05
-15	cuenta	0001_initial	2024-01-24 18:17:26.048518-05
-16	admin	0001_initial	2024-01-24 18:17:26.127487-05
-17	admin	0002_logentry_remove_auto_add	2024-01-24 18:17:26.165133-05
-18	admin	0003_logentry_add_action_flag_choices	2024-01-24 18:17:26.195542-05
-19	marketing	0001_initial	2024-01-24 18:17:26.370292-05
-20	sessions	0001_initial	2024-01-24 18:17:26.392324-05
-21	token_blacklist	0001_initial	2024-01-24 18:17:26.467476-05
-22	token_blacklist	0002_outstandingtoken_jti_hex	2024-01-24 18:17:26.492255-05
-23	token_blacklist	0003_auto_20171017_2007	2024-01-24 18:17:26.528706-05
-24	token_blacklist	0004_auto_20171017_2013	2024-01-24 18:17:26.568364-05
-25	token_blacklist	0005_remove_outstandingtoken_jti	2024-01-24 18:17:26.611666-05
-26	token_blacklist	0006_auto_20171017_2113	2024-01-24 18:17:26.643904-05
-27	token_blacklist	0007_auto_20171017_2214	2024-01-24 18:17:26.723711-05
-28	token_blacklist	0008_migrate_to_bigautofield	2024-01-24 18:17:26.831942-05
-29	token_blacklist	0010_fix_migrate_to_bigautofield	2024-01-24 18:17:26.873826-05
-30	token_blacklist	0011_linearizes_history	2024-01-24 18:17:26.876882-05
-31	token_blacklist	0012_alter_outstandingtoken_user	2024-01-24 18:17:26.976377-05
-32	ventas	0001_initial	2024-01-24 18:17:27.916617-05
-41	ventas	0002_estadoevento_evento_estadoevento	2024-01-24 18:18:51.895231-05
-42	ventas	0003_remove_evento_proyecto_remove_evento_ubicacion	2024-01-24 18:19:16.526529-05
-43	ventas	0004_rename_objeciones_llamada_objecion_and_more	2024-01-24 21:54:44.083442-05
-44	ventas	0005_rename_descripcion_evento_observacion	2024-01-24 22:20:46.171445-05
-45	ventas	0006_evento_separado	2024-01-24 22:26:07.218902-05
-46	ventas	0007_alter_estadoevento_nombre	2024-01-24 22:42:05.253018-05
-47	ventas	0008_desasignacionleadasesor	2024-01-24 22:49:22.126577-05
-48	ventas	0009_videoproyecto_videoproducto_imagenproyecto_and_more	2024-01-25 19:23:33.563318-05
-49	ventas	0010_delete_imagenproducto	2024-01-25 19:25:45.037065-05
-50	ventas	0011_remove_videoproducto_producto_and_more	2024-01-25 19:25:45.129612-05
-51	multimedia	0001_initial	2024-01-25 19:34:55.424175-05
-52	multimedia	0002_alter_imagenproducto_imagen_and_more	2024-01-26 19:04:59.290762-05
-53	multimedia	0003_alter_imagenproducto_imagen_and_more	2024-01-26 19:23:42.769245-05
-54	ventas	0002_lead_fecha_asginado	2024-01-27 18:14:08.044371-05
-55	ventas	0003_remove_lead_fecha_asginado	2024-01-27 18:39:47.215579-05
+1	contenttypes	0001_initial	2024-01-28 18:48:49.093417-05
+2	contenttypes	0002_remove_content_type_name	2024-01-28 18:48:49.11011-05
+3	auth	0001_initial	2024-01-28 18:48:49.17491-05
+4	auth	0002_alter_permission_name_max_length	2024-01-28 18:48:49.185507-05
+5	auth	0003_alter_user_email_max_length	2024-01-28 18:48:49.19679-05
+6	auth	0004_alter_user_username_opts	2024-01-28 18:48:49.212697-05
+7	auth	0005_alter_user_last_login_null	2024-01-28 18:48:49.234269-05
+8	auth	0006_require_contenttypes_0002	2024-01-28 18:48:49.240623-05
+9	auth	0007_alter_validators_add_error_messages	2024-01-28 18:48:49.254107-05
+10	auth	0008_alter_user_username_max_length	2024-01-28 18:48:49.26595-05
+11	auth	0009_alter_user_last_name_max_length	2024-01-28 18:48:49.275507-05
+12	auth	0010_alter_group_name_max_length	2024-01-28 18:48:49.2885-05
+13	auth	0011_update_proxy_permissions	2024-01-28 18:48:49.308469-05
+14	auth	0012_alter_user_first_name_max_length	2024-01-28 18:48:49.320975-05
+15	cuenta	0001_initial	2024-01-28 18:48:49.428556-05
+16	admin	0001_initial	2024-01-28 18:48:49.460096-05
+17	admin	0002_logentry_remove_auto_add	2024-01-28 18:48:49.4734-05
+18	admin	0003_logentry_add_action_flag_choices	2024-01-28 18:48:49.492665-05
+19	marketing	0001_initial	2024-01-28 18:48:49.593844-05
+20	ventas	0001_initial	2024-01-28 18:48:50.672768-05
+21	multimedia	0001_initial	2024-01-28 18:48:50.835796-05
+22	sessions	0001_initial	2024-01-28 18:48:50.85237-05
+23	token_blacklist	0001_initial	2024-01-28 18:48:50.98816-05
+24	token_blacklist	0002_outstandingtoken_jti_hex	2024-01-28 18:48:51.021132-05
+25	token_blacklist	0003_auto_20171017_2007	2024-01-28 18:48:51.176089-05
+26	token_blacklist	0004_auto_20171017_2013	2024-01-28 18:48:51.209996-05
+27	token_blacklist	0005_remove_outstandingtoken_jti	2024-01-28 18:48:51.232723-05
+28	token_blacklist	0006_auto_20171017_2113	2024-01-28 18:48:51.254481-05
+29	token_blacklist	0007_auto_20171017_2214	2024-01-28 18:48:51.30571-05
+30	token_blacklist	0008_migrate_to_bigautofield	2024-01-28 18:48:51.37189-05
+31	token_blacklist	0010_fix_migrate_to_bigautofield	2024-01-28 18:48:51.407335-05
+32	token_blacklist	0011_linearizes_history	2024-01-28 18:48:51.409896-05
+33	token_blacklist	0012_alter_outstandingtoken_user	2024-01-28 18:48:51.439391-05
 \.
 
 
@@ -872,8 +704,8 @@ COPY public.ventas_desasignacionleadasesor (id, fecha, lead_id, usuario_id) FROM
 -- Data for Name: ventas_estadoevento; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public.ventas_estadoevento (nombre, descripcion, estado_id) FROM stdin;
-En curso	En curso	A
+COPY public.ventas_estadoevento (id, nombre, descripcion, estado_id) FROM stdin;
+1	En curso	En curso	A
 \.
 
 
@@ -891,8 +723,7 @@ COPY public.ventas_tipoevento (id, nombre, estado_id) FROM stdin;
 -- Data for Name: ventas_evento; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public.ventas_evento (id, titulo, duracion, fecha_visita, observacion, fecha_creacion, fecha_actualizacion, asesor_id, estado_id, lead_id, tipo_id, "usuarioActualizador_id", "usuarioCreador_id", "estadoEvento_id", separado) FROM stdin;
-1	Firma del contrato de socabaya	50	2023-12-30 22:12:30-05		2024-01-24	2023-12-29 22:13:24-05	2	A	1	1	2	1	En curso	f
+COPY public.ventas_evento (id, titulo, duracion, fecha_visita, observacion, fecha_creacion, fecha_actualizacion, separado, asesor_id, estado_id, "estadoEvento_id", lead_id, tipo_id, "usuarioActualizador_id", "usuarioCreador_id") FROM stdin;
 \.
 
 
@@ -1134,6 +965,13 @@ SELECT pg_catalog.setval('public.ventas_cuota_id_seq', 1, false);
 --
 
 SELECT pg_catalog.setval('public.ventas_desasignacionleadasesor_id_seq', 4, true);
+
+
+--
+-- Name: ventas_estadoevento_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.ventas_estadoevento_id_seq', 1, true);
 
 
 --

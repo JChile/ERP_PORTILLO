@@ -62,7 +62,6 @@ class Lead(models.Model):
     fecha_creacion = models.DateField(auto_now=True)
     fecha_actualizacion = models.DateTimeField(blank=True, null=True)
 
-
     def __str__(self):
         return self.nombre + "-"+str(self.celular)
 
@@ -112,15 +111,14 @@ class Llamada(models.Model):
     fecha_actualizacion = models.DateTimeField(blank=True, null=True)
 
 
-
 class EstadoEvento(models.Model):
-    nombre = models.CharField(max_length=20)
-    descripcion = models.CharField(max_length=50, null=True, default=None)
+    nombre = models.CharField(max_length=20, null=True)
     estado = models.ForeignKey(
         EstadoRegistro, on_delete=models.SET_NULL, default='A', null=True)
 
     def __str__(self):
-        return self.descripcion
+        return self.nombre
+
 
 class Evento(models.Model):
     asesor = models.ForeignKey(
@@ -144,7 +142,6 @@ class Evento(models.Model):
     fecha_creacion = models.DateField(auto_now=True)
     fecha_actualizacion = models.DateTimeField(blank=True, null=True)
     separado = models.BooleanField(default=False)
-
 
     def __str__(self):
         return self.titulo

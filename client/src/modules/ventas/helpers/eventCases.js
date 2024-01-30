@@ -37,9 +37,14 @@ const deleteEvent = async (id, event) => {
   return data;
 };
 
-const updateEvent = async (id, event) => {
+const updateEvent = async (id, event, token) => {
   const URL = `${DOMAIN}/api/evento/${id}`;
-  const { data } = await axios.put(URL, { ...event });
+  const config = {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  };
+  const { data } = await axios.put(URL, { ...event }, config);
   return data;
 };
 

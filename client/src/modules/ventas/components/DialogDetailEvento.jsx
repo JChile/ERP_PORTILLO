@@ -1,4 +1,3 @@
-import styled from "@emotion/styled";
 import {
   Button,
   Checkbox,
@@ -13,16 +12,11 @@ import {
 } from "@mui/material";
 import { useEffect, useState } from "react";
 import { FiEdit, FiSave, FiX } from "react-icons/fi";
-import { GrUpdate } from "react-icons/gr";
-import { MdCancel, MdOutlineSave } from "react-icons/md";
-import { CustomTextArea } from "../../../components";
 import {
-  DatePicker,
+  DesktopDateTimePicker,
   LocalizationProvider,
-  TimePicker,
 } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { getEstadoEvento, getTipoEventos } from "../helpers/typeEventCases";
 import dayjs from "dayjs";
 import "dayjs/locale/es";
 import { FilterTipoEvento } from "../../../components/filters/tipoEvento/FilterTipoEvento";
@@ -34,20 +28,20 @@ export const DialogDetailEvento = ({
   isOpen,
   onUpdateEvent,
 }) => {
-  const [dataAuxEvento, setDataAuxEvento] = useState(selectedEvent);
+  const [originalData, setOriginalData] = useState(selectedEvent);
+  const [dataAuxEvento, setDataAuxEvento] = useState(originalData);
 
   const {
+    id,
     separado,
     title,
     lead,
     start,
     duracion,
-    tipoEvento,
+    tipo,
     observacion,
     estadoEvento,
   } = dataAuxEvento;
-
-  console.log(dataAuxEvento)
 
   const [editData, setEditData] = useState(false);
 
@@ -65,29 +59,47 @@ export const DialogDetailEvento = ({
 
   // guardar los datos
   const onSaveChanges = () => {
-    onUpdateEvent(id, dataAuxEvento);
+    const formatData =  dayjs(dataAuxEvento.start)
+    onUpdateEvent(id, {
+      ...dataAuxEvento,
+      lead: lead.id,
+      titulo: title,
+      fecha_visita: formatData.toDate().toISOString(),
+    });
+    setOriginalData(dataAuxEvento);
     setEditData(false);
   };
 
   // cancelar los datos
   const onCancelChanges = () => {
-    setDataAuxEvento(selectedEvent);
+    setDataAuxEvento(originalData);
     setEditData(false);
   };
 
   const handleChangeTipoEvento = (value) => {
-    console.log(value);
-  }
+    setDataAuxEvento((prev) => ({
+      ...prev,
+      tipo: value.id,
+    }));
+  };
 
   const handleChangeEstadoEvento = (value) => {
-    console.log(value);
-  }
+    setDataAuxEvento((prev) => ({
+      ...prev,
+      estadoEvento: value.id,
+    }));
+  };
 
+  const handleChangeDate = (value) => {
+    setDataAuxEvento((prev) => ({
+      ...prev,
+      start: value,
+    }));
+  };
 
   useEffect(() => {
     dayjs.locale("es");
   }, []);
-
 
   return (
     <Dialog
@@ -129,24 +141,32 @@ export const DialogDetailEvento = ({
       </DialogTitle>
       <DialogContent dividers>
         {/* SEPARÓ? */}
-        <Grid container>
+
+        <Grid container spacing={4}>
           <Grid item xs={6}>
             <Typography variant="subtitle1" sx={{ fontWeight: "bold" }}>
-              Titulo:
+              Título:
             </Typography>
             <TextField
               disabled={!editData}
               placeholder="empty"
               size="small"
+              fullWidth
               value={title}
               name="title"
-              onChangeValue={handleChangeValue}
+              sx={{
+                "&.Mui-disabled": {
+                  opacity: 1, // Establecer opacidad completa cuando está deshabilitado
+                },
+              }}
+              onChange={handleChangeValue}
             />
+
             <Typography variant="subtitle1" sx={{ fontWeight: "bold" }}>
               Lead:
             </Typography>
             <Typography>
-              {`${lead.nombre} ${lead.apellido} - Celular: ${lead.celular}`}
+              {`${lead.nombre} ${lead.apellido} - ${lead.celular}`}
             </Typography>
             <Typography variant="subtitle1" sx={{ fontWeight: "bold" }}>
               Separó:
@@ -161,9 +181,11 @@ export const DialogDetailEvento = ({
               Tipo de evento:
             </Typography>
             <FilterTipoEvento
-              defaultValue={tipoEvento.id}
+              defaultValue={tipo}
               size="small"
-              onNewInput={(value) => {handleChangeTipoEvento(value)}}
+              onNewInput={(value) => {
+                handleChangeTipoEvento(value);
+              }}
               disabled={!editData}
             />
             <Typography variant="subtitle1" sx={{ fontWeight: "bold" }}>
@@ -172,7 +194,9 @@ export const DialogDetailEvento = ({
             <FilterEstadoEvento
               defaultValue={estadoEvento}
               size="small"
-              onNewInput={(value) => {handleChangeEstadoEvento(value)}}
+              onNewInput={(value) => {
+                handleChangeEstadoEvento(value);
+              }}
               disabled={!editData}
             />
           </Grid>
@@ -181,12 +205,13 @@ export const DialogDetailEvento = ({
               Fecha evento:
             </Typography>
             <LocalizationProvider dateAdapter={AdapterDayjs}>
-              <DatePicker
+              <DesktopDateTimePicker
                 disabled={!editData}
                 disablePast
+                name="start"
                 value={dayjs(start)}
-                slotProps={{ textField: { size: "small" } }}
-                onChange={() => {}}
+                slotProps={{ textField: { size: "small", fullWidth: true } }}
+                onChange={(value) => handleChangeDate(value)}
               />
             </LocalizationProvider>
             <Typography variant="subtitle1" sx={{ fontWeight: "bold" }}>
@@ -197,6 +222,7 @@ export const DialogDetailEvento = ({
               size="small"
               value={duracion}
               disabled={!editData}
+              fullWidth
               onChange={handleChangeValue}
               name="duracion"
             />
@@ -208,19 +234,19 @@ export const DialogDetailEvento = ({
               value={observacion}
               disabled={!editData}
               multiline
+              fullWidth
               rows={5}
               onChange={handleChangeValue}
             />
           </Grid>
         </Grid>
       </DialogContent>
-      <DialogActions className="bg-dark-purple" sx={{}}>
+      <DialogActions className="bg-dark-purple">
         <Button
           variant="contained"
           onClick={onClose}
           sx={{
             textTransform: "capitalize",
-            borderRadius: "0px",
           }}
         >
           Aceptar

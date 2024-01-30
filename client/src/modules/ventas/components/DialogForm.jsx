@@ -7,7 +7,6 @@ import {
   DialogTitle,
   FormControl,
   TextField,
-  TextareaAutosize,
   Typography,
 } from "@mui/material";
 
@@ -109,11 +108,7 @@ export const DialogForm = ({ isOpen, onClose, lead, token, user }) => {
 
   return (
     <Backdrop open={isOpen}>
-      <Dialog
-        open={isOpen}
-        onClose={onClose}
-        PaperProps={{ sx: { borderRadius: "0px" } }}
-      >
+      <Dialog open={isOpen} onClose={onClose}>
         <DialogTitle>Registrar Evento</DialogTitle>
 
         <DialogContent className="flex flex-col gap-y-2" dividers>
@@ -133,6 +128,7 @@ export const DialogForm = ({ isOpen, onClose, lead, token, user }) => {
                     onNewInput={onAddTipoEvento}
                   />
                   <DatePicker
+                    disablePast
                     type="date"
                     label="Fecha"
                     value={fecha}
@@ -143,6 +139,7 @@ export const DialogForm = ({ isOpen, onClose, lead, token, user }) => {
                     name="fecha"
                   />
                   <TimePicker
+                    disablePast
                     label="Hora de inicio"
                     value={horaInicio}
                     onChange={(value) => {
@@ -179,14 +176,13 @@ export const DialogForm = ({ isOpen, onClose, lead, token, user }) => {
             </Typography>
           ))}
         </DialogContent>
-        <DialogActions>
+        <DialogActions className="bg-dark-purple">
           <Button
             variant="contained"
             color="inherit"
             onClick={onClose}
             sx={{
               textTransform: "capitalize",
-              borderRadius: 0,
             }}
           >
             Cerrar
@@ -196,7 +192,6 @@ export const DialogForm = ({ isOpen, onClose, lead, token, user }) => {
             color="success"
             sx={{
               textTransform: "capitalize",
-              borderRadius: 0,
             }}
             onClick={() => handleSubmit(handleSave)}
           >

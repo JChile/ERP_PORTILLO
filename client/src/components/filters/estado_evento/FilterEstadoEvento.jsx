@@ -56,7 +56,7 @@ const FilterEstadoEvento = ({
       value={value}
       disableClearable
       getOptionLabel={(option) => option.label}
-      onAbort={handleChange}
+      onChange={handleChange}
       isOptionEqualToValue={(option, value) => option.id == value.id}
       renderInput={(params) => (
         <TextField label={label} {...params} size={size} />

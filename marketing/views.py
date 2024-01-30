@@ -26,9 +26,7 @@ def get_or_none(classmodel, **kwargs):
 class ProyectoList(generics.ListCreateAPIView):
     serializer_class = ProyectoSerializer
     queryset = Proyecto.objects.all()
-    
 
-    
 
     def get(self, request):
         estado = request.query_params.get('estado')
@@ -63,6 +61,8 @@ class ProyectoDetail(generics.RetrieveUpdateDestroyAPIView):
         if proyecto == None :
             return Response({"message" : "No existe proyecto o no tiene permisos el usuario"}, status=404)
 
+        desde = request.query_params.get('desde')
+        hasta = request.query_params.get('hasta')
 
         proyectoSerializer = ProyectoSerializer(proyecto)
         proyecto_data = proyectoSerializer.data
@@ -76,6 +76,8 @@ class ProyectoDetail(generics.RetrieveUpdateDestroyAPIView):
             campania_queryset = Campania.objects.filter(proyecto = proyecto.pk)
             campania_id_list = [int(campania.pk) for campania in campania_queryset]
             lead_queryset = Lead.objects.filter(campania__in=campania_id_list)
+            if desde and hasta:
+                lead_queryset = lead_queryset.filter(fecha_creacion__range=[desde, hasta])
             #lead_asesor_list =  [int(lead.asesor.pk) for lead in lead_queryset]
             #asesor_queryset = User.objects.filter(id__in = lead_asesor_list)
 

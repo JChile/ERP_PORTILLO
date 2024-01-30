@@ -346,7 +346,7 @@ class AsesorAsignacion(APIView):
             return Response({'detalle': error_message})
         return Response({'message': f"No se reasignaron los leads : {leadsNoAsigandos} porque no existen", 'detalle': error_message})
 
-
+#Retorna los leads asociados a un asesor auntentificado
 class AsesorLead(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -365,6 +365,11 @@ class AsesorLead(APIView):
             dataJson = asesorSerializer.data
             dataJson["leads"] = LeadSerializer(
                 Lead.objects.all(), many=True).data
+            
+            for leadIter in dataJson["leads"] :
+                leadIter["numeroWhatsapps"]= WhatsApp.objects.filter(lead = leadIter["id"], asesor = leadIter["asesor"]).count()
+                leadIter["numeroLlamadas"]= Llamada.objects.filter(lead = leadIter["id"], asesor = leadIter["asesor"]).count()
+
             return Response(dataJson)
         else:
             try:
@@ -377,7 +382,12 @@ class AsesorLead(APIView):
             dataJson = asesorSerializer.data
             dataJson["leads"] = LeadSerializer(Lead.objects.filter(
                 asesor=asesor_queryset.pk), many=True).data
+            for leadIter in dataJson["leads"] :
+                leadIter["numeroWhatsapps"]= WhatsApp.objects.filter(lead = leadIter["id"], asesor = leadIter["asesor"]).count()
+                leadIter["numeroLlamadas"]= Llamada.objects.filter(lead = leadIter["id"], asesor = leadIter["asesor"]).count()
+
             return Response(dataJson)
+
 
 
 class ProyectoTipoProductoList(generics.ListCreateAPIView):

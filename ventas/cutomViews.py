@@ -15,6 +15,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import permission_classes
 from .consts import *
 from django.utils import timezone
+from django.utils.timezone import make_aware
 
 
 
@@ -171,9 +172,9 @@ class leadCreation:
                     
     def check_date(self):
         try:
-            self.data["horaRecepcion"] = datetime.strptime(self.data["horaRecepcion"], "%d/%m/%Y")
+            self.data["horaRecepcion"] = make_aware(datetime.strptime(self.data["horaRecepcion"], "%d/%m/%Y"))
         except (ValueError, KeyError):
-            self.data["horaRecepcion"] = datetime.now()
+            self.data["horaRecepcion"] = timezone.now()
     
     def put_asesor(self, asesor):
         if asesor is not None:
@@ -345,7 +346,7 @@ class AsesorAsignacion(APIView):
             return Response({'detalle': error_message})
         return Response({'message': f"No se reasignaron los leads : {leadsNoAsigandos} porque no existen", 'detalle': error_message})
 
-
+#Retorna los leads asociados a un asesor auntentificado
 class AsesorLead(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -364,6 +365,11 @@ class AsesorLead(APIView):
             dataJson = asesorSerializer.data
             dataJson["leads"] = LeadSerializer(
                 Lead.objects.all(), many=True).data
+            
+            for leadIter in dataJson["leads"] :
+                leadIter["numeroWhatsapps"]= WhatsApp.objects.filter(lead = leadIter["id"], asesor = leadIter["asesor"]).count()
+                leadIter["numeroLlamadas"]= Llamada.objects.filter(lead = leadIter["id"], asesor = leadIter["asesor"]).count()
+
             return Response(dataJson)
         else:
             try:
@@ -376,7 +382,12 @@ class AsesorLead(APIView):
             dataJson = asesorSerializer.data
             dataJson["leads"] = LeadSerializer(Lead.objects.filter(
                 asesor=asesor_queryset.pk), many=True).data
+            for leadIter in dataJson["leads"] :
+                leadIter["numeroWhatsapps"]= WhatsApp.objects.filter(lead = leadIter["id"], asesor = leadIter["asesor"]).count()
+                leadIter["numeroLlamadas"]= Llamada.objects.filter(lead = leadIter["id"], asesor = leadIter["asesor"]).count()
+
             return Response(dataJson)
+
 
 
 class ProyectoTipoProductoList(generics.ListCreateAPIView):
@@ -492,6 +503,7 @@ class AsignacionMasivaAsesorLeadById(APIView):
                 user = user_queryset.get(id=arrAsesor[iter])
                 lead.asesor = user
                 lead.fecha_actualizacion = timezone.now()
+                lead.fecha_asignacion = timezone.now()
 
                 lead.save()
                 HistoricoLeadAsesor.objects.create(lead=lead, usuario=user)
@@ -518,9 +530,11 @@ class DesAsignacionMasivaLeadsById(APIView):
             try:
                 lead = lead_queryset.get(id=i)
                 user = user_queryset.get(id=lead.asesor.pk)
+                #print(lead, user)
                 lead.asesor = None
                 lead.asignado = False
-                lead.fecha_actualizacion = datetime.datetime.now()
+                lead.fecha_actualizacion = timezone.now()
+                lead.fecha_desasignacion = timezone.now()
                 lead.save()
                 DesasignacionLeadAsesor.objects.create(lead=lead, usuario=user)
             except:

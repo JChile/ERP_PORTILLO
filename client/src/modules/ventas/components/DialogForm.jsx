@@ -9,55 +9,61 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
+
+import {
+  DatePicker,
+  LocalizationProvider,
+  TimePicker,
+} from "@mui/x-date-pickers";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { useForm } from "../hooks";
 import { createEvent } from "../helpers/eventCases";
-import { useState } from "react";
-import { FilterProyectos } from "../../../components";
+import { useEffect, useState } from "react";
 import { FilterTipoEvento } from "../../../components/filters/tipoEvento/FilterTipoEvento";
+import { getEstadoEvento } from "../helpers/typeEventCases";
+import dayjs from "dayjs";
+import "dayjs/locale/es";
 
 export const DialogForm = ({ isOpen, onClose, lead, token, user }) => {
   const { form, handleChangeForm, handleSubmit } = useForm({
     titulo: "",
-    duracion: 1,
-    fecha: "",
-    descripcion: "",
+    duracion: 10,
+    fecha: dayjs(),
+    observacion: "",
     tipo: null,
-    proyecto: null,
-    horaInicio: "",
-    ubicacion: "",
+    horaInicio: dayjs(),
+    estadoEvento: 1,
   });
   const [formErrors, setFormErrors] = useState({});
 
   const {
     titulo,
-    proyecto,
     tipo,
-    descripcion,
+    observacion,
     fecha,
     horaInicio,
     duracion,
-    ubicacion,
+    estadoEvento,
   } = form;
 
   const handleSave = async () => {
     const errors = checkInputForm();
     if (Object.keys(errors).length === 0) {
-      const dateToSave = new Date(`${fecha}T${horaInicio}`);
+      const dateToSave = combinedDataAndTime(fecha, horaInicio);
       const eventSave = {
         duracion: duracion,
         fecha_visita: dateToSave.toISOString(),
-        descripcion: descripcion,
+        observacion: observacion,
         lead: lead,
         titulo: titulo,
         tipo: tipo,
-        ubicacion: ubicacion,
-        proyecto: proyecto,
         usuarioCreador: user,
         usuarioActualizador: user,
+        estadoEvento: estadoEvento,
       };
-      console.log({ eventSave });
+
+      console.log(duracion);
       const result = await createEvent(eventSave, token);
-      console.log(result);
       onClose();
     } else {
       setFormErrors(errors);
@@ -78,19 +84,8 @@ export const DialogForm = ({ isOpen, onClose, lead, token, user }) => {
     if (!tipo) {
       errors.tipo = "El tipo es obligatorio";
     }
-    if (!proyecto) {
-      errors.proyecto = "El proyecto es obligatorio";
-    }
-    return errors;
-  };
 
-  const onAddProyecto = (item) => {
-    handleChangeForm({
-      target: {
-        name: "proyecto",
-        value: item.id,
-      },
-    });
+    return errors;
   };
 
   const onAddTipoEvento = (item) => {
@@ -102,95 +97,76 @@ export const DialogForm = ({ isOpen, onClose, lead, token, user }) => {
     });
   };
 
+  useEffect(() => {
+    const fetchData = async () => {
+      const data = await getEstadoEvento(token);
+      console.log(data);
+    };
+    dayjs.locale("es");
+    fetchData();
+  }, []);
+
   return (
     <Backdrop open={isOpen}>
-      <Dialog
-        open={isOpen}
-        onClose={onClose}
-        PaperProps={{ sx: { borderRadius: "0px" } }}
-      >
-        <DialogTitle className="text-white font-bold text-center bg-[#282828]">
-          Registrar Evento
-        </DialogTitle>
-        <DialogContent className="flex flex-col gap-y-2">
+      <Dialog open={isOpen} onClose={onClose}>
+        <DialogTitle>Registrar Evento</DialogTitle>
+
+        <DialogContent className="flex flex-col gap-y-2" dividers>
           <FormControl>
-            <div className="flex gap-x-4 mt-4">
-              <div className="flex flex-col gap-y-4">
-                <TextField
-                  size="small"
-                  label="Título"
-                  placeholder="Titulo del evento"
-                  value={titulo}
-                  onChange={handleChangeForm}
-                  name="titulo"
-                />
-                <TextField
-                  size="small"
-                  label="Descripción"
-                  placeholder="Descripción"
-                  value={descripcion}
-                  onChange={handleChangeForm}
-                  name="descripcion"
-                  rows={2}
-                  minRows={2}
-                />
-                <FilterTipoEvento
-                  defaultValue={null}
-                  onNewInput={onAddTipoEvento}
-                />
-                <FilterProyectos
-                  label="Proyectos"
-                  onNewInput={onAddProyecto}
-                  defaultValue={null}
-                  token={token}
-                />
-              </div>
+            <div className="flex flex-col gap-y-4">
+              <TextField
+                label="Título"
+                placeholder="Titulo del evento"
+                value={titulo}
+                onChange={handleChangeForm}
+                name="titulo"
+              />
+              <LocalizationProvider dateAdapter={AdapterDayjs}>
+                <div className="grid grid-cols-2 gap-y-4 gap-x-4">
+                  <FilterTipoEvento
+                    defaultValue={null}
+                    onNewInput={onAddTipoEvento}
+                  />
+                  <DatePicker
+                    disablePast
+                    type="date"
+                    label="Fecha"
+                    value={fecha}
+                    onChange={(value) => {
+                      const target = { name: "fecha", value: value };
+                      handleChangeForm({ target });
+                    }}
+                    name="fecha"
+                  />
+                  <TimePicker
+                    disablePast
+                    label="Hora de inicio"
+                    value={horaInicio}
+                    onChange={(value) => {
+                      const target = { name: "horaInicio", value: value };
+                      handleChangeForm({ target });
+                    }}
+                    name="horaInicio"
+                  />
 
-              <div className="flex flex-col gap-y-4">
-                <TextField
-                  size="small"
-                  type="date"
-                  label="Fecha"
-                  value={fecha}
-                  onChange={handleChangeForm}
-                  name="fecha"
-                  InputLabelProps={{
-                    shrink: true,
-                  }}
-                />
-                <TextField
-                  type="time"
-                  label="Hora de inicio"
-                  value={horaInicio}
-                  onChange={handleChangeForm}
-                  name="horaInicio"
-                  size="small"
-                  InputLabelProps={{
-                    shrink: true,
-                  }}
-                  className="flex-2"
-                />
-
-                <TextField
-                  type="number"
-                  label="Duración (min)"
-                  placeholder="Duración"
-                  value={duracion}
-                  onChange={handleChangeForm}
-                  name="duracion"
-                  size="small"
-                />
-
+                  <TextField
+                    type="number"
+                    label="Duración (min)"
+                    placeholder="Duración"
+                    value={duracion}
+                    onChange={handleChangeForm}
+                    name="duracion"
+                  />
+                </div>
                 <TextField
                   type="text"
-                  label="Ubicación"
-                  placeholder="Ubicación"
-                  value={ubicacion}
+                  multiline
+                  label="Observaciones"
+                  name="observacion"
+                  value={observacion}
                   onChange={handleChangeForm}
-                  name="ubicacion"
-                  size="small"
                 />
-              </div>
+              </LocalizationProvider>
             </div>
           </FormControl>
           {/* Mostrar mensajes de error debajo de los campos del formulario */}
@@ -207,17 +183,15 @@ export const DialogForm = ({ isOpen, onClose, lead, token, user }) => {
             onClick={onClose}
             sx={{
               textTransform: "capitalize",
-              borderRadius: 0,
             }}
           >
             Cerrar
           </Button>
           <Button
             variant="contained"
-            color="info"
+            color="success"
             sx={{
               textTransform: "capitalize",
-              borderRadius: 0,
             }}
             onClick={() => handleSubmit(handleSave)}
           >
@@ -228,3 +202,20 @@ export const DialogForm = ({ isOpen, onClose, lead, token, user }) => {
     </Backdrop>
   );
 };
+
+/**
+ *
+ * @param {Date} date
+ * @param {Time} time
+ * @returns
+ */
+function combinedDataAndTime(date, time) {
+  console.log(date, time);
+  const year = date.year();
+  const month = date.month(); // Note: month is 0-indexed or not?
+  const day = date.date();
+  const hours = time.hour();
+  const minutes = time.minute();
+  const seconds = time.second();
+  return new Date(year, month, day, hours, minutes, seconds);
+}

@@ -5,8 +5,8 @@ import "./../components/calendar.css";
 import moment from "moment";
 import { CustomToolbar, CustomEvent, CustomEventWrapper } from "../components";
 import { DialogForm } from "../components/DialogForm";
-import { DialogDetail } from "../components/DialogDetail";
-import { getEvents } from "../helpers/eventCases";
+import { DialogDetailEvento } from "../components/DialogDetailEvento";
+import { getEvents, updateEvent } from "../helpers/eventCases";
 import { getTipoEventos } from "../helpers/typeEventCases";
 import { CustomCircularProgress } from "../../../components";
 import {
@@ -18,8 +18,8 @@ import {
   ListItemSecondaryAction,
   ListItemText,
 } from "@mui/material";
-import { transformToEvent } from "../utils/util";
 import { AuthContext } from "../../../auth";
+import { obtenerHoraActualFormatPostgress } from "../../../utils";
 
 const localizer = momentLocalizer(moment);
 
@@ -85,8 +85,6 @@ export const CalendarView = () => {
   const [selectedFilters, setSelectedFilters] = useState({});
   const [tempFilters, setTempFilters] = useState({});
 
-  // temporary viewr
-
 
   const handleTempFilters = (event) => {
     const { name, checked } = event.target;
@@ -97,12 +95,12 @@ export const CalendarView = () => {
     setTempFilters(updatedFilters);
   };
 
-
   const applyFilters = () => {
     const filtered = originalEvents.filter(
       (event) => tempFilters[event.tipo.nombre]
     );
-    setCalendarEvents(filtered);
+    const transformedEvents = filtered.map((item) => transformToEvent(item));
+    setCalendarEvents(transformedEvents);
     setSelectedFilters(tempFilters);
   };
 
@@ -111,6 +109,9 @@ export const CalendarView = () => {
       const events = await getEvents(authTokens);
       const typeEvents = await getTipoEventos();
 
+      setOriginalEvents(events);
+      setTypeEvents(typeEvents);
+      const transformedEvents = events.map((item) => transformToEvent(item));
 
       if (Object.keys(selectedFilters).length === 0) {
         const initialFilters = {};
@@ -118,30 +119,34 @@ export const CalendarView = () => {
           initialFilters[typeEvent.nombre] = true;
         });
         setSelectedFilters(initialFilters);
-      }
-      setTypeEvents(typeEvents);
-      const transformedEvents = events.map((item) => transformToEvent(item));
-      // Aplicar filtros si existen antes de actualizar los eventos
-      if (Object.keys(selectedFilters).length > 0) {
-        const filteredEvents = transformedEvents.filter(
-          (event) => selectedFilters[event.tipo.nombre]
-        );
-        setCalendarEvents(filteredEvents);
-      } else {
         setCalendarEvents(transformedEvents);
       }
 
-      setOriginalEvents(transformedEvents);
+      if (Object.keys(selectedFilters).length > 0) {
+        const filteredEvents = events.filter((e) => {
+          console.log(e);
+          return selectedFilters[e.tipo.nombre];
+        });
+        setCalendarEvents(filteredEvents.map((item) => transformToEvent(item)));
+      }
+
       dispatch({ type: "base_state" });
     } catch (error) {
       console.error(error);
     }
   };
 
+  const updateEventSelected = async (id, event) => {
+    const dataToSave = {
+      ...event,
+      fecha_actualizacion: obtenerHoraActualFormatPostgress(),
+    };
+    const response = await updateEvent(id, dataToSave, authTokens["access"]);
+  };
+
   useEffect(() => {
-    const controller = new AbortController();
     getCalendarData(authTokens.access);
-    return () => controller.abort();
+    console.log("loading");
   }, [flagLoader]);
 
   return (
@@ -209,7 +214,6 @@ export const CalendarView = () => {
                 sx={{
                   textTransform: "capitalize",
                   width: "100%",
-                  borderRadius: "0px",
                 }}
                 size="small"
                 onClick={() => {
@@ -248,28 +252,42 @@ export const CalendarView = () => {
         />
 
         {state.selectState && (
-          <DialogDetail
+          <DialogDetailEvento
             selectedEvent={selectedEvent}
             onClose={() => {
-              dispatch({ type: "base_state" });
+              setFlagLoader((prev) => !prev);
               setSelectedEvent(null);
             }}
             isOpen={state.selectState}
-          />
-        )}
-
-        {state.createState && (
-          <DialogForm
-            typeEvents={typeEvents}
-            onClose={() => {
-              dispatch({ type: "loading_state" });
-              setFlagLoader((prev) => !prev);
-            }}
-            isOpen={state.createState}
+            onUpdateEvent={updateEventSelected}
           />
         )}
       </div>
       {state.loadState && <CustomCircularProgress />}
     </React.Fragment>
   );
+};
+
+
+
+
+const transformToEvent = (oldEvent) => {
+
+  console.log(oldEvent)
+
+  const startEvent = new Date(oldEvent.fecha_visita);
+  const durationMilliseconds = oldEvent.duracion * 60000;
+  const endEvent = new Date(startEvent.getTime() + durationMilliseconds);
+  return {
+    id: oldEvent.id,
+    separado: oldEvent.separado,
+    title: oldEvent.titulo,
+    lead: oldEvent.lead,
+    start: startEvent,
+    end: endEvent,
+    duracion: oldEvent.duracion,
+    tipo: oldEvent.tipo.id,
+    estadoEvento: oldEvent.estadoEvento.id,
+    observacion: oldEvent.observacion,
+  };
 };

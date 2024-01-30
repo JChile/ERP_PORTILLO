@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { RiFileExcel2Fill } from "react-icons/ri";
-import { deleteLead, getLeadsActivos } from "../helpers";
+import { deleteLead } from "../helpers";
 import { CustomCircularProgress } from "../../../components";
 import { CustomTable } from "../../../components/CustomLeadTable";
 import { CustomInputBase } from "../../../components/CustomInputBase";

@@ -2,7 +2,7 @@
 from django.urls import path
 from django.urls import include, re_path
 from . import views
-from . import cutomViews
+from . import cutomViews, reportesViews
 
 urlpatterns = [
     re_path(r'^lead/$', views.LeadList.as_view()),
@@ -25,7 +25,7 @@ urlpatterns = [
     re_path(r'^asesorAsignacion/$', cutomViews.AsesorAsignacion.as_view()),
     re_path(r'^asignacionAsesorLeadById/$',
             cutomViews.AsignacionMasivaAsesorLeadById.as_view()),
-    # re_path(r'^desasignacionAsesorLeadById/$', cutomViews.DesAsignacionMasivaLeadsById.as_view()),
+    re_path(r'^desasignacionAsesorLeadById/$', cutomViews.DesAsignacionMasivaLeadsById.as_view()),
 
 
     re_path(r'^whatsapp/$', views.WhatsAppList.as_view()),
@@ -117,5 +117,8 @@ urlpatterns = [
     re_path(r'^estadoEvento/$', views.EstadoEventoList.as_view()),
     re_path(r'^estadoEvento/(?P<pk>[\w-]+)$',
             views.EstadoEventoDetail.as_view()),
+
+    re_path(r'^reporteAsesorLead/$', reportesViews.ReporteAsesorLead.as_view()),
+
 
 ]

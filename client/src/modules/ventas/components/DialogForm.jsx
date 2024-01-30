@@ -7,7 +7,6 @@ import {
   DialogTitle,
   FormControl,
   TextField,
-  TextareaAutosize,
   Typography,
 } from "@mui/material";
 
@@ -33,11 +32,19 @@ export const DialogForm = ({ isOpen, onClose, lead, token, user }) => {
     observacion: "",
     tipo: null,
     horaInicio: dayjs(),
-    estadoEvento: "Por iniciar",
+    estadoEvento: 1,
   });
   const [formErrors, setFormErrors] = useState({});
 
-  const { titulo, tipo, observacion, fecha, horaInicio, duracion, estadoEvento } = form;
+  const {
+    titulo,
+    tipo,
+    observacion,
+    fecha,
+    horaInicio,
+    duracion,
+    estadoEvento,
+  } = form;
 
   const handleSave = async () => {
     const errors = checkInputForm();
@@ -54,6 +61,8 @@ export const DialogForm = ({ isOpen, onClose, lead, token, user }) => {
         usuarioActualizador: user,
         estadoEvento: estadoEvento,
       };
+
+      console.log(duracion);
       const result = await createEvent(eventSave, token);
       onClose();
     } else {
@@ -79,15 +88,6 @@ export const DialogForm = ({ isOpen, onClose, lead, token, user }) => {
     return errors;
   };
 
-  const onAddProyecto = (item) => {
-    handleChangeForm({
-      target: {
-        name: "proyecto",
-        value: item.id,
-      },
-    });
-  };
-
   const onAddTipoEvento = (item) => {
     handleChangeForm({
       target: {
@@ -108,11 +108,7 @@ export const DialogForm = ({ isOpen, onClose, lead, token, user }) => {
 
   return (
     <Backdrop open={isOpen}>
-      <Dialog
-        open={isOpen}
-        onClose={onClose}
-        PaperProps={{ sx: { borderRadius: "0px" } }}
-      >
+      <Dialog open={isOpen} onClose={onClose}>
         <DialogTitle>Registrar Evento</DialogTitle>
 
         <DialogContent className="flex flex-col gap-y-2" dividers>
@@ -132,6 +128,7 @@ export const DialogForm = ({ isOpen, onClose, lead, token, user }) => {
                     onNewInput={onAddTipoEvento}
                   />
                   <DatePicker
+                    disablePast
                     type="date"
                     label="Fecha"
                     value={fecha}
@@ -142,6 +139,7 @@ export const DialogForm = ({ isOpen, onClose, lead, token, user }) => {
                     name="fecha"
                   />
                   <TimePicker
+                    disablePast
                     label="Hora de inicio"
                     value={horaInicio}
                     onChange={(value) => {
@@ -160,7 +158,14 @@ export const DialogForm = ({ isOpen, onClose, lead, token, user }) => {
                     name="duracion"
                   />
                 </div>
-                <TextField type="text" multiline label="Observaciones" />
+                <TextField
+                  type="text"
+                  multiline
+                  label="Observaciones"
+                  name="observacion"
+                  value={observacion}
+                  onChange={handleChangeForm}
+                />
               </LocalizationProvider>
             </div>
           </FormControl>
@@ -171,14 +176,13 @@ export const DialogForm = ({ isOpen, onClose, lead, token, user }) => {
             </Typography>
           ))}
         </DialogContent>
-        <DialogActions>
+        <DialogActions className="bg-dark-purple">
           <Button
             variant="contained"
             color="inherit"
             onClick={onClose}
             sx={{
               textTransform: "capitalize",
-              borderRadius: 0,
             }}
           >
             Cerrar
@@ -188,7 +192,6 @@ export const DialogForm = ({ isOpen, onClose, lead, token, user }) => {
             color="success"
             sx={{
               textTransform: "capitalize",
-              borderRadius: 0,
             }}
             onClick={() => handleSubmit(handleSave)}
           >

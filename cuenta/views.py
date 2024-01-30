@@ -350,7 +350,7 @@ class UserInactivoList(APIView):
 
 class UserAsesorList(APIView):
     def get(self, request):
-        users = User.objects.filter(is_active=True).filter(groups__in=[1])
-        dataJson = UserSerializer(users, many=True, fields=(
+        asesor_queryset = User.objects.filter(is_active=True).filter(groups__in=[1])
+        dataJson = UserSerializer(asesor_queryset, many=True, fields=(
             'id', 'first_name', 'last_name', 'username', 'codigoAsesor')).data
         return Response(dataJson)

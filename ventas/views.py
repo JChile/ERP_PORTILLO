@@ -47,7 +47,7 @@ class LeadList(generics.ListCreateAPIView):
             lead_queryset = lead_queryset.filter(estado=estado)
         if desde and hasta:
             lead_queryset = lead_queryset.filter(
-                horaRecepcion__range=[desde, hasta])
+                fecha_asignacion__range=[desde, hasta])
 
         leadSerializer = LeadSerializer(lead_queryset, many=True)
 
@@ -436,11 +436,13 @@ class EventoList(generics.ListCreateAPIView):
             asesor = get_or_none(User, id=eventoIterador["asesor"])
             tipo = get_or_none(TipoEvento, id=eventoIterador["tipo"])
             lead = get_or_none(Lead, id=eventoIterador["lead"])
+            estadoEvento = get_or_none(EstadoEvento, id=eventoIterador["estadoEvento"])
             userCreador = get_or_none(
                 User, id=eventoIterador["usuarioCreador"])
             userActualizador = get_or_none(
                 User, id=eventoIterador["usuarioActualizador"])
 
+            estadoEventoSerializer = EstadoEventoSerializer(estadoEvento) if estadoEvento else None
             userAsesorSerializer = UserSerializer(asesor, fields=(
                 'id', 'first_name', 'last_name', 'username')) if asesor else None
             tipoSerializer = TipoEventoSerializer(tipo) if tipo else None
@@ -454,6 +456,8 @@ class EventoList(generics.ListCreateAPIView):
             eventoIterador["asesor"] = userAsesorSerializer.data if userAsesorSerializer else {
             }
             eventoIterador["tipo"] = tipoSerializer.data if tipoSerializer else {}
+            eventoIterador["estadoEvento"] = estadoEventoSerializer.data if estadoEventoSerializer else {}
+
             eventoIterador["lead"] = leadSerializer.data if leadSerializer else {}
 
         return Response(evento_data)
@@ -495,15 +499,21 @@ class EventoDetail(generics.RetrieveUpdateDestroyAPIView):
 
         asesor = get_or_none(User, id=evento.asesor.pk)
         tipo = get_or_none(TipoEvento, id=evento.tipo.pk)
+        estadoEvento = get_or_none(EstadoEvento, id=evento.estadoEvento.pk)
+
 
         asesorSerlializer = UserSerializer(asesor, fields=(
             'id', 'first_name', 'last_name', 'username')) if asesor else None
+        
         tipoSerializer = TipoEventoSerializer(tipo) if tipo else None
+        estadoEventoSerializer = EstadoEventoSerializer(estadoEvento) if estadoEvento else None
+
 
         evento_dataJson = EventoSerializer(evento).data
         evento_dataJson["asesor"] = asesorSerlializer.data if asesorSerlializer else {
         }
         evento_dataJson["tipo"] = tipoSerializer.data if tipoSerializer else {}
+        evento_dataJson["estadoEvento"] = estadoEventoSerializer.data if estadoEventoSerializer else {}
 
         return Response(evento_dataJson)
 
@@ -908,10 +918,17 @@ class DesasignacionLeadAsesorList(generics.ListCreateAPIView):
     queryset = DesasignacionLeadAsesor.objects.all()
 
     def list(self, request):
+        desde = request.query_params.get('desde')
+        hasta = request.query_params.get('hasta')
+
         queryset = DesasignacionLeadAsesor.objects.all()
         lead_queryset = Lead.objects.all()
         user_queryset = User.objects.all()
+
+        if desde and hasta:
+            queryset = queryset.filter(fecha__range=[desde, hasta])
         dataJson = DesasignacionLeadAsesorSerlializer(queryset, many=True).data
+
 
         for i in dataJson:
             i["lead"] = LeadSerializer(lead_queryset.filter(pk=i["lead"]).first(), fields=[

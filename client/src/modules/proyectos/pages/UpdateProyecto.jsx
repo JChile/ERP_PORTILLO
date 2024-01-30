@@ -3,9 +3,16 @@ import { useNavigate, useParams } from "react-router-dom";
 import { TextField } from "@mui/material";
 import { useAlertMUI } from "../../../hooks";
 import { CustomAlert, CustomCircularProgress } from "../../../components";
-import { getProyecto, updateProyecto } from "../helpers";
+import {
+  createImagenProyecto,
+  createVideoProyecto,
+  getProyecto,
+  updateProyecto,
+} from "../helpers";
 import { combinarErrores, validIdURL } from "../../../utils";
 import { AuthContext } from "../../../auth";
+import CarouselComponentImageAdd from "../components/CarouselImageAdd";
+import CarouselComponentVideoAdd from "../components/CarouselVideoAdd";
 
 export const UpdateProyecto = () => {
   const { authTokens, currentUser } = useContext(AuthContext);
@@ -16,9 +23,13 @@ export const UpdateProyecto = () => {
     ubicacion: "",
     descripcion: "",
     estado: "A",
+    imagenes: [],
+    videos: [],
   });
 
-  const { nombre, ubicacion, descripcion, estado } = project;
+  const { nombre, ubicacion, descripcion, estado, imagenes, videos } = project;
+  const [imageList, setImageList] = useState([]);
+  const [videoList, setVideoList] = useState([]);
 
   const {
     feedbackCreate,
@@ -35,7 +46,11 @@ export const UpdateProyecto = () => {
       setVisibleProgress(true);
       try {
         const result = await getProyecto(idProyecto, authTokens["access"]);
-        setProject(result);
+        setProject({
+          ...result,
+          imagenes: result.imagenes,
+          videos: result.videos,
+        });
         setVisibleProgress(false);
       } catch (error) {
         setVisibleProgress(false);
@@ -103,6 +118,30 @@ export const UpdateProyecto = () => {
           formatProject,
           authTokens["access"]
         );
+        try {
+          for (const imageFile of imageList) {
+            if (typeof imageFile === "undefined") {
+              return;
+            }
+            const formData = new FormData();
+            formData.append("imagen", imageFile);
+            formData.append("proyecto", idProyecto);
+            const imgs = await createImagenProyecto(formData);
+            console.log("imagen creado exitosamente");
+          }
+          for (const videoFile of videoList) {
+            if (typeof videoFile === "undefined") {
+              return;
+            }
+            const formData = new FormData();
+            formData.append("video", videoFile);
+            formData.append("proyecto", idProyecto);
+            const vid = await createVideoProyecto(formData);
+            console.log("video creado exitosamente");
+          }
+        } catch (error) {
+          console.error(error);
+        }
         setVisibleProgress(false);
         onNavigateBack();
       } catch (error) {
@@ -117,16 +156,86 @@ export const UpdateProyecto = () => {
       }
     }
   };
+
+  const handleFileSelect = (event) => {
+    const previewContainerImage = document.getElementById(
+      "preview-containerImage"
+    );
+    const previewContainerVideo = document.getElementById(
+      "preview-containerVideo"
+    );
+
+    const files = event.target.files;
+
+    for (const file of files) {
+      const reader = new FileReader();
+
+      reader.onload = function (e) {
+        const previewContainer = document.createElement("div");
+
+        if (file.type.includes("image")) {
+          previewContainer.className =
+            "relative w-24 h-24 border border-gray-300 rounded overflow-hidden";
+          const img = document.createElement("img");
+          img.src = e.target.result;
+          img.className = "w-full h-full object-cover";
+          previewContainer.appendChild(img);
+
+          setImageList((prevList) => [...prevList, file]);
+        } else if (file.type.includes("video")) {
+          previewContainer.className =
+            "relative w-40 h-40 border border-gray-300 rounded overflow-hidden";
+          const video = document.createElement("video");
+          video.src = e.target.result;
+          video.className = "w-full h-full object-cover";
+          video.setAttribute("controls", "");
+          previewContainer.appendChild(video);
+
+          setVideoList((prevList) => [...prevList, file]);
+        }
+
+        const closeIcon = document.createElement("div");
+        closeIcon.className =
+          "absolute top-0 right-0 cursor-pointer p-1 rounded-full bg-red-500 text-white";
+        closeIcon.innerHTML = "x";
+        closeIcon.addEventListener("click", () => {
+          // Eliminar la previsualización al hacer clic en la "X"
+          if (file.type.includes("image")) {
+            const fileInput = document.getElementById("fileImage");
+            fileInput.value = "";
+            previewContainer.parentNode.removeChild(previewContainer);
+            setImageList((prevList) => prevList.filter((img) => img !== file));
+          } else if (file.type.includes("video")) {
+            const fileInputVideo = document.getElementById("fileVideo");
+            fileInputVideo.value = "";
+            previewContainer.parentNode.removeChild(previewContainer);
+            setVideoList((prevList) =>
+              prevList.filter((video) => video !== file)
+            );
+          }
+        });
+
+        previewContainer.appendChild(closeIcon);
+
+        if (file.type.includes("image")) {
+          previewContainerImage.appendChild(previewContainer);
+        } else if (file.type.includes("video")) {
+          previewContainerVideo.appendChild(previewContainer);
+        }
+      };
+
+      reader.readAsDataURL(file);
+    }
+  };
+
   useEffect(() => {
-    const controller = new AbortController();
     obtenerProyecto();
-    return () => controller.abort();
   }, []);
 
   return (
     <>
       <div className="relative p-5">
-        <h1 className="text-lg font-bold">Crear Proyecto</h1>
+        <h1 className="text-lg font-bold">Modificar Proyecto</h1>
         <hr className="my-4"></hr>
         <form
           method="post"
@@ -148,7 +257,9 @@ export const UpdateProyecto = () => {
                   onChange={handledForm}
                 />
               </label>
+            </div>
 
+            <div className="w-6/12 flex flex-col gap-y-5">
               <label htmlFor="ubicacion" className="flex flex-col gap-y-1">
                 <span className="after:content-['*'] after:ml-0.5 after:text-yellow-500 block text-sm font-medium">
                   Ubicacion
@@ -185,6 +296,37 @@ export const UpdateProyecto = () => {
                 }}
               />
             </label>
+          </div>
+          <div className="flex flex-row gap-y-6 gap-x-8">
+            <div className="w-6/12 flex flex-col gap-y-5 border border-gray-300 p-4 rounded-md">
+              <h3>Imagenes</h3>
+              <div className="items-center mx-auto">
+                <CarouselComponentImageAdd
+                  images={imagenes}
+                  handleFileSelect={handleFileSelect}
+                  obtenerProyecto={obtenerProyecto}
+                />
+              </div>
+              <div
+                className="flex gap-2 mt-4"
+                id="preview-containerImage"
+              ></div>
+            </div>
+
+            <div className="w-6/12 flex flex-col gap-y-5 border border-gray-300 p-4 rounded-md">
+              <h3>Videos</h3>
+              <div className="items-center mx-auto">
+                <CarouselComponentVideoAdd
+                  videos={videos}
+                  handleFileSelect={handleFileSelect}
+                  obtenerProyecto={obtenerProyecto}
+                />
+              </div>
+              <div
+                className="flex gap-2 mt-4"
+                id="preview-containerVideo"
+              ></div>
+            </div>
           </div>
         </form>
       </div>

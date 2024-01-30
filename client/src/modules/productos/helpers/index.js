@@ -3,3 +3,7 @@ export * from "./deleteProducto";
 export * from "./createProducto";
 export * from "./updateProducto";
 export * from "./getProducto";
+export * from "./createImagenProducto";
+export * from "./createVideoProducto";
+export * from "./deleteImagenProducto";
+export * from "./deleteVideoProducto";

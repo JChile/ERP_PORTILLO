@@ -1,11 +1,16 @@
 import React, { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { TextField } from "@mui/material";
-import { createProyecto } from "../helpers";
+import {
+  createImagenProyecto,
+  createProyecto,
+  createVideoProyecto,
+} from "../helpers";
 import { useAlertMUI } from "../../../hooks";
 import { CustomAlert, CustomCircularProgress } from "../../../components";
 import { AuthContext } from "../../../auth";
 import { combinarErrores } from "../../../utils";
+import { IoIosAddCircleOutline } from "react-icons/io";
 
 export const CreateProyecto = () => {
   const { authTokens, currentUser } = useContext(AuthContext);
@@ -15,7 +20,8 @@ export const CreateProyecto = () => {
     descripcion: "",
     estado: "A",
   });
-  const [imageList, setImageList] = useState([]); 
+  const [imageList, setImageList] = useState([]);
+  const [videoList, setVideoList] = useState([]);
 
   const { nombre, ubicacion, descripcion, estado } = project;
 
@@ -76,7 +82,30 @@ export const CreateProyecto = () => {
           usuarioActualizador: currentUser["user_id"],
         };
         const result = await createProyecto(formatData, authTokens["access"]);
-        console.log(imageList);
+        try {
+          for (const imageFile of imageList) {
+            if (typeof imageFile === "undefined") {
+              return;
+            }
+            const formData = new FormData();
+            formData.append("imagen", imageFile);
+            formData.append("proyecto", result.id);
+            const imgs = await createImagenProyecto(formData);
+            console.log("imagen creado exitosamente");
+          }
+          for (const videoFile of videoList) {
+            if (typeof videoFile === "undefined") {
+              return;
+            }
+            const formData = new FormData();
+            formData.append("video", videoFile);
+            formData.append("proyecto", result.id);
+            const vid = await createVideoProyecto(formData);
+            console.log("video creado exitosamente");
+          }
+        } catch (error) {
+          console.error(error);
+        }
         setVisibleProgress(false);
         onNavigateBack();
       } catch (error) {
@@ -92,43 +121,70 @@ export const CreateProyecto = () => {
   };
 
   const handleFileSelect = (event) => {
-    const previewContainer = document.getElementById("preview-containerImage");
+    const previewContainerImage = document.getElementById(
+      "preview-containerImage"
+    );
+    const previewContainerVideo = document.getElementById(
+      "preview-containerVideo"
+    );
+
     const files = event.target.files;
 
     for (const file of files) {
       const reader = new FileReader();
 
       reader.onload = function (e) {
-        const previewImage = document.createElement("div");
-        previewImage.className =
-          "relative w-16 h-16 border border-gray-300 rounded overflow-hidden";
+        const previewContainer = document.createElement("div");
 
         if (file.type.includes("image")) {
+          previewContainer.className =
+            "relative w-24 h-24 border border-gray-300 rounded overflow-hidden";
           const img = document.createElement("img");
           img.src = e.target.result;
           img.className = "w-full h-full object-cover";
-          previewImage.appendChild(img);
-          
-          // Agregar la imagen a la lista
-          setImageList(prevList => [...prevList, file]);
+          previewContainer.appendChild(img);
+
+          setImageList((prevList) => [...prevList, file]);
         } else if (file.type.includes("video")) {
-          // Puedes agregar lógica para videos si lo necesitas
+          previewContainer.className =
+            "relative w-40 h-40 border border-gray-300 rounded overflow-hidden";
+          const video = document.createElement("video");
+          video.src = e.target.result;
+          video.className = "w-full h-full object-cover";
+          video.setAttribute("controls", "");
+          previewContainer.appendChild(video);
+
+          setVideoList((prevList) => [...prevList, file]);
         }
 
         const closeIcon = document.createElement("div");
         closeIcon.className =
-          "absolute top-0 right-0 cursor-pointer p-1 bg-red-500 text-white";
+          "absolute top-0 right-0 cursor-pointer p-1 rounded-full bg-red-500 text-white";
         closeIcon.innerHTML = "x";
         closeIcon.addEventListener("click", () => {
           // Eliminar la previsualización al hacer clic en la "X"
-          previewContainer.removeChild(previewImage);
-
-          // Eliminar la imagen de la lista
-          setImageList(prevList => prevList.filter(img => img !== file));
+          if (file.type.includes("image")) {
+            const fileInput = document.getElementById("fileImage");
+            fileInput.value = "";
+            previewContainer.parentNode.removeChild(previewContainer);
+            setImageList((prevList) => prevList.filter((img) => img !== file));
+          } else if (file.type.includes("video")) {
+            const fileInputVideo = document.getElementById("fileVideo");
+            fileInputVideo.value = "";
+            previewContainer.parentNode.removeChild(previewContainer);
+            setVideoList((prevList) =>
+              prevList.filter((video) => video !== file)
+            );
+          }
         });
 
-        previewImage.appendChild(closeIcon);
-        previewContainer.appendChild(previewImage);
+        previewContainer.appendChild(closeIcon);
+
+        if (file.type.includes("image")) {
+          previewContainerImage.appendChild(previewContainer);
+        } else if (file.type.includes("video")) {
+          previewContainerVideo.appendChild(previewContainer);
+        }
       };
 
       reader.readAsDataURL(file);
@@ -160,7 +216,8 @@ export const CreateProyecto = () => {
                   onChange={handledForm}
                 />
               </label>
-
+            </div>
+            <div className="w-6/12 flex flex-col gap-y-5">
               <label htmlFor="ubicacion" className="flex flex-col gap-y-1">
                 <span className="after:content-['*'] after:ml-0.5 after:text-yellow-500 block text-sm font-medium">
                   Ubicacion
@@ -199,43 +256,62 @@ export const CreateProyecto = () => {
             </label>
           </div>
           <div className="flex flex-row gap-y-6 gap-x-8">
-            <div className="w-6/12 flex flex-col gap-y-5">
+            <div className="w-6/12 flex flex-col gap-y-5 border border-gray-300 p-4 rounded-md">
               <div className="w-6/12 flex flex-col gap-y-6">
                 <label htmlFor="file" className="flex flex-col gap-y-1">
                   <span className="after:content-['*'] after:ml-0.5 after:text-yellow-500 block text-sm font-medium">
                     Imágenes
                   </span>
-                  <input
-                    type="file"
-                    name="file"
-                    id="fileImage"
-                    accept="image/*"
-                    multiple
-                    className="mt-1 px-3 py-2 bg-white border shadow-sm border-slate-300 placeholder-slate-400 focus:outline-none focus:border-sky-500 focus:ring-sky-500 block w-full rounded-md sm:text-sm focus:ring-1"
-                    onChange={handleFileSelect}
-                  />
+                  <div className="bg-green-500 hover:bg-green-600 rounded">
+                    <input
+                      type="file"
+                      name="file"
+                      id="fileImage"
+                      accept="image/jpeg, image/png, image/jpg, image/gif"
+                      multiple
+                      onChange={handleFileSelect}
+                      style={{ display: "none" }}
+                    />
+                    <label
+                      htmlFor="fileImage"
+                      className="flex flex-row items-center justify-center"
+                    >
+                      <IoIosAddCircleOutline className="w-16 h-16 text-white mr-2" />
+                      <h3 className="text-white">Agregar imagen</h3>
+                    </label>
+                  </div>
                 </label>
               </div>
               <div
-                className="flex gap-10 mt-4"
+                className="flex gap-2 mt-4"
                 id="preview-containerImage"
               ></div>
             </div>
 
-            <div className="w-6/12 flex flex-col gap-y-5">
+            <div className="w-6/12 flex flex-col gap-y-5 border border-gray-300 p-4 rounded-md">
               <div className="w-6/12 flex flex-col gap-y-6">
                 <label htmlFor="file" className="flex flex-col gap-y-1">
                   <span className="after:content-['*'] after:ml-0.5 after:text-yellow-500 block text-sm font-medium">
                     Video
                   </span>
-                  <input
-                    type="file"
-                    name="file"
-                    id="fileVideo"
-                    accept="video/*"
-                    className="mt-1 px-3 py-2 bg-white border shadow-sm border-slate-300 placeholder-slate-400 focus:outline-none focus:border-sky-500 focus:ring-sky-500 block w-full rounded-md sm:text-sm focus:ring-1"
-                    onChange={handledForm}
-                  />
+                  <div className="bg-green-500 hover:bg-green-600 rounded">
+                    <input
+                      type="file"
+                      name="file"
+                      id="fileVideo"
+                      accept="video/mp4, video/avi, video/mov, video/mkv"
+                      multiple
+                      onChange={handleFileSelect}
+                      style={{ display: "none" }}
+                    />
+                    <label
+                      htmlFor="fileVideo"
+                      className="flex flex-row items-center justify-center"
+                    >
+                      <IoIosAddCircleOutline className="w-16 h-16 text-white mr-2" />
+                      <h3 className="text-white">Agregar video</h3>
+                    </label>
+                  </div>
                 </label>
               </div>
               <div

@@ -3,10 +3,14 @@ import { getProyectos } from "./getProyectos";
 import { FormControl, MenuItem, Select } from "@mui/material";
 import { AuthContext } from "../../../auth";
 
-export const SelectProyecto = ({ onNewInput, size = "small" }) => {
+export const SelectProyecto = ({
+  onNewInput,
+  size = "small",
+  defaultValue = "",
+}) => {
   const { authTokens } = useContext(AuthContext);
   const [options, setOptions] = useState([]);
-  const [value, setValue] = useState("");
+  const [value, setValue] = useState(defaultValue);
 
   const obtenerProyectos = async () => {
     const result = await getProyectos({ authToken: authTokens["access"] });
@@ -23,12 +27,15 @@ export const SelectProyecto = ({ onNewInput, size = "small" }) => {
     const selectValue = event.target.value;
     const name = "proyecto";
     onNewInput(selectValue, name);
-    setValue(selectValue + "");
   };
 
   useEffect(() => {
     obtenerProyectos();
   }, []);
+
+  useEffect(() => {
+    setValue(defaultValue);
+  }, [defaultValue]);
 
   return (
     <FormControl sx={{ m: 1, minWidth: 120 }} size={size}>

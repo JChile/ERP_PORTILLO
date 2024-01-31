@@ -13,3 +13,4 @@ export * from "./MenuSimple";
 export * from "./DynamicCustomerDialog";
 export * from "./HomePage";
 export * from "./CustomTextArea";
+export * from "./datepickers";

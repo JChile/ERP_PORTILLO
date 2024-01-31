@@ -6,7 +6,7 @@ import { ViewLeadsNoAsignados } from "./ViewLeadsNoAsignados";
 import ViewLeadAsignados from "./ViewLeadAsignados";
 import { MdClear, MdFilterList } from "react-icons/md";
 
-const ListJefeVentasLead = ({ credentials }) => {
+const ListJefeVentasLead = () => {
   const [error, setError] = useState(false);
   const [value, setValue] = useState(0);
   const [filterState, setFilterState] = useState({

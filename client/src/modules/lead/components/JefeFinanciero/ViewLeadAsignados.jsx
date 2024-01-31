@@ -1,5 +1,4 @@
 import {
-  Box,
   Button,
   Checkbox,
   Paper,
@@ -17,19 +16,13 @@ import { AuthContext } from "../../../../auth";
 import { getLeads } from "../../helpers";
 import RowItemLeadAsignado from "./RowItemLeadAsignado";
 import { MdClose, MdSearch } from "react-icons/md";
-import { quitarLeads } from "../../helpers/desasignarLeads";
 import {
   SelectEstadoLead,
   SelectProyecto,
 } from "../../../../components/select";
-import { MassActionsViewLeadsNoAsignados } from "./acciones-masivas/MassActionsViewLeadsNoAsignados";
 import SelectAsesor from "../../../../components/select/asesor-filter/SelectAsesor";
 import { useAlertMUI, useCustomTablePagination } from "../../../../hooks";
-import {
-  combinarErrores,
-  formatDate_ISO861_to_formatdate,
-} from "../../../../utils";
-import { ViewLeadsNoAsignados } from "./ViewLeadsNoAsignados";
+import { combinarErrores } from "../../../../utils";
 import MassActionsViewLeadsAsignados from "./acciones-masivas/MassActionsViewLeadsAsignados";
 import { CustomAlert, CustomCircularProgress } from "../../../../components";
 
@@ -210,8 +203,7 @@ const ViewLeadAsignados = () => {
       setLeadsAsignados(formatData);
       setAuxLeadsAsignados(formatData);
       setVisibleProgress(false);
-    } 
-    catch (e) {
+    } catch (error) {
       const pilaError = combinarErrores(error);
       setFeedbackMessages({
         style_message: "error",
@@ -339,18 +331,21 @@ const ViewLeadAsignados = () => {
                   <SelectProyecto
                     size="small"
                     onNewInput={handledFilterSelectValues}
+                    defaultValue={proyecto}
                   />
                 </TableCell>
                 <TableCell>
                   <SelectEstadoLead
                     size="small"
                     onNewInput={handledFilterSelectValues}
+                    defaultValue={estadoLead}
                   />
                 </TableCell>
                 <TableCell>
                   <SelectAsesor
                     size="small"
                     onNewInput={handledFilterSelectValues}
+                    defaultValue={asesor}
                   />
                 </TableCell>
               </TableRow>

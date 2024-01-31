@@ -1,5 +1,5 @@
+import React from "react";
 import { Checkbox, TableCell, TableRow } from "@mui/material";
-import React, { useEffect } from "react";
 
 export const RowItemLeadNoAsignado = ({ item, checkedElement }) => {
   const { campania } = item;

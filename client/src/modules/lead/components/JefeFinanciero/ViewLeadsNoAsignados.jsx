@@ -42,7 +42,7 @@ export const ViewLeadsNoAsignados = () => {
     proyecto: "",
     estadoLead: "",
   });
-  const { celular, nombre, apellido } = filterData;
+  const { celular, nombre, apellido, proyecto, estadoLead } = filterData;
 
   // flag reset
   const [flagReset, setFlagReset] = useState(false);
@@ -189,6 +189,7 @@ export const ViewLeadsNoAsignados = () => {
   const traerInformacionLeadNoAsociados = async () => {
     // mostrar el progress
     setVisibleProgress(true);
+    setCountSelectedElements(0);
     try {
       // se debe traer en un rango de 30 dias
       const result = await getLeads(authTokens["access"], "asignado=False");
@@ -198,7 +199,7 @@ export const ViewLeadsNoAsignados = () => {
           isSelected: false,
         };
       });
-      setLeadsNoAsignados(result);
+      setLeadsNoAsignados(formatData);
       setAuxLeadsNoAsignados(formatData);
       // ocultar el progress
       setVisibleProgress(false);
@@ -346,12 +347,14 @@ export const ViewLeadsNoAsignados = () => {
                   <SelectProyecto
                     onNewInput={handledFilterSelectValues}
                     size="small"
+                    defaultValue={proyecto}
                   />
                 </TableCell>
                 <TableCell>
                   <SelectEstadoLead
                     onNewInput={handledFilterSelectValues}
                     size="small"
+                    defaultValue={estadoLead}
                   />
                 </TableCell>
               </TableRow>

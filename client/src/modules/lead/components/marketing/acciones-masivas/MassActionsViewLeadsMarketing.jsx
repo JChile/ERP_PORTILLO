@@ -18,11 +18,11 @@ import { getAsesorActivo } from "../../../../../components/filters/asesor/getAse
 import { AuthContext } from "../../../../../auth";
 import { combinarErrores } from "../../../../../utils";
 import { asignarAsesorToLeads } from "../../../helpers";
-import { exportLeadsNoAsignados } from "./exportLeadsNoAsignados";
+import { exportLeadsMarketing } from "./exportLeadsMarketing";
 
 const ITEM_HEIGHT = 48;
 
-export const MassActionsViewLeadsNoAsignados = ({
+export const MassActionsViewLeadsMarketing = ({
   data,
   setFeedbackMessages,
   handleClickFeedback,
@@ -77,7 +77,7 @@ export const MassActionsViewLeadsNoAsignados = ({
   // funcion para exportar asesores seleccionados
   const exportLeadsSeleccionados = () => {
     setVisibleProgress(true);
-    exportLeadsNoAsignados(data);
+    exportLeadsMarketing(data);
     // cerramos el menu
     handleClose();
     setVisibleProgress(false);

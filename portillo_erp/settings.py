@@ -103,6 +103,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'portillo_erp',
         'USER': 'postgres',
+        # 'PASSWORD': '123',
         'PASSWORD': '123',
         'HOST': 'localhost',
         'PORT': '',
@@ -207,7 +208,7 @@ CORS_ALLOWED_ORIGINS = [
 ]
 
 
-
 CRONJOBS = [
-    ('*/1 * * * *', 'ventas.cron.my_scheduled_job','>> /home/briang/portillo2/ERP_PORTILLO/log/django/file.log')
+    ('*/1 * * * *', 'ventas.cron.my_scheduled_job',
+     '>> /home/briang/portillo2/ERP_PORTILLO/log/django/file.log')
 ]

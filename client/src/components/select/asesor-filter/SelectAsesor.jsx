@@ -3,10 +3,10 @@ import { FormControl, MenuItem, Select } from "@mui/material";
 import { AuthContext } from "../../../auth";
 import { getAsesor } from "./getAsesor";
 
-const SelectAsesor = ({ onNewInput, size = "small" }) => {
+const SelectAsesor = ({ onNewInput, size = "small", defaultValue = "" }) => {
   const { authTokens } = useContext(AuthContext);
   const [options, setOptions] = useState([]);
-  const [value, setValue] = useState("");
+  const [value, setValue] = useState(defaultValue);
 
   const obtenerAsesores = async () => {
     const result = await getAsesor(authTokens["access"]);
@@ -21,12 +21,15 @@ const SelectAsesor = ({ onNewInput, size = "small" }) => {
     const selectValue = event.target.value;
     const name = "asesor";
     onNewInput(selectValue, name);
-    setValue(selectValue + "");
   };
 
   useEffect(() => {
     obtenerAsesores();
   }, []);
+
+  useEffect(() => {
+    setValue(defaultValue);
+  }, [defaultValue]);
 
   return (
     <FormControl sx={{ m: 1, minWidth: 120 }} size={size}>

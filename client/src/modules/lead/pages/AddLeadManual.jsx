@@ -13,7 +13,8 @@ import { FilterAsesor } from "../../../components/filters/asesor/FilterAsesor";
 import { useAlertMUI } from "../../../hooks";
 import { MuiTelInput } from "mui-tel-input";
 import { AuthContext } from "../../../auth";
-import { combinarErrores } from "../../../utils";
+import { combinarErrores, formatCelular } from "../../../utils";
+import { FilterProyectoCampania } from "../../../components/multiple-filters/proyecto-campania/FilterProyectoCampania";
 
 export const AddLeadManual = () => {
   const { authTokens, currentUser } = useContext(AuthContext);
@@ -30,6 +31,7 @@ export const AddLeadManual = () => {
     estadoLead: "EP",
     objecion: 1,
     campania: null,
+    campaniaName: "",
     horaRecepcion: "",
   });
 
@@ -46,6 +48,7 @@ export const AddLeadManual = () => {
     objecion,
     horaRecepcion,
     campania,
+    campaniaName,
   } = lead;
 
   const {
@@ -72,7 +75,8 @@ export const AddLeadManual = () => {
     setLead({ ...lead, llamar: !llamar });
   };
   const onAddCampania = (item) => {
-    setLead({ ...lead, campania: item.id });
+    const label = item["id"] ? item["label"] : "";
+    setLead({ ...lead, campania: item.id, campaniaName: label });
   };
   const onAddEstadoLead = (item) => {
     setLead({ ...lead, estadoLead: item.id });
@@ -84,16 +88,57 @@ export const AddLeadManual = () => {
     setLead({ ...lead, objecion: item.id });
   };
 
-  const validateLead = (celular) => {
+  const validateLead = (celular, celular2) => {
     const errors = [];
-    if (celular.length === 0) {
-      errors.push("El celular es obligatorio.");
+
+    // validacion de celular
+    if (celular.length !== 0 && celular !== "+51") {
+      const formatCelular = celular.match(/^\+(\d{1,2})\s*(\d[\s\d]+)$/);
+      if (formatCelular) {
+        const replaceCelular = formatCelular[2].replace(/\s/g, "");
+        if (!/^9\d{8}$/.test(replaceCelular)) {
+          errors.push("El celular no cumple con el formato adecuado");
+        }
+      } else {
+        errors.push("El celular no cumple con el formato adecuado");
+      }
+    } else {
+      errors.push("El celular es obligatorio");
     }
+
+    // validacion de celular 2
+    if (celular2.length !== 0 && celular2 !== "+51") {
+      const formatCelular2 = celular2.match(/^\+(\d{1,2})\s*(\d[\s\d]+)$/);
+      if (formatCelular2) {
+        const replaceCelular2 = formatCelular2[2].replace(/\s/g, "");
+        if (!/^9\d{8}$/.test(replaceCelular2)) {
+          errors.push("El celular 2 no cumple con el formato adecuado");
+        }
+      } else {
+        errors.push("El celular 2 no cumple con el formato adecuado");
+      }
+    }
+
+    // validacion de campaña
+    if (!campania) {
+      errors.push("Debes seleccionar una campaña");
+    }
+
+    // validacion de estado de lead
+    if (!estadoLead) {
+      errors.push("Debes seleccionar un estado de lead");
+    }
+
+    // validacion de objecion
+    if (!objecion) {
+      errors.push("Debes seleccionar una objecion");
+    }
+
     return errors.join("\n");
   };
 
   const crearLead = async () => {
-    const validationMessage = validateLead(celular);
+    const validationMessage = validateLead(celular, celular2);
     if (validationMessage) {
       setFeedbackMessages({
         style_message: "warning",
@@ -103,15 +148,25 @@ export const AddLeadManual = () => {
     } else {
       setVisibleProgress(true);
       try {
+        // formateamos la data
         const formatLead = {
           ...lead,
+          celular: formatCelular(lead["celular"]),
+          celular2:
+            celular2.length !== 0 && celular2 !== "+51"
+              ? formatCelular(lead["celular2"])
+              : "",
           usuarioCreador: currentUser["user_id"],
-          usuarioActualizador: currentUser["user_id"],
         };
 
-        if (lead.horaRecepcion.length === 0) {
+        // eliminamos el label de nombre usado
+        delete formatLead.campaniaName;
+
+        // si no se proporciono una hora de recepcion
+        if (lead["horaRecepcion"].length === 0) {
           delete formatLead.horaRecepcion;
         }
+
         console.log(formatLead);
         const result = await createLead(formatLead, authTokens["access"]);
         setVisibleProgress(false);
@@ -166,6 +221,8 @@ export const AddLeadManual = () => {
               </span>
               <MuiTelInput
                 defaultCountry="PE"
+                disableDropdown
+                forceCallingCode
                 value={celular}
                 onChange={(value) => {
                   handledForm({
@@ -182,6 +239,8 @@ export const AddLeadManual = () => {
               <span className="block text-sm font-medium">Celular 2</span>
               <MuiTelInput
                 defaultCountry="PE"
+                disableDropdown
+                forceCallingCode
                 value={celular2}
                 onChange={(value) => {
                   handledForm({
@@ -242,9 +301,17 @@ export const AddLeadManual = () => {
               <FilterAsesor onNewInput={onAddAsesor} />
             </label>
 
-            <label className="flex flex-col gap-y-1">
-              <span className="block text-sm font-medium">Campaña</span>
-              <FilterCampania onNewInput={onAddCampania} />
+            <label className="flex content-center gap-x-2">
+              <span className="block text-sm font-medium flex items-center">
+                <span className="mr-2">Campaña: </span>
+                {campaniaName.length !== 0 && (
+                  <span className="inline-block px-2 py-1 text-sm font-semibold leading-none bg-blue-500 text-white rounded-full">
+                    {campaniaName}
+                  </span>
+                )}
+                {/* {`Campaña: ${campaniaName}`} */}
+              </span>
+              <FilterProyectoCampania onAddCampania={onAddCampania} />
             </label>
 
             <label className="flex flex-col gap-y-1">

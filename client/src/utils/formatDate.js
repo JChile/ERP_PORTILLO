@@ -1,3 +1,15 @@
+import dayjs from "dayjs";
+
+export const formatDate_ISO861_to_date = (dateString) => {
+  // Parsear la cadena a un objeto de fecha con dayjs
+  const dateTimeObject = dayjs(dateString);
+
+  // Obtener solo la parte de la fecha (YYYY-MM-DD)
+  const formattedDate = dateTimeObject.format("YYYY-MM-DD");
+  return formattedDate;
+};
+
+// FUNCION PARA PARSEAR LA FECHA DE FORMATO ISO A UN FORMATO MAS VISUAL
 export const formatDate_ISO861_to_formatdate = (fecha_hora_iso) => {
   // Crear un objeto Date a partir de la cadena de fecha
   let fecha = new Date(fecha_hora_iso);
@@ -11,10 +23,11 @@ export const formatDate_ISO861_to_formatdate = (fecha_hora_iso) => {
   let seconds = String(fecha.getSeconds()).padStart(2, "0");
 
   // Formatear la fecha como "YYYY/MM/DD HH:mm:ss"
-  let fechaFormateada = `${year}/${month}/${day} ${hours}:${minutes}:${seconds}`;
+  let fechaFormateada = `${day}/${month}/${year} ${hours}:${minutes}:${seconds}`;
   return fechaFormateada;
 };
 
+// FUNCION PARA OBTENER LA HORA ACTUAL EN FORMATO FECHA POSTGRESS
 export const obtenerHoraActualFormatPostgress = () => {
   const ahora = new Date();
 

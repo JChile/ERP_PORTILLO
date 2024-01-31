@@ -60,7 +60,7 @@ class Lead(models.Model):
         User, on_delete=models.SET_NULL, null=True, related_name='usuarioCreadorLead')
     usuarioActualizador = models.ForeignKey(
         User, on_delete=models.SET_NULL, null=True, related_name='usuarioActualizadorLead')
-    fecha_creacion = models.DateField(auto_now=True)
+    fecha_creacion = models.DateTimeField(auto_now=True)
     fecha_actualizacion = models.DateTimeField(blank=True, null=True)
 
     def __str__(self):
@@ -87,14 +87,14 @@ class WhatsApp(models.Model):
         User, on_delete=models.SET_NULL, null=True, related_name='usuarioCreadorWhatsapp')
     usuarioActualizador = models.ForeignKey(
         User, on_delete=models.SET_NULL, null=True, related_name='usuarioActualizadorWhatsapp')
-    fecha_creacion = models.DateField(auto_now=True)
+    fecha_creacion = models.DateTimeField(auto_now=True)
     fecha_actualizacion = models.DateTimeField(blank=True, null=True)
 
 
 class HistoricoLeadAsesor(models.Model):
     lead = models.ForeignKey(Lead, on_delete=models.SET_NULL, null=True)
     usuario = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
-    fecha_creacion = models.DateField(auto_now=True)
+    fecha_creacion = models.DateTimeField(auto_now=True)
 
 
 class Llamada(models.Model):
@@ -110,7 +110,7 @@ class Llamada(models.Model):
         User, on_delete=models.SET_NULL, null=True, related_name='usuarioCreadorLlamada')
     usuarioActualizador = models.ForeignKey(
         User, on_delete=models.SET_NULL, null=True, related_name='usuarioActualizadorLlamada')
-    fecha_creacion = models.DateField(auto_now=True)
+    fecha_creacion = models.DateTimeField(auto_now=True)
     fecha_actualizacion = models.DateTimeField(blank=True, null=True)
 
 
@@ -142,7 +142,7 @@ class Evento(models.Model):
         User, on_delete=models.SET_NULL, null=True, related_name='usuarioCreadorEvento')
     usuarioActualizador = models.ForeignKey(
         User, on_delete=models.SET_NULL, null=True, related_name='usuarioActualizadorEvento')
-    fecha_creacion = models.DateField(auto_now=True)
+    fecha_creacion = models.DateTimeField(auto_now=True)
     fecha_actualizacion = models.DateTimeField(blank=True, null=True)
     separado = models.BooleanField(default=False)
 
@@ -176,7 +176,7 @@ class Producto(models.Model):
         User, on_delete=models.SET_NULL, null=True, related_name='usuarioCreadorProducto')
     usuarioActualizador = models.ForeignKey(
         User, on_delete=models.SET_NULL, null=True, related_name='usuarioActualizadorProducto')
-    fecha_creacion = models.DateField(auto_now=True)
+    fecha_creacion = models.DateTimeField(auto_now=True)
     fecha_actualizacion = models.DateTimeField(blank=True, null=True)
 
     def __str__(self):
@@ -255,4 +255,4 @@ class ProyectoTipoProducto(models.Model):
 class DesasignacionLeadAsesor(models.Model):
     lead = models.ForeignKey(Lead, on_delete=models.SET_NULL, null=True)
     usuario = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
-    fecha = models.DateField(auto_now=True)
+    fecha = models.DateTimeField(auto_now=True)

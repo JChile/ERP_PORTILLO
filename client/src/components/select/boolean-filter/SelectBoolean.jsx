@@ -1,32 +1,32 @@
 import React, { useState, useContext, useEffect } from "react";
 import { FormControl, MenuItem, Select } from "@mui/material";
-import { AuthContext } from "../../../auth";
-import { getEstadoLead } from "./getEstadoLead";
 
-export const SelectEstadoLead = ({
+export const SelectBoolean = ({
   onNewInput,
-  size = "small",
   defaultValue = "",
+  size = "small",
+  filterName = "",
 }) => {
-  const { authTokens } = useContext(AuthContext);
   const [options, setOptions] = useState([]);
   const [value, setValue] = useState(defaultValue);
 
-  const obtenerEstadoLeads = async () => {
-    const result = await getEstadoLead(authTokens["access"]);
-    const formatSelect = result.map((element) => {
-      return {
-        value: element.nombre,
-        label: element.nombre,
-      };
-    });
+  const obtenerEstadoLeads = () => {
+    const formatSelect = [
+      {
+        value: true,
+        label: "Si",
+      },
+      {
+        value: false,
+        label: "No",
+      },
+    ];
     setOptions(formatSelect);
   };
 
   const handleChange = (event) => {
     const selectValue = event.target.value;
-    const name = "estadoLead";
-    onNewInput(selectValue, name);
+    onNewInput(selectValue, filterName);
   };
 
   useEffect(() => {

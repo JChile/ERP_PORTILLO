@@ -208,7 +208,6 @@ CORS_ALLOWED_ORIGINS = [
 ]
 
 
-
 CRONJOBS = [
     ('*/1 * * * *', 'ventas.cron.my_scheduled_job',
      '>> /home/briang/portillo2/ERP_PORTILLO/log/django/file.log')

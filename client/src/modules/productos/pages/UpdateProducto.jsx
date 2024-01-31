@@ -153,7 +153,7 @@ export const UpdateProducto = () => {
             }
             const formData = new FormData();
             formData.append("video", videoFile);
-            formData.append("proyecto", idProducto);
+            formData.append("producto", idProducto);
             const vid = await createVideoProducto(formData);
             console.log("video creado exitosamente");
           }

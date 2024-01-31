@@ -5,6 +5,9 @@ import { combinarErrores, validIdURL } from "../../../utils";
 import { CustomAlert } from "../../../components";
 import { AuthContext } from "../../../auth";
 import { useAlertMUI } from "../../../hooks";
+import CarouselComponentImageView from "../components/CarrouselImageView";
+import CarouselComponentVideoView from "../components/CarouselVideoView";
+
 
 export const DetailProducto = () => {
   const { authTokens } = useContext(AuthContext);
@@ -22,9 +25,11 @@ export const DetailProducto = () => {
       nombre: "",
     },
     estado: "",
+    imagenes: [],
+    videos: [],
   });
 
-  const { nombre, codigo, numero, area, tipo, proyecto, estado } = producto;
+  const { nombre, codigo, numero, area, tipo, proyecto, estado, imagenes, videos } = producto;
 
   const {
     feedbackCreate,
@@ -117,6 +122,21 @@ export const DetailProducto = () => {
                   {estado == "A" ? "Activo" : "Inactivo"}
                 </span>
               </label>
+            </div>
+          </div>
+          <div className="flex flex-row gap-y-6 gap-x-8">
+            <div className="w-6/12 flex flex-col gap-y-5 border border-gray-300 p-4 rounded-md">
+              <h3>Imagenes</h3>
+              <div className="items-center mx-auto">
+                <CarouselComponentImageView images={imagenes}/>
+              </div>
+            </div>
+
+            <div className="w-6/12 flex flex-col gap-y-5 border border-gray-300 p-4 rounded-md">
+              <h3>Videos</h3>
+              <div className="items-center mx-auto">
+                <CarouselComponentVideoView videos={videos}/>
+              </div>
             </div>
           </div>
           <div className="flex justify-center">

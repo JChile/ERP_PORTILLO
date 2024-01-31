@@ -1,6 +1,6 @@
 import React, { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { createProducto } from "../helpers";
+import { createImagenProducto, createProducto, createVideoProducto } from "../helpers";
 import { useAlertMUI } from "../../../hooks";
 import { CustomAlert, CustomCircularProgress } from "../../../components";
 import { FilterProyectos } from "../../../components";
@@ -8,6 +8,7 @@ import { FilterTipoProducto } from "../../../components";
 import { combinarErrores } from "../../../utils";
 import { AuthContext } from "../../../auth";
 import { v4 as uuidv4 } from "uuid";
+import { IoIosAddCircleOutline } from "react-icons/io";
 
 export const CreateProducto = () => {
   const { authTokens, currentUser } = useContext(AuthContext);
@@ -20,7 +21,8 @@ export const CreateProducto = () => {
     proyecto: null,
     estado: "A",
   });
-
+  const [imageList, setImageList] = useState([]);
+  const [videoList, setVideoList] = useState([]);
   const { nombre, numero, area, tipo, proyecto, estado } = product;
 
   const {
@@ -99,6 +101,30 @@ export const CreateProducto = () => {
           usuarioActualizador: currentUser["user_id"],
         };
         const result = await createProducto(formatData, authTokens["access"]);
+        try {
+          for (const imageFile of imageList) {
+            if (typeof imageFile === "undefined") {
+              return;
+            }
+            const formData = new FormData();
+            formData.append("imagen", imageFile);
+            formData.append("producto", result.id);
+            const imgs = await createImagenProducto(formData);
+            console.log("imagen creado exitosamente");
+          }
+          for (const videoFile of videoList) {
+            if (typeof videoFile === "undefined") {
+              return;
+            }
+            const formData = new FormData();
+            formData.append("video", videoFile);
+            formData.append("producto", result.id);
+            const vid = await createVideoProducto(formData);
+            console.log("video creado exitosamente");
+          }
+        } catch (error) {
+          console.error(error);
+        }
         setVisibleProgress(false);
         onNavigateBack();
       } catch (error) {
@@ -112,6 +138,77 @@ export const CreateProducto = () => {
         });
         handleClickFeedback();
       }
+    }
+  };
+
+  const handleFileSelect = (event) => {
+    const previewContainerImage = document.getElementById(
+      "preview-containerImage"
+    );
+    const previewContainerVideo = document.getElementById(
+      "preview-containerVideo"
+    );
+
+    const files = event.target.files;
+
+    for (const file of files) {
+      const reader = new FileReader();
+
+      reader.onload = function (e) {
+        const previewContainer = document.createElement("div");
+
+        if (file.type.includes("image")) {
+          previewContainer.className =
+            "relative w-24 h-24 border border-gray-300 rounded overflow-hidden";
+          const img = document.createElement("img");
+          img.src = e.target.result;
+          img.className = "w-full h-full object-cover";
+          previewContainer.appendChild(img);
+
+          setImageList((prevList) => [...prevList, file]);
+        } else if (file.type.includes("video")) {
+          previewContainer.className =
+            "relative w-40 h-40 border border-gray-300 rounded overflow-hidden";
+          const video = document.createElement("video");
+          video.src = e.target.result;
+          video.className = "w-full h-full object-cover";
+          video.setAttribute("controls", "");
+          previewContainer.appendChild(video);
+
+          setVideoList((prevList) => [...prevList, file]);
+        }
+
+        const closeIcon = document.createElement("div");
+        closeIcon.className =
+          "absolute top-0 right-0 cursor-pointer p-1 rounded-full bg-red-500 text-white";
+        closeIcon.innerHTML = "x";
+        closeIcon.addEventListener("click", () => {
+          // Eliminar la previsualización al hacer clic en la "X"
+          if (file.type.includes("image")) {
+            const fileInput = document.getElementById("fileImage");
+            fileInput.value = "";
+            previewContainer.parentNode.removeChild(previewContainer);
+            setImageList((prevList) => prevList.filter((img) => img !== file));
+          } else if (file.type.includes("video")) {
+            const fileInputVideo = document.getElementById("fileVideo");
+            fileInputVideo.value = "";
+            previewContainer.parentNode.removeChild(previewContainer);
+            setVideoList((prevList) =>
+              prevList.filter((video) => video !== file)
+            );
+          }
+        });
+
+        previewContainer.appendChild(closeIcon);
+
+        if (file.type.includes("image")) {
+          previewContainerImage.appendChild(previewContainer);
+        } else if (file.type.includes("video")) {
+          previewContainerVideo.appendChild(previewContainer);
+        }
+      };
+
+      reader.readAsDataURL(file);
     }
   };
 
@@ -190,6 +287,71 @@ export const CreateProducto = () => {
                   defaultValue={proyecto}
                 />
               </label>
+            </div>
+          </div>
+          <div className="flex flex-row gap-y-6 gap-x-8">
+            <div className="w-6/12 flex flex-col gap-y-5 border border-gray-300 p-4 rounded-md">
+              <div className="w-6/12 flex flex-col gap-y-6">
+                <label htmlFor="file" className="flex flex-col gap-y-1">
+                  <span className="after:content-['*'] after:ml-0.5 after:text-yellow-500 block text-sm font-medium">
+                    Imágenes
+                  </span>
+                  <div className="bg-green-500 hover:bg-green-600 rounded">
+                    <input
+                      type="file"
+                      name="file"
+                      id="fileImage"
+                      accept="image/jpeg, image/png, image/jpg, image/gif"
+                      multiple
+                      onChange={handleFileSelect}
+                      style={{ display: "none" }}
+                    />
+                    <label
+                      htmlFor="fileImage"
+                      className="flex flex-row items-center justify-center"
+                    >
+                      <IoIosAddCircleOutline className="w-16 h-16 text-white mr-2" />
+                      <h3 className="text-white">Agregar imagen</h3>
+                    </label>
+                  </div>
+                </label>
+              </div>
+              <div
+                className="flex gap-2 mt-4"
+                id="preview-containerImage"
+              ></div>
+            </div>
+
+            <div className="w-6/12 flex flex-col gap-y-5 border border-gray-300 p-4 rounded-md">
+              <div className="w-6/12 flex flex-col gap-y-6">
+                <label htmlFor="file" className="flex flex-col gap-y-1">
+                  <span className="after:content-['*'] after:ml-0.5 after:text-yellow-500 block text-sm font-medium">
+                    Video
+                  </span>
+                  <div className="bg-green-500 hover:bg-green-600 rounded">
+                    <input
+                      type="file"
+                      name="file"
+                      id="fileVideo"
+                      accept="video/mp4, video/avi, video/mov, video/mkv"
+                      multiple
+                      onChange={handleFileSelect}
+                      style={{ display: "none" }}
+                    />
+                    <label
+                      htmlFor="fileVideo"
+                      className="flex flex-row items-center justify-center"
+                    >
+                      <IoIosAddCircleOutline className="w-16 h-16 text-white mr-2" />
+                      <h3 className="text-white">Agregar video</h3>
+                    </label>
+                  </div>
+                </label>
+              </div>
+              <div
+                className="flex gap-10 mt-4"
+                id="preview-containerVideo"
+              ></div>
             </div>
           </div>
         </form>

@@ -12,6 +12,7 @@ import { combinarErrores } from "../../../utils";
 import { AuthContext } from "../../../auth";
 import { useAlertMUI } from "../../../hooks";
 import { CustomCircularProgress, CustomAlert } from "../../../components";
+import CarouselComponentImageView from "../components/CarrouselImageView";
 
 const ListProyectos = () => {
   const { authTokens, currentUser } = useContext(AuthContext);
@@ -41,9 +42,6 @@ const ListProyectos = () => {
       );
       setProjects(data);
       setProjectsTemporal(data);
-      console.log(activeButton);
-      console.log(projects);
-      console.log(projectsTemporal);
       setVisibleProgress(false);
     } catch (error) {
       setVisibleProgress(false);
@@ -84,7 +82,6 @@ const ListProyectos = () => {
   };
 
   const onEditItemSelected = (id) => {
-    console.log(id);
     navigate(`/proyecto/update/${id}`);
   };
 
@@ -141,31 +138,38 @@ const ListProyectos = () => {
         {projectsTemporal.map((project) => (
           <Card key={project.id}>
             <CardContent className="flex flex-col items-center justify-center">
-              <Avatar
-                sx={{ width: 100, height: 100, backgroundColor: "#c6004c" }}
-              >
-                <Icon component={BsBuildingsFill} sx={{ color: "white" }} />
-              </Avatar>
-              <Typography variant="h5" component="div">
-                {project.nombre}
-              </Typography>
-              <Typography variant="body2" color="text.secondary">
-                {project.ubicacion}
-              </Typography>
+              <div className="items-center justify-center mb-2">
+                {project.imagenes && project.imagenes.length > 0 ? (
+                  <CarouselComponentImageView images={project.imagenes} />
+                ) : (
+                  <div className="flex items-center justify-center bg-green-500 hover:bg-green-600 rounded-full w-64 h-64">
+                    <BsBuildingsFill className="w-32 h-32 text-white" />
+                  </div>
+                )}
+              </div>
+
+              <div className="flex flex-row items-center justify-center">
+                <Typography variant="h5" component="div">
+                  {project.nombre}
+                </Typography>
+                <Typography variant="body2" color="text.secondary">
+                  ({project.ubicacion})
+                </Typography>
+              </div>
               <Typography variant="body2" color="text.secondary">
                 {project.descripcion}
               </Typography>
               {/* <Button variant="outlined">Ver cotizaciones</Button> */}
               <div className="flex space-x-4">
                 <IconButton
-                  size="large"
+                  size="m"
                   color="primary"
                   onClick={() => onEditItemSelected(project.id)}
                 >
                   <FaRegEdit />
                 </IconButton>
                 <IconButton
-                  size="large"
+                  size="m"
                   color="error"
                   onClick={() => verDialog(project)}
                   /* onClick={() => onDeleteItemSelected(project)} */

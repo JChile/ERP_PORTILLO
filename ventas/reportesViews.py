@@ -26,7 +26,6 @@ class ReporteAsesorLead(APIView):
         if not (bool(request.user.groups.first().permissions.filter(codename=PermissionLead.CAN_VIEW) or request.user.is_superuser)):
             return Response({"message": "Usuario no tiene permisos para ver leads"}, status=403)
 
-        pk = request.user.pk
         if request.user.isAdmin == True:
             asesor_queryset = User.objects.filter(is_active=True).filter(groups__in=[1])
             asesor_data = UserSerializer(asesor_queryset, fields=( 'id', 'first_name', 'last_name', 'username'), many = True).data
@@ -38,3 +37,5 @@ class ReporteAsesorLead(APIView):
                     leadIter["numeroLlamadas"]= Llamada.objects.filter(lead = leadIter["id"], asesor = leadIter["asesor"]).count()
 
             return Response(asesor_data)
+        else :
+            return Response({"message": "Usuario no es admin"})

@@ -139,7 +139,6 @@ export const DialogForm = ({ isOpen, onClose, lead, token, user }) => {
                     name="fecha"
                   />
                   <TimePicker
-                    disablePast
                     label="Hora de inicio"
                     value={horaInicio}
                     onChange={(value) => {

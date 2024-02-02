@@ -40,7 +40,8 @@ class LeadList(generics.ListCreateAPIView):
         if not (bool(request.user.groups.first().permissions.filter(codename=PermissionLead.CAN_VIEW) or request.user.is_superuser)):
             return Response({"message": "Usuario no tiene permisos para ver leads"}, status=403)
 
-        lead_queryset = Lead.objects.all()
+
+        fecha_limite = datetime.now() - timedelta(days=60)
 
         estado = request.query_params.get('estado')
         desde = request.query_params.get('desde')
@@ -48,15 +49,20 @@ class LeadList(generics.ListCreateAPIView):
         asignado = request.query_params.get('asignado')
         recienCreado = request.query_params.get('recienCreado')
 
+        if desde and hasta:
+            lead_queryset = Lead.objects.filter(
+                fecha_asignacion__range=[desde, hasta]).order_by('-fecha_asignacion')
+        else : 
+            lead_queryset = Lead.objects.filter(fecha_asignacion__gte=fecha_limite).order_by('-fecha_asignacion')
+
         if asignado:
             lead_queryset = lead_queryset.filter(asignado=asignado)
         if estado:
             lead_queryset = lead_queryset.filter(estado=estado)
-        if desde and hasta:
-            lead_queryset = lead_queryset.filter(
-                fecha_asignacion__range=[desde, hasta])
-        if desde and hasta:
+
+        if recienCreado:
             lead_queryset = lead_queryset.filter(recienCreado=recienCreado)
+        
 
         leadSerializer = LeadSerializer(lead_queryset, many=True)
 
@@ -87,7 +93,22 @@ class LeadList(generics.ListCreateAPIView):
             i["objecion"] = objecionSerializer.data if objecionSerializer else {}
 
         return Response(leadData)
+    
 
+    def post(self, request, format=None):
+        dos_meses_atras = timezone.now() - timezone.timedelta(days=60)
+        serializer = LeadSerializer(data=request.data)
+        registros_existentes = Lead.objects.filter(celular=request.data.get("celular"), fecha_creacion__gte=dos_meses_atras)
+        if registros_existentes.exists():
+            return Response({'celular':'El número de celular ya ha sido utilizado en los últimos dos meses.'})
+        
+        if serializer.is_valid(raise_exception=True):
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+
+'''
     def perform_create(self, serializer):
         asesor_id = self.request.data.get('asesor')
         campania = get_or_none(
@@ -114,6 +135,8 @@ class LeadList(generics.ListCreateAPIView):
             user_data = get_or_none(User, id=asesor_id)
             HistoricoLeadAsesor.objects.create(
                 lead=serializer.instance, usuario=user_data)
+'''
+
 
 # @permission_classes([IsAuthenticated])
 # class LeadListSinFiltros(LeadList):
@@ -251,6 +274,28 @@ class LeadDetail(generics.RetrieveUpdateDestroyAPIView):
 
         return Response(lead_data)
 
+    def put(self, request, pk):
+        try:
+            instancia = Lead.objects.get(pk=pk)
+        except Lead.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+        
+        data = request.data
+
+
+        if data.get("celular") == None:
+            data["celular"] = instancia.celular
+
+
+        serializer = LeadSerializer(instancia, data=data)
+        print("PUUUUT : ", serializer)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+'''
+
     def perform_update(self, serializer):
         campania = get_or_none(
             Campania, id=self.request.data.get("campania"), estado="A")
@@ -281,6 +326,8 @@ class LeadDetail(generics.RetrieveUpdateDestroyAPIView):
             user_data = get_or_none(User, id=asesor_id_nuevo)
             HistoricoLeadAsesor.objects.create(
                 lead=serializer.instance, usuario=user_data)
+
+'''
 
 
 @permission_classes([IsAuthenticated])

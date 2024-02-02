@@ -3,6 +3,8 @@ from cuenta.models import User, EstadoRegistro
 from marketing.models import Campania
 from marketing.models import Proyecto
 from django.utils import timezone
+from django.core.validators import RegexValidator
+from django.core.exceptions import ValidationError
 
 
 class TipoEvento(models.Model):
@@ -37,8 +39,12 @@ class Lead(models.Model):
     nombre = models.CharField(max_length=100, null=False, blank=True)
     apellido = models.CharField(max_length=100, null=False, blank=True)
     asignado = models.BooleanField(default=False)
-    celular = models.CharField(max_length=100, null=False, blank=False)
-    celular2 = models.CharField(max_length=100, null=False, blank=True)
+    celular =  models.CharField(max_length=9, null=False, validators=[
+        RegexValidator(regex=r'^9\d{8}$', message="El número de celular debe tener 9 dígitos y comenzar con 9.")
+    ])
+    celular2 =  models.CharField(max_length=9, null = True,blank=True,validators=[
+        RegexValidator(regex=r'^9\d{8}$', message="El número de celular debe tener 9 dígitos y comenzar con 9.")
+    ])
     comentario = models.TextField(max_length=200, null=False, blank=True)
     horaRecepcion = models.DateTimeField(
         default=timezone.now, null=True, blank=True)
@@ -57,20 +63,27 @@ class Lead(models.Model):
     fecha_desasignacion = models.DateTimeField(blank=True, null=True)
     recienCreado = models.BooleanField(default=True)
     usuarioCreador = models.ForeignKey(
-        User, on_delete=models.SET_NULL, null=True, related_name='usuarioCreadorLead')
+        User, on_delete=models.SET_NULL, null=True, blank=True, related_name='usuarioCreadorLead')
     usuarioActualizador = models.ForeignKey(
-        User, on_delete=models.SET_NULL, null=True, related_name='usuarioActualizadorLead')
+        User, on_delete=models.SET_NULL, null=True,blank=True, related_name='usuarioActualizadorLead')
     fecha_creacion = models.DateTimeField(auto_now=True)
     fecha_actualizacion = models.DateTimeField(blank=True, null=True)
 
     def __str__(self):
+        if self.nombre == "":
+            return str(self.celular)
         return self.nombre + "-"+str(self.celular)
-
+    
     def actualizar_estado_asignado(self):
         self.asignado = self.asesor is not None
 
-    def save(self, *args, **kwargs):
+    def clean(self):
         self.actualizar_estado_asignado()
+        if self.asesor != None:
+            self.recienCreado = False
+        
+    def save(self, *args, **kwargs):
+        self.full_clean()
         super().save(*args, **kwargs)
 
 
@@ -84,9 +97,9 @@ class WhatsApp(models.Model):
     objecion = models.ForeignKey(
         Objecion, on_delete=models.SET_NULL, null=True)
     usuarioCreador = models.ForeignKey(
-        User, on_delete=models.SET_NULL, null=True, related_name='usuarioCreadorWhatsapp')
+        User, on_delete=models.SET_NULL, null=True, blank=True, related_name='usuarioCreadorWhatsapp')
     usuarioActualizador = models.ForeignKey(
-        User, on_delete=models.SET_NULL, null=True, related_name='usuarioActualizadorWhatsapp')
+        User, on_delete=models.SET_NULL, null=True, blank=True, related_name='usuarioActualizadorWhatsapp')
     fecha_creacion = models.DateTimeField(auto_now=True)
     fecha_actualizacion = models.DateTimeField(blank=True, null=True)
 
@@ -107,9 +120,9 @@ class Llamada(models.Model):
     objecion = models.ForeignKey(
         Objecion, on_delete=models.SET_NULL, null=True)
     usuarioCreador = models.ForeignKey(
-        User, on_delete=models.SET_NULL, null=True, related_name='usuarioCreadorLlamada')
+        User, on_delete=models.SET_NULL, null=True,  blank=True,related_name='usuarioCreadorLlamada')
     usuarioActualizador = models.ForeignKey(
-        User, on_delete=models.SET_NULL, null=True, related_name='usuarioActualizadorLlamada')
+        User, on_delete=models.SET_NULL, null=True, blank=True, related_name='usuarioActualizadorLlamada')
     fecha_creacion = models.DateTimeField(auto_now=True)
     fecha_actualizacion = models.DateTimeField(blank=True, null=True)
 
@@ -139,9 +152,9 @@ class Evento(models.Model):
     estadoEvento = models.ForeignKey(
         EstadoEvento, on_delete=models.SET_NULL, null=True)
     usuarioCreador = models.ForeignKey(
-        User, on_delete=models.SET_NULL, null=True, related_name='usuarioCreadorEvento')
+        User, on_delete=models.SET_NULL, null=True, blank=True, related_name='usuarioCreadorEvento')
     usuarioActualizador = models.ForeignKey(
-        User, on_delete=models.SET_NULL, null=True, related_name='usuarioActualizadorEvento')
+        User, on_delete=models.SET_NULL, null=True,  blank=True,related_name='usuarioActualizadorEvento')
     fecha_creacion = models.DateTimeField(auto_now=True)
     fecha_actualizacion = models.DateTimeField(blank=True, null=True)
     separado = models.BooleanField(default=False)
@@ -173,9 +186,9 @@ class Producto(models.Model):
         EstadoRegistro, on_delete=models.SET_NULL, default='A', null=True)
 
     usuarioCreador = models.ForeignKey(
-        User, on_delete=models.SET_NULL, null=True, related_name='usuarioCreadorProducto')
+        User, on_delete=models.SET_NULL, null=True, blank=True, related_name='usuarioCreadorProducto')
     usuarioActualizador = models.ForeignKey(
-        User, on_delete=models.SET_NULL, null=True, related_name='usuarioActualizadorProducto')
+        User, on_delete=models.SET_NULL, null=True, blank=True,related_name='usuarioActualizadorProducto')
     fecha_creacion = models.DateTimeField(auto_now=True)
     fecha_actualizacion = models.DateTimeField(blank=True, null=True)
 

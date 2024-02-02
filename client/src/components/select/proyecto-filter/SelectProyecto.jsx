@@ -7,6 +7,7 @@ export const SelectProyecto = ({
   onNewInput,
   size = "small",
   defaultValue = "",
+  name = "proyecto",
 }) => {
   const { authTokens } = useContext(AuthContext);
   const [options, setOptions] = useState([]);
@@ -25,7 +26,6 @@ export const SelectProyecto = ({
 
   const handleChange = (event) => {
     const selectValue = event.target.value;
-    const name = "proyecto";
     onNewInput(selectValue, name);
   };
 

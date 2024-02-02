@@ -292,25 +292,20 @@ export const DetailLead = () => {
             </div>
           </div>
 
-          <div className="flex gap-2">
-            <Button
-              variant="contained"
-              color="success"
-              sx={{ textTransform: "capitalize", borderRadius: 0 }}
-              onClick={() => setShowDialog(true)}
-            >
-              Crear Evento
-            </Button>
-            {/* <Button
-              variant="contained"
-              color="info"
-              sx={{ textTransform: "capitalize", borderRadius: 0 }}
-            >
-              <Link to={"cotizacion/"}>Generar Cotización</Link>
-            </Button> */}
-          </div>
-          {/* SECCION DE ACCIONES SOBRE LEADS */}
+          {isAsesor && (
+            <div className="flex gap-2">
+              <Button
+                variant="contained"
+                color="success"
+                sx={{ textTransform: "capitalize", borderRadius: 0 }}
+                onClick={() => setShowDialog(true)}
+              >
+                Crear Evento
+              </Button>
+            </div>
+          )}
 
+          {/* SECCION DE ACCIONES SOBRE LEADS */}
           {isAsesor && (
             <>
               <div className="flex justify-center">

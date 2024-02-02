@@ -6,6 +6,7 @@ import { CustomMoreVerticalActions } from "../../../components";
 
 export const RowItemUsuario = ({ item, onDeleteUsuario }) => {
   const idGroup = item["groups"][0]["id"];
+  const nameGroup = item.groups[0].name;
   const navigate = useNavigate();
 
   const onDeleteItemSelected = () => {
@@ -41,7 +42,7 @@ export const RowItemUsuario = ({ item, onDeleteUsuario }) => {
           to={`/usuario/detail/${item.id}`}
         >{`${item.first_name} ${item.last_name}`}</Link>
       </TableCell>
-      <TableCell>{item.groups[0].name}</TableCell>
+      <TableCell>{nameGroup}</TableCell>
       <TableCell>{item.username}</TableCell>
       <TableCell>{item.email}</TableCell>
     </TableRow>

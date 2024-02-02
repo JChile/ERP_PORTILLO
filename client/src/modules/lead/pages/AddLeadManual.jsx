@@ -88,7 +88,7 @@ export const AddLeadManual = () => {
     setLead({ ...lead, objecion: item.id });
   };
 
-  const validateLead = (celular, celular2) => {
+  const validateLead = () => {
     const errors = [];
 
     // validacion de celular
@@ -138,7 +138,7 @@ export const AddLeadManual = () => {
   };
 
   const crearLead = async () => {
-    const validationMessage = validateLead(celular, celular2);
+    const validationMessage = validateLead();
     if (validationMessage) {
       setFeedbackMessages({
         style_message: "warning",

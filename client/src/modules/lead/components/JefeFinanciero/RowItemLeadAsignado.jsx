@@ -1,6 +1,7 @@
 import React from "react";
 import { Checkbox, TableCell, TableRow } from "@mui/material";
 import { CustomMoreVerticalActions } from "../../../../components";
+import { Link } from "react-router-dom";
 
 const RowItemLeadAsignado = ({ item, checkedElement }) => {
   return (
@@ -13,7 +14,26 @@ const RowItemLeadAsignado = ({ item, checkedElement }) => {
         />
         <CustomMoreVerticalActions />
       </TableCell>
-      <TableCell>{item.celular}</TableCell>
+      <TableCell>
+        <Link
+          to={`/lead/detail/${item["id"]}`}
+          style={{
+            textDecoration: "none",
+            color: "black",
+            transition: "color 0.3s", // Add a smooth transition effect
+          }}
+          onMouseEnter={(e) => {
+            e.target.style.color = "blue";
+          }}
+          onMouseLeave={(e) => {
+            e.target.style.color = "black";
+          }}
+        >
+          <div className="flex flex-col gap-y-2">
+            <span>{item["celular"]}</span>
+          </div>
+        </Link>
+      </TableCell>
       <TableCell>{item.nombre}</TableCell>
       <TableCell>{item.campania.proyecto.nombre}</TableCell>
       <TableCell>{item.estadoLead}</TableCell>

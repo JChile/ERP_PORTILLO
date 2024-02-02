@@ -1,23 +1,25 @@
 import React, { useState, useContext, useEffect } from "react";
 import { FormControl, MenuItem, Select } from "@mui/material";
 import { AuthContext } from "../../../auth";
-import { getEstadoLead } from "./getEstadoLead";
+import { getCategoriaCampania } from "./getCategoriaCampania";
 
-export const SelectEstadoLead = ({
+export const SelectCategoriaCampania = ({
   onNewInput,
   size = "small",
   defaultValue = "",
-  name = "estadoLead",
+  name = "categoriaCampania",
 }) => {
   const { authTokens } = useContext(AuthContext);
   const [options, setOptions] = useState([]);
   const [value, setValue] = useState(defaultValue);
 
-  const obtenerEstadoLeads = async () => {
-    const result = await getEstadoLead(authTokens["access"]);
+  const obtenerCategoriaCampanias = async () => {
+    const result = await getCategoriaCampania({
+      authToken: authTokens["access"],
+    });
     const formatSelect = result.map((element) => {
       return {
-        value: element.nombre,
+        value: element.id,
         label: element.nombre,
       };
     });
@@ -30,7 +32,7 @@ export const SelectEstadoLead = ({
   };
 
   useEffect(() => {
-    obtenerEstadoLeads();
+    obtenerCategoriaCampanias();
   }, []);
 
   useEffect(() => {

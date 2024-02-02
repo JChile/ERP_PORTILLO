@@ -5,10 +5,12 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { ViewLeadsNoAsignados } from "./ViewLeadsNoAsignados";
 import ViewLeadAsignados from "./ViewLeadAsignados";
 import { MdClear, MdFilterList } from "react-icons/md";
+import { CustomDatePicker } from "../../../../components";
 
 const ListJefeVentasLead = () => {
   const [error, setError] = useState(false);
   const [value, setValue] = useState(0);
+  // filtros de fechas
   const [filterState, setFilterState] = useState({
     startDate: null,
     endDate: null,
@@ -17,6 +19,16 @@ const ListJefeVentasLead = () => {
   const handleChange = (event, newValue) => setValue(newValue);
 
   const handleSearchButton = (searchText) => {};
+
+  // funcion para cambiar fecha desde
+  const onChangeDatePickerFechaDesde = (newDate) => {
+    console.log(newDate);
+  };
+
+  // funcion para cambiar fecha hasta
+  const onChangeDatePickerFechaHasta = (newDate) => {
+    console.log(newDate);
+  };
 
   const onHandleFilterClick = () => {
     const filtered = leads.filter((lead) => {
@@ -57,60 +69,26 @@ const ListJefeVentasLead = () => {
         Gestion de leads - Administrador
       </h1>
       <div className="mt-6 flex flex-col gap-y-3">
-        <form className="flex flex-col gap-y-3">
-          <LocalizationProvider dateAdapter={AdapterDayjs}>
-            <div className="flex gap-x-6">
-              <DatePicker
-                label="Desde"
-                value={filterState.startDate}
-                onChange={(newValue) => {
-                  setFilterState((prev) => ({
-                    ...prev,
-                    startDate: newValue,
-                  }));
-                }}
-                sx={{ width: 160 }}
-                TextField={(params) => <TextField {...params} size="medium" />}
-              />
-              <DatePicker
-                label="Hasta"
-                value={filterState.endDate}
-                onChange={(newValue) => {
-                  setFilterState((prev) => ({ ...prev, endDate: newValue }));
-                }}
-                sx={{ width: 160 }}
-                TextField={(params) => <TextField {...params} size="medium" />}
-              />
-            </div>
-          </LocalizationProvider>
-
-          <div className="flex gap-x-4">
-            <Button
-              startIcon={<MdClear size={16} />}
-              size="large"
-              variant="contained"
-              sx={{ textTransform: "capitalize", width: 80, paddingX: 5 }}
-              onClick={onHandleCleanFilter}
-            >
-              Limpiar
-            </Button>
-            <Button
-              startIcon={<MdFilterList size={16} />}
-              size="large"
-              variant="contained"
-              sx={{ textTransform: "capitalize", width: 80, paddingX: 5 }}
-              onClick={onHandleFilterClick}
-            >
-              Filtrar
-            </Button>
+        <div className="mt-2 flex justify-between">
+          {/* Filtro de fechas */}
+          <div className="flex gap-x-2">
+            <CustomDatePicker
+              onNewFecha={onChangeDatePickerFechaDesde}
+              label="Fecha Desde"
+            />
+            <CustomDatePicker
+              onNewFecha={onChangeDatePickerFechaHasta}
+              label="Fecha Hasta"
+            />
           </div>
-        </form>
-
+        </div>
         <Tabs
           aria-label="basic tabs"
           value={value}
           onChange={handleChange}
           sx={{ marginTop: 3 }}
+          centered
+          variant="fullWidth"
         >
           <Tab
             sx={{

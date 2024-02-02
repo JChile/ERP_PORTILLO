@@ -48,6 +48,7 @@ export const ListRol = () => {
     setVisibleProgress(true);
     try {
       const result = await getRoles(authTokens["access"]);
+      console.log(result);
       setListRoles(result);
       setVisibleProgress(false);
     } catch (error) {
@@ -88,11 +89,14 @@ export const ListRol = () => {
                   },
                 }}
               >
-                <TableCell align="left" width={20}>
+                <TableCell align="center" width={50}>
                   <b>Acciones</b>
                 </TableCell>
-                <TableCell align="left" width={200}>
+                <TableCell align="left" width={100}>
                   <b>Nombre</b>
+                </TableCell>
+                <TableCell align="left" width={150}>
+                  <b>Permisos</b>
                 </TableCell>
               </TableRow>
             </TableHead>

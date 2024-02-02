@@ -8,6 +8,7 @@ class LeadSerializer(serializers.ModelSerializer):
         model = Lead
         fields = '__all__'
 
+
     def __init__(self, *args, **kwargs):
         # Recibe el parámetro 'fields' que contiene los campos deseados
         fields = kwargs.pop('fields', None)

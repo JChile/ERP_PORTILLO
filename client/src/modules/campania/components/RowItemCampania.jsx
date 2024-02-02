@@ -34,9 +34,9 @@ export const RowItemCampania = ({ item, onDeleteCampania }) => {
         </Link>
       </TableCell>
       <TableCell>{codigo}</TableCell>
-      <TableCell>{formatDate_ISO861_to_formatdate(fecha_creacion)}</TableCell>
       <TableCell>{proyecto.nombre}</TableCell>
       <TableCell>{categoria.nombre}</TableCell>
+      <TableCell>{formatDate_ISO861_to_formatdate(fecha_creacion)}</TableCell>
     </TableRow>
   );
 };

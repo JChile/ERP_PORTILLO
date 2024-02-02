@@ -1,7 +1,11 @@
 import React from "react";
 import { Checkbox, TableCell, TableRow } from "@mui/material";
 import { CustomMoreVerticalActions } from "../../../../components";
+<<<<<<< HEAD
 import { useNavigate, Link } from "react-router-dom";
+=======
+import { Link } from "react-router-dom";
+>>>>>>> 8d6bdfe82e23cc540fbb4e6f6d944e3cac02990f
 
 const RowItemLeadAsignado = ({ item, checkedElement }) => {
   return (

@@ -61,8 +61,8 @@ class ProyectoDetail(generics.RetrieveUpdateDestroyAPIView):
         if proyecto == None :
             return Response({"message" : "No existe proyecto o no tiene permisos el usuario"}, status=404)
 
-        desde = request.query_params.get('desde')
-        hasta = request.query_params.get('hasta')
+        desde = request.query_params.get('leadDesde')
+        hasta = request.query_params.get('leadHasta')
 
         proyectoSerializer = ProyectoSerializer(proyecto)
         proyecto_data = proyectoSerializer.data
@@ -132,13 +132,13 @@ class CampaniaList(generics.ListCreateAPIView):
         categorias = Categoria.objects.all()
         dataJson = groupserializer.data
         for i in dataJson:
-            permissions_data = proyecto_queryset.get(id=i["proyecto"])
+            proyecto_data = proyecto_queryset.filter(id=i["proyecto"]).first()
             # user_data = users.get(id=i["user"])
-            categoria_data = categorias.get(id=i["categoria"])
-            permissionSerializer = ProyectoSerializer(permissions_data)
+            categoria_data = categorias.filter(id=i["categoria"]).first()
+            proyectoSerializer = ProyectoSerializer(proyecto_data)
             # userSerializer = UserSerializer(user_data)
             categoriaSerializer = CategoriaSerializer(categoria_data)
-            i["proyecto"] = permissionSerializer.data
+            i["proyecto"] = proyectoSerializer.data
             # i["user"] = userSerializer.data
             i["categoria"] = categoriaSerializer.data
             # i["subCategoria"][0]["categoria"]= categoriaSerializer.data
@@ -166,65 +166,15 @@ class CampaniaDetail(generics.RetrieveUpdateDestroyAPIView):
         campania = get_object_or_404(campania_queryset, pk=pk)
         campaniaSerializer = CampaniaSerializer(campania)
         dataJson = campaniaSerializer.data
-        proyecto = Proyecto.objects.all().get(id=dataJson["proyecto"])
+        proyecto = Proyecto.objects.all().filter(id=dataJson["proyecto"]).first()
         # user = User.objects.all().get(id=dataJson["user"])
-        categoria = Categoria.objects.all().get(id=dataJson["categoria"])
+        categoria = Categoria.objects.all().filter(id=dataJson["categoria"]).first()
         proyectoSerializer = ProyectoSerializer(proyecto)
         # userSerializer = UserSerializer(user)
         categoriaSerializer = CategoriaSerializer(categoria)
-        dataJson["proyecto"] = proyectoSerializer.data
+        dataJson["proyecto"] = proyectoSerializer.data if proyecto != None else {}
         # dataJson["user"] = userSerializer.data
-        dataJson["categoria"] = categoriaSerializer.data
-        return Response(dataJson)
-
-
-class CampaniaActivoList(APIView):
-    def get(self, request):
-        campania_queryset = Campania.objects.filter(estado='A')
-        groupserializer = CampaniaSerializer(campania_queryset, many=True)
-        proyecto_queryset = Proyecto.objects.all()
-        # users = User.objects.all()
-        categorias = Categoria.objects.all()
-        dataJson = groupserializer.data
-        for i in dataJson:
-            permissions_data = proyecto_queryset.get(id=i["proyecto"])
-            # user_data = users.get(id=i["user"])
-            categoria_data = categorias.get(id=i["categoria"])
-
-            permissionSerializer = ProyectoSerializer(permissions_data)
-            # userSerializer = UserSerializer(user_data)
-            categoriaSerializer = CategoriaSerializer(categoria_data)
-
-            i["proyecto"] = permissionSerializer.data
-            # i["user"] = userSerializer.data
-            i["categoria"] = categoriaSerializer.data
-            # i["subCategoria"][0]["categoria"]= categoriaSerializer.data
-
-        return Response(dataJson)
-
-
-class CampaniaInactivoList(APIView):
-    def get(self, request):
-        campania_queryset = Campania.objects.filter(estado='I')
-        groupserializer = CampaniaSerializer(campania_queryset, many=True)
-        proyecto_queryset = Proyecto.objects.all()
-        # users = User.objects.all()
-        categorias = Categoria.objects.all()
-        dataJson = groupserializer.data
-        for i in dataJson:
-            permissions_data = proyecto_queryset.get(id=i["proyecto"])
-            # user_data = users.get(id=i["user"])
-            categoria_data = categorias.get(id=i["categoria"])
-
-            permissionSerializer = ProyectoSerializer(permissions_data)
-            # userSerializer = UserSerializer(user_data)
-            categoriaSerializer = CategoriaSerializer(categoria_data)
-
-            i["proyecto"] = permissionSerializer.data
-            # i["user"] = userSerializer.data
-            i["categoria"] = categoriaSerializer.data
-            # i["subCategoria"][0]["categoria"]= categoriaSerializer.data
-
+        dataJson["categoria"] = categoriaSerializer.data if categoria != None else {}
         return Response(dataJson)
 
 

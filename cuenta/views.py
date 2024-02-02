@@ -245,10 +245,10 @@ class ModuloList(generics.ListCreateAPIView):
         dataJson = moduloSerializer.data
 
         for i in dataJson:
-            contentType_queryset = ContentType.objects.all().get(
-                id=i["contentType"])
+            contentType_queryset = ContentType.objects.all().filter(
+                id=i["contentType"]).first()
             contentTypeSerializer = ContentTypeSerializer(contentType_queryset)
-            i["contentType"] = contentTypeSerializer.data
+            i["contentType"] = contentTypeSerializer.data if  contentType_queryset !=None else {}
         return Response(dataJson)
 
 
@@ -350,7 +350,7 @@ class UserInactivoList(APIView):
 
 class UserAsesorList(APIView):
     def get(self, request):
-        asesor_queryset = User.objects.filter(is_active=True).filter(groups__in=[1])
+        asesor_queryset = User.objects.filter(is_active=True, estado= 'A').filter(groups__name__in=["asesor" or "Asesor" or "ASESOR"])
         dataJson = UserSerializer(asesor_queryset, many=True, fields=(
             'id', 'first_name', 'last_name', 'username', 'codigoAsesor')).data
         return Response(dataJson)

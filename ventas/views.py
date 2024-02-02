@@ -25,6 +25,12 @@ def get_or_none(classmodel, **kwargs):
         return None
 
 
+#markting filtrar por fecha creacion
+#asesor fecha asignacion
+#asesor admin asignacion
+#si se filtra por asginado true, fecha asignacion
+#si se filtra por desaginado true, fecha desasignacion
+
 @permission_classes([IsAuthenticated])
 class LeadList(generics.ListCreateAPIView):
     serializer_class = LeadSerializer
@@ -40,17 +46,17 @@ class LeadList(generics.ListCreateAPIView):
         desde = request.query_params.get('desde')
         hasta = request.query_params.get('hasta')
         asignado = request.query_params.get('asignado')
-        recienCreado = request.query_params.get('recienCrado')
+        recienCreado = request.query_params.get('recienCreado')
 
         if asignado:
             lead_queryset = lead_queryset.filter(asignado=asignado)
         if estado:
             lead_queryset = lead_queryset.filter(estado=estado)
-        if recienCreado:
-            lead_queryset = lead_queryset.filter(recienCreado=recienCreado)
         if desde and hasta:
             lead_queryset = lead_queryset.filter(
                 fecha_asignacion__range=[desde, hasta])
+        if desde and hasta:
+            lead_queryset = lead_queryset.filter(recienCreado=recienCreado)
 
         leadSerializer = LeadSerializer(lead_queryset, many=True)
 
@@ -439,15 +445,13 @@ class EventoList(generics.ListCreateAPIView):
             asesor = get_or_none(User, id=eventoIterador["asesor"])
             tipo = get_or_none(TipoEvento, id=eventoIterador["tipo"])
             lead = get_or_none(Lead, id=eventoIterador["lead"])
-            estadoEvento = get_or_none(
-                EstadoEvento, id=eventoIterador["estadoEvento"])
+            estadoEvento = get_or_none(EstadoEvento, id=eventoIterador["estadoEvento"])
             userCreador = get_or_none(
                 User, id=eventoIterador["usuarioCreador"])
             userActualizador = get_or_none(
                 User, id=eventoIterador["usuarioActualizador"])
 
-            estadoEventoSerializer = EstadoEventoSerializer(
-                estadoEvento) if estadoEvento else None
+            estadoEventoSerializer = EstadoEventoSerializer(estadoEvento) if estadoEvento else None
             userAsesorSerializer = UserSerializer(asesor, fields=(
                 'id', 'first_name', 'last_name', 'username')) if asesor else None
             tipoSerializer = TipoEventoSerializer(tipo) if tipo else None
@@ -461,8 +465,7 @@ class EventoList(generics.ListCreateAPIView):
             eventoIterador["asesor"] = userAsesorSerializer.data if userAsesorSerializer else {
             }
             eventoIterador["tipo"] = tipoSerializer.data if tipoSerializer else {}
-            eventoIterador["estadoEvento"] = estadoEventoSerializer.data if estadoEventoSerializer else {
-            }
+            eventoIterador["estadoEvento"] = estadoEventoSerializer.data if estadoEventoSerializer else {}
 
             eventoIterador["lead"] = leadSerializer.data if leadSerializer else {}
 
@@ -507,12 +510,13 @@ class EventoDetail(generics.RetrieveUpdateDestroyAPIView):
         tipo = get_or_none(TipoEvento, id=evento.tipo.pk)
         estadoEvento = get_or_none(EstadoEvento, id=evento.estadoEvento.pk)
 
+
         asesorSerlializer = UserSerializer(asesor, fields=(
             'id', 'first_name', 'last_name', 'username')) if asesor else None
-
+        
         tipoSerializer = TipoEventoSerializer(tipo) if tipo else None
-        estadoEventoSerializer = EstadoEventoSerializer(
-            estadoEvento) if estadoEvento else None
+        estadoEventoSerializer = EstadoEventoSerializer(estadoEvento) if estadoEvento else None
+
 
         evento_dataJson = EventoSerializer(evento).data
         evento_dataJson["asesor"] = asesorSerlializer.data if asesorSerlializer else {
@@ -933,6 +937,7 @@ class DesasignacionLeadAsesorList(generics.ListCreateAPIView):
         if desde and hasta:
             queryset = queryset.filter(fecha__range=[desde, hasta])
         dataJson = DesasignacionLeadAsesorSerlializer(queryset, many=True).data
+
 
         for i in dataJson:
             i["lead"] = LeadSerializer(lead_queryset.filter(pk=i["lead"]).first(), fields=[

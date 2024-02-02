@@ -102,113 +102,15 @@ class LeadList(generics.ListCreateAPIView):
         if registros_existentes.exists():
             return Response({'celular':'El número de celular ya ha sido utilizado en los últimos dos meses.'})
         
-        if serializer.is_valid(raise_exception=True):
-            serializer.save()
+        if serializer.is_valid():
+            lead = serializer.save()
+
+            if lead.asesor !=None :
+                HistoricoLeadAsesor.objects.create(lead = lead, usuario = lead.asesor)
+
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
-
-'''
-    def perform_create(self, serializer):
-        asesor_id = self.request.data.get('asesor')
-        campania = get_or_none(
-            Campania, id=self.request.data.get("campania"), estado="A")
-
-        if campania is None:
-            return Response({"message": "No se proporciono la campaña."}, status=403)
-
-        proyecto_id = campania.proyecto.id
-        thirty_days = datetime.now() - timedelta(days=60)
-        phone_numbers = set(
-            Lead.objects.filter(horaRecepcion__gte=thirty_days,
-                                estado="A", campania__proyecto__id=proyecto_id)
-            .values_list('celular', flat=True)
-            .distinct()
-        )
-
-        celular = self.request.data.get("celular")
-        if celular in phone_numbers:
-            return Response({"message": "Este numero de celular ya esta registrado en el proyecto en un plazo de 60 dias."}, status=403)
-
-        serializer.save()
-        if asesor_id:
-            user_data = get_or_none(User, id=asesor_id)
-            HistoricoLeadAsesor.objects.create(
-                lead=serializer.instance, usuario=user_data)
-'''
-
-
-# @permission_classes([IsAuthenticated])
-# class LeadListSinFiltros(LeadList):
-#     def list(self, request):
-#         if not (bool(request.user.groups.first().permissions.filter(codename = PermissionLead.CAN_VIEW) or request.user.is_superuser)) :
-#             return Response({"message" : "Usuario no tiene permisos para ver leads"}, status=403)
-
-#         self.queryset = self.queryset.filter()
-#         return super().list(request)
-
-
-class LeadListSinFiltros(generics.ListAPIView):
-    permission_classes = [IsAuthenticated]
-    # Reemplaza 'TuSerializer' con el nombre real de tu serializer
-    serializer_class = LeadSerializer
-    queryset = Lead.objects.all()  # Reemplaza 'TuModel' con el nombre real de tu modelo
-
-    def get_queryset(self):
-        queryset = super().get_queryset()
-        # Obtener parámetros de la URL
-        asesor_id = self.request.query_params.get('asesor', None)
-        # Aplicar filtros según los parámetros
-        if asesor_id is not None:
-            queryset = queryset.filter(asesor=asesor_id)
-
-        return queryset
-
-    def list(self, request, *args, **kwargs):
-        if not (bool(request.user.groups.first().permissions.filter(codename=PermissionLead.CAN_VIEW) or request.user.is_superuser)):
-            return Response({"message": "Usuario no tiene permisos para ver leads"}, status=403)
-
-        return super().list(request, *args, **kwargs)
-
-
-@permission_classes([IsAuthenticated])
-class LeadListAsignados(LeadList):
-    def list(self, request):
-        if not (bool(request.user.groups.first().permissions.filter(codename=PermissionLead.CAN_VIEW) or request.user.is_superuser)):
-            return Response({"message": "Usuario no tiene permisos para ver leads"}, status=403)
-
-        self.queryset = self.queryset.filter(estado="A", asignado=True)
-        return super().list(request)
-
-
-@permission_classes([IsAuthenticated])
-class LeadListNoAsignados(LeadList):
-    def list(self, request):
-        if not (bool(request.user.groups.first().permissions.filter(codename=PermissionLead.CAN_VIEW) or request.user.is_superuser)):
-            return Response({"message": "Usuario no tiene permisos para ver leads"}, status=403)
-
-        self.queryset = self.queryset.filter(estado="A", asignado=False)
-        return super().list(request)
-
-
-@permission_classes([IsAuthenticated])
-class LeadListActivos(LeadList):
-    def list(self, request):
-        if not (bool(request.user.groups.first().permissions.filter(codename=PermissionLead.CAN_VIEW) or request.user.is_superuser)):
-            return Response({"message": "Usuario no tiene permisos para ver leads"}, status=403)
-
-        self.queryset = self.queryset.filter(estado="A")
-        return super().list(request)
-
-
-@permission_classes([IsAuthenticated])
-class LeadListInactivos(LeadList):
-    def list(self, request):
-        if not (bool(request.user.groups.first().permissions.filter(codename=PermissionLead.CAN_VIEW) or request.user.is_superuser)):
-            return Response({"message": "Usuario no tiene permisos para ver leads"}, status=403)
-
-        self.queryset = self.queryset.filter(estado="I")
-        return super().list(request)
 
 
 @permission_classes([IsAuthenticated])
@@ -285,49 +187,105 @@ class LeadDetail(generics.RetrieveUpdateDestroyAPIView):
 
         if data.get("celular") == None:
             data["celular"] = instancia.celular
+        if data.get("asesor") != None:
+            data["fecha_asignacion"] = timezone.now()
+        
+        try:
+            if data["asesor"] == None:
+                data["fecha_desasignacion"] = timezone.now()
+                DesasignacionLeadAsesor.objects.create(lead = instancia, usuario = instancia.asesor)
+            else :
+                asesor = get_or_none(User, id = data["asesor"])
+                if asesor !=None:
+                    HistoricoLeadAsesor.objects.create(lead = instancia, usuario = asesor)
+        except:
+            pass
+
+        data["campania"] = instancia.campania.pk
 
 
         serializer = LeadSerializer(instancia, data=data)
-        print("PUUUUT : ", serializer)
+
         if serializer.is_valid():
             serializer.save()
+
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-'''
 
-    def perform_update(self, serializer):
-        campania = get_or_none(
-            Campania, id=self.request.data.get("campania"), estado="A")
-        if campania is None:
-            return Response({"message": "No se proporciono la campaña."}, status=403)
 
-        proyecto_id = campania.proyecto.id
-        thirty_days = datetime.now() - timedelta(days=60)
 
-        lead_id_actual = self.kwargs.get("pk")
-        phone_numbers = set(
-            Lead.objects.filter(horaRecepcion__gte=thirty_days,
-                                estado="A", campania__proyecto__id=proyecto_id)
-            .exclude(id=lead_id_actual)
-            .values_list('celular', flat=True)
-            .distinct()
-        )
+# @permission_classes([IsAuthenticated])
+# class LeadListSinFiltros(LeadList):
+#     def list(self, request):
+#         if not (bool(request.user.groups.first().permissions.filter(codename = PermissionLead.CAN_VIEW) or request.user.is_superuser)) :
+#             return Response({"message" : "Usuario no tiene permisos para ver leads"}, status=403)
 
-        celular = self.request.data.get("celular")
-        if celular in phone_numbers:
-            return Response({"message": "Este numero de celular ya esta registrado en el proyecto en un plazo de 60 dias."}, status=403)
+#         self.queryset = self.queryset.filter()
+#         return super().list(request)
 
-        asesor_id_nuevo = self.request.data.get('asesor', None)
-        asesor_id_antiguo = serializer.instance.asesor.id if serializer.instance.asesor else None
 
-        super(LeadDetail, self).perform_update(serializer)
-        if asesor_id_nuevo and serializer.instance.estado.estado == 'A' and asesor_id_antiguo != asesor_id_nuevo:
-            user_data = get_or_none(User, id=asesor_id_nuevo)
-            HistoricoLeadAsesor.objects.create(
-                lead=serializer.instance, usuario=user_data)
+class LeadListSinFiltros(generics.ListAPIView):
+    permission_classes = [IsAuthenticated]
+    # Reemplaza 'TuSerializer' con el nombre real de tu serializer
+    serializer_class = LeadSerializer
+    queryset = Lead.objects.all()  # Reemplaza 'TuModel' con el nombre real de tu modelo
 
-'''
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        # Obtener parámetros de la URL
+        asesor_id = self.request.query_params.get('asesor', None)
+        # Aplicar filtros según los parámetros
+        if asesor_id is not None:
+            queryset = queryset.filter(asesor=asesor_id)
+
+        return queryset
+
+    def list(self, request, *args, **kwargs):
+        if not (bool(request.user.groups.first().permissions.filter(codename=PermissionLead.CAN_VIEW) or request.user.is_superuser)):
+            return Response({"message": "Usuario no tiene permisos para ver leads"}, status=403)
+
+        return super().list(request, *args, **kwargs)
+
+
+@permission_classes([IsAuthenticated])
+class LeadListAsignados(LeadList):
+    def list(self, request):
+        if not (bool(request.user.groups.first().permissions.filter(codename=PermissionLead.CAN_VIEW) or request.user.is_superuser)):
+            return Response({"message": "Usuario no tiene permisos para ver leads"}, status=403)
+
+        self.queryset = self.queryset.filter(estado="A", asignado=True)
+        return super().list(request)
+
+
+@permission_classes([IsAuthenticated])
+class LeadListNoAsignados(LeadList):
+    def list(self, request):
+        if not (bool(request.user.groups.first().permissions.filter(codename=PermissionLead.CAN_VIEW) or request.user.is_superuser)):
+            return Response({"message": "Usuario no tiene permisos para ver leads"}, status=403)
+
+        self.queryset = self.queryset.filter(estado="A", asignado=False)
+        return super().list(request)
+
+
+@permission_classes([IsAuthenticated])
+class LeadListActivos(LeadList):
+    def list(self, request):
+        if not (bool(request.user.groups.first().permissions.filter(codename=PermissionLead.CAN_VIEW) or request.user.is_superuser)):
+            return Response({"message": "Usuario no tiene permisos para ver leads"}, status=403)
+
+        self.queryset = self.queryset.filter(estado="A")
+        return super().list(request)
+
+
+@permission_classes([IsAuthenticated])
+class LeadListInactivos(LeadList):
+    def list(self, request):
+        if not (bool(request.user.groups.first().permissions.filter(codename=PermissionLead.CAN_VIEW) or request.user.is_superuser)):
+            return Response({"message": "Usuario no tiene permisos para ver leads"}, status=403)
+
+        self.queryset = self.queryset.filter(estado="I")
+        return super().list(request)
 
 
 @permission_classes([IsAuthenticated])

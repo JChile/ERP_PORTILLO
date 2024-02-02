@@ -11,7 +11,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.decorators import permission_classes
 from ventas.consts import *
 from ventas.models import Lead
-from ventas.serializers import LeadSerializer
+from ventas.serializers import LeadSerializer, ProductoSerializer
 from multimedia.models import *
 from multimedia.serializers import *
 
@@ -39,6 +39,7 @@ class ProyectoList(generics.ListCreateAPIView):
         dataJson = ProyectoSerializer(proyecto_queryset, many = True).data
 
         for i in dataJson:
+            i["producto"] = ProductoSerializer(Producto.objects.filter(proyecto = i["id"]), many = True).data
             i["videos"] =VideoProyectoSerializer(VideoProyecto.objects.filter(proyecto = i["id"]), many = True).data
             i["imagenes"] = ImagenProyectoSerializer(ImagenProyecto.objects.filter(proyecto = i["id"]), many = True).data
 

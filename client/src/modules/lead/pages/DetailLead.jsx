@@ -7,20 +7,29 @@ import {
   updateWhatsapp,
   updateLlamada,
 } from "../helpers";
-import { Button, Checkbox } from "@mui/material";
-import { DialogForm } from "../../ventas/components/DialogForm";
+import {
+  Box,
+  Button,
+  Checkbox,
+  Paper,
+  Tab,
+  Tabs,
+  Typography,
+} from "@mui/material";
 import { ComponentLlamadas, ComponentWhatsapp } from "../components";
 import { AuthContext } from "../../../auth";
 import { CustomAlert, CustomCircularProgress } from "../../../components";
 import { useAlertMUI } from "../../../hooks";
 import { combinarErrores, validIdURL } from "../../../utils";
+import { MdArrowBack } from "react-icons/md";
+import ComponentEventos from "../components/ComponentEventos";
 
 export const DetailLead = () => {
   const { idLead } = useParams();
   const numericId = parseInt(idLead);
   const { authTokens, currentUser } = useContext(AuthContext);
   const isAsesor = currentUser["groupsId"] === "1" ? true : false;
-  const [showDialog, setShowDialog] = useState(false);
+  const [tabIndex, setTabIndex] = useState(0);
   const [lead, setLead] = useState({
     nombre: "",
     apellido: "",
@@ -199,27 +208,27 @@ export const DetailLead = () => {
   return (
     <>
       <div className="flex flex-col gap-y-4">
-        <div className="p-3 border-[1px] flex flex-col gap-x-5">
-          <h1 className="text-lg font-bold">Detalle Lead</h1>
-        </div>
-        <div className="p-3 border-[1px] flex flex-col gap-y-4">
+        <Paper sx={{ padding: "8px 16px" }} elevation={2}>
+          <Typography variant="h5">Detalle Lead</Typography>
+        </Paper>
+        <Paper elevation={2} className="p-3 flex flex-col gap-y-4">
           <div className="flex flex-col md:flex-row min-w-[242px] gap-x-2 gap-y-3">
             <div className="w-full flex flex-col gap-y-3">
-              <label className="block flex gap-y-1 min-w-full">
+              <label className="flex gap-y-1 min-w-full">
                 <span className="block text-sm font-medium min-w-[10rem] text-zinc-500">
                   Nombre:
                 </span>
                 <span className="block text-sm">{nombre || ""}</span>
               </label>
 
-              <label className="block flex gap-y-1 ">
+              <label className="flex gap-y-1 ">
                 <span className="block text-sm font-medium min-w-[10rem] text-zinc-500">
                   Apellido:
                 </span>
                 <span className="block text-sm">{apellido || ""}</span>
               </label>
 
-              <label className="block flex gap-y-1 ">
+              <label className="flex gap-y-1 ">
                 <span className="block text-sm font-medium min-w-[10rem] text-zinc-500">
                   Celular:
                 </span>
@@ -233,7 +242,7 @@ export const DetailLead = () => {
                 <span className="block text-sm">{telefono || ""}</span>
               </div>
 
-              <label className="block flex gap-y-1 ">
+              <label className="flex gap-y-1 ">
                 <span className="block text-sm font-medium min-w-[10rem] text-zinc-500">
                   Llamar:
                 </span>
@@ -247,21 +256,21 @@ export const DetailLead = () => {
             </div>
 
             <div className="w-full flex flex-col gap-y-3">
-              <label className="block flex gap-y-1 ">
+              <label className=" flex gap-y-1 ">
                 <span className="block text-sm font-medium min-w-[10rem] text-zinc-500">
                   Estado:
                 </span>
                 <span className="block text-sm">{estadoLead || ""}</span>
               </label>
 
-              <label className="block flex gap-y-1 ">
+              <label className="flex gap-y-1 ">
                 <span className="block text-sm font-medium min-w-[10rem] text-zinc-500">
                   Objeciones:
                 </span>
                 <span className="block text-sm">{objecion?.nombre || ""}</span>
               </label>
 
-              <label className="block flex gap-y-1 ">
+              <label className="flex gap-y-1 ">
                 <span className="block text-sm font-medium min-w-[10rem] text-zinc-500">
                   Asesor:
                 </span>
@@ -270,7 +279,7 @@ export const DetailLead = () => {
                 </span>
               </label>
 
-              <label className="block flex gap-y-1 ">
+              <label className="flex gap-y-1 ">
                 <span className="block text-sm font-medium min-w-[10rem] text-zinc-500">
                   Campaña:
                 </span>
@@ -291,67 +300,50 @@ export const DetailLead = () => {
               <span className="block text-sm">{comentario || ""}</span>
             </div>
           </div>
+        </Paper>
 
-          <div className="flex gap-2">
-            <Button
-              variant="contained"
-              color="success"
-              sx={{ textTransform: "capitalize", borderRadius: 0 }}
-              onClick={() => setShowDialog(true)}
+        {isAsesor && (
+          <React.Fragment>
+            <Tabs
+              value={tabIndex}
+              onChange={(event, newValue) => setTabIndex(newValue)}
             >
-              Crear Evento
-            </Button>
-            {/* <Button
-              variant="contained"
-              color="info"
-              sx={{ textTransform: "capitalize", borderRadius: 0 }}
-            >
-              <Link to={"cotizacion/"}>Generar Cotización</Link>
-            </Button> */}
-          </div>
-          {/* SECCION DE ACCIONES SOBRE LEADS */}
+              <Tab sx={{ textTransform: "capitalize" }} label="Whatsapp" />
+              <Tab sx={{ textTransform: "capitalize" }} label="Llamada" />
+              <Tab sx={{ textTransform: "capitalize" }} label="Eventos" />
+            </Tabs>
 
-          {isAsesor && (
-            <>
-              <div className="flex justify-center">
-                {/* Columna 1 */}
-                <ComponentWhatsapp
-                  lead={idLead}
-                  dataWhatsapp={whatsapps}
-                  onUpdateDataWhatsapp={updateWhatsappMessage}
-                  onCreateDataWhatsapp={createWhatsappMessage}
-                />
+            <CustomTabPanel value={tabIndex} index={0}>
+              <ComponentWhatsapp
+                lead={idLead}
+                dataWhatsapp={whatsapps}
+                onUpdateDataWhatsapp={updateWhatsappMessage}
+                onCreateDataWhatsapp={createWhatsappMessage}
+              />
+            </CustomTabPanel>
+            <CustomTabPanel value={tabIndex} index={1}>
+              <ComponentLlamadas
+                lead={idLead}
+                dataLlamada={llamadas}
+                onUpdatedataLlamada={updateLlamadaLead}
+                onCreatedataLlamada={createLlamadaLead}
+              />
+            </CustomTabPanel>
 
-                {/* Columna 2 */}
-                <ComponentLlamadas
-                  lead={idLead}
-                  dataLlamada={llamadas}
-                  onUpdatedataLlamada={updateLlamadaLead}
-                  onCreatedataLlamada={createLlamadaLead}
-                />
-                {showDialog ? (
-                  <DialogForm
-                    lead={idLead}
-                    isOpen={showDialog}
-                    onClose={() => setShowDialog(false)}
-                    token={authTokens["access"]}
-                    user={currentUser.user_id}
-                  />
-                ) : null}
-              </div>
-            </>
-          )}
-
-          <div className="flex justify-center">
-            <Button
-              variant="contained"
-              sx={{ borderRadius: 0, backgroundColor: "gray" }}
-              onClick={onNavigateBack}
-            >
-              Volver
-            </Button>
-          </div>
-        </div>
+            <CustomTabPanel value={tabIndex} index={2}>
+              <ComponentEventos lead={idLead}/>
+            </CustomTabPanel>
+          </React.Fragment>
+        )}
+        <Button
+          startIcon={<MdArrowBack />}
+          variant="contained"
+          color="warning"
+          sx={{ textTransform: "capitalize", width: "6rem" }}
+          onClick={onNavigateBack}
+        >
+          Volver
+        </Button>
       </div>
       {/* COMPONENTE ALERTA */}
       <CustomAlert
@@ -359,8 +351,26 @@ export const DetailLead = () => {
         feedbackMessages={feedbackMessages}
         handleCloseFeedback={handleCloseFeedback}
       />
-      {/* CIRCULAR PROGRESS */}
       {visibleProgress && <CustomCircularProgress />}
     </>
+  );
+};
+
+/**
+ * Custom tab panel to use as tab wrapper.
+ * @param {*} props
+ * @returns
+ */
+const CustomTabPanel = (props) => {
+  const { children, value, index, ...other } = props;
+  return (
+    <div
+      role="tabpanel"
+      hidden={value !== index}
+      id={`simple-tabpanel-${index}`}
+      {...other}
+    >
+      {value === index && <div>{children}</div>}
+    </div>
   );
 };

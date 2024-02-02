@@ -14,6 +14,7 @@
     "@babel/helper-validator-identifier": "^7.22.5",
     "@emotion/react": "^11.11.1",
     "@emotion/styled": "^11.11.0",
+    "@fontsource/roboto": "^5.0.8",
     "@handsontable/react": "^13.0.0",
     "@mui/material": "^5.13.5",
     "@mui/x-data-grid": "^6.16.2",

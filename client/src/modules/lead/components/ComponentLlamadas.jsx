@@ -216,13 +216,14 @@ const DialogRegistrarLlamada = ({ onCreateRegistroLlamada }) => {
 
   return (
     <div className="py-4">
-      <button
-        className="bg-blue-500 text-white font-bold py-2 px-4 rounded mr-2"
+      <Button
         title="Salida Parcial"
         onClick={handleClickOpen}
+        variant="contained"
+        sx={{ textTransform: "capitalize" }}
       >
         Nuevo registro
-      </button>
+      </Button>
       <BootstrapDialog
         maxWidth={"xs"}
         onClose={handleClose}

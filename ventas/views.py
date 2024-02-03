@@ -212,16 +212,16 @@ class LeadDetail(generics.RetrieveUpdateDestroyAPIView):
         lead_data["eventos"] = EventoSerializer(
             Evento.objects.filter(lead=lead.pk), many=True).data
         
-        for eventoIter in lead_data["eventos"] :
-            asesor = User.objects.filter(id = eventoIter["asesor"]).first()
-            tipoEvento = TipoEvento.objects.filter(id = eventoIter["tipo"]).first()
-            estadoEvento = EstadoEvento.objects.filter(id = eventoIter["estadoEvento"]).first()
-            objecion = Objecion.objects.filter(id = eventoIter["objecion"]).first()
+        # for eventoIter in lead_data["eventos"] :
+        #     lead = Lead.objects.filter(id = eventoIter["lead"]).first()
+        #     tipoEvento = TipoEvento.objects.filter(id = eventoIter["tipo"]).first()
+        #     estadoEvento = EstadoEvento.objects.filter(id = eventoIter["estadoEvento"]).first()
+        #     objecion = Objecion.objects.filter(id = eventoIter["objecion"]).first()
 
-            eventoIter["asesor"] = UserSerializer(asesor ,fields=('id', 'first_name', 'last_name', 'username', 'codigoAsesor')).data if asesor != None else None            
-            eventoIter["tipo"] =  TipoEventoSerializer(tipoEvento).data if tipoEvento != None else None
-            eventoIter["estadoEvento"] =  EstadoEventoSerializer(estadoEvento).data if estadoEvento != None else None
-            eventoIter["objecion"] =  ObjecionSerializer(objecion).data if objecion != None else None
+        #     eventoIter["lead"] = UserSerializer(asesor ,fields=('id', 'first_name', 'last_name', 'username', 'codigoAsesor')).data if asesor != None else None            
+        #     eventoIter["tipo"] =  TipoEventoSerializer(tipoEvento).data if tipoEvento != None else None
+        #     eventoIter["estadoEvento"] =  EstadoEventoSerializer(estadoEvento).data if estadoEvento != None else None
+        #     eventoIter["objecion"] =  ObjecionSerializer(objecion).data if objecion != None else None
 
         return Response(lead_data)
 

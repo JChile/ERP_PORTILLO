@@ -44,7 +44,7 @@ class LeadList(generics.ListCreateAPIView):
         #asesor_queryset = User.objects.filter(is_active=True, estado= 'A').filter(groups__name__in=["asesor" or "Asesor" or "ASESOR"])
 
 
-        fecha_limite = datetime.now() - timedelta(days=60)
+        fecha_limite = timezone.now() - timedelta(days=60)
 
         estado = request.query_params.get('estado')
         desde = request.query_params.get('desde')
@@ -484,9 +484,17 @@ class EventoList(generics.ListCreateAPIView):
 
         if estado:
             evento_queryset = Evento.objects.all().filter(estado=estado)
+        
         if desde and hasta:
             evento_queryset = evento_queryset.filter(
-                fecha_creacion__range=[desde, hasta])
+                fecha_visita__range=[desde, hasta])
+        else :
+            fecha_actual = timezone.now()
+            fecha_hace_30_dias = fecha_actual - timedelta(days=30)
+            fecha_dentro_de_30_dias = fecha_actual + timedelta(days=30)
+            evento_queryset = evento_queryset.filter(
+                fecha_visita__range=[fecha_hace_30_dias, fecha_dentro_de_30_dias])
+
 
         if request.user.isAdmin == False:
             evento_queryset = evento_queryset.filter(asesor=usuarioId)

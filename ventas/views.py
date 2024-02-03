@@ -59,20 +59,20 @@ class LeadList(generics.ListCreateAPIView):
             lead_queryset = lead_queryset.filter(asignado=asignado)
             if request.user.groups.first().name == "marketing" : 
                 if desde and hasta:
-                    lead_queryset = Lead.objects.filter(fecha_creacion__range=[desde, hasta]).order_by('-fecha_creacion')
+                    lead_queryset = lead_queryset.objects.filter(fecha_creacion__range=[desde, hasta]).order_by('-fecha_creacion')
                 else : 
-                    lead_queryset = Lead.objects.filter(fecha_creacion__gte=fecha_limite).order_by('-fecha_creacion')
+                    lead_queryset = lead_queryset.objects.filter(fecha_creacion__gte=fecha_limite).order_by('-fecha_creacion')
             
             elif request.user.groups.first().name == "asesor" : 
                 if desde and hasta:
-                    lead_queryset = Lead.objects.filter(fecha_desasignacion__range=[desde, hasta]).order_by('-fecha_desasignacion')
+                    lead_queryset = lead_queryset.objects.filter(fecha_desasignacion__range=[desde, hasta]).order_by('-fecha_desasignacion')
                 else : 
-                    lead_queryset = Lead.objects.filter(fecha_desasignacion__gte=fecha_limite).order_by('-fecha_desasignacion')
+                    lead_queryset = lead_queryset.objects.filter(fecha_desasignacion__gte=fecha_limite).order_by('-fecha_desasignacion')
             else:
                 if desde and hasta:
-                    lead_queryset = Lead.objects.filter(fecha_desasignacion__range=[desde, hasta]).order_by('-fecha_desasignacion')
+                    lead_queryset = lead_queryset.objects.filter(fecha_desasignacion__range=[desde, hasta]).order_by('-fecha_desasignacion')
                 else : 
-                    lead_queryset = Lead.objects.filter(fecha_desasignacion__gte=fecha_limite).order_by('-fecha_desasignacion')
+                    lead_queryset = lead_queryset.objects.filter(fecha_desasignacion__gte=fecha_limite).order_by('-fecha_desasignacion')
 
         else :
             if request.user.groups.first().name == "marketing" : 

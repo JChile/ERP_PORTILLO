@@ -36,9 +36,7 @@ export const FilterRol = ({ onNewInput, defaultValue = null }) => {
 
   // useeffect cuando se carga el componente
   useEffect(() => {
-    const controller = new AbortController();
     obtenerDataRoles();
-    return () => controller.abort();
   }, []);
 
   // use effect cuando hay cambios en el valor por defecto

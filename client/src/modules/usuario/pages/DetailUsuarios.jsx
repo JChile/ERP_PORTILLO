@@ -159,7 +159,7 @@ export const DetailUsuarios = () => {
                 <span className="block text-sm">{groups["name"]}</span>
               </label>
 
-              {groups["id"] === 1 && (
+              {groups["name"] === "asesor" && (
                 <label className="block flex gap-y-1 ">
                   <span className="block text-sm font-medium min-w-[10rem] text-zinc-500">
                     Codigo asesor

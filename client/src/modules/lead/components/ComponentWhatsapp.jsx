@@ -91,7 +91,7 @@ export const ComponentWhatsapp = ({
 
   return (
     <React.Fragment>
-      <Card className="rounded-lg shadow-md">
+      <Card sx={{ minHeight: "200px", marginY: "2em" }}>
         <CardHeader
           sx={{
             backgroundColor: "rgb(34 197 94)",
@@ -112,11 +112,7 @@ export const ComponentWhatsapp = ({
         />
 
         <CardContent
-          sx={{
-            display: "flex",
-            justifyContent: "center",
-            minHeight: "200px",
-          }}
+          sx={{ display: "flex", justifyContent: "center", minHeight: "200px" }}
         >
           {/* Contenido de la primera columna */}
           {dataWhatsapp.length !== 0 ? (

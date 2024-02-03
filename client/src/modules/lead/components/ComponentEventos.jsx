@@ -74,10 +74,11 @@ const ComponentEventos = ({
 
   return (
     <React.Fragment>
-      <Card sx={{ minHeight: "200px", marginY: "1rem" }}>
+      <Card sx={{ minHeight: "200px" }}>
         <CardHeader
           sx={{
-            backgroundColor: "yellow",
+            backgroundColor: "#ed6c02",
+            color: "white",
             fontWeight: "bold",
             height: "4rem", // Agrega esta línea para aumentar la altura del encabezado
             "& .MuiCardHeader-title": {
@@ -142,7 +143,7 @@ const ComponentEventos = ({
         <CardActions>
           <Button
             variant="contained"
-            color="success"
+            color="warning"
             sx={{ textTransform: "capitalize", marginX: "auto" }}
             onClick={() => setShowDialogForm(true)}
           >
@@ -192,7 +193,7 @@ const transformToEvent = (oldEvent) => {
     tipo: oldEvent.tipo,
     estadoEvento: oldEvent.estadoEvento,
     observacion: oldEvent.observacion,
-    objecion: oldEvent.objecion
+    objecion: oldEvent.objecion,
   };
 };
 

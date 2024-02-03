@@ -5,7 +5,6 @@ import { CustomMoreVerticalActions } from "../../../components";
 
 export const RowItemProducto = ({ item, onDeleteItemSelected }) => {
   const { id, nombre, codigo, numero, area, tipo, proyecto, estado } = item;
-  console.log(item);
   const navigate = useNavigate();
 
   const onEditItemSelected = () => {

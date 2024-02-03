@@ -64,8 +64,15 @@ class UserList(generics.ListCreateAPIView):
     queryset = User.objects.all()
 
     def list(self, request):
+        estado = request.query_params.get('estado')
+        is_superuser = request.query_params.get('is_superuser')
 
         user_queryset = User.objects.all()
+        if estado:
+            user_queryset = user_queryset.filter(estado=estado)
+        if is_superuser:
+            user_queryset = user_queryset.filter(is_superuser=is_superuser)
+
         userSerializer = UserSerializer(user_queryset, many=True)
         dataJson = userSerializer.data
         for i in dataJson:
@@ -153,36 +160,36 @@ class UserDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
 
-    # update desacioar, desacociar
-    def update(self, request, pk=None, *args, **kwargs):
+    # # update desacioar, desacociar
+    # def update(self, request, pk=None, *args, **kwargs):
 
-        # if not (bool(request.user.groups.first().permissions.filter(codename = PermissionUser.CAN_CHANGE) or request.user.is_superuser)) :
-        #    return Response({"message" : "Usuario no tiene permisos para editar usuarios"}, status=403)
+    #     # if not (bool(request.user.groups.first().permissions.filter(codename = PermissionUser.CAN_CHANGE) or request.user.is_superuser)) :
+    #     #    return Response({"message" : "Usuario no tiene permisos para editar usuarios"}, status=403)
 
-        try:
-            desasociar = request.data.pop("desasociar")
-        except:
-            desasociar = False
+    #     try:
+    #         desasociar = request.data.pop("desasociar")
+    #     except:
+    #         desasociar = False
 
-        try:
-            user = self.queryset.get(id=pk)
-        except:
-            return Response({"Message": "User no existe"})
+    #     try:
+    #         user = self.queryset.get(id=pk)
+    #     except:
+    #         return Response({"Message": "User no existe"})
 
-        serializer = UserSerializer(user, data=request.data)
-        if serializer.is_valid():
-            if desasociar:
-                leads_queryset = Lead.objects.filter(asesor=user.pk)
+    #     serializer = UserSerializer(user, data=request.data)
+    #     if serializer.is_valid():
+    #         if desasociar:
+    #             leads_queryset = Lead.objects.filter(asesor=user.pk)
 
-                for i in leads_queryset:
-                    i.asesor = None
-                    i.asignado = False
-                    DesasignacionLeadAsesor.objects.create(lead = i, usuario = user).save()
-                    i.save()
-            serializer.save()
-            return Response(serializer.data)
+    #             for i in leads_queryset:
+    #                 i.asesor = None
+    #                 i.asignado = False
+    #                 DesasignacionLeadAsesor.objects.create(lead = i, usuario = user).save()
+    #                 i.save()
+    #         serializer.save()
+    #         return Response(serializer.data)
 
-        return Response({"Message": "No se actualizo"})
+    #     return Response({"Message": "No se actualizo"})
 
     # eliminar password en el envio
     def retrieve(self, request, pk=None):

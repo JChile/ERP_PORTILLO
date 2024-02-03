@@ -161,10 +161,8 @@ export const CreateUsuarios = () => {
     setVisibleProgress(true);
     const usuarioJSON = { ...usuario, groups: [groups["id"]] };
     delete usuarioJSON.confirm_password;
-    console.log(usuarioJSON);
     try {
       const result = await createUsuario(usuarioJSON, authTokens["access"]);
-      console.log(result);
       // comprobar si se realizo con exito la creación del usuario
       setVisibleProgress(false);
       // navegamos atras

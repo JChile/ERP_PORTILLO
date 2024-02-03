@@ -60,8 +60,17 @@ export const CreateProducto = () => {
     if (!nombre) {
       errors.push("- El nombre del proyecto es obligatorio.");
     }
+    if (numero<99 || numero>1000) {
+      errors.push("- El número debe tener 3 digitos.");
+    }
+    if (numero % 1 !== 0) {
+      errors.push("- El número debe ser un entero.");
+    }
     if (!numero) {
       errors.push("- El número es obligatorio.");
+    }
+    if (area<0) {
+      errors.push("- El área no puede ser negativo.");
     }
     if (!area) {
       errors.push("- El área es obligatorio.");

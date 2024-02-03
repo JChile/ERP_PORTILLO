@@ -2,6 +2,8 @@
 
 # pg_dump -h localhost -p 5432 -U postgres -d portillo_erp -a -f portillo_erp.sql
 
+nombreBd=$1
+
 dropdb -h localhost -p 5432 -U postgres portillo_erp
 createdb -h localhost -p 5432 -U postgres portillo_erp
 psql -h localhost -p 5432 -U postgres --list
@@ -21,6 +23,6 @@ python manage.py migrate
 
 #psql -h localhost -p 5432 -U postgres portillo_erp -c "\dt"
 
-psql -h localhost -p 5432 -U postgres -d portillo_erp -a -f portillo_erp.sql
+psql -h localhost -p 5432 -U postgres -d portillo_erp -a -f $nombreBd
 
 python manage.py runserver

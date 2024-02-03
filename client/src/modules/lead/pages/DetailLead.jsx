@@ -218,8 +218,7 @@ export const DetailLead = () => {
     }
   };
 
-
-  console.log(lead)
+  console.log(lead);
 
   // obtener informacion del lead
   const obtenerLead = async () => {
@@ -252,10 +251,27 @@ export const DetailLead = () => {
   return (
     <>
       <div className="flex flex-col gap-y-4">
-        <Paper sx={{ padding: "8px 16px" }} elevation={2}>
+        <Paper
+          sx={{
+            padding: "8px 16px",
+            border: "0.5px solid #e5e7eb",
+            borderRadius: "0px",
+          }}
+          elevation={0}
+        >
           <Typography variant="h5">Detalle Lead</Typography>
         </Paper>
-        <Paper elevation={2} className="p-3 flex flex-col gap-y-4">
+        <Paper
+          elevation={0}
+          sx={{
+            padding: "0.75rem",
+            display: "flex",
+            flexDirection: "column",
+            rowGap: "1rem",
+            border: "0.5px solid #e5e7eb",
+            borderRadius: "0px",
+          }}
+        >
           <div className="flex flex-col md:flex-row min-w-[242px] gap-x-2 gap-y-3">
             <div className="w-full flex flex-col gap-y-3">
               <label className="flex gap-y-1 min-w-full">
@@ -391,8 +407,8 @@ export const DetailLead = () => {
         <Button
           startIcon={<MdArrowBack />}
           variant="contained"
-          color="warning"
-          sx={{ textTransform: "capitalize", width: "6rem" }}
+          color="inherit"
+          sx={{ textTransform: "capitalize", width: "6rem", marginX: "auto" }}
           onClick={onNavigateBack}
         >
           Volver

@@ -5,7 +5,6 @@ import {
   CardActions,
   CardContent,
   CardHeader,
-  CircularProgress,
   Table,
   TableBody,
   TableCell,
@@ -14,7 +13,7 @@ import {
   TableRow,
   Typography,
 } from "@mui/material";
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useState } from "react";
 import { DialogForm } from "../../ventas/components/DialogForm";
 import { AuthContext } from "../../../auth";
 import { MdEvent } from "react-icons/md";
@@ -116,7 +115,6 @@ const ComponentEventos = ({
                     <TableCell>N°</TableCell>
                     <TableCell>Evento</TableCell>
                     <TableCell>Separado</TableCell>
-                    <TableCell>Asesor</TableCell>
                     <TableCell>Fecha</TableCell>
                   </TableRow>
                 </TableHead>
@@ -129,8 +127,9 @@ const ComponentEventos = ({
                       <TableCell>{index + 1}</TableCell>
                       <TableCell>{element.titulo}</TableCell>
                       <TableCell>{element.separado ? "Sí" : "No"}</TableCell>
-                      <TableCell>{`${lead.asesor.first_name} ${lead.asesor.last_name}`}</TableCell>
-                      <TableCell>{formatDate_ISO861_to_formatdate(element.fecha_visita)}</TableCell>
+                      <TableCell>
+                        {formatDate_ISO861_to_formatdate(element.fecha_visita)}
+                      </TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
@@ -178,6 +177,7 @@ const ComponentEventos = ({
  * @returns event in calendar_view
  */
 const transformToEvent = (oldEvent) => {
+  console.log(oldEvent);
   const startEvent = new Date(oldEvent.fecha_visita);
   const durationMilliseconds = oldEvent.duracion * 60000;
   const endEvent = new Date(startEvent.getTime() + durationMilliseconds);
@@ -189,9 +189,10 @@ const transformToEvent = (oldEvent) => {
     start: startEvent,
     end: endEvent,
     duracion: oldEvent.duracion,
-    tipo: oldEvent.tipo.id,
-    estadoEvento: oldEvent.estadoEvento.id,
+    tipo: oldEvent.tipo,
+    estadoEvento: oldEvent.estadoEvento,
     observacion: oldEvent.observacion,
+    objecion: oldEvent.objecion
   };
 };
 

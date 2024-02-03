@@ -45,6 +45,7 @@ export const DialogDetailEvento = ({
     tipo,
     observacion,
     estadoEvento,
+    objecion,
   } = dataAuxEvento;
 
   const [editData, setEditData] = useState(false);
@@ -104,7 +105,7 @@ export const DialogDetailEvento = ({
   const handleChangeObjecion = (value) => {
     setDataAuxEvento((prev) => ({
       ...prev,
-      objecion: value,
+      objecion: value.id,
     }));
   };
 
@@ -246,7 +247,7 @@ export const DialogDetailEvento = ({
               Comentario:
             </Typography>
             <TextField
-              type="number"
+              type="text"
               value={observacion}
               disabled={!editData}
               fullWidth
@@ -259,7 +260,7 @@ export const DialogDetailEvento = ({
             <FilterObjecion
               active={!editData}
               size="small"
-              defaultValue={null}
+              defaultValue={objecion}
               onNewInput={(value) => handleChangeObjecion(value)}
             />
           </Grid>

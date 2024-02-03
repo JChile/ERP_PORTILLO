@@ -15,6 +15,7 @@ from ventas.serializers import LeadSerializer, ProductoSerializer
 from multimedia.models import *
 from multimedia.serializers import *
 
+from rest_framework import status
 
 def get_or_none(classmodel, **kwargs):
     try:
@@ -44,6 +45,14 @@ class ProyectoList(generics.ListCreateAPIView):
             i["imagenes"] = ImagenProyectoSerializer(ImagenProyecto.objects.filter(proyecto = i["id"]), many = True).data
 
         return Response(dataJson)
+    
+    def post(self, request):
+        serializer = ProyectoSerializer(data=request.data)
+        if serializer.is_valid():
+            lead = serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
 
 
@@ -177,7 +186,6 @@ class CampaniaDetail(generics.RetrieveUpdateDestroyAPIView):
         # dataJson["user"] = userSerializer.data
         dataJson["categoria"] = categoriaSerializer.data if categoria != None else {}
         return Response(dataJson)
-
 
 class ProyectoCampaniaList(APIView):
 

@@ -161,7 +161,6 @@ export const CreateUsuarios = () => {
     setVisibleProgress(true);
     const usuarioJSON = { ...usuario, groups: [groups["id"]] };
     delete usuarioJSON.confirm_password;
-    console.log(usuarioJSON);
     try {
       const result = await createUsuario(usuarioJSON, authTokens["access"]);
       // comprobar si se realizo con exito la creación del usuario
@@ -178,7 +177,7 @@ export const CreateUsuarios = () => {
       });
       handleClickFeedback();
     }
-    setVisibleProgress(false);
+    // setVisibleProgress(false);
   };
 
   const handledCrearUsuario = () => {

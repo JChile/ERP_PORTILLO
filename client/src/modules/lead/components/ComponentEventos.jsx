@@ -5,70 +5,80 @@ import {
   CardActions,
   CardContent,
   CardHeader,
-  CircularProgress,
   Table,
   TableBody,
   TableCell,
   TableContainer,
   TableHead,
   TableRow,
+  Typography,
 } from "@mui/material";
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useState } from "react";
 import { DialogForm } from "../../ventas/components/DialogForm";
 import { AuthContext } from "../../../auth";
 import { MdEvent } from "react-icons/md";
 import { getEvents, updateEvent } from "../../ventas/helpers/eventCases";
 import {
   combinarErrores,
+  formatDate_ISO861_to_formatdate,
   obtenerHoraActualFormatPostgress,
 } from "../../../utils";
 import { DialogDetailEvento } from "../../ventas/components/DialogDetailEvento";
 
-const ComponentEventos = ({ lead }) => {
+/**
+ *
+ * @param {Object} lead
+ * @param {Array} dataEventos
+ * @param {Function} onCreateDataEvento
+ * @param {Function} onUpdateDataEvento
+ * @returns
+ */
+const ComponentEventos = ({
+  lead,
+  dataEventos,
+  onCreateDataEvento,
+  onUpdateDataEvento,
+}) => {
   const { currentUser, authTokens } = useContext(AuthContext);
   const [showDialogForm, setShowDialogForm] = useState(false);
   const [showDialogDetail, setShowDialogDetail] = useState(false);
-  const [eventosData, setEventosData] = useState([]);
-  const [loading, setLoading] = useState(true);
   const [selectedEvent, setSelectedEvent] = useState(null);
-
-  const traerEventos = async () => {
-    try {
-      const response = await getEvents(authTokens["access"]);
-      setLoading(false);
-      setEventosData(response);
-    } catch (error) {
-      const errores = combinarErrores(error);
-    }
-  };
 
   const handleSelectEvent = (event) => {
     setShowDialogDetail(true);
     setSelectedEvent(event);
   };
 
-  const updateEventSelected = async (id, event) => {
-    const dataToSave = {
-      ...event,
-      fecha_actualizacion: obtenerHoraActualFormatPostgress(),
-    };
-    try {
-      const response = await updateEvent(id, dataToSave, authTokens["access"]);
-    } catch (error) {
-      const errores = combinarErrores(error);
-    }
+  const handleCloseDialogDetail = () => {
+    setShowDialogDetail(false);
+    setSelectedEvent(null);
   };
 
-  useEffect(() => {
-    traerEventos();
-  }, []);
+  const createRegistroEvento = (body) => {
+    const formatData = {
+      ...body,
+      lead: parseInt(lead.id),
+      usuarioCreador: currentUser["user_id"],
+    };
+    onCreateDataEvento(formatData);
+  };
+
+  const actualizarRegistroEvento = (id, body) => {
+    const formatData = {
+      ...body,
+      usuarioActualizador: currentUser["user_id"],
+      fecha_actualizacion: obtenerHoraActualFormatPostgress(),
+    };
+    onUpdateDataEvento(id, formatData);
+  };
 
   return (
     <React.Fragment>
-      <Card sx={{ width: "60%", minHeight: "200px", marginY: "1rem" }}>
+      <Card sx={{ minHeight: "200px" }}>
         <CardHeader
           sx={{
-            backgroundColor: "yellow",
+            backgroundColor: "#ed6c02",
+            color: "white",
             fontWeight: "bold",
             height: "4rem", // Agrega esta línea para aumentar la altura del encabezado
             "& .MuiCardHeader-title": {
@@ -80,22 +90,17 @@ const ComponentEventos = ({ lead }) => {
               fontWeight: "bold",
             },
           }}
-          title={`Eventos (${eventosData.length})`}
+          title={`Eventos (${dataEventos.length})`}
           avatar={<MdEvent size="1.4rem" />}
         />
         <CardContent
           sx={{
             display: "flex",
             justifyContent: "center",
-            alignItems: "center",
             minHeight: "200px",
           }}
         >
-          {loading ? (
-            <Box>
-              <CircularProgress />
-            </Box>
-          ) : (
+          {dataEventos.length > 0 ? (
             <TableContainer>
               <Table stickyHeader>
                 <TableHead sx={{ background: "black" }}>
@@ -111,12 +116,11 @@ const ComponentEventos = ({ lead }) => {
                     <TableCell>N°</TableCell>
                     <TableCell>Evento</TableCell>
                     <TableCell>Separado</TableCell>
-                    <TableCell>Asesor</TableCell>
                     <TableCell>Fecha</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {eventosData.map((element, index) => (
+                  {dataEventos.map((element, index) => (
                     <TableRow
                       key={element.id}
                       onClick={() => handleSelectEvent(element)}
@@ -124,19 +128,22 @@ const ComponentEventos = ({ lead }) => {
                       <TableCell>{index + 1}</TableCell>
                       <TableCell>{element.titulo}</TableCell>
                       <TableCell>{element.separado ? "Sí" : "No"}</TableCell>
-                      <TableCell>{element.asesor.first_name}</TableCell>
-                      <TableCell>{element.fecha_visita}</TableCell>
+                      <TableCell>
+                        {formatDate_ISO861_to_formatdate(element.fecha_visita)}
+                      </TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
               </Table>
             </TableContainer>
+          ) : (
+            <Typography>No hay registros</Typography>
           )}
         </CardContent>
         <CardActions>
           <Button
             variant="contained"
-            color="success"
+            color="warning"
             sx={{ textTransform: "capitalize", marginX: "auto" }}
             onClick={() => setShowDialogForm(true)}
           >
@@ -148,18 +155,17 @@ const ComponentEventos = ({ lead }) => {
         <DialogForm
           isOpen={showDialogForm}
           onClose={() => setShowDialogForm(false)}
-          lead={lead}
-          token={authTokens["access"]}
-          user={currentUser.user_id}
+          onCreateRegistroEvento={createRegistroEvento}
         />
       )}
 
       {showDialogDetail && (
         <DialogDetailEvento
           isOpen={showDialogDetail}
-          onClose={() => setShowDialogDetail(false)}
           selectedEvent={transformToEvent(selectedEvent)}
-          onUpdateEvent={updateEventSelected}
+          onClose={handleCloseDialogDetail}
+          onUpdateEvent={actualizarRegistroEvento}
+          showLead={false}
         />
       )}
     </React.Fragment>
@@ -172,6 +178,7 @@ const ComponentEventos = ({ lead }) => {
  * @returns event in calendar_view
  */
 const transformToEvent = (oldEvent) => {
+  console.log(oldEvent);
   const startEvent = new Date(oldEvent.fecha_visita);
   const durationMilliseconds = oldEvent.duracion * 60000;
   const endEvent = new Date(startEvent.getTime() + durationMilliseconds);
@@ -183,9 +190,10 @@ const transformToEvent = (oldEvent) => {
     start: startEvent,
     end: endEvent,
     duracion: oldEvent.duracion,
-    tipo: oldEvent.tipo.id,
-    estadoEvento: oldEvent.estadoEvento.id,
+    tipo: oldEvent.tipo,
+    estadoEvento: oldEvent.estadoEvento,
     observacion: oldEvent.observacion,
+    objecion: oldEvent.objecion,
   };
 };
 

@@ -4,11 +4,10 @@ import "react-big-calendar/lib/css/react-big-calendar.css";
 import "./../components/calendar.css";
 import moment from "moment";
 import { CustomToolbar, CustomEvent, CustomEventWrapper } from "../components";
-import { DialogForm } from "../components/DialogForm";
 import { DialogDetailEvento } from "../components/DialogDetailEvento";
 import { getEvents, updateEvent } from "../helpers/eventCases";
 import { getTipoEventos } from "../helpers/typeEventCases";
-import { CustomCircularProgress } from "../../../components";
+import { CustomCircularProgress, CustomDatePicker } from "../../../components";
 import {
   Button,
   Checkbox,
@@ -17,9 +16,12 @@ import {
   ListItem,
   ListItemSecondaryAction,
   ListItemText,
+  Typography,
 } from "@mui/material";
 import { AuthContext } from "../../../auth";
 import { obtenerHoraActualFormatPostgress } from "../../../utils";
+import { MdFilter, MdFilterAlt } from "react-icons/md";
+import { useAlertMUI } from "../../../hooks";
 
 const localizer = momentLocalizer(moment);
 
@@ -84,6 +86,17 @@ export const CalendarView = () => {
   const [originalEvents, setOriginalEvents] = useState([]);
   const [selectedFilters, setSelectedFilters] = useState({});
   const [tempFilters, setTempFilters] = useState({});
+  const [desdeValue, setDesdeValue] = useState(null);
+  const [hastaValue, setHastaValue] = useState(null);
+
+
+  const {
+    feedbackCreate,
+    feedbackMessages,
+    setFeedbackMessages,
+    handleCloseFeedback,
+    handleClickFeedback,
+  } = useAlertMUI();
 
 
   const handleTempFilters = (event) => {
@@ -104,9 +117,15 @@ export const CalendarView = () => {
     setSelectedFilters(tempFilters);
   };
 
+  // http://127.0.0.1:8000/api/evento/?desde=2020-2-2&hasta=2020-2-2
+
   const getCalendarData = async (authTokens) => {
+    let query = "";
+    if (desdeValue && hastaValue) {
+      query = `desde=${desdeValue}&hasta=${hastaValue}`;
+    }
     try {
-      const events = await getEvents(authTokens);
+      const events = await getEvents(authTokens, query);
       const typeEvents = await getTipoEventos();
 
       setOriginalEvents(events);
@@ -124,7 +143,6 @@ export const CalendarView = () => {
 
       if (Object.keys(selectedFilters).length > 0) {
         const filteredEvents = events.filter((e) => {
-          console.log(e);
           return selectedFilters[e.tipo.nombre];
         });
         setCalendarEvents(filteredEvents.map((item) => transformToEvent(item)));
@@ -144,6 +162,19 @@ export const CalendarView = () => {
     const response = await updateEvent(id, dataToSave, authTokens["access"]);
   };
 
+  const onChangeDatePickerFechaDesde = (newDate) => {
+    setDesdeValue(newDate);
+  };
+
+  const onChangeDatePickerFechaHasta = (newDate) => {
+    setHastaValue(newDate);
+  };
+
+  const onSubmitFilter = (event) => {
+    
+    setFlagLoader((prev) => !prev);
+  };
+
   useEffect(() => {
     getCalendarData(authTokens.access);
   }, [flagLoader]);
@@ -151,6 +182,29 @@ export const CalendarView = () => {
   return (
     <React.Fragment>
       <div className="flex flex-col gap-y-3">
+        <Typography variant="h5">Eventos Registrados</Typography>
+        <Typography variant="h6">Filtro</Typography>
+        <div className="flex gap-x-4">
+          <CustomDatePicker
+            label="Fecha Desde"
+            onNewFecha={onChangeDatePickerFechaDesde}
+            defaultValue={desdeValue}
+          />
+          <CustomDatePicker
+            label="Fecha Hasta"
+            onNewFecha={onChangeDatePickerFechaHasta}
+            defaultValue={hastaValue}
+          />
+          <Button
+            startIcon={<MdFilterAlt />}
+            variant="contained"
+            sx={{ textTransform: "capitalize" }}
+            onClick={onSubmitFilter}
+          >
+            Filtrar
+          </Button>
+        </div>
+
         <div className="flex justify-between">
           <Button
             variant="contained"
@@ -267,11 +321,7 @@ export const CalendarView = () => {
   );
 };
 
-
-
-
 const transformToEvent = (oldEvent) => {
-
   const startEvent = new Date(oldEvent.fecha_visita);
   const durationMilliseconds = oldEvent.duracion * 60000;
   const endEvent = new Date(startEvent.getTime() + durationMilliseconds);
@@ -286,5 +336,6 @@ const transformToEvent = (oldEvent) => {
     tipo: oldEvent.tipo.id,
     estadoEvento: oldEvent.estadoEvento.id,
     observacion: oldEvent.observacion,
+    objecion: oldEvent.objecion,
   };
 };

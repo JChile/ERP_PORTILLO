@@ -23,12 +23,14 @@ import { useAlertMUI } from "../../../hooks";
 import { combinarErrores, validIdURL } from "../../../utils";
 import { MdArrowBack } from "react-icons/md";
 import ComponentEventos from "../components/ComponentEventos";
+import { createEvent, updateEvent } from "../../ventas/helpers/eventCases";
 
 export const DetailLead = () => {
   const { idLead } = useParams();
   const numericId = parseInt(idLead);
   const { authTokens, currentUser } = useContext(AuthContext);
-  const isAsesor = currentUser["groupsId"] === "1" ? true : false;
+
+  const isAsesor = currentUser["groups"] === "asesor" ? true : false;
   const [tabIndex, setTabIndex] = useState(0);
   const [lead, setLead] = useState({
     nombre: "",
@@ -87,30 +89,6 @@ export const DetailLead = () => {
   };
 
   const [visibleProgress, setVisibleProgress] = useState(false);
-
-  // obtener informacion del lead
-  const obtenerLead = async () => {
-    if (validIdURL(numericId)) {
-      try {
-        setVisibleProgress(true);
-        const auxLead = await getLead(numericId, authTokens.access);
-        setLead(auxLead);
-        // comprobar si se realizo con exito la creación del usuario
-        setVisibleProgress(false);
-      } catch (error) {
-        setVisibleProgress(false);
-        const pilaError = combinarErrores(error);
-        // mostramos feedback de error
-        setFeedbackMessages({
-          style_message: "error",
-          feedback_description_error: pilaError,
-        });
-        handleClickFeedback();
-      }
-    } else {
-      onNavigateBack();
-    }
-  };
 
   // crear informacion de whatsapp
   const createWhatsappMessage = async (itemData) => {
@@ -201,6 +179,71 @@ export const DetailLead = () => {
     }
   };
 
+  const createEventoLead = async (itemData) => {
+    try {
+      const result = await createEvent(itemData, authTokens["access"]);
+      const createDataEvento = [...eventos, result];
+      setLead({
+        ...lead,
+        eventos: createDataEvento,
+      });
+    } catch (error) {
+      const pilaError = combinarErrores(error);
+      setFeedbackMessages({
+        style_message: "error",
+        feedback_description_error: pilaError,
+      });
+      handleClickFeedback();
+    }
+  };
+
+  const updateEventoLead = async (id, itemData) => {
+    try {
+      const result = await updateEvent(id, itemData, authTokens["access"]);
+      const updateDataEvento = eventos.map((elemento) => {
+        return elemento.id === id ? result : elemento;
+      });
+      console.log(updateDataEvento);
+      setLead({
+        ...lead,
+        eventos: updateDataEvento,
+      });
+    } catch (error) {
+      const pilaError = combinarErrores(error);
+      setFeedbackMessages({
+        style_message: "error",
+        feedback_description_error: pilaError,
+      });
+      handleClickFeedback();
+    }
+  };
+
+  console.log(lead);
+
+  // obtener informacion del lead
+  const obtenerLead = async () => {
+    if (validIdURL(numericId)) {
+      try {
+        setVisibleProgress(true);
+        const auxLead = await getLead(numericId, authTokens.access);
+        setLead(auxLead);
+        // comprobar si se realizo con exito la creación del usuario
+        setVisibleProgress(false);
+      } catch (error) {
+        setVisibleProgress(false);
+        const pilaError = combinarErrores(error);
+        // mostramos feedback de error
+        setFeedbackMessages({
+          style_message: "error",
+          feedback_description_error: pilaError,
+        });
+        handleClickFeedback();
+      }
+    } else {
+      onNavigateBack();
+    }
+  };
+
   useEffect(() => {
     obtenerLead();
   }, []);
@@ -208,10 +251,27 @@ export const DetailLead = () => {
   return (
     <>
       <div className="flex flex-col gap-y-4">
-        <Paper sx={{ padding: "8px 16px" }} elevation={2}>
+        <Paper
+          sx={{
+            padding: "8px 16px",
+            border: "0.5px solid #e5e7eb",
+            borderRadius: "0px",
+          }}
+          elevation={0}
+        >
           <Typography variant="h5">Detalle Lead</Typography>
         </Paper>
-        <Paper elevation={2} className="p-3 flex flex-col gap-y-4">
+        <Paper
+          elevation={0}
+          sx={{
+            padding: "0.75rem",
+            display: "flex",
+            flexDirection: "column",
+            rowGap: "1rem",
+            border: "0.5px solid #e5e7eb",
+            borderRadius: "0px",
+          }}
+        >
           <div className="flex flex-col md:flex-row min-w-[242px] gap-x-2 gap-y-3">
             <div className="w-full flex flex-col gap-y-3">
               <label className="flex gap-y-1 min-w-full">
@@ -305,8 +365,12 @@ export const DetailLead = () => {
         {isAsesor && (
           <React.Fragment>
             <Tabs
+              aria-label="basic tabs"
               value={tabIndex}
               onChange={(event, newValue) => setTabIndex(newValue)}
+              sx={{ marginTop: 3 }}
+              centered
+              variant="fullWidth"
             >
               <Tab sx={{ textTransform: "capitalize" }} label="Whatsapp" />
               <Tab sx={{ textTransform: "capitalize" }} label="Llamada" />
@@ -331,15 +395,20 @@ export const DetailLead = () => {
             </CustomTabPanel>
 
             <CustomTabPanel value={tabIndex} index={2}>
-              <ComponentEventos lead={idLead}/>
+              <ComponentEventos
+                lead={lead}
+                dataEventos={eventos}
+                onUpdateDataEvento={updateEventoLead}
+                onCreateDataEvento={createEventoLead}
+              />
             </CustomTabPanel>
           </React.Fragment>
         )}
         <Button
           startIcon={<MdArrowBack />}
           variant="contained"
-          color="warning"
-          sx={{ textTransform: "capitalize", width: "6rem" }}
+          color="inherit"
+          sx={{ textTransform: "capitalize", width: "6rem", marginX: "auto" }}
           onClick={onNavigateBack}
         >
           Volver
@@ -368,6 +437,7 @@ const CustomTabPanel = (props) => {
       role="tabpanel"
       hidden={value !== index}
       id={`simple-tabpanel-${index}`}
+      style={{ display: "flex", justifyContent: "center" }}
       {...other}
     >
       {value === index && <div>{children}</div>}

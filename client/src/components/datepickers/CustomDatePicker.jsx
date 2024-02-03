@@ -7,11 +7,12 @@ export const CustomDatePicker = ({
   onNewFecha,
   disabled = false,
   label = "",
+  disabledPast = false,
+  defaultValue = "",
 }) => {
-  const [value, setValue] = useState(dayjs());
+  const [value, setValue] = useState(dayjs(defaultValue));
 
   const formatFecha = (newValue) => {
-    setValue(newValue);
     // Formatear la fecha a formato PostgreSQL (ISO 8601)
     const formattedDate = newValue.format("YYYY-MM-DD");
     onNewFecha(formattedDate);
@@ -25,6 +26,7 @@ export const CustomDatePicker = ({
     <DatePicker
       label={label}
       value={value}
+      disablePast={disabledPast}
       slotProps={{ textField: { size: "small" } }}
       format="DD/MM/YYYY"
       sx={{ maxWidth: 180 }}

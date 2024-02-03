@@ -164,7 +164,6 @@ export const ListCampanias = () => {
         `estado=${activeButton ? "A" : "I"}`,
         authTokens["access"]
       );
-      console.log(result);
       setCampanias(result);
       setauxCampanias(result);
       // ocultar el progress
@@ -339,7 +338,7 @@ export const ListCampanias = () => {
                     <TextField
                       size="small"
                       variant="outlined"
-                      placeholder="Nombre"
+                      placeholder="codigo"
                       type="text"
                       name="codigo"
                       value={codigo}

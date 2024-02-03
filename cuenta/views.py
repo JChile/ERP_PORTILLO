@@ -65,13 +65,13 @@ class UserList(generics.ListCreateAPIView):
 
     def list(self, request):
         estado = request.query_params.get('estado')
-        is_superuser = request.query_params.get('is_superuser')
+        is_active = request.query_params.get('is_active')
 
         user_queryset = User.objects.all()
         if estado:
             user_queryset = user_queryset.filter(estado=estado)
-        if is_superuser:
-            user_queryset = user_queryset.filter(is_superuser=is_superuser)
+        if is_active:
+            user_queryset = user_queryset.filter(is_active=is_active)
 
         userSerializer = UserSerializer(user_queryset, many=True)
         dataJson = userSerializer.data

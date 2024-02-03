@@ -16,6 +16,12 @@ class Proyecto(models.Model):
     def __str__(self):
         return self.nombre
 
+    def save(self, *args, **kwargs):
+        if not self.pk: 
+            super().save(*args, **kwargs)
+            Campania.objects.create(nombre = str(self.nombre)+"_desconocido", codigo=str(self.nombre)+"_desconocido", proyecto = self, categoria = Categoria.objects.get(nombre = "Desconocido"))
+
+        super().save(*args, **kwargs)
 
 class Categoria(models.Model):
     nombre = models.CharField(max_length=100, null=True)
@@ -39,9 +45,10 @@ class Campania(models.Model):
     categoria = models.ForeignKey(Categoria, on_delete=models.CASCADE)
     estado = models.ForeignKey(
         EstadoRegistro, on_delete=models.SET_NULL, default='A', null=True)
-    usuarioCreador =   models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='usuarioCreadorCampania')
-    usuarioActualizador =   models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='usuarioActualizadorCampania')
+    usuarioCreador =   models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank = True, related_name='usuarioCreadorCampania')
+    usuarioActualizador =   models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank = True , related_name='usuarioActualizadorCampania')
     fecha_actualizacion = models.DateTimeField(blank = True, null = True)
 
     def __str__(self):
         return self.nombre
+

@@ -21,6 +21,7 @@ import {
 import { AuthContext } from "../../../auth";
 import { obtenerHoraActualFormatPostgress } from "../../../utils";
 import { MdFilter, MdFilterAlt } from "react-icons/md";
+import { useAlertMUI } from "../../../hooks";
 
 const localizer = momentLocalizer(moment);
 
@@ -88,6 +89,16 @@ export const CalendarView = () => {
   const [desdeValue, setDesdeValue] = useState(null);
   const [hastaValue, setHastaValue] = useState(null);
 
+
+  const {
+    feedbackCreate,
+    feedbackMessages,
+    setFeedbackMessages,
+    handleCloseFeedback,
+    handleClickFeedback,
+  } = useAlertMUI();
+
+
   const handleTempFilters = (event) => {
     const { name, checked } = event.target;
     const updatedFilters = {
@@ -115,9 +126,6 @@ export const CalendarView = () => {
     }
     try {
       const events = await getEvents(authTokens, query);
-
-      console.log(events);
-
       const typeEvents = await getTipoEventos();
 
       setOriginalEvents(events);
@@ -163,6 +171,7 @@ export const CalendarView = () => {
   };
 
   const onSubmitFilter = (event) => {
+    
     setFlagLoader((prev) => !prev);
   };
 

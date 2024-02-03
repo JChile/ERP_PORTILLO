@@ -164,6 +164,7 @@ export const CreateUsuarios = () => {
     console.log(usuarioJSON);
     try {
       const result = await createUsuario(usuarioJSON, authTokens["access"]);
+      console.log(result);
       // comprobar si se realizo con exito la creación del usuario
       setVisibleProgress(false);
       // navegamos atras
@@ -178,7 +179,7 @@ export const CreateUsuarios = () => {
       });
       handleClickFeedback();
     }
-    setVisibleProgress(false);
+    // setVisibleProgress(false);
   };
 
   const handledCrearUsuario = () => {

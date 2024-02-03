@@ -52,27 +52,28 @@ class LeadList(generics.ListCreateAPIView):
         asignado = request.query_params.get('asignado')
         recienCreado = request.query_params.get('recienCreado')
 
+        print(asignado)
 
+        if asignado == "False":
+            print(asignado)
 
-
-        if asignado == False:
-            lead_queryset = lead_queryset.filter(asignado=asignado)
+            lead_queryset = Lead.objects.filter(asignado=False)
             if request.user.groups.first().name == "marketing" : 
                 if desde and hasta:
-                    lead_queryset = Lead.objects.filter(fecha_creacion__range=[desde, hasta]).order_by('-fecha_creacion')
+                    lead_queryset = lead_queryset.filter(fecha_creacion__range=[desde, hasta]).order_by('-fecha_creacion')
                 else : 
-                    lead_queryset = Lead.objects.filter(fecha_creacion__gte=fecha_limite).order_by('-fecha_creacion')
+                    lead_queryset = lead_queryset.filter(fecha_creacion__gte=fecha_limite).order_by('-fecha_creacion')
             
             elif request.user.groups.first().name == "asesor" : 
                 if desde and hasta:
-                    lead_queryset = Lead.objects.filter(fecha_desasignacion__range=[desde, hasta]).order_by('-fecha_desasignacion')
+                    lead_queryset = lead_queryset.filter(fecha_desasignacion__range=[desde, hasta]).order_by('-fecha_desasignacion')
                 else : 
-                    lead_queryset = Lead.objects.filter(fecha_desasignacion__gte=fecha_limite).order_by('-fecha_desasignacion')
+                    lead_queryset = lead_queryset.filter(fecha_desasignacion__gte=fecha_limite).order_by('-fecha_desasignacion')
             else:
                 if desde and hasta:
-                    lead_queryset = Lead.objects.filter(fecha_desasignacion__range=[desde, hasta]).order_by('-fecha_desasignacion')
+                    lead_queryset = lead_queryset.filter(fecha_desasignacion__range=[desde, hasta]).order_by('-fecha_desasignacion')
                 else : 
-                    lead_queryset = Lead.objects.filter(fecha_desasignacion__gte=fecha_limite).order_by('-fecha_desasignacion')
+                    lead_queryset = lead_queryset.filter(fecha_desasignacion__gte=fecha_limite).order_by('-fecha_desasignacion')
 
         else :
             if request.user.groups.first().name == "marketing" : 
@@ -192,9 +193,9 @@ class LeadDetail(generics.RetrieveUpdateDestroyAPIView):
         objecionSerializer = ObjecionSerializer(
             objecion_data) if objecion_data else None
 
-        lead_data["asesor"] = userSerializer.data if userSerializer else {}
-        lead_data["campania"] = campaniaSerializer.data if campaniaSerializer else {}
-        lead_data["objecion"] = objecionSerializer.data if objecionSerializer else {}
+        lead_data["asesor"] = userSerializer.data if userSerializer else None
+        lead_data["campania"] = campaniaSerializer.data if campaniaSerializer else None
+        lead_data["objecion"] = objecionSerializer.data if objecionSerializer else None
         lead_data["whatsapps"] = WhatsAppSerializer(
             WhatsApp.objects.filter(lead=lead.pk), many=True).data
 
@@ -211,16 +212,16 @@ class LeadDetail(generics.RetrieveUpdateDestroyAPIView):
         lead_data["eventos"] = EventoSerializer(
             Evento.objects.filter(lead=lead.pk), many=True).data
         
-        for eventoIter in lead_data["eventos"] :
-            asesor = User.objects.filter(id = eventoIter["asesor"]).first()
-            tipoEvento = TipoEvento.objects.filter(id = eventoIter["tipo"]).first()
-            estadoEvento = EstadoEvento.objects.filter(id = eventoIter["estadoEvento"]).first()
-            objecion = Objecion.objects.filter(id = eventoIter["objecion"]).first()
+        # for eventoIter in lead_data["eventos"] :
+        #     lead = Lead.objects.filter(id = eventoIter["lead"]).first()
+        #     tipoEvento = TipoEvento.objects.filter(id = eventoIter["tipo"]).first()
+        #     estadoEvento = EstadoEvento.objects.filter(id = eventoIter["estadoEvento"]).first()
+        #     objecion = Objecion.objects.filter(id = eventoIter["objecion"]).first()
 
-            eventoIter["asesor"] = UserSerializer(asesor ,fields=('id', 'first_name', 'last_name', 'username', 'codigoAsesor')).data if asesor != None else None            
-            eventoIter["tipo"] =  TipoEventoSerializer(tipoEvento).data if tipoEvento != None else None
-            eventoIter["estadoEvento"] =  EstadoEventoSerializer(estadoEvento).data if estadoEvento != None else None
-            eventoIter["objecion"] =  ObjecionSerializer(objecion).data if objecion != None else None
+        #     eventoIter["lead"] = UserSerializer(asesor ,fields=('id', 'first_name', 'last_name', 'username', 'codigoAsesor')).data if asesor != None else None            
+        #     eventoIter["tipo"] =  TipoEventoSerializer(tipoEvento).data if tipoEvento != None else None
+        #     eventoIter["estadoEvento"] =  EstadoEventoSerializer(estadoEvento).data if estadoEvento != None else None
+        #     eventoIter["objecion"] =  ObjecionSerializer(objecion).data if objecion != None else None
 
         return Response(lead_data)
 

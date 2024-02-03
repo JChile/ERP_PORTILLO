@@ -14,19 +14,27 @@ import { CustomCircularProgress, CustomAlert } from "../../../components";
 import { AuthContext } from "../../../auth";
 import { combinarErrores } from "../../../utils";
 import { useAlertMUI, useCustomTablePagination } from "../../../hooks";
-import { TablePagination } from "@mui/material";
+import { Button, TablePagination, TextField } from "@mui/material";
+import { MdClose, MdSearch } from "react-icons/md";
+import { SelectRol } from "../../../components/select";
 
 export const ListUsuarios = () => {
   const { authTokens, currentUser, logoutUser } = useContext(AuthContext);
-  const [usuarios, setusuarios] = useState([]);
-  const [usuariosTemporal, setUsuariosTemporal] = useState([]);
+  const [usuarios, setUsuarios] = useState([]);
+  const [auxUsuarios, setauxUsuarios] = useState([]);
 
-  // CONTROL DE ACTIVOS Y DESACTIVOS
-  const [activeButton, setActiveButton] = useState(true);
+  // flag reset
+  const [flagReset, setFlagReset] = useState();
+  const [countSelectedElements, setCountSelectedElements] = useState(0);
 
-  const handleButtonClick = (buttonName) => {
-    setActiveButton(buttonName);
-  };
+  // definimos el hook de pagination
+  const {
+    page,
+    rowsPerPage,
+    handleChangePage,
+    handleChangeRowsPerPage,
+    paginatedItems,
+  } = useCustomTablePagination(auxUsuarios);
 
   // hook alert
   const {
@@ -37,17 +45,87 @@ export const ListUsuarios = () => {
     handleClickFeedback,
   } = useAlertMUI();
 
-  // definimos el hook de pagination
-  const {
-    page,
-    rowsPerPage,
-    handleChangePage,
-    handleChangeRowsPerPage,
-    paginatedItems,
-  } = useCustomTablePagination(usuariosTemporal);
+  // Retroalimentacion, estado de progreso.
+  const [visibleProgress, setVisibleProgress] = useState(true);
 
-  // estado de progress
-  const [visibleProgress, setVisibleProgress] = useState(false);
+  // CONTROL DE ACTIVOS Y DESACTIVOS
+  const [activeButton, setActiveButton] = useState(true);
+
+  const handleButtonClick = (buttonName) => {
+    setActiveButton(buttonName);
+  };
+
+  // numero de items seleccionados
+  const [filterData, setFilterData] = useState({
+    nombre: "",
+    group: "",
+    username: "",
+    correo: "",
+  });
+
+  const { nombre, group, username, correo } = filterData;
+
+  const handledFilterData = () => {
+    setVisibleProgress(true);
+    const dataFilter = usuarios.filter((element) => {
+      const nombreElement = `${element["first_name"]
+        .toString()
+        .toLowerCase()} ${element["last_name"].toString().toLowerCase()}`;
+      const rolElement = element["groups"][0]["name"].toString().toLowerCase();
+      const usernameElement = element["username"].toString().toLowerCase();
+      const correoElement = element["email"].toString().toLowerCase();
+
+      if (
+        (filterData["nombre"] !== "" &&
+          !nombreElement.includes(filterData["nombre"].toLowerCase())) ||
+        (filterData["group"] !== "" &&
+          !rolElement.includes(filterData["group"].toLowerCase())) ||
+        (filterData["username"] !== "" &&
+          !usernameElement.includes(filterData["username"].toLowerCase())) ||
+        (filterData["correo"] !== "" &&
+          !correoElement.includes(filterData["correo"].toLowerCase()))
+      ) {
+        return false;
+      }
+      return true;
+    });
+
+    setauxUsuarios(dataFilter);
+    setFlagReset(true);
+    setVisibleProgress(false);
+  };
+
+  const handledResetDataFilter = () => {
+    setauxUsuarios(usuarios);
+    // reset filtros
+    setFilterData({
+      nombre: "",
+      group: "",
+      username: "",
+      correo: "",
+    });
+    setFlagReset(false);
+  };
+
+  // manejador de filtros para select values
+  const handledFilterSelectValues = (value, name) => {
+    setFilterData({
+      ...filterData,
+      [name]: value,
+    });
+    setFlagReset(false);
+  };
+
+  // manejador de filtros para input values
+  const handledFilterInputValues = (event) => {
+    const { target } = event;
+    const { value, name } = target;
+    setFilterData({
+      ...filterData,
+      [name]: value,
+    });
+    setFlagReset(false);
+  };
 
   // ELIMINAR DETALLE DE FORMULA
   const onEliminarUsuario = async (idItem) => {
@@ -82,40 +160,16 @@ export const ListUsuarios = () => {
     }
   };
 
-  // FILTROS
-  const filtrar = (nameFilter, valor) => {
-    let resultFilter = [];
-    switch (nameFilter) {
-      case "filterActivateUsuario":
-        resultFilter = usuarios.filter((element) => {
-          if (element.is_active === valor) {
-            return true;
-          } else {
-            return false;
-          }
-        });
-        setUsuariosTemporal(resultFilter);
-        break;
-      default:
-        break;
-    }
-  };
-
   const obtenerUsuarios = async () => {
     setVisibleProgress(true);
     try {
-      const result = await getUsuarios({ authToken: authTokens["access"] });
-      setusuarios(result);
-      // mostramos en primer lugar los activos
-      setUsuariosTemporal(
-        result.filter((element) => {
-          if (element.is_active === true) {
-            return true;
-          } else {
-            return false;
-          }
-        })
+      const result = await getUsuarios(
+        `is_active=${activeButton ? "True" : "False"}`,
+        authTokens["access"]
       );
+      console.log(result);
+      setUsuarios(result);
+      setauxUsuarios(result);
       setVisibleProgress(false);
     } catch (error) {
       setVisibleProgress(false);
@@ -131,7 +185,7 @@ export const ListUsuarios = () => {
 
   useEffect(() => {
     obtenerUsuarios();
-  }, []);
+  }, [activeButton]);
 
   return (
     <div className="px-4">
@@ -149,7 +203,6 @@ export const ListUsuarios = () => {
         <button
           onClick={() => {
             handleButtonClick(true);
-            filtrar("filterActivateUsuario", true);
           }}
           className={`px-4 py-2 mr-2 rounded ${
             activeButton === true ? "bg-blue-500 text-white" : "bg-gray-300"
@@ -160,7 +213,6 @@ export const ListUsuarios = () => {
         <button
           onClick={() => {
             handleButtonClick(false);
-            filtrar("filterActivateUsuario", false);
           }}
           className={`px-4 py-2 rounded ${
             activeButton === false ? "bg-blue-500 text-white" : "bg-gray-300"
@@ -200,6 +252,76 @@ export const ListUsuarios = () => {
               </TableRow>
             </TableHead>
             <TableBody>
+              <TableRow>
+                <TableCell>
+                  {flagReset ? (
+                    <Button
+                      startIcon={<MdClose />}
+                      sx={{
+                        textTransform: "capitalize",
+                        borderRadius: "0px",
+                      }}
+                      color="error"
+                      variant="contained"
+                      onClick={handledResetDataFilter}
+                    >
+                      Limpiar
+                    </Button>
+                  ) : (
+                    <Button
+                      startIcon={<MdSearch />}
+                      sx={{
+                        textTransform: "capitalize",
+                        borderRadius: "0px",
+                      }}
+                      color="success"
+                      variant="contained"
+                      onClick={handledFilterData}
+                    >
+                      Buscar
+                    </Button>
+                  )}
+                </TableCell>
+                <TableCell>
+                  <TextField
+                    size="small"
+                    variant="outlined"
+                    placeholder="Nombre"
+                    type="text"
+                    name="nombre"
+                    value={nombre}
+                    onChange={handledFilterInputValues}
+                  />
+                </TableCell>
+                <TableCell>
+                  <SelectRol
+                    onNewInput={handledFilterSelectValues}
+                    defaultValue={group}
+                  />
+                </TableCell>
+                <TableCell>
+                  <TextField
+                    size="small"
+                    variant="outlined"
+                    placeholder="Usuario"
+                    type="text"
+                    name="username"
+                    value={username}
+                    onChange={handledFilterInputValues}
+                  />
+                </TableCell>
+                <TableCell>
+                  <TextField
+                    size="small"
+                    variant="outlined"
+                    placeholder="Correo"
+                    type="text"
+                    name="correo"
+                    value={correo}
+                    onChange={handledFilterInputValues}
+                  />
+                </TableCell>
+              </TableRow>
               {paginatedItems.map((item) => (
                 <RowItemUsuario
                   key={item.id}
@@ -214,7 +336,7 @@ export const ListUsuarios = () => {
         <TablePagination
           rowsPerPageOptions={[5, 10, 25, 50, 100]}
           component="div"
-          count={usuariosTemporal.length}
+          count={auxUsuarios.length}
           rowsPerPage={rowsPerPage}
           page={page}
           onPageChange={handleChangePage}

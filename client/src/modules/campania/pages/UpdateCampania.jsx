@@ -9,6 +9,7 @@ import {
   CustomCircularProgress,
   FilterSubcategoria,
   FilterProyectos,
+  CustomDatePicker,
 } from "../../../components";
 import { AuthContext } from "../../../auth";
 import {
@@ -73,6 +74,22 @@ export const UpdateCampania = () => {
     setCampaign({
       ...campaign,
       [name]: value,
+    });
+  };
+
+  // fecha inicio estimado
+  const handleFechaInicioEstimado = (newDate) => {
+    setCampaign({
+      ...campaign,
+      fecha_estimada: newDate,
+    });
+  };
+
+  // fecha cierre estimado
+  const handleFechaCierreEstimado = (newDate) => {
+    setCampaign({
+      ...campaign,
+      fecha_cierre: newDate,
     });
   };
 
@@ -173,10 +190,12 @@ export const UpdateCampania = () => {
     setVisibleProgress(true);
     try {
       const result = await getCampania(idCampania, authTokens["access"]);
+      console.log(result);
       setCampaign({
         ...result,
         proyecto: result.proyecto.id,
         categoria: result.categoria.id,
+        descripcion: result.descripcion === null ? "" : result.descripcion,
       });
       setVisibleProgress(false);
     } catch (error) {
@@ -242,13 +261,9 @@ export const UpdateCampania = () => {
                 <span className="after:content-['*'] after:ml-0.5 after:text-yellow-500 block text-sm font-medium">
                   Fecha estimado
                 </span>
-                <input
-                  type="date"
-                  name="fecha_estimada"
-                  id="fecha_estimada"
-                  value={fecha_estimada}
-                  onChange={handledForm}
-                  className="mt-1 px-3 py-2 bg-white border shadow-sm border-slate-300 placeholder-slate-400 focus:outline-none focus:border-sky-500 focus:ring-sky-500 block w-full rounded-md sm:text-sm focus:ring-1"
+                <CustomDatePicker
+                  onNewFecha={handleFechaInicioEstimado}
+                  defaultValue={fecha_estimada}
                 />
               </label>
 
@@ -300,15 +315,12 @@ export const UpdateCampania = () => {
 
               <label className="block flex flex-col gap-y-1">
                 <span className="after:content-['*'] after:ml-0.5 after:text-yellow-500 block text-sm font-medium">
-                  Fecha cierre
+                  Fecha estimado cierre
                 </span>
-                <input
-                  type="date"
-                  name="fecha_cierre"
-                  id="fecha_cierre"
-                  value={fecha_cierre}
-                  onChange={handledForm}
-                  className="mt-1 px-3 py-2 bg-white border shadow-sm border-slate-300 placeholder-slate-400 focus:outline-none focus:border-sky-500 focus:ring-sky-500 block w-full rounded-md sm:text-sm focus:ring-1"
+                <CustomDatePicker
+                  defaultValue={fecha_cierre}
+                  onNewFecha={handleFechaCierreEstimado}
+                  disabledPast={true}
                 />
               </label>
 

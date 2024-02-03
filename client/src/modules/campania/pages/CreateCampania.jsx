@@ -178,7 +178,6 @@ export const CreateCampania = () => {
         const formatData = {
           ...campaign,
           usuarioCreador: currentUser["user_id"],
-          usuarioActualizador: currentUser["user_id"],
         };
         const result = await createCampania(formatData, authTokens["access"]);
         setVisibleProgress(false);

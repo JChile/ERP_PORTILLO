@@ -9,7 +9,7 @@ from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework.permissions import IsAuthenticated
 from django.shortcuts import get_object_or_404
 from rest_framework.views import APIView
-from ventas.models import Lead , DesasignacionLeadAsesor
+from ventas.models import Lead, DesasignacionLeadAsesor
 import json
 from rest_framework.decorators import permission_classes
 from ventas.consts import *
@@ -82,8 +82,6 @@ class UserList(generics.ListCreateAPIView):
             groupSerializer = GruopSerializer(groups_queryset, many=True)
             i["groups"] = groupSerializer.data
         return Response(dataJson)
-
-
 
 
 def mergePermissionsIdWithContentType(permissionSerializer, moduloSerializer, contentType_queryset):
@@ -247,7 +245,7 @@ class ModuloList(generics.ListCreateAPIView):
             contentType_queryset = ContentType.objects.all().filter(
                 id=i["contentType"]).first()
             contentTypeSerializer = ContentTypeSerializer(contentType_queryset)
-            i["contentType"] = contentTypeSerializer.data if  contentType_queryset !=None else {}
+            i["contentType"] = contentTypeSerializer.data if contentType_queryset != None else {}
         return Response(dataJson)
 
 
@@ -349,7 +347,8 @@ class UserInactivoList(APIView):
 
 class UserAsesorList(APIView):
     def get(self, request):
-        asesor_queryset = User.objects.filter(is_active=True, estado= 'A').filter(groups__name__in=["asesor" or "Asesor" or "ASESOR"])
+        asesor_queryset = User.objects.filter(is_active=True, estado='A').filter(
+            groups__name__in=["asesor" or "Asesor" or "ASESOR"])
         dataJson = UserSerializer(asesor_queryset, many=True, fields=(
             'id', 'first_name', 'last_name', 'username', 'codigoAsesor')).data
         return Response(dataJson)

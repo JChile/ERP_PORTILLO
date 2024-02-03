@@ -101,7 +101,7 @@ export const FilterProyectoCampania = ({ onAddCampania }) => {
     handleClose();
   };
 
-  const handleCancelarSeleccion = () => {
+  const handleQuitarSeleccion = () => {
     // pasamos el valor de la campaña default
     onAddCampania(defaultOptionCampania);
     // seteamos la informacion
@@ -176,7 +176,7 @@ export const FilterProyectoCampania = ({ onAddCampania }) => {
           </div>
         </DialogContent>
         <DialogActions>
-          <Button autoFocus onClick={handleCancelarSeleccion}>
+          <Button autoFocus onClick={handleQuitarSeleccion}>
             Quitar
           </Button>
           <Button color="error" autoFocus onClick={handledAceptarSeleccion}>

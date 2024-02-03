@@ -1,4 +1,7 @@
 import {
+  Card,
+  CardContent,
+  CardHeader,
   Checkbox,
   FormControlLabel,
   Grid,
@@ -87,15 +90,34 @@ export const ComponentWhatsapp = ({
   };
 
   return (
-    <div className="w-1/2 py-3 px-2">
-      <div className="rounded-lg shadow-md">
-        <div className="bg-green-500 rounded-t-lg p-4 text-white mb-4">
-          <div className="flex items-center">
-            <FaWhatsapp className="mr-2" />
-            <h2 className="text-lg font-bold">{`Whatsapp (${dataWhatsapp.length})`}</h2>
-          </div>
-        </div>
-        <div className="bg-white rounded-b-lg px-3 flex justify-center items-center flex-col">
+    <React.Fragment>
+      <Card className="rounded-lg shadow-md">
+        <CardHeader
+          sx={{
+            backgroundColor: "rgb(34 197 94)",
+            fontWeight: "bold",
+            height: "4rem", // Agrega esta línea para aumentar la altura del encabezado
+            color: "white",
+            "& .MuiCardHeader-title": {
+              fontSize: "1.125rem",
+              fontWeight: "bold",
+              lineHeight: "1.75rem",
+            },
+            "& .MuiSvgIcon-root": {
+              fontWeight: "bold",
+            },
+          }}
+          title={`Whatsapp (${dataWhatsapp.length})`}
+          avatar={<FaWhatsapp size="1.4rem" />}
+        />
+
+        <CardContent
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            minHeight: "200px",
+          }}
+        >
           {/* Contenido de la primera columna */}
           {dataWhatsapp.length !== 0 ? (
             <TableContainer
@@ -135,6 +157,8 @@ export const ComponentWhatsapp = ({
           ) : (
             <p>No hay registros</p>
           )}
+        </CardContent>
+        <div className="bg-white rounded-b-lg px-3 flex justify-center items-center flex-col">
           <DialogRegistrarMensajeWhatsapp
             onCreateRegistroWhatsapp={crearRegistroWhatsapp}
           />
@@ -147,8 +171,8 @@ export const ComponentWhatsapp = ({
             />
           )}
         </div>
-      </div>
-    </div>
+      </Card>
+    </React.Fragment>
   );
 };
 
@@ -221,7 +245,7 @@ const DialogRegistrarMensajeWhatsapp = ({ onCreateRegistroWhatsapp }) => {
         title="Salida Parcial"
         color="success"
         variant="contained"
-        sx={{ textTransform: "capitalize"}}
+        sx={{ textTransform: "capitalize" }}
         onClick={handleClickOpen}
       >
         Nuevo registro

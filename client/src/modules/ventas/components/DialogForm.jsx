@@ -9,13 +9,7 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-
-import {
-  DatePicker,
-  DateTimePicker,
-  LocalizationProvider,
-  TimePicker,
-} from "@mui/x-date-pickers";
+import { DateTimePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { useForm } from "../hooks";
 import { createEvent } from "../helpers/eventCases";
@@ -25,29 +19,20 @@ import { getEstadoEvento } from "../helpers/typeEventCases";
 import dayjs from "dayjs";
 import "dayjs/locale/es";
 
-export const DialogForm = ({ isOpen, onClose, lead, token, user }) => {
-  const { form, handleChangeForm, handleSubmit } = useForm({
+export const DialogForm = ({ isOpen, onClose, onCreateRegistroEvento }) => {
+  const { form, handleChangeForm } = useForm({
     titulo: "",
     duracion: 10,
     fecha: dayjs(),
     observacion: "",
     tipo: null,
-    //horaInicio: dayjs(),
     estadoEvento: 1,
   });
   const [formErrors, setFormErrors] = useState({});
 
-  const {
-    titulo,
-    tipo,
-    observacion,
-    fecha,
-    //horaInicio,
-    duracion,
-    estadoEvento,
-  } = form;
+  const { titulo, tipo, observacion, fecha, duracion, estadoEvento } = form;
 
-  const handleSave = async () => {
+  const handleSave = () => {
     const errors = checkInputForm();
     if (Object.keys(errors).length === 0) {
       const dateToSave = fecha.toDate().toISOString();
@@ -55,16 +40,11 @@ export const DialogForm = ({ isOpen, onClose, lead, token, user }) => {
         duracion: duracion,
         fecha_visita: dateToSave,
         observacion: observacion,
-        lead: lead,
         titulo: titulo,
         tipo: tipo,
-        usuarioCreador: user,
-        usuarioActualizador: user,
         estadoEvento: estadoEvento,
       };
-
-      console.log(duracion);
-      const result = await createEvent(eventSave, token);
+      onCreateRegistroEvento(eventSave)
       onClose();
     } else {
       setFormErrors(errors);
@@ -98,18 +78,10 @@ export const DialogForm = ({ isOpen, onClose, lead, token, user }) => {
     });
   };
 
-  useEffect(() => {
-    const fetchData = async () => {
-      const data = await getEstadoEvento(token);
-      console.log(data);
-    };
-    dayjs.locale("es");
-    fetchData();
-  }, []);
 
   return (
     <Backdrop open={isOpen}>
-      <Dialog open={isOpen} onClose={onClose}>
+      <Dialog open={isOpen} onClose={onClose} fullWidth={true}>
         <DialogTitle>Registrar Evento</DialogTitle>
         <DialogContent className="flex flex-col gap-y-2" dividers>
           <FormControl>
@@ -145,15 +117,15 @@ export const DialogForm = ({ isOpen, onClose, lead, token, user }) => {
                     onChange={handleChangeForm}
                     name="duracion"
                   />
+                  <TextField
+                    type="text"
+                    multiline
+                    label="Observaciones"
+                    name="observacion"
+                    value={observacion}
+                    onChange={handleChangeForm}
+                  />
                 </div>
-                <TextField
-                  type="text"
-                  multiline
-                  label="Observaciones"
-                  name="observacion"
-                  value={observacion}
-                  onChange={handleChangeForm}
-                />
               </LocalizationProvider>
             </div>
           </FormControl>
@@ -181,7 +153,7 @@ export const DialogForm = ({ isOpen, onClose, lead, token, user }) => {
             sx={{
               textTransform: "capitalize",
             }}
-            onClick={() => handleSubmit(handleSave)}
+            onClick={handleSave}
           >
             Guardar
           </Button>
@@ -190,20 +162,3 @@ export const DialogForm = ({ isOpen, onClose, lead, token, user }) => {
     </Backdrop>
   );
 };
-
-/**
- *
- * @param {Date} date
- * @param {Time} time
- * @returns
- */
-function combinedDataAndTime(date, time) {
-  console.log(date, time);
-  const year = date.year();
-  const month = date.month(); // Note: month is 0-indexed or not?
-  const day = date.date();
-  const hours = time.hour();
-  const minutes = time.minute();
-  const seconds = time.second();
-  return new Date(year, month, day, hours, minutes, seconds);
-}

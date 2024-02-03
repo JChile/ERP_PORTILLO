@@ -23,12 +23,14 @@ import { useAlertMUI } from "../../../hooks";
 import { combinarErrores, validIdURL } from "../../../utils";
 import { MdArrowBack } from "react-icons/md";
 import ComponentEventos from "../components/ComponentEventos";
+import { createEvent, updateEvent } from "../../ventas/helpers/eventCases";
 
 export const DetailLead = () => {
   const { idLead } = useParams();
   const numericId = parseInt(idLead);
   const { authTokens, currentUser } = useContext(AuthContext);
-  const isAsesor = currentUser["groupsId"] === "1" ? true : false;
+
+  const isAsesor = currentUser["groups"] === "asesor" ? true : false;
   const [tabIndex, setTabIndex] = useState(0);
   const [lead, setLead] = useState({
     nombre: "",
@@ -201,9 +203,50 @@ export const DetailLead = () => {
     }
   };
 
+  const createEventoLead = async (itemData) => {
+    try {
+      const result = await createEvent(itemData, authTokens["access"]);
+      const createDataEvento = [...eventos, result];
+      setLead({
+        ...lead,
+        eventos: createDataEvento,
+      });
+    } catch (error) {
+      const pilaError = combinarErrores(error);
+      setFeedbackMessages({
+        style_message: "error",
+        feedback_description_error: pilaError,
+      });
+      handleClickFeedback();
+    }
+  };
+
+  const updateEventoLead = async (id, itemData) => {
+    try {
+      const result = await updateEvent(id, itemData, authTokens["access"]);
+      const updateDataEvento = eventos.map((elemento) => {
+        return elemento.id === id ? result : elemento;
+      });
+      console.log(updateDataEvento)
+      setLead({
+      ...lead,
+        eventos: updateDataEvento,
+      });
+    } catch (error) {
+      const pilaError = combinarErrores(error);
+      setFeedbackMessages({
+        style_message: "error",
+        feedback_description_error: pilaError,
+      });
+      handleClickFeedback();
+    }
+  };
+
   useEffect(() => {
     obtenerLead();
   }, []);
+
+  console.log(lead);
 
   return (
     <>
@@ -305,8 +348,12 @@ export const DetailLead = () => {
         {isAsesor && (
           <React.Fragment>
             <Tabs
+              aria-label="basic tabs"
               value={tabIndex}
               onChange={(event, newValue) => setTabIndex(newValue)}
+              sx={{ marginTop: 3}}
+              centered
+              variant="fullWidth"
             >
               <Tab sx={{ textTransform: "capitalize" }} label="Whatsapp" />
               <Tab sx={{ textTransform: "capitalize" }} label="Llamada" />
@@ -331,7 +378,12 @@ export const DetailLead = () => {
             </CustomTabPanel>
 
             <CustomTabPanel value={tabIndex} index={2}>
-              <ComponentEventos lead={idLead}/>
+              <ComponentEventos
+                lead={lead}
+                dataEventos={eventos}
+                onUpdateDataEvento={updateEventoLead}
+                onCreateDataEvento={createEventoLead}
+              />
             </CustomTabPanel>
           </React.Fragment>
         )}
@@ -368,6 +420,7 @@ const CustomTabPanel = (props) => {
       role="tabpanel"
       hidden={value !== index}
       id={`simple-tabpanel-${index}`}
+      style={{ display: "flex", justifyContent: "center"}}
       {...other}
     >
       {value === index && <div>{children}</div>}

@@ -12,6 +12,7 @@ import {
 
 import {
   DatePicker,
+  DateTimePicker,
   LocalizationProvider,
   TimePicker,
 } from "@mui/x-date-pickers";
@@ -31,7 +32,7 @@ export const DialogForm = ({ isOpen, onClose, lead, token, user }) => {
     fecha: dayjs(),
     observacion: "",
     tipo: null,
-    horaInicio: dayjs(),
+    //horaInicio: dayjs(),
     estadoEvento: 1,
   });
   const [formErrors, setFormErrors] = useState({});
@@ -41,7 +42,7 @@ export const DialogForm = ({ isOpen, onClose, lead, token, user }) => {
     tipo,
     observacion,
     fecha,
-    horaInicio,
+    //horaInicio,
     duracion,
     estadoEvento,
   } = form;
@@ -49,10 +50,10 @@ export const DialogForm = ({ isOpen, onClose, lead, token, user }) => {
   const handleSave = async () => {
     const errors = checkInputForm();
     if (Object.keys(errors).length === 0) {
-      const dateToSave = combinedDataAndTime(fecha, horaInicio);
+      const dateToSave = fecha.toDate().toISOString();
       const eventSave = {
         duracion: duracion,
-        fecha_visita: dateToSave.toISOString(),
+        fecha_visita: dateToSave,
         observacion: observacion,
         lead: lead,
         titulo: titulo,
@@ -110,7 +111,6 @@ export const DialogForm = ({ isOpen, onClose, lead, token, user }) => {
     <Backdrop open={isOpen}>
       <Dialog open={isOpen} onClose={onClose}>
         <DialogTitle>Registrar Evento</DialogTitle>
-
         <DialogContent className="flex flex-col gap-y-2" dividers>
           <FormControl>
             <div className="flex flex-col gap-y-4">
@@ -127,27 +127,16 @@ export const DialogForm = ({ isOpen, onClose, lead, token, user }) => {
                     defaultValue={null}
                     onNewInput={onAddTipoEvento}
                   />
-                  <DatePicker
+                  <DateTimePicker
                     disablePast
                     type="date"
                     label="Fecha"
-                    value={fecha}
                     onChange={(value) => {
                       const target = { name: "fecha", value: value };
                       handleChangeForm({ target });
                     }}
                     name="fecha"
                   />
-                  <TimePicker
-                    label="Hora de inicio"
-                    value={horaInicio}
-                    onChange={(value) => {
-                      const target = { name: "horaInicio", value: value };
-                      handleChangeForm({ target });
-                    }}
-                    name="horaInicio"
-                  />
-
                   <TextField
                     type="number"
                     label="Duración (min)"

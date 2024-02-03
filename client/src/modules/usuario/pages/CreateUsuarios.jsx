@@ -70,10 +70,14 @@ export const CreateUsuarios = () => {
     setDialogOpen(false);
   };
 
-  // INPUT CODIGO MATERIA PRIMA
-  const onAddGroup = ({ id }) => {
-    const valorCodigoAsesor = id === 1 ? codigoAsesor : null;
-    setUsuario({ ...usuario, groups: { id }, codigoAsesor: valorCodigoAsesor });
+  // INPUT CODIGO
+  const onAddGroup = ({ id, label }) => {
+    const valorCodigoAsesor = label === "asesor" ? codigoAsesor : null;
+    setUsuario({
+      ...usuario,
+      groups: { id, name: label },
+      codigoAsesor: valorCodigoAsesor,
+    });
   };
 
   // INPUT CHECK ACTIVATE
@@ -139,7 +143,7 @@ export const CreateUsuarios = () => {
     }
 
     if (codigoAsesor === null) {
-      if (groups["id"] === 1) {
+      if (groups["name"] === "asesor") {
         messages_error +=
           "Si el rol es asesor, debes ingresar un código de asesor\n";
       }
@@ -157,6 +161,7 @@ export const CreateUsuarios = () => {
     setVisibleProgress(true);
     const usuarioJSON = { ...usuario, groups: [groups["id"]] };
     delete usuarioJSON.confirm_password;
+    console.log(usuarioJSON);
     try {
       const result = await createUsuario(usuarioJSON, authTokens["access"]);
       // comprobar si se realizo con exito la creación del usuario
@@ -173,6 +178,7 @@ export const CreateUsuarios = () => {
       });
       handleClickFeedback();
     }
+    setVisibleProgress(false);
   };
 
   const handledCrearUsuario = () => {
@@ -317,7 +323,7 @@ export const CreateUsuarios = () => {
               <FilterRol onNewInput={onAddGroup} defaultValue={groups["id"]} />
             </label>
 
-            {groups["id"] === 1 && (
+            {groups["name"] === "asesor" && (
               <label className="block flex flex-col gap-y-1">
                 <span className="after:content-['*'] after:ml-0.5 after:text-yellow-500 block text-sm font-medium">
                   Código asesor

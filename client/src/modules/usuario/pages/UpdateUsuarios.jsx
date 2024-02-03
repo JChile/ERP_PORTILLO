@@ -17,6 +17,7 @@ export const UpdateUsuarios = () => {
   const { authTokens, currentUser, logoutUser } = useContext(AuthContext);
   const { idUsuario } = useParams();
   const numericId = parseInt(idUsuario);
+  // usuario
   const [usuario, setUsuario] = useState({
     first_name: "",
     last_name: "",
@@ -79,9 +80,13 @@ export const UpdateUsuarios = () => {
   };
 
   // INPUT CODIGO MATERIA PRIMA
-  const onAddGroup = ({ id }) => {
-    const valorCodigoAsesor = id === 1 ? codigoAsesorBefore : null;
-    setUsuario({ ...usuario, groups: { id }, codigoAsesor: valorCodigoAsesor });
+  const onAddGroup = ({ id, label }) => {
+    const valorCodigoAsesor = label === "asesor" ? codigoAsesorBefore : null;
+    setUsuario({
+      ...usuario,
+      groups: { id, name: label },
+      codigoAsesor: valorCodigoAsesor,
+    });
   };
 
   // INPUT CHECK ACTIVATE
@@ -120,7 +125,7 @@ export const UpdateUsuarios = () => {
     }
 
     if (codigoAsesor === null) {
-      if (groups["id"] === 1) {
+      if (groups["name"] === "asesor") {
         messages_error +=
           "Si el rol es asesor, debes ingresar un código de asesor\n";
       }
@@ -134,16 +139,18 @@ export const UpdateUsuarios = () => {
   };
 
   // funcion asincrona para actualizar un usuario
-  const actualizarUsuario = async ({ desasociar }) => {
+  const actualizarUsuario = async () => {
     const idUsuarioItem = usuario["id"];
-    const usuarioJSON = { ...usuario, desasociar, groups: [groups["id"]] };
+    const usuarioJSON = { ...usuario, groups: [groups["id"]] };
     delete usuarioJSON.id;
+    // si el codigo asesor es igual al proporcionado
     if (codigoAsesor === codigoAsesorBefore) {
       delete usuarioJSON.codigoAsesor;
     }
     delete usuarioJSON.codigoAsesorBefore;
     delete usuarioJSON.groupsBefore;
     setVisibleProgress(true);
+    console.log(usuarioJSON);
 
     try {
       const result = await updateUsuario(
@@ -180,6 +187,7 @@ export const UpdateUsuarios = () => {
       });
       handleClickFeedback();
     }
+    setVisibleProgress(false);
   };
 
   const handledActualizaciónUsuario = () => {
@@ -196,7 +204,7 @@ export const UpdateUsuarios = () => {
       if (is_active === false || groupsBefore["id"] !== groups["id"]) {
         handleOpenDialog();
       } else {
-        actualizarUsuario({ desasociar: false });
+        actualizarUsuario();
       }
     } else {
       // mostramos feedback
@@ -331,7 +339,7 @@ export const UpdateUsuarios = () => {
                 </div>
               </label>
 
-              {groups["id"] === 1 && (
+              {groups["name"] === "asesor" && (
                 <label className="block flex gap-y-1 ">
                   <span className="block text-sm font-medium min-w-[10rem] text-zinc-500">
                     Código asesor
@@ -390,8 +398,8 @@ export const UpdateUsuarios = () => {
         description={`${
           is_active === false
             ? `Se ha indicado que el usuario estará inactivo. ${
-                groups["id"] === 1
-                  ? "El usuario a modificar es asesor. Recuerda que esta operación desasociará sus lead en un rango de 1 mes."
+                groups["name"] === "asesor"
+                  ? "El usuario a modificar es asesor. Debes gestionar sus leads."
                   : ""
               }`
             : ""
@@ -399,22 +407,15 @@ export const UpdateUsuarios = () => {
             ${
               groupsBefore["id"] !== groups["id"]
                 ? ` Este usuario tenia asignado otro rol. ${
-                    groupsBefore["id"] === 1
-                      ? "Se ha detectado que este usuario era asesor. Recuerda que esta operación desasociará sus lead en un rango de 1 mes."
+                    groupsBefore["name"] === "asesor"
+                      ? "Se ha detectado que este usuario era asesor. Debes gestionar sus leads."
                       : ""
                   }`
                 : ""
             } ¿Deseas confirmar la operación?`}
         onClose={handleCloseDialog}
         onConfirm={() => {
-          actualizarUsuario({
-            desasociar:
-              (groupsBefore["id"] === 1 &&
-                groupsBefore["id"] !== groups["id"]) ||
-              (groups["id"] === 1 && is_active === false)
-                ? true
-                : false,
-          });
+          actualizarUsuario();
         }}
       />
       {/* CIRCULAR PROGRESS */}

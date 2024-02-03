@@ -216,13 +216,16 @@ const DialogRegistrarMensajeWhatsapp = ({ onCreateRegistroWhatsapp }) => {
 
   return (
     <div className="py-4">
-      <button
+      <Button
         className="bg-green-500 text-white font-bold py-2 px-4 rounded mr-2"
         title="Salida Parcial"
+        color="success"
+        variant="contained"
+        sx={{ textTransform: "capitalize"}}
         onClick={handleClickOpen}
       >
         Nuevo registro
-      </button>
+      </Button>
       <BootstrapDialog
         maxWidth={"xs"}
         onClose={handleClose}

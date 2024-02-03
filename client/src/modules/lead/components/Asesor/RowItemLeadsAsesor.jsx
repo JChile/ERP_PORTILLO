@@ -1,8 +1,11 @@
 import React from "react";
+import { formatDate_ISO861_to_formatdate } from "../../../../utils";
 import { Checkbox, TableCell, TableRow } from "@mui/material";
+import { FiCheckCircle, FiXCircle } from "react-icons/fi";
 import { Link } from "react-router-dom";
 
-export const RowItemLeadNoAsignado = ({ item, checkedElement }) => {
+export const RowItemLeadsAsesor = ({ item, checkedElement }) => {
+  console.log(item);
   const { campania } = item;
   const { proyecto } = campania;
 
@@ -37,10 +40,26 @@ export const RowItemLeadNoAsignado = ({ item, checkedElement }) => {
           </div>
         </Link>
       </TableCell>
-      <TableCell>{item["nombre"]}</TableCell>
-      <TableCell>{item["apellido"]}</TableCell>
       <TableCell>{proyecto["nombre"]}</TableCell>
-      <TableCell>{item["estadoLead"]}</TableCell>
+      <TableCell align="center">
+        {item["asignado"] === true ? (
+          <FiCheckCircle
+            color="green"
+            style={{ margin: "auto", display: "block", fontSize: "20px" }}
+          />
+        ) : (
+          <FiXCircle
+            color="red"
+            style={{ margin: "auto", display: "block", fontSize: "20px" }}
+          />
+        )}
+      </TableCell>
+      <TableCell>
+        {formatDate_ISO861_to_formatdate(item["horaRecepcion"])}
+      </TableCell>
+      <TableCell>
+        {formatDate_ISO861_to_formatdate(item["fecha_creacion"])}
+      </TableCell>
     </TableRow>
   );
 };

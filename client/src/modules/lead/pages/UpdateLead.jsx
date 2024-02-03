@@ -14,15 +14,14 @@ import { FilterObjecion } from "../../../components/filters/objecion/FilterObjec
 import { FilterAsesor } from "../../../components/filters/asesor/FilterAsesor";
 import { AuthContext } from "../../../auth";
 import { MuiTelInput } from "mui-tel-input";
+import {
+  combinarErrores,
+  obtenerHoraActualFormatPostgress,
+} from "../../../utils";
 
 export const UpdateLead = () => {
   const { idLead } = useParams();
-  const { authTokens } = useContext(AuthContext);
-  const isAdmin = true;
-  /* obtenemos los datos de la sesión para enviarlo. */
-  const [currentUser, setCurrentUser] = useState(() =>
-    jwtDecode(authTokens.refresh)
-  );
+  const { authTokens, currentUser } = useContext(AuthContext);
 
   const [lead, setLead] = useState({
     nombre: "",
@@ -89,11 +88,52 @@ export const UpdateLead = () => {
     setLead({ ...lead, objecion: item.id });
   };
 
-  const validateLead = (celular) => {
+  const validateLead = () => {
     const errors = [];
-    if (!celular) {
-      errors.push("- El celular es obligatorio.");
+
+    // validacion de celular
+    if (celular.length !== 0 && celular !== "+51") {
+      const formatCelular = celular.match(/^\+(\d{1,2})\s*(\d[\s\d]+)$/);
+      if (formatCelular) {
+        const replaceCelular = formatCelular[2].replace(/\s/g, "");
+        if (!/^9\d{8}$/.test(replaceCelular)) {
+          errors.push("El celular no cumple con el formato adecuado");
+        }
+      } else {
+        errors.push("El celular no cumple con el formato adecuado");
+      }
+    } else {
+      errors.push("El celular es obligatorio");
     }
+
+    // validacion de celular 2
+    if (celular2.length !== 0 && celular2 !== "+51") {
+      const formatCelular2 = celular2.match(/^\+(\d{1,2})\s*(\d[\s\d]+)$/);
+      if (formatCelular2) {
+        const replaceCelular2 = formatCelular2[2].replace(/\s/g, "");
+        if (!/^9\d{8}$/.test(replaceCelular2)) {
+          errors.push("El celular 2 no cumple con el formato adecuado");
+        }
+      } else {
+        errors.push("El celular 2 no cumple con el formato adecuado");
+      }
+    }
+
+    // validacion de campaña
+    if (!campania) {
+      errors.push("Debes seleccionar una campaña");
+    }
+
+    // validacion de estado de lead
+    if (!estadoLead) {
+      errors.push("Debes seleccionar un estado de lead");
+    }
+
+    // validacion de objecion
+    if (!objecion) {
+      errors.push("Debes seleccionar una objecion");
+    }
+
     return errors.join("\n");
   };
 
@@ -103,8 +143,10 @@ export const UpdateLead = () => {
   };
 
   const actualizarLead = async () => {
-    const validationMessage = validateLead(celular, asesor, campania, objecion);
+    // activamos el progress
+    setVisibleProgress(true);
 
+    const validationMessage = validateLead();
     if (validationMessage) {
       // Si hay campos faltantes, mostrar una alerta con los mensajes de error concatenados
       setFeedbackMessages({
@@ -113,11 +155,31 @@ export const UpdateLead = () => {
       });
       handleClickFeedback();
     } else {
-      setVisibleProgress(true);
-      console.log(lead);
-      const result = await updateLead(idLead, lead);
-      setVisibleProgress(false);
-      onNavigateBack();
+      try {
+        const formatLead = {
+          ...lead,
+          celular: formatCelular(lead["celular"]),
+          celular2:
+            celular2.length !== 0 && celular2 !== "+51"
+              ? formatCelular(lead["celular2"])
+              : "",
+          usuarioActualizador: currentUser["user_id"],
+          fecha_actualizacion: obtenerHoraActualFormatPostgress(),
+        };
+        const result = await updateLead(idLead, formatLead);
+        setVisibleProgress(false);
+        onNavigateBack();
+      } catch (error) {
+        // ocultar el progress
+        setVisibleProgress(false);
+        const pilaError = combinarErrores(error);
+        // mostramos feedback de error
+        setFeedbackMessages({
+          style_message: "error",
+          feedback_description_error: pilaError,
+        });
+        handleClickFeedback();
+      }
     }
   };
 
@@ -168,6 +230,8 @@ export const UpdateLead = () => {
               <span className="block text-sm font-medium">Celular</span>
               <MuiTelInput
                 defaultCountry="PE"
+                disableDropdown
+                forceCallingCode
                 value={celular}
                 onChange={(value) => {
                   handledForm({
@@ -184,6 +248,8 @@ export const UpdateLead = () => {
               <span className="block text-sm font-medium">Celular 2</span>
               <MuiTelInput
                 defaultCountry="PE"
+                disableDropdown
+                forceCallingCode
                 value={celular2}
                 onChange={(value) => {
                   handledForm({

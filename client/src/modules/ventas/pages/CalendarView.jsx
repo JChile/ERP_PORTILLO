@@ -146,7 +146,6 @@ export const CalendarView = () => {
 
   useEffect(() => {
     getCalendarData(authTokens.access);
-    console.log("loading");
   }, [flagLoader]);
 
   return (
@@ -272,8 +271,6 @@ export const CalendarView = () => {
 
 
 const transformToEvent = (oldEvent) => {
-
-  console.log(oldEvent)
 
   const startEvent = new Date(oldEvent.fecha_visita);
   const durationMilliseconds = oldEvent.duracion * 60000;

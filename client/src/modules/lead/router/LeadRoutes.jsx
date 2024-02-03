@@ -1,12 +1,6 @@
 import React from "react";
 import { Route, Routes } from "react-router-dom";
-import {
-  AddLeadManual,
-  AddLeadSheet,
-  DetailLead,
-  UpdateLead,
-  AsignLeads,
-} from "../pages";
+import { AddLeadManual, AddLeadSheet, DetailLead, UpdateLead } from "../pages";
 import HomeController from "../controllers/HomeController";
 
 export const LeadRoutes = () => {
@@ -17,7 +11,6 @@ export const LeadRoutes = () => {
       <Route path="create" element={<AddLeadManual />}></Route>
       <Route path="detail/:idLead" element={<DetailLead />} />
       <Route path="update/:idLead" element={<UpdateLead />} />
-      <Route path="asign" element={<AsignLeads />} />
     </Routes>
   );
 };

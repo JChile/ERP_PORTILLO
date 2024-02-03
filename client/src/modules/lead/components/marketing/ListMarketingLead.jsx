@@ -28,7 +28,6 @@ import { SelectBoolean, SelectProyecto } from "../../../../components/select";
 import { combinarErrores, formatDate_ISO861_to_date } from "../../../../utils";
 import { getLeads } from "../../helpers";
 import { RowItemLeadMarketing } from "./RowItemLeadMarketing";
-import { MassActionsViewLeadsNoAsignados } from "../JefeFinanciero/acciones-masivas/MassActionsViewLeadsNoAsignados";
 import { MassActionsViewLeadsMarketing } from "./acciones-masivas/MassActionsViewLeadsMarketing";
 
 export const ListMarketingLead = () => {
@@ -424,12 +423,6 @@ export const ListMarketingLead = () => {
               </Table>
             </TableContainer>
           </Paper>
-          {visibleProgress && <CustomCircularProgress />}
-          <CustomAlert
-            feedbackCreate={feedbackCreate}
-            feedbackMessages={feedbackMessages}
-            handleCloseFeedback={handleCloseFeedback}
-          />
         </React.Fragment>
       </div>
       {visibleProgress && <CustomCircularProgress />}

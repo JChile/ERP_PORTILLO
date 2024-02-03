@@ -3,7 +3,12 @@ import { FormControl, MenuItem, Select } from "@mui/material";
 import { AuthContext } from "../../../auth";
 import { getAsesor } from "./getAsesor";
 
-const SelectAsesor = ({ onNewInput, size = "small", defaultValue = "" }) => {
+const SelectAsesor = ({
+  onNewInput,
+  size = "small",
+  defaultValue = "",
+  name = "asesor",
+}) => {
   const { authTokens } = useContext(AuthContext);
   const [options, setOptions] = useState([]);
   const [value, setValue] = useState(defaultValue);
@@ -19,7 +24,6 @@ const SelectAsesor = ({ onNewInput, size = "small", defaultValue = "" }) => {
 
   const handleChange = (event) => {
     const selectValue = event.target.value;
-    const name = "asesor";
     onNewInput(selectValue, name);
   };
 

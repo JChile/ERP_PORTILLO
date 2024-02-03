@@ -187,7 +187,6 @@ class CampaniaDetail(generics.RetrieveUpdateDestroyAPIView):
         dataJson["categoria"] = categoriaSerializer.data if categoria != None else {}
         return Response(dataJson)
 
-
 class ProyectoCampaniaList(APIView):
 
     def get(self, request):

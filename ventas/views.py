@@ -41,6 +41,9 @@ class LeadList(generics.ListCreateAPIView):
             return Response({"message": "Usuario no tiene permisos para ver leads"}, status=403)
 
 
+        #asesor_queryset = User.objects.filter(is_active=True, estado= 'A').filter(groups__name__in=["asesor" or "Asesor" or "ASESOR"])
+
+
         fecha_limite = datetime.now() - timedelta(days=60)
 
         estado = request.query_params.get('estado')
@@ -49,14 +52,48 @@ class LeadList(generics.ListCreateAPIView):
         asignado = request.query_params.get('asignado')
         recienCreado = request.query_params.get('recienCreado')
 
-        if desde and hasta:
-            lead_queryset = Lead.objects.filter(
-                fecha_asignacion__range=[desde, hasta]).order_by('-fecha_asignacion')
-        else : 
-            lead_queryset = Lead.objects.filter(fecha_asignacion__gte=fecha_limite).order_by('-fecha_asignacion')
 
-        if asignado:
+
+
+        if asignado == False:
             lead_queryset = lead_queryset.filter(asignado=asignado)
+            if request.user.groups.first().name == "marketing" : 
+                if desde and hasta:
+                    lead_queryset = Lead.objects.filter(fecha_creacion__range=[desde, hasta]).order_by('-fecha_creacion')
+                else : 
+                    lead_queryset = Lead.objects.filter(fecha_creacion__gte=fecha_limite).order_by('-fecha_creacion')
+            
+            elif request.user.groups.first().name == "asesor" : 
+                if desde and hasta:
+                    lead_queryset = Lead.objects.filter(fecha_desasignacion__range=[desde, hasta]).order_by('-fecha_desasignacion')
+                else : 
+                    lead_queryset = Lead.objects.filter(fecha_desasignacion__gte=fecha_limite).order_by('-fecha_desasignacion')
+            else:
+                if desde and hasta:
+                    lead_queryset = Lead.objects.filter(fecha_desasignacion__range=[desde, hasta]).order_by('-fecha_desasignacion')
+                else : 
+                    lead_queryset = Lead.objects.filter(fecha_desasignacion__gte=fecha_limite).order_by('-fecha_desasignacion')
+
+        else :
+            if request.user.groups.first().name == "marketing" : 
+                if desde and hasta:
+                    lead_queryset = Lead.objects.filter(fecha_creacion__range=[desde, hasta]).order_by('-fecha_creacion')
+                else : 
+                    lead_queryset = Lead.objects.filter(fecha_creacion__gte=fecha_limite).order_by('-fecha_creacion')
+            
+            elif request.user.groups.first().name == "asesor" : 
+                if desde and hasta:
+                    lead_queryset = Lead.objects.filter(fecha_asignacion__range=[desde, hasta]).order_by('-fecha_asignacion')
+                else : 
+                    lead_queryset = Lead.objects.filter(fecha_asignacion__gte=fecha_limite).order_by('-fecha_asignacion')
+            else:
+                if desde and hasta:
+                    lead_queryset = Lead.objects.filter(fecha_asignacion__range=[desde, hasta]).order_by('-fecha_asignacion')
+                else : 
+                    lead_queryset = Lead.objects.filter(fecha_asignacion__gte=fecha_limite).order_by('-fecha_asignacion')
+
+
+
         if estado:
             lead_queryset = lead_queryset.filter(estado=estado)
 

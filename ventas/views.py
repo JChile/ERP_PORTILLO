@@ -44,7 +44,7 @@ class LeadList(generics.ListCreateAPIView):
         #asesor_queryset = User.objects.filter(is_active=True, estado= 'A').filter(groups__name__in=["asesor" or "Asesor" or "ASESOR"])
 
 
-        fecha_limite = datetime.now() - timedelta(days=60)
+        fecha_limite = timezone.now() - timedelta(days=60)
 
         estado = request.query_params.get('estado')
         desde = request.query_params.get('desde')
@@ -52,27 +52,28 @@ class LeadList(generics.ListCreateAPIView):
         asignado = request.query_params.get('asignado')
         recienCreado = request.query_params.get('recienCreado')
 
+        print(asignado)
 
+        if asignado == "False":
+            print(asignado)
 
-
-        if asignado == False:
-            lead_queryset = lead_queryset.filter(asignado=asignado)
+            lead_queryset = Lead.objects.filter(asignado=False)
             if request.user.groups.first().name == "marketing" : 
                 if desde and hasta:
-                    lead_queryset = Lead.objects.filter(fecha_creacion__range=[desde, hasta]).order_by('-fecha_creacion')
+                    lead_queryset = lead_queryset.filter(fecha_creacion__range=[desde, hasta]).order_by('-fecha_creacion')
                 else : 
-                    lead_queryset = Lead.objects.filter(fecha_creacion__gte=fecha_limite).order_by('-fecha_creacion')
+                    lead_queryset = lead_queryset.filter(fecha_creacion__gte=fecha_limite).order_by('-fecha_creacion')
             
             elif request.user.groups.first().name == "asesor" : 
                 if desde and hasta:
-                    lead_queryset = Lead.objects.filter(fecha_desasignacion__range=[desde, hasta]).order_by('-fecha_desasignacion')
+                    lead_queryset = lead_queryset.filter(fecha_desasignacion__range=[desde, hasta]).order_by('-fecha_desasignacion')
                 else : 
-                    lead_queryset = Lead.objects.filter(fecha_desasignacion__gte=fecha_limite).order_by('-fecha_desasignacion')
+                    lead_queryset = lead_queryset.filter(fecha_desasignacion__gte=fecha_limite).order_by('-fecha_desasignacion')
             else:
                 if desde and hasta:
-                    lead_queryset = Lead.objects.filter(fecha_desasignacion__range=[desde, hasta]).order_by('-fecha_desasignacion')
+                    lead_queryset = lead_queryset.filter(fecha_desasignacion__range=[desde, hasta]).order_by('-fecha_desasignacion')
                 else : 
-                    lead_queryset = Lead.objects.filter(fecha_desasignacion__gte=fecha_limite).order_by('-fecha_desasignacion')
+                    lead_queryset = lead_queryset.filter(fecha_desasignacion__gte=fecha_limite).order_by('-fecha_desasignacion')
 
         else :
             if request.user.groups.first().name == "marketing" : 
@@ -134,15 +135,21 @@ class LeadList(generics.ListCreateAPIView):
 
     def post(self, request, format=None):
         dos_meses_atras = timezone.now() - timezone.timedelta(days=60)
-        serializer = LeadSerializer(data=request.data)
         registros_existentes = Lead.objects.filter(celular=request.data.get("celular"), fecha_creacion__gte=dos_meses_atras)
         if registros_existentes.exists():
             return Response({'celular':'El número de celular ya ha sido utilizado en los últimos dos meses.'})
         
+        data = request.data
+        if data.get("asesor") != None:
+            data["fecha_asignacion"] = timezone.now()
+        
+        serializer = LeadSerializer(data=data)
+
         if serializer.is_valid():
             lead = serializer.save()
 
             if lead.asesor !=None :
+                
                 HistoricoLeadAsesor.objects.create(lead = lead, usuario = lead.asesor)
 
             return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -211,16 +218,16 @@ class LeadDetail(generics.RetrieveUpdateDestroyAPIView):
         lead_data["eventos"] = EventoSerializer(
             Evento.objects.filter(lead=lead.pk), many=True).data
         
-        for eventoIter in lead_data["eventos"] :
-            asesor = User.objects.filter(id = eventoIter["asesor"]).first()
-            tipoEvento = TipoEvento.objects.filter(id = eventoIter["tipo"]).first()
-            estadoEvento = EstadoEvento.objects.filter(id = eventoIter["estadoEvento"]).first()
-            objecion = Objecion.objects.filter(id = eventoIter["objecion"]).first()
+        # for eventoIter in lead_data["eventos"] :
+        #     lead = Lead.objects.filter(id = eventoIter["lead"]).first()
+        #     tipoEvento = TipoEvento.objects.filter(id = eventoIter["tipo"]).first()
+        #     estadoEvento = EstadoEvento.objects.filter(id = eventoIter["estadoEvento"]).first()
+        #     objecion = Objecion.objects.filter(id = eventoIter["objecion"]).first()
 
-            eventoIter["asesor"] = UserSerializer(asesor ,fields=('id', 'first_name', 'last_name', 'username', 'codigoAsesor')).data if asesor != None else None            
-            eventoIter["tipo"] =  TipoEventoSerializer(tipoEvento).data if tipoEvento != None else None
-            eventoIter["estadoEvento"] =  EstadoEventoSerializer(estadoEvento).data if estadoEvento != None else None
-            eventoIter["objecion"] =  ObjecionSerializer(objecion).data if objecion != None else None
+        #     eventoIter["lead"] = UserSerializer(asesor ,fields=('id', 'first_name', 'last_name', 'username', 'codigoAsesor')).data if asesor != None else None            
+        #     eventoIter["tipo"] =  TipoEventoSerializer(tipoEvento).data if tipoEvento != None else None
+        #     eventoIter["estadoEvento"] =  EstadoEventoSerializer(estadoEvento).data if estadoEvento != None else None
+        #     eventoIter["objecion"] =  ObjecionSerializer(objecion).data if objecion != None else None
 
         return Response(lead_data)
 
@@ -483,9 +490,17 @@ class EventoList(generics.ListCreateAPIView):
 
         if estado:
             evento_queryset = Evento.objects.all().filter(estado=estado)
+        
         if desde and hasta:
             evento_queryset = evento_queryset.filter(
-                fecha_creacion__range=[desde, hasta])
+                fecha_visita__range=[desde, hasta])
+        else :
+            fecha_actual = timezone.now()
+            fecha_hace_30_dias = fecha_actual - timedelta(days=30)
+            fecha_dentro_de_30_dias = fecha_actual + timedelta(days=30)
+            evento_queryset = evento_queryset.filter(
+                fecha_visita__range=[fecha_hace_30_dias, fecha_dentro_de_30_dias])
+
 
         if request.user.isAdmin == False:
             evento_queryset = evento_queryset.filter(asesor=usuarioId)

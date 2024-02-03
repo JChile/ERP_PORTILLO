@@ -73,6 +73,8 @@ class UserList(generics.ListCreateAPIView):
         if is_active:
             user_queryset = user_queryset.filter(is_active=is_active)
 
+
+
         userSerializer = UserSerializer(user_queryset, many=True)
         dataJson = userSerializer.data
         for i in dataJson:

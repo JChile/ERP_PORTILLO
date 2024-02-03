@@ -2,6 +2,7 @@ import React, { useContext, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { createImagenProducto, createVideoProducto, getProducto, updateProducto } from "../helpers";
 import { useAlertMUI } from "../../../hooks";
+import { MenuItem, Select } from "@mui/material";
 import { CustomAlert, CustomCircularProgress } from "../../../components";
 import { FilterProyectos } from "../../../components";
 import { FilterTipoProducto } from "../../../components";
@@ -17,15 +18,13 @@ import CarouselComponentVideoAdd from "../components/CarouselVideoAdd";
 export const UpdateProducto = () => {
   const { idProducto } = useParams();
   const { authTokens, currentUser } = useContext(AuthContext);
-  //const numericId = parseInt(idProduct);
-  console.log({ idProducto });
   const [product, setProduct] = useState({
     nombre: "",
     numero: 0.0,
     area: 0.0,
     tipo: null,
     proyecto: null,
-    estado: "A",
+    estado: "",
     imagenes: [],
     videos: [],
   });
@@ -92,8 +91,17 @@ export const UpdateProducto = () => {
     if (!nombre) {
       errors.push("- El nombre del proyecto es obligatorio.");
     }
+    if (numero<0) {
+      errors.push("- El número debe ser mayor que 0.");
+    }
+    if (numero % 1 !== 0) {
+      errors.push("- El número debe ser un entero.");
+    }
     if (!numero) {
       errors.push("- El número es obligatorio.");
+    }
+    if (area<0) {
+      errors.push("- El área no puede ser negativo.");
     }
     if (!area) {
       errors.push("- El área es obligatorio.");
@@ -324,6 +332,26 @@ export const UpdateProducto = () => {
                   onNewInput={onAddProyecto}
                   defaultValue={proyecto}
                 />
+              </label>
+
+              <label className="block flex flex-col gap-y-1">
+                <span className="after:content-['*'] after:ml-0.5 after:text-yellow-500 block text-sm font-medium">
+                  Estado inicial
+                </span>
+                <Select
+                  name="estado"
+                  value={estado}
+                  onChange={handledForm}
+                  style={{
+                    height: "2.64rem", // Ajusta el valor según tus necesidades
+                    paddingTop: "1rem", // Ajusta el valor según tus necesidades
+                    paddingBottom: "1rem",
+                  }}
+                  className="bg-white border shadow-sm border-slate-300 placeholder-slate-400 focus:outline-none focus:border-sky-500 focus:ring-sky-500 block w-full rounded-md sm:text-sm focus:ring-1"
+                >
+                  <MenuItem value="A">Activo</MenuItem>
+                  <MenuItem value="I">Inactivo</MenuItem>
+                </Select>
               </label>
             </div>
           </div>

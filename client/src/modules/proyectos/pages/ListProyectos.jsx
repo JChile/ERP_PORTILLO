@@ -1,7 +1,6 @@
 import React, { useEffect, useState, useContext } from "react";
 import { Button, Card, CardContent, Typography, Avatar } from "@mui/material";
 import { Link, useNavigate } from "react-router-dom";
-import Icon from "@mui/material/Icon";
 import IconButton from "@mui/material/IconButton";
 import { BsBuildingsFill } from "react-icons/bs";
 import { deleteProyecto, getProyectos } from "../helpers";
@@ -168,14 +167,18 @@ const ListProyectos = () => {
                 >
                   <FaRegEdit />
                 </IconButton>
-                <IconButton
-                  size="m"
-                  color="error"
-                  onClick={() => verDialog(project)}
-                  /* onClick={() => onDeleteItemSelected(project)} */
-                >
-                  <MdDeleteForever />
-                </IconButton>
+                {project.estado === "A" ? (
+                  <IconButton
+                    size="m"
+                    color="error"
+                    onClick={() => verDialog(project)}
+                    /* onClick={() => onDeleteItemSelected(project)} */
+                  >
+                    <MdDeleteForever />
+                  </IconButton>
+                ) : (
+                  <></>
+                )}
               </div>
             </CardContent>
           </Card>

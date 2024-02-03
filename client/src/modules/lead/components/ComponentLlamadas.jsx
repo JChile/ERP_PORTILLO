@@ -1,4 +1,7 @@
 import {
+  Card,
+  CardContent,
+  CardHeader,
   Checkbox,
   FormControlLabel,
   Grid,
@@ -87,15 +90,29 @@ export const ComponentLlamadas = ({
   };
 
   return (
-    <div className="w-1/2 py-3 px-2">
-      <div className="rounded-lg shadow-md">
-        <div className="bg-blue-500 rounded-t-lg p-4 text-white mb-4">
-          <div className="flex items-center">
-            <FaPhone className="mr-2" />
-            <h2 className="text-lg font-bold">{`Llamada (${dataLlamada.length})`}</h2>
-          </div>
-        </div>
-        <div className="bg-white rounded-b-lg px-3 flex justify-center items-center flex-col">
+    <React.Fragment>
+      <Card sx={{ minHeight: "200px", marginY: "1rem" }}>
+        <CardHeader
+          sx={{
+            backgroundColor: "rgb(59 130 246)",
+            fontWeight: "bold",
+            height: "4rem",
+            color: "white",
+            "& .MuiCardHeader-title": {
+              fontSize: "1.125rem",
+              fontWeight: "bold",
+              lineHeight: "1.75rem",
+            },
+            "& .MuiSvgIcon-root": {
+              fontWeight: "bold",
+            },
+          }}
+          title={`Llamada (${dataLlamada.length})`}
+          avatar={<FaPhone />}
+        />
+        <CardContent
+          sx={{ display: "flex", justifyContent: "center", minHeight: "200px" }}
+        >
           {/* Contenido de la primera columna */}
           {dataLlamada.length !== 0 ? (
             <TableContainer
@@ -126,7 +143,11 @@ export const ComponentLlamadas = ({
                     >
                       <TableCell>{index + 1}</TableCell>
                       <TableCell>{element["detalle"]}</TableCell>
-                      <TableCell>{element["fecha_creacion"]}</TableCell>
+                      <TableCell>
+                        {formatDate_ISO861_to_formatdate(
+                          element["fecha_creacion"]
+                        )}
+                      </TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
@@ -135,6 +156,8 @@ export const ComponentLlamadas = ({
           ) : (
             <p>No hay registros</p>
           )}
+        </CardContent>
+        <div className="bg-white rounded-b-lg px-3 flex justify-center items-center flex-col">
           <DialogRegistrarLlamada
             onCreateRegistroLlamada={crearRegistroLlamada}
           />
@@ -147,8 +170,8 @@ export const ComponentLlamadas = ({
             />
           )}
         </div>
-      </div>
-    </div>
+      </Card>
+    </React.Fragment>
   );
 };
 

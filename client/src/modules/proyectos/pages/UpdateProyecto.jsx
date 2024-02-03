@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { TextField } from "@mui/material";
+import { MenuItem, Select, TextField } from "@mui/material";
 import { useAlertMUI } from "../../../hooks";
 import { CustomAlert, CustomCircularProgress } from "../../../components";
 import {
@@ -22,7 +22,7 @@ export const UpdateProyecto = () => {
     nombre: "",
     ubicacion: "",
     descripcion: "",
-    estado: "A",
+    estado: "",
     imagenes: [],
     videos: [],
   });
@@ -273,6 +273,26 @@ export const UpdateProyecto = () => {
                   onChange={handledForm}
                   className="mt-1 px-3 py-2 bg-white border shadow-sm border-slate-300 placeholder-slate-400 focus:outline-none focus:border-sky-500 focus:ring-sky-500 block w-full rounded-md sm:text-sm focus:ring-1"
                 />
+              </label>
+              
+              <label className="block flex flex-col gap-y-1">
+                <span className="after:content-['*'] after:ml-0.5 after:text-yellow-500 block text-sm font-medium">
+                  Estado inicial
+                </span>
+                <Select
+                  name="estado"
+                  value={estado}
+                  onChange={handledForm}
+                  style={{
+                    height: "2.64rem", // Ajusta el valor según tus necesidades
+                    paddingTop: "1rem", // Ajusta el valor según tus necesidades
+                    paddingBottom: "1rem",
+                  }}
+                  className="bg-white border shadow-sm border-slate-300 placeholder-slate-400 focus:outline-none focus:border-sky-500 focus:ring-sky-500 block w-full rounded-md sm:text-sm focus:ring-1"
+                >
+                  <MenuItem value="A">Activo</MenuItem>
+                  <MenuItem value="I">Inactivo</MenuItem>
+                </Select>
               </label>
             </div>
           </div>

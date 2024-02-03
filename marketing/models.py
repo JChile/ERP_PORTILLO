@@ -5,7 +5,7 @@ from django.utils import timezone
 
 
 class Proyecto(models.Model):
-    nombre = models.CharField(max_length=100, null=True)
+    nombre = models.CharField(max_length=100, null=True, unique =True)
     ubicacion = models.CharField(max_length=100, null=True, blank=True)
     descripcion = models.TextField(null=True, blank=True)
     estado = models.ForeignKey(EstadoRegistro, on_delete=models.SET_NULL, default='A', null=True)
@@ -18,11 +18,11 @@ class Proyecto(models.Model):
         return self.nombre
 
     def save(self, *args, **kwargs):
-        if not self.pk: 
-            super().save(*args, **kwargs)
-            Campania.objects.create(nombre = str(self.nombre)+"_organico", codigo=str(self.nombre)+"_organico", proyecto = self, categoria = Categoria.objects.get(nombre = "Desconocido"))
-
         super().save(*args, **kwargs)
+        if not self.pk: 
+            Campania.objects.create(nombre = str(self.nombre)+"_organico", codigo=str(self.nombre)+"_organico", proyecto = self, categoria = Categoria.objects.get(nombre = "Desconocido"))
+ 
+
 
 class Categoria(models.Model):
     nombre = models.CharField(max_length=100, null=True)
@@ -34,7 +34,7 @@ class Categoria(models.Model):
 
 
 class Campania(models.Model):
-    nombre = models.CharField(max_length=100, null=True)
+    nombre = models.CharField(max_length=100, null=True , unique =True)
     codigo = models.CharField(unique=True, null=True, default=None)
     fecha_creacion = models.DateTimeField(auto_now=True)
     fecha_estimada = models.DateField(null=True, blank=True)

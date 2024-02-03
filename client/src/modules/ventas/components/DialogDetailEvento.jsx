@@ -10,7 +10,7 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { FiEdit, FiSave, FiX } from "react-icons/fi";
 import {
   DesktopDateTimePicker,
@@ -21,15 +21,19 @@ import dayjs from "dayjs";
 import "dayjs/locale/es";
 import { FilterTipoEvento } from "../../../components/filters/tipoEvento/FilterTipoEvento";
 import FilterEstadoEvento from "../../../components/filters/estado_evento/FilterEstadoEvento";
+import { FilterObjecion } from "../../../components";
 
 export const DialogDetailEvento = ({
   onClose,
   selectedEvent,
   isOpen,
   onUpdateEvent,
+  showLead = true,
 }) => {
   const [originalData, setOriginalData] = useState(selectedEvent);
   const [dataAuxEvento, setDataAuxEvento] = useState(originalData);
+
+  console.log(dataAuxEvento)
 
   const {
     id,
@@ -41,6 +45,7 @@ export const DialogDetailEvento = ({
     tipo,
     observacion,
     estadoEvento,
+    objecion,
   } = dataAuxEvento;
 
   const [editData, setEditData] = useState(false);
@@ -59,7 +64,7 @@ export const DialogDetailEvento = ({
 
   // guardar los datos
   const onSaveChanges = () => {
-    const formatData =  dayjs(dataAuxEvento.start)
+    const formatData = dayjs(dataAuxEvento.start);
     onUpdateEvent(id, {
       ...dataAuxEvento,
       lead: lead.id,
@@ -94,6 +99,13 @@ export const DialogDetailEvento = ({
     setDataAuxEvento((prev) => ({
       ...prev,
       start: value,
+    }));
+  };
+
+  const handleChangeObjecion = (value) => {
+    setDataAuxEvento((prev) => ({
+      ...prev,
+      objecion: value.id,
     }));
   };
 
@@ -161,13 +173,18 @@ export const DialogDetailEvento = ({
               }}
               onChange={handleChangeValue}
             />
+            {showLead && (
+              <React.Fragment>
+                <Typography variant="subtitle1" sx={{ fontWeight: "bold" }}>
+                  Lead:
+                </Typography>
 
-            <Typography variant="subtitle1" sx={{ fontWeight: "bold" }}>
-              Lead:
-            </Typography>
-            <Typography>
-              {`${lead.nombre} ${lead.apellido} - ${lead.celular}`}
-            </Typography>
+                <Typography>
+                  {`${lead.nombre} ${lead.apellido} - ${lead.celular}`}
+                </Typography>
+              </React.Fragment>
+            )}
+
             <Typography variant="subtitle1" sx={{ fontWeight: "bold" }}>
               Separó:
             </Typography>
@@ -227,16 +244,24 @@ export const DialogDetailEvento = ({
               name="duracion"
             />
             <Typography variant="subtitle1" sx={{ fontWeight: "bold" }}>
-              Observación:
+              Comentario:
             </Typography>
             <TextField
-              type="number"
+              type="text"
               value={observacion}
               disabled={!editData}
-              multiline
               fullWidth
-              rows={5}
               onChange={handleChangeValue}
+              size="small"
+            />
+            <Typography variant="subtitle1" sx={{ fontWeight: "bold" }}>
+              Objección
+            </Typography>
+            <FilterObjecion
+              active={!editData}
+              size="small"
+              defaultValue={objecion}
+              onNewInput={(value) => handleChangeObjecion(value)}
             />
           </Grid>
         </Grid>

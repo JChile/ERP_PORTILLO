@@ -79,8 +79,8 @@ class UserList(generics.ListCreateAPIView):
     def create(self, request):
         print(request.data)
         data = UserSerializer(data=request.data)
-        if not (bool(request.user.groups.first().permissions.filter(codename=PermissionUser.CAN_ADD) or request.user.is_superuser)):
-            return Response({"message": "Usuario no tiene permisos para agregar usuarios"}, status=403)
+        #if not (bool(request.user.groups.first().permissions.filter(codename=PermissionUser.CAN_ADD) or request.user.is_superuser)):
+        #    return Response({"message": "Usuario no tiene permisos para agregar usuarios"}, status=403)
         if data.is_valid():
             print("Entra aqui")
             data.save()

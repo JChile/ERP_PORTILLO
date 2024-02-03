@@ -17,7 +17,7 @@ class TipoEvento(models.Model):
 
 
 class Objecion(models.Model):
-    nombre = models.CharField(max_length=100, null=True)
+    nombre = models.CharField(max_length=100, null=True, unique= True)
     estado = models.ForeignKey(
         EstadoRegistro, on_delete=models.SET_NULL, default='A', null=True)
 
@@ -179,6 +179,7 @@ class Producto(models.Model):
         TipoProducto, on_delete=models.CASCADE, null=True, blank=True)
     proyecto = models.ForeignKey(
         Proyecto, on_delete=models.CASCADE, null=True, blank=True)
+    reservado = models.BooleanField(default=False)
     numero = models.IntegerField(null=True, blank=True, default=0)
     area = models.FloatField(null=True, blank=True, default=0)
     estado = models.ForeignKey(

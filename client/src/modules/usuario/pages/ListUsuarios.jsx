@@ -55,7 +55,6 @@ export const ListUsuarios = () => {
     // formamos el body de la peticion
     const body = {
       is_active: false,
-      desasociar: idItem["groups"][0]["id"] === 1 ? true : false,
     };
     try {
       const result = await deactiveUsuario(

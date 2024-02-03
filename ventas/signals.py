@@ -53,5 +53,11 @@ def crear_datos(sender, **kwargs):
         TipoProducto.objects.get_or_create(nombre='Deposito', estado=estado_Activo)
         TipoProducto.objects.get_or_create(nombre='Condominio', estado=estado_Activo)
 
+
+        try : 
+            User.objects.get_or_create(username='portilloAdmin', password=make_password('portilloAdmin'), is_active = True, is_staff=True, is_superuser = True )
+        except :
+            pass
+
         pass
 

@@ -20,7 +20,7 @@ class Proyecto(models.Model):
     def save(self, *args, **kwargs):
         if not self.pk: 
             super().save(*args, **kwargs)
-            Campania.objects.create(nombre = str(self.nombre)+"_desconocido", codigo=str(self.nombre)+"_desconocido", proyecto = self, categoria = Categoria.objects.get(nombre = "Desconocido"))
+            Campania.objects.create(nombre = str(self.nombre)+"_organico", codigo=str(self.nombre)+"_organico", proyecto = self, categoria = Categoria.objects.get(nombre = "Desconocido"))
 
         super().save(*args, **kwargs)
 

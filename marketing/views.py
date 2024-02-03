@@ -48,6 +48,7 @@ class ProyectoList(generics.ListCreateAPIView):
     
     def post(self, request):
         serializer = ProyectoSerializer(data=request.data)
+
         if serializer.is_valid():
             lead = serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)

@@ -91,8 +91,8 @@ export const UpdateProducto = () => {
     if (!nombre) {
       errors.push("- El nombre del proyecto es obligatorio.");
     }
-    if (numero<99 || numero>1000) {
-      errors.push("- El número debe tener 3 digitos.");
+    if (numero<0) {
+      errors.push("- El número debe ser mayor que 0.");
     }
     if (numero % 1 !== 0) {
       errors.push("- El número debe ser un entero.");

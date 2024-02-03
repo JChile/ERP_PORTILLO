@@ -8,6 +8,7 @@ import {
   FilterProyectos,
   FilterSubcategoria,
   CustomCircularProgress,
+  CustomDatePicker,
 } from "../../../components";
 import { AuthContext } from "../../../auth";
 import { combinarErrores } from "../../../utils";
@@ -18,8 +19,8 @@ export const CreateCampania = () => {
     nombre: "",
     fecha_estimada: "",
     fecha_cierre: "",
-    coste_estimado: "",
-    coste_real: "",
+    coste_estimado: 0,
+    coste_real: 0,
     descripcion: "",
     proyecto: 0,
     categoria: 0,
@@ -46,6 +47,12 @@ export const CreateCampania = () => {
 
   const [visibleProgress, setVisibleProgress] = useState(false);
 
+  const navigate = useNavigate();
+  const onNavigateBack = () => {
+    navigate(-1);
+  };
+
+  // control de formularios
   const handledForm = (event) => {
     const { name, value } = event.target;
     setCampaign({
@@ -54,11 +61,7 @@ export const CreateCampania = () => {
     });
   };
 
-  const navigate = useNavigate();
-  const onNavigateBack = () => {
-    navigate(-1);
-  };
-
+  // categoria
   const onAddCategory = (category) => {
     setCampaign({
       ...campaign,
@@ -66,10 +69,27 @@ export const CreateCampania = () => {
     });
   };
 
+  // proyecto
   const onAddProject = (project) => {
     setCampaign({
       ...campaign,
       proyecto: project.id,
+    });
+  };
+
+  // fecha inicio estimado
+  const handleFechaInicioEstimado = (newDate) => {
+    setCampaign({
+      ...campaign,
+      fecha_estimada: newDate,
+    });
+  };
+
+  // fecha cierre estimado
+  const handleFechaCierreEstimado = (newDate) => {
+    setCampaign({
+      ...campaign,
+      fecha_cierre: newDate,
     });
   };
 
@@ -84,58 +104,53 @@ export const CreateCampania = () => {
   ) => {
     const errors = [];
 
-    if (!nombre) {
+    //validacion de nombre
+    if (nombre.length === 0) {
       errors.push("- El nombre de la campaña es obligatorio.");
-    } else if (nombre.length < 10 || nombre.length > 30) {
+    } else if (nombre.length < 10 || nombre.length > 60) {
       errors.push(
-        "- El nombre de la campaña debe tener entre 10 y 24 caracteres y no debe contener espacios en blanco."
+        "- El nombre de la campaña debe tener entre 10 y 60 caracteres"
       );
     }
-    if (!fecha_estimada) {
-      errors.push("- La fecha estimada es obligatoria.");
-    } else {
-      const partesFecha = fecha_estimada.split("-");
-      const anio = parseInt(partesFecha[0]);
-      const mes = parseInt(partesFecha[1]) - 1; // Restamos 1 para ajustar al formato de meses de JavaScript
-      const dia = parseInt(partesFecha[2]);
-      const fechaEstimada = new Date(anio, mes, dia);
-      const today = new Date();
-      today.setHours(0, 0, 0, 0);
-      if (fechaEstimada.getTime() < today.getTime()) {
-        errors.push("- La fecha estimada no puede ser anterior a hoy.");
-      }
-    }
-    if (!fecha_cierre) {
-      errors.push("- La fecha de cierre es obligatoria.");
-    } else {
-      const fechaEstimada = new Date(fecha_estimada);
-      const fechaCierre = new Date(fecha_cierre);
 
-      if (fechaCierre.getTime() < fechaEstimada.getTime()) {
-        errors.push(
-          "- La fecha de cierre no puede ser anterior a la fecha de inicio."
-        );
-      }
+    // validacion de fecha estimada
+    if (fecha_estimada.length === 0) {
+      errors.push("- La fecha estimada es obligatoria.");
     }
+
+    // validacion de fecha de cierre
+    if (fecha_cierre.length === 0) {
+      errors.push("- La fecha de cierre es obligatoria.");
+    }
+
     // Validación para el campo coste_estimado
-    if (!coste_estimado) {
-      errors.push("- El costo estimado es obligatorio.");
-    } else if (isNaN(coste_estimado) || coste_estimado <= 0) {
-      errors.push("- El costo estimado debe ser un número mayor a 0.");
+    if (coste_estimado) {
+      if (isNaN(coste_estimado) || parseFloat(coste_estimado) <= 0) {
+        errors.push("- El costo estimado debe ser un número mayor a 0");
+      }
+    } else {
+      errors.push("- El costo estimado es obligatorio");
     }
 
     // Validación para el campo coste_real
-    if (!coste_real) {
-      errors.push("- El costo real es obligatorio.");
-    } else if (isNaN(coste_real) || coste_real <= 0) {
-      errors.push("- El costo real debe ser un número mayor a 0.");
+    if (coste_real) {
+      if (isNaN(coste_real) || parseFloat(coste_real) <= 0) {
+        errors.push("- El costo estimado debe ser un número mayor a 0");
+      }
+    } else {
+      errors.push("- El costo real es obligatorio");
     }
-    if (!proyecto) {
+
+    // validacion de proyecto
+    if (proyecto === 0) {
       errors.push("- El proyecto es obligatorio.");
     }
-    if (!categoria) {
+
+    // validacion de categoria
+    if (categoria === 0) {
       errors.push("- La categoría es obligatoria.");
     }
+
     return errors.join("\n");
   };
 
@@ -230,13 +245,9 @@ export const CreateCampania = () => {
                 <span className="after:content-['*'] after:ml-0.5 after:text-yellow-500 block text-sm font-medium">
                   Fecha estimado inicio
                 </span>
-                <input
-                  type="date"
-                  name="fecha_estimada"
-                  id="fecha_estimada"
-                  value={fecha_estimada}
-                  onChange={handledForm}
-                  className="mt-1 px-3 py-2 bg-white border shadow-sm border-slate-300 placeholder-slate-400 focus:outline-none focus:border-sky-500 focus:ring-sky-500 block w-full rounded-md sm:text-sm focus:ring-1"
+                <CustomDatePicker
+                  onNewFecha={handleFechaInicioEstimado}
+                  defaultValue={fecha_estimada}
                 />
               </label>
               <label className="flex flex-col gap-y-1">
@@ -280,13 +291,10 @@ export const CreateCampania = () => {
                 <span className="after:content-['*'] after:ml-0.5 after:text-yellow-500 block text-sm font-medium">
                   Fecha estimado cierre
                 </span>
-                <input
-                  type="date"
-                  name="fecha_cierre"
-                  id="fecha_cierre"
-                  value={fecha_cierre}
-                  onChange={handledForm}
-                  className="mt-1 px-3 py-2 bg-white border shadow-sm border-slate-300 placeholder-slate-400 focus:outline-none focus:border-sky-500 focus:ring-sky-500 block w-full rounded-md sm:text-sm focus:ring-1"
+                <CustomDatePicker
+                  defaultValue={fecha_cierre}
+                  onNewFecha={handleFechaCierreEstimado}
+                  disabledPast={true}
                 />
               </label>
             </div>

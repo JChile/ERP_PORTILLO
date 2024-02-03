@@ -21,6 +21,7 @@ import { MdEvent } from "react-icons/md";
 import { getEvents, updateEvent } from "../../ventas/helpers/eventCases";
 import {
   combinarErrores,
+  formatDate_ISO861_to_formatdate,
   obtenerHoraActualFormatPostgress,
 } from "../../../utils";
 import { DialogDetailEvento } from "../../ventas/components/DialogDetailEvento";
@@ -129,7 +130,7 @@ const ComponentEventos = ({
                       <TableCell>{element.titulo}</TableCell>
                       <TableCell>{element.separado ? "Sí" : "No"}</TableCell>
                       <TableCell>{`${lead.asesor.first_name} ${lead.asesor.last_name}`}</TableCell>
-                      <TableCell>{element.fecha_visita}</TableCell>
+                      <TableCell>{formatDate_ISO861_to_formatdate(element.fecha_visita)}</TableCell>
                     </TableRow>
                   ))}
                 </TableBody>

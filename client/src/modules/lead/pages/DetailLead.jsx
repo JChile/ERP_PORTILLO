@@ -90,30 +90,6 @@ export const DetailLead = () => {
 
   const [visibleProgress, setVisibleProgress] = useState(false);
 
-  // obtener informacion del lead
-  const obtenerLead = async () => {
-    if (validIdURL(numericId)) {
-      try {
-        setVisibleProgress(true);
-        const auxLead = await getLead(numericId, authTokens.access);
-        setLead(auxLead);
-        // comprobar si se realizo con exito la creación del usuario
-        setVisibleProgress(false);
-      } catch (error) {
-        setVisibleProgress(false);
-        const pilaError = combinarErrores(error);
-        // mostramos feedback de error
-        setFeedbackMessages({
-          style_message: "error",
-          feedback_description_error: pilaError,
-        });
-        handleClickFeedback();
-      }
-    } else {
-      onNavigateBack();
-    }
-  };
-
   // crear informacion de whatsapp
   const createWhatsappMessage = async (itemData) => {
     try {
@@ -227,9 +203,9 @@ export const DetailLead = () => {
       const updateDataEvento = eventos.map((elemento) => {
         return elemento.id === id ? result : elemento;
       });
-      console.log(updateDataEvento)
+      console.log(updateDataEvento);
       setLead({
-      ...lead,
+        ...lead,
         eventos: updateDataEvento,
       });
     } catch (error) {
@@ -242,11 +218,36 @@ export const DetailLead = () => {
     }
   };
 
+
+  console.log(lead)
+
+  // obtener informacion del lead
+  const obtenerLead = async () => {
+    if (validIdURL(numericId)) {
+      try {
+        setVisibleProgress(true);
+        const auxLead = await getLead(numericId, authTokens.access);
+        setLead(auxLead);
+        // comprobar si se realizo con exito la creación del usuario
+        setVisibleProgress(false);
+      } catch (error) {
+        setVisibleProgress(false);
+        const pilaError = combinarErrores(error);
+        // mostramos feedback de error
+        setFeedbackMessages({
+          style_message: "error",
+          feedback_description_error: pilaError,
+        });
+        handleClickFeedback();
+      }
+    } else {
+      onNavigateBack();
+    }
+  };
+
   useEffect(() => {
     obtenerLead();
   }, []);
-
-  console.log(lead);
 
   return (
     <>
@@ -351,7 +352,7 @@ export const DetailLead = () => {
               aria-label="basic tabs"
               value={tabIndex}
               onChange={(event, newValue) => setTabIndex(newValue)}
-              sx={{ marginTop: 3}}
+              sx={{ marginTop: 3 }}
               centered
               variant="fullWidth"
             >
@@ -420,7 +421,7 @@ const CustomTabPanel = (props) => {
       role="tabpanel"
       hidden={value !== index}
       id={`simple-tabpanel-${index}`}
-      style={{ display: "flex", justifyContent: "center"}}
+      style={{ display: "flex", justifyContent: "center" }}
       {...other}
     >
       {value === index && <div>{children}</div>}

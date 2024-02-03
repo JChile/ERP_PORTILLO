@@ -33,6 +33,8 @@ export const DialogDetailEvento = ({
   const [originalData, setOriginalData] = useState(selectedEvent);
   const [dataAuxEvento, setDataAuxEvento] = useState(originalData);
 
+  console.log(dataAuxEvento)
+
   const {
     id,
     separado,

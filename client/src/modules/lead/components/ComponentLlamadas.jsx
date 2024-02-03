@@ -318,6 +318,8 @@ const DialogDetalleLlamada = ({
 }) => {
   const [dataAuxLlamada, setDataAuxLlamada] = useState(element);
 
+
+
   useEffect(() => {
     parserDataElement();
   }, [element]);

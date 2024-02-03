@@ -157,7 +157,7 @@ class Evento(models.Model):
     fecha_creacion = models.DateTimeField(default = timezone.now)
     fecha_actualizacion = models.DateTimeField(auto_now=True)
     separado = models.BooleanField(default=False)
-
+    objecion = models.ForeignKey(Objecion, null=True, blank=True, on_delete=models.CASCADE)
     def __str__(self):
         return self.titulo
 

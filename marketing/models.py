@@ -1,6 +1,7 @@
 
 from cuenta.models import User, EstadoRegistro
 from django.db import models
+from django.utils import timezone
 
 
 class Proyecto(models.Model):
@@ -10,8 +11,8 @@ class Proyecto(models.Model):
     estado = models.ForeignKey(EstadoRegistro, on_delete=models.SET_NULL, default='A', null=True)
     usuarioCreador =   models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='usuarioCreadorProyecto')
     usuarioActualizador =   models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='usuarioActualizadorProyecto')
-    fecha_creacion = models.DateField(auto_now=True)
-    fecha_actualizacion = models.DateTimeField(blank = True, null = True)
+    fecha_creacion = models.DateTimeField(default = timezone.now)
+    fecha_actualizacion = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return self.nombre
@@ -47,7 +48,8 @@ class Campania(models.Model):
         EstadoRegistro, on_delete=models.SET_NULL, default='A', null=True)
     usuarioCreador =   models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank = True, related_name='usuarioCreadorCampania')
     usuarioActualizador =   models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank = True , related_name='usuarioActualizadorCampania')
-    fecha_actualizacion = models.DateTimeField(blank = True, null = True)
+    fecha_creacion = models.DateTimeField(default = timezone.now)
+    fecha_actualizacion = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return self.nombre

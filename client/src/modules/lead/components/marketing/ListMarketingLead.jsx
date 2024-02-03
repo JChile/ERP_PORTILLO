@@ -217,13 +217,13 @@ export const ListMarketingLead = () => {
     setCountSelectedElements(0);
     try {
       const rowData = await getLeads(authTokens["access"], "recienCreado=True");
+      console.log(rowData);
       const formatData = rowData.map((element) => {
         return {
           ...element,
           isSelected: false,
         };
       });
-      console.log(formatData);
       setLeads(formatData);
       setAuxLeads(formatData);
       setVisibleProgress(false);

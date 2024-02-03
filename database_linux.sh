@@ -22,6 +22,6 @@ python manage.py migrate
 
 psql -h localhost -p 5432 -U postgres portillo_erp -c "\dt"
 
-psql -h localhost -p 5432 -U postgres -d portillo_erp -a -f ~/portillo_erp.sql
+psql -h localhost -p 5432 -U postgres -d portillo_erp -a -f portillo_erp.sql
 
 python manage.py runserver

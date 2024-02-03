@@ -13,7 +13,6 @@ export const CustomDatePickerFilter = ({
   const [value, setValue] = useState(dayjs(defaultValue));
 
   const formatFecha = (newValue) => {
-    // setValue(newValue);
     // Formatear la fecha a formato PostgreSQL (ISO 8601)
     const formattedDate = newValue.format("YYYY-MM-DD");
     onNewFecha(formattedDate, filterName);

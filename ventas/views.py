@@ -134,12 +134,18 @@ class LeadList(generics.ListCreateAPIView):
     
 
     def post(self, request, format=None):
-        dos_meses_atras = timezone.now() - timezone.timedelta(days=60)
-        registros_existentes = Lead.objects.filter(celular=request.data.get("celular"), fecha_creacion__gte=dos_meses_atras)
-        if registros_existentes.exists():
-            return Response({'celular':'El número de celular ya ha sido utilizado en los últimos dos meses.'})
-        
         data = request.data
+        dos_meses_atras = timezone.now() - timezone.timedelta(days=60)
+        
+        campania = Campania.objects.get(id = data["campania"])
+        proyecto = Proyecto.objects.get(campania = campania)
+        lead_queryset = Lead.objects.filter(campania__in = proyecto.campania_set.all())
+        print(proyecto.campania_set.all().prefetch_related('lead_set'))
+        registros_existentes = lead_queryset.filter(celular=request.data.get("celular"), fecha_creacion__gte=dos_meses_atras)
+        if registros_existentes.exists():
+            return Response({'response':{'data':'El número de celular ya ha sido utilizado en los últimos dos meses.'}})
+        
+
         if data.get("asesor") != None:
             data["fecha_asignacion"] = timezone.now()
         
@@ -147,9 +153,7 @@ class LeadList(generics.ListCreateAPIView):
 
         if serializer.is_valid():
             lead = serializer.save()
-
             if lead.asesor !=None :
-                
                 HistoricoLeadAsesor.objects.create(lead = lead, usuario = lead.asesor)
 
             return Response(serializer.data, status=status.HTTP_201_CREATED)

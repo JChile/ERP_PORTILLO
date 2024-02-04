@@ -27,7 +27,7 @@ export const FilterEstadoRegistro = ({
 
   const handleChange = (event, value) => {
     onNewInput(value);
-    setValue(value);
+    // setValue(value);
   };
 
   useEffect(() => {

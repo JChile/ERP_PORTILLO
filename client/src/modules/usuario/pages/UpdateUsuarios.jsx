@@ -150,7 +150,6 @@ export const UpdateUsuarios = () => {
     delete usuarioJSON.codigoAsesorBefore;
     delete usuarioJSON.groupsBefore;
     setVisibleProgress(true);
-    console.log(usuarioJSON);
 
     try {
       const result = await updateUsuario(
@@ -222,9 +221,15 @@ export const UpdateUsuarios = () => {
       setVisibleProgress(true);
       try {
         const result = await getUsuarioPerfil(idUsuario, authTokens["access"]);
+        // verificacion de grupo no vacio
+        const groups =
+          result["groups"].length === 0
+            ? { id: 0, name: "sin rol" }
+            : result["groups"];
+        // mantenemos informacion anterior para verificar los cambios
         const codigoAsesorBefore = result["codigoAsesor"];
         const groupsBefore = result["groups"];
-        setUsuario({ ...result, codigoAsesorBefore, groupsBefore });
+        setUsuario({ ...result, groups, codigoAsesorBefore, groupsBefore });
         setVisibleProgress(false);
       } catch (error) {
         setVisibleProgress(false);
@@ -330,12 +335,10 @@ export const UpdateUsuarios = () => {
                   Rol
                 </span>
                 <div className="flex-1">
-                  {groups.length !== 0 && (
-                    <FilterRol
-                      defaultValue={groups["id"]}
-                      onNewInput={onAddGroup}
-                    />
-                  )}
+                  <FilterRol
+                    defaultValue={groups["id"]}
+                    onNewInput={onAddGroup}
+                  />
                 </div>
               </label>
 
@@ -406,7 +409,7 @@ export const UpdateUsuarios = () => {
         }
             ${
               groupsBefore["id"] !== groups["id"]
-                ? ` Este usuario tenia asignado otro rol. ${
+                ? ` \nEste usuario tenia asignado otro rol. ${
                     groupsBefore["name"] === "asesor"
                       ? "Se ha detectado que este usuario era asesor. Debes gestionar sus leads."
                       : ""

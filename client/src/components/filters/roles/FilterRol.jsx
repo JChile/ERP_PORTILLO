@@ -52,7 +52,7 @@ export const FilterRol = ({ onNewInput, defaultValue = null }) => {
 
   const handledChange = (event, value) => {
     onNewInput(value);
-    setValue(value);
+    // setValue(value);
   };
 
   return (

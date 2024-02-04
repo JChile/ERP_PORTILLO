@@ -8,7 +8,11 @@ const defaultOption = {
   id: null,
 };
 
-export const FilterCampania = ({ defaultValue = null, onNewInput, label = "" }) => {
+export const FilterCampania = ({
+  defaultValue = null,
+  onNewInput,
+  label = "",
+}) => {
   const [options, setOptions] = useState([defaultOption]);
   const [value, setValue] = useState(defaultOption);
 
@@ -36,14 +40,22 @@ export const FilterCampania = ({ defaultValue = null, onNewInput, label = "" }) 
 
   const handleChange = (event, value) => {
     onNewInput(value);
-    setValue(value);
+    // setValue(value);
   };
 
   useEffect(() => {
-    const controller = new AbortController();
-    obtenerCampanias();
-    return () => controller.abort();
+    // verficar si defualtvalue coincide
+    const defaultValueOption = options.find(
+      (option) => option.id === defaultValue
+    );
+    if (defaultValueOption) {
+      setValue(defaultValueOption);
+    }
   }, [defaultValue]);
+
+  useEffect(() => {
+    obtenerCampanias();
+  }, []);
 
   return (
     <Autocomplete

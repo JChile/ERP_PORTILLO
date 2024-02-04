@@ -6,11 +6,17 @@ import TableCell from "@mui/material/TableCell";
 import { CustomMoreVerticalActions } from "../../../components";
 import { BsShieldFillX } from "react-icons/bs";
 
-export const RowItemRol = ({ item }) => {
+export const RowItemRol = ({ item, eliminarRol }) => {
   const navigate = useNavigate();
 
+  // editar un rol
   const onEditItemSelected = () => {
     navigate(`/rol/update/${item.id}`);
+  };
+
+  // eliminar un rol
+  const onDeleteItemSelected = () => {
+    eliminarRol(item.id);
   };
 
   const { permissions } = item;
@@ -43,7 +49,7 @@ export const RowItemRol = ({ item }) => {
         item["name"] !== "marketing" ? (
           <CustomMoreVerticalActions
             onEdit={onEditItemSelected}
-            activeOnDelete={false}
+            onDelete={onDeleteItemSelected}
             activeOnEdit={
               item["name"] !== "asesor" &&
               item["name"] !== "administrador" &&

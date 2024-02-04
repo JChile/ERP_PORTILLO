@@ -36,14 +36,23 @@ export const FilterUsuario = ({ onNewInput, defaultValue = null }) => {
 
   const handleChange = (event, value) => {
     onNewInput(value);
-    setValue(value);
+    // setValue(value);
   };
 
+  // use effect cuando hay cambios en el valor por defecto
   useEffect(() => {
-    const controller = new AbortController();
-    obtenerUsuarios();
-    return () => controller.abort();
+    // verficar si defualtvalue coincide
+    const defaultValueOption = options.find(
+      (option) => option.id === defaultValue
+    );
+    if (defaultValueOption) {
+      setValue(defaultValueOption);
+    }
   }, [defaultValue]);
+
+  useEffect(() => {
+    obtenerUsuarios();
+  }, []);
 
   return (
     <Autocomplete

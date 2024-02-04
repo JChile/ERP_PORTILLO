@@ -79,7 +79,6 @@ export const CreateProyecto = () => {
         const formatData = {
           ...project,
           usuarioCreador: currentUser["user_id"],
-          usuarioActualizador: currentUser["user_id"],
         };
         const result = await createProyecto(formatData, authTokens["access"]);
         try {

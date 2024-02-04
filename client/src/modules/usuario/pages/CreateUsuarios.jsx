@@ -24,7 +24,7 @@ export const CreateUsuarios = () => {
     email: "",
     groups: { id: 0 },
     is_active: true,
-    isAdmin: true,
+    isAdmin: false,
     codigoAsesor: null,
   });
 
@@ -82,9 +82,10 @@ export const CreateUsuarios = () => {
 
   // INPUT CHECK ACTIVATE
   const onAddCheckInput = ({ target }) => {
-    const { name, checked } = target;
-
-    setUsuario({ ...usuario, [name]: checked });
+    if (target.type === "checkbox") {
+      const { name, checked } = target;
+      setUsuario({ ...usuario, [name]: checked });
+    }
   };
 
   // HANDLED FORM

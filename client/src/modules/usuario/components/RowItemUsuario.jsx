@@ -5,8 +5,9 @@ import { Link, useNavigate } from "react-router-dom";
 import { CustomMoreVerticalActions } from "../../../components";
 
 export const RowItemUsuario = ({ item, onDeleteUsuario }) => {
-  const idGroup = item["groups"][0]["id"];
-  const nameGroup = item.groups[0].name;
+  const idGroup = item["groups"].length !== 0 ? item["groups"][0]["id"] : 0;
+  const nameGroup =
+    item["groups"].length !== 0 ? item.groups[0]["name"] : "Sin rol";
   const navigate = useNavigate();
 
   const onDeleteItemSelected = () => {
@@ -42,7 +43,7 @@ export const RowItemUsuario = ({ item, onDeleteUsuario }) => {
           to={`/usuario/detail/${item.id}`}
         >{`${item.first_name} ${item.last_name}`}</Link>
       </TableCell>
-      <TableCell>{nameGroup}</TableCell>
+      <TableCell align="center">{nameGroup}</TableCell>
       <TableCell>{item.username}</TableCell>
       <TableCell>{item.email}</TableCell>
     </TableRow>

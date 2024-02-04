@@ -70,10 +70,10 @@ export const ListCampanias = () => {
     codigo: "",
     proyecto: "",
     categoria: "",
-    fecha_estimada: "",
+    fecha_creacion: "",
   });
 
-  const { nombre, codigo, proyecto, categoria, fecha_estimada } = filterData;
+  const { nombre, codigo, proyecto, categoria, fecha_creacion } = filterData;
 
   const handledFilterData = () => {
     setVisibleProgress(true);
@@ -86,8 +86,8 @@ export const ListCampanias = () => {
       const categoriaElement = element["categoria"]["nombre"]
         .toString()
         .toLowerCase();
-      const fechaEstimadoElement = formatDate_ISO861_to_date(
-        element["fecha_estimada"]
+      const fechaCreacionElement = formatDate_ISO861_to_date(
+        element["fecha_creacion"]
       );
 
       if (
@@ -99,8 +99,8 @@ export const ListCampanias = () => {
           !proyectoElement.includes(filterData["proyecto"].toLowerCase())) ||
         (filterData["categoria"] !== "" &&
           !categoriaElement.includes(filterData["categoria"].toLowerCase())) ||
-        (filterData["fecha_estimada"] !== "" &&
-          !fechaEstimadoElement.includes(filterData["fecha_estimada"]))
+        (filterData["fecha_creacion"] !== "" &&
+          !fechaCreacionElement.includes(filterData["fecha_creacion"]))
       ) {
         return false;
       }
@@ -120,7 +120,7 @@ export const ListCampanias = () => {
       codigo: "",
       proyecto: "",
       categoria: "",
-      fecha_estimada: "",
+      fecha_creacion: "",
     });
     setFlagReset(false);
   };
@@ -289,7 +289,7 @@ export const ListCampanias = () => {
                   <TableCell>Codigo</TableCell>
                   <TableCell>Proyecto</TableCell>
                   <TableCell>Categoria</TableCell>
-                  <TableCell>Fecha inicio</TableCell>
+                  <TableCell>Fecha creación</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -363,8 +363,8 @@ export const ListCampanias = () => {
                   <TableCell>
                     <CustomDatePickerFilter
                       onNewFecha={handledFilterDateValues}
-                      filterName="fecha_estimada"
-                      defaultValue={fecha_estimada}
+                      filterName="fecha_creacion"
+                      defaultValue={fecha_creacion}
                     />
                   </TableCell>
                 </TableRow>

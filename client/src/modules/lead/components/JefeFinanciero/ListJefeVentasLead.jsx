@@ -8,14 +8,14 @@ import { MdClear, MdFilterAlt, MdFilterList } from "react-icons/md";
 import { CustomDatePicker } from "../../../../components";
 
 const ListJefeVentasLead = () => {
-  const [error, setError] = useState(false);
-  const [value, setValue] = useState(0);
   // filtros de fechas
   const [filterState, setFilterState] = useState({
     startDate: null,
     endDate: null,
   });
 
+  // manejadores de tabs
+  const [value, setValue] = useState(0);
   const handleChange = (event, newValue) => setValue(newValue);
 
   const handleSearchButton = (searchText) => {};
@@ -30,42 +30,9 @@ const ListJefeVentasLead = () => {
     console.log(newDate);
   };
 
-  const onHandleFilterClick = () => {
-    const filtered = leads.filter((lead) => {
-      // Filtrar por fecha de inicio
-      if (filterState.startDate) {
-        const startDate = new Date(filterState.startDate);
-        const leadDate = new Date(lead.horaRecepcion);
-        if (leadDate < startDate) {
-          return false;
-        }
-      }
-      // Filtrar por fecha de fin
-      if (filterState.endDate) {
-        const endDate = new Date(filterState.endDate);
-        const leadDate = new Date(lead.horaRecepcion);
-        if (leadDate > endDate) {
-          return false;
-        }
-      }
-      return true;
-    });
-    setFilteredLeads(filtered);
-  };
-
-  const onHandleCleanFilter = () => {
-    setFilterState(() => {
-      onHandleFilterClick();
-      return {
-        startDate: null,
-        endDate: null,
-      };
-    });
-  };
-
   const onSubmitFilter = () => {
-    console.log("Click tareas")
-  }
+    console.log("Click tareas");
+  };
 
   return (
     <React.Fragment>

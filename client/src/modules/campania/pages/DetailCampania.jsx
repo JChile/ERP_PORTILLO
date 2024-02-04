@@ -4,7 +4,10 @@ import { getCampania } from "../helpers";
 import { AuthContext } from "../../../auth";
 import { CustomAlert, CustomCircularProgress } from "../../../components";
 import { useAlertMUI } from "../../../hooks";
-import { combinarErrores } from "../../../utils";
+import {
+  combinarErrores,
+  formatDate_ISO861_to_formatdate,
+} from "../../../utils";
 
 export const DetailCampania = () => {
   const { idCampania } = useParams();
@@ -100,7 +103,11 @@ export const DetailCampania = () => {
                 <span className="block text-sm font-medium min-w-[10rem] text-zinc-500">
                   Fecha estimada:
                 </span>
-                <span className="block text-sm">{fecha_estimada}</span>
+                <span className="block text-sm">
+                  {fecha_estimada
+                    ? formatDate_ISO861_to_formatdate(fecha_estimada)
+                    : "Sin fecha"}
+                </span>
               </label>
 
               <label className="block flex gap-y-1 ">
@@ -114,7 +121,7 @@ export const DetailCampania = () => {
                 <span className="block text-sm font-medium min-w-[10rem] text-zinc-500">
                   Categoria:
                 </span>
-                <span className="block text-sm">{categoria.nombre}</span>
+                <span className="block text-sm">{categoria["nombre"]}</span>
               </label>
             </div>
 
@@ -129,14 +136,18 @@ export const DetailCampania = () => {
                 <span className="block text-sm font-medium min-w-[10rem] text-zinc-500">
                   Proyecto:
                 </span>
-                <span className="block text-sm">{proyecto.nombre}</span>
+                <span className="block text-sm">{proyecto["nombre"]}</span>
               </label>
 
               <label className="block flex gap-y-1 ">
                 <span className="block text-sm font-medium min-w-[10rem] text-zinc-500">
                   Fecha cierre:
                 </span>
-                <span className="block text-sm">{fecha_cierre}</span>
+                <span className="block text-sm">
+                  {fecha_cierre
+                    ? formatDate_ISO861_to_formatdate(fecha_cierre)
+                    : "Sin fecha"}
+                </span>
               </label>
 
               <label className="block flex gap-y-1 ">

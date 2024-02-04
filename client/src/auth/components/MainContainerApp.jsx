@@ -53,6 +53,11 @@ export const MainContainerApp = ({ children }) => {
           <div style={{ flex: 1 }} />
           <div className="flex flex-row gap-x-3 items-center">
             <div>
+              <Link to="/reportes"> 
+                <p className="font-semi-bold text-xs text-[gray]">Reportes</p>
+              </Link>
+            </div>
+            <div>
               <p className="font-semi-bold text-white text-sm">
                 {`${first_name ?? "Nombre"} ${last_name ?? "Apellido"}`}
               </p>

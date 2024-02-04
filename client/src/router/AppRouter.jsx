@@ -10,6 +10,7 @@ import { NotPublicPage } from "../components/NotPublicPage";
 import { VentasRouter } from "../modules/ventas/router/VentasRouter";
 import { ProyectoRoutes } from "../modules/proyectos/router/ProyectoRoutes";
 import { ProductoRoutes } from "../modules/productos/router/ProductoRoutes";
+import ReportesRoutes from "../modules/reportes/router/ReportesRoutes";
 
 export const AppRouter = () => {
   return (
@@ -33,6 +34,7 @@ export const AppRouter = () => {
                   {/* <Route path="cotizaciones/*" element={<CotizacionRouter />} /> */}
                   <Route path="proyecto/*" element={<ProyectoRoutes />} />
                   <Route path="producto/*" element={<ProductoRoutes />} />
+                  <Route path="reportes/" element={<ReportesRoutes />} />
                 </Routes>
               </MainContainerApp>
             }

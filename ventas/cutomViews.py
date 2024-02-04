@@ -367,7 +367,7 @@ class AsesorLead(APIView):
 
     def get(self, request):
         if not (bool(request.user.groups.first().permissions.filter(codename=PermissionLead.CAN_VIEW) or request.user.is_superuser)):
-            return Response({"message": "Usuario no tiene permisos para ver leads"}, status=403)
+            return Response({"message": "Usuario no tiene permisos para ver leads"}, status.HTTP_403_FORBIDDEN)
 
         pk = request.user.pk
         if request.user.isAdmin == True:

@@ -39,7 +39,7 @@ class LeadList(generics.ListCreateAPIView):
     def list(self, request):
 
         if not (bool(request.user.groups.first().permissions.filter(codename=PermissionLead.CAN_VIEW) or request.user.is_superuser)):
-            return Response({"message": "Usuario no tiene permisos para ver leads"}, status=403)
+            return Response({"message": "Usuario no tiene permisos para ver leads"}, status.HTTP_403_FORBIDDEN)
 
         fecha_limite = timezone.now() - timedelta(days=60)
 
@@ -49,11 +49,10 @@ class LeadList(generics.ListCreateAPIView):
         asignado = request.query_params.get('asignado')
         recienCreado = request.query_params.get('recienCreado')
 
-        print(asignado)
+        print(request.user.isAdmin)
 
         if asignado == "False":
             print(asignado)
-
             lead_queryset = Lead.objects.filter(asignado=False)
             if request.user.groups.first().name == "marketing":
                 if desde and hasta:
@@ -64,12 +63,20 @@ class LeadList(generics.ListCreateAPIView):
                         fecha_creacion__gte=fecha_limite).order_by('-fecha_creacion')
 
             elif request.user.groups.first().name == "asesor":
-                if desde and hasta:
-                    lead_queryset = lead_queryset.filter(fecha_desasignacion__range=[
-                                                         desde, hasta]).order_by('-fecha_desasignacion')
-                else:
-                    lead_queryset = lead_queryset.filter(
-                        fecha_desasignacion__gte=fecha_limite).order_by('-fecha_desasignacion')
+                if request.user.isAdmin == True:
+                    if desde and hasta:
+                        lead_queryset = lead_queryset.filter(fecha_desasignacion__range=[
+                                                            desde, hasta]).order_by('-fecha_desasignacion')
+                    else:
+                        lead_queryset = lead_queryset.filter(
+                            fecha_desasignacion__gte=fecha_limite).order_by('-fecha_desasignacion')
+                else :
+                    if desde and hasta:
+                        lead_queryset = lead_queryset.filter(fecha_desasignacion__range=[
+                                                            desde, hasta], asesor = request.user.pk).order_by('-fecha_desasignacion')
+                    else:
+                        lead_queryset = lead_queryset.filter(
+                            fecha_desasignacion__gte=fecha_limite,  asesor = request.user.pk).order_by('-fecha_desasignacion')
             else:
                 if desde and hasta:
                     lead_queryset = lead_queryset.filter(fecha_desasignacion__range=[
@@ -77,6 +84,39 @@ class LeadList(generics.ListCreateAPIView):
                 else:
                     lead_queryset = lead_queryset.filter(
                         fecha_desasignacion__gte=fecha_limite).order_by('-fecha_desasignacion')
+
+        elif asignado == "True":
+            lead_queryset = Lead.objects.filter(asignado=True)
+            if request.user.groups.first().name == "marketing":
+                if desde and hasta:
+                    lead_queryset = lead_queryset.filter(
+                        fecha_creacion__range=[desde, hasta]).order_by('-fecha_creacion')
+                else:
+                    lead_queryset = lead_queryset.filter(
+                        fecha_creacion__gte=fecha_limite).order_by('-fecha_creacion')
+
+            elif request.user.groups.first().name == "asesor":
+                if request.user.isAdmin == True:
+                    if desde and hasta:
+                        lead_queryset = lead_queryset.filter(
+                            fecha_asignacion__range=[desde, hasta]).order_by('-fecha_asignacion')
+                    else:
+                        lead_queryset = lead_queryset.filter(
+                            fecha_asignacion__gte=fecha_limite).order_by('-fecha_asignacion')
+                else :
+                    if desde and hasta:
+                        lead_queryset =lead_queryset.filter(
+                            fecha_asignacion__range=[desde, hasta],asesor = request.user.pk).order_by('-fecha_asignacion')
+                    else:
+                        lead_queryset = lead_queryset.filter(
+                            fecha_asignacion__gte=fecha_limite,asesor = request.user.pk).order_by('-fecha_asignacion')
+            else:
+                if desde and hasta:
+                    lead_queryset = lead_queryset.filter(
+                        fecha_asignacion__range=[desde, hasta]).order_by('-fecha_asignacion')
+                else:
+                    lead_queryset = lead_queryset.filter(
+                        fecha_asignacion__gte=fecha_limite).order_by('-fecha_asignacion')
 
         else:
             if request.user.groups.first().name == "marketing":
@@ -88,12 +128,20 @@ class LeadList(generics.ListCreateAPIView):
                         fecha_creacion__gte=fecha_limite).order_by('-fecha_creacion')
 
             elif request.user.groups.first().name == "asesor":
-                if desde and hasta:
-                    lead_queryset = Lead.objects.filter(
-                        fecha_asignacion__range=[desde, hasta]).order_by('-fecha_asignacion')
-                else:
-                    lead_queryset = Lead.objects.filter(
-                        fecha_asignacion__gte=fecha_limite).order_by('-fecha_asignacion')
+                if request.user.isAdmin == True:
+                    if desde and hasta:
+                        lead_queryset = Lead.objects.filter(
+                            fecha_asignacion__range=[desde, hasta]).order_by('-fecha_asignacion')
+                    else:
+                        lead_queryset = Lead.objects.filter(
+                            fecha_asignacion__gte=fecha_limite).order_by('-fecha_asignacion')
+                else :
+                    if desde and hasta:
+                        lead_queryset =Lead.objects.filter(
+                            fecha_asignacion__range=[desde, hasta],asesor = request.user.pk).order_by('-fecha_asignacion')
+                    else:
+                        lead_queryset = Lead.objects.filter(
+                            fecha_asignacion__gte=fecha_limite,asesor = request.user.pk).order_by('-fecha_asignacion')
             else:
                 if desde and hasta:
                     lead_queryset = Lead.objects.filter(
@@ -101,7 +149,7 @@ class LeadList(generics.ListCreateAPIView):
                 else:
                     lead_queryset = Lead.objects.filter(
                         fecha_asignacion__gte=fecha_limite).order_by('-fecha_asignacion')
-
+            
         if estado:
             lead_queryset = lead_queryset.filter(estado=estado)
 
@@ -113,18 +161,13 @@ class LeadList(generics.ListCreateAPIView):
         leadData = leadSerializer.data
         for i in leadData:
             user_data = get_or_none(User, id=i["asesor"])
-            userCreador_data = get_or_none(User, id=i["usuarioCreador"])
-            userActualizador_data = get_or_none(
-                User, id=i["usuarioActualizador"])
+
             campania_data = get_or_none(Campania, id=i["campania"])
             objecion_data = get_or_none(Objecion, id=i["objecion"])
 
             userSerializer = UserSerializer(user_data, fields=(
                 'id', 'first_name', 'last_name', 'username')) if user_data else None
-            userCreadorSerializer = UserSerializer(userCreador_data, fields=(
-                'id', 'first_name', 'last_name', 'username')) if userCreador_data else None
-            userActualizadorializer = UserSerializer(userActualizador_data, fields=(
-                'id', 'first_name', 'last_name', 'username')) if userActualizador_data else None
+
             campaniaSerializer = CampaniaSerializer(
                 campania_data) if campania_data else None
             objecionSerializer = ObjecionSerializer(
@@ -176,7 +219,7 @@ class LeadDetail(generics.RetrieveUpdateDestroyAPIView):
         usuario = request.user
 
         if not (bool(request.user.groups.first().permissions.filter(codename=PermissionLead.CAN_VIEW) or request.user.is_superuser)):
-            return Response({"message": "Usuario no tiene permisos para ver leads"}, status=403)
+            return Response({"message": "Usuario no tiene permisos para ver leads"}, status.HTTP_403_FORBIDDEN)
 
         if request.user.isAdmin == True or request.user.groups.first().name == "marketing" or "administrador":
             lead = get_or_none(Lead, id=pk)
@@ -191,18 +234,13 @@ class LeadDetail(generics.RetrieveUpdateDestroyAPIView):
         lead_data = leadSerializer.data
 
         user_data = get_or_none(User, id=lead_data["asesor"])
-        userCreador_data = get_or_none(User, id=lead_data["usuarioCreador"])
-        userActualizador_data = get_or_none(
-            User, id=lead_data["usuarioActualizador"])
+
         campania_data = get_or_none(Campania, id=lead_data["campania"])
         objecion_data = get_or_none(Objecion, id=lead_data["objecion"])
 
         userSerializer = UserSerializer(user_data, fields=(
             'id', 'first_name', 'last_name', 'username')) if user_data else None
-        userCreadorSerializer = UserSerializer(userCreador_data, fields=(
-            'id', 'first_name', 'last_name', 'username')) if userCreador_data else None
-        userActualizadorializer = UserSerializer(userActualizador_data, fields=(
-            'id', 'first_name', 'last_name', 'username')) if userActualizador_data else None
+
         campaniaSerializer = CampaniaSerializer(
             campania_data) if campania_data else None
         objecionSerializer = ObjecionSerializer(
@@ -470,7 +508,7 @@ class EventoList(generics.ListCreateAPIView):
 
     def post(self, request):
         if not (bool(request.user.groups.first().permissions.filter(codename=PermissionEvento.CAN_ADD) or request.user.is_superuser)):
-            return Response({"message": "Usuario no tiene permisos para crear eventos"}, status=403)
+            return Response({"message": "Usuario no tiene permisos para crear eventos"}, status.HTTP_403_FORBIDDEN)
         idUsuario = request.user.pk
         print("id user", idUsuario)
         try:
@@ -488,7 +526,7 @@ class EventoList(generics.ListCreateAPIView):
         usuarioId = request.user.pk
 
         if not (bool(request.user.groups.first().permissions.filter(codename=PermissionEvento.CAN_VIEW) or request.user.is_superuser)):
-            return Response({"message": "Usuario no tiene permisos para ver eventos"}, status=403)
+            return Response({"message": "Usuario no tiene permisos para ver eventos"}, status.HTTP_403_FORBIDDEN)
 
         evento_queryset = Evento.objects.all()
         estado = request.query_params.get('estado')
@@ -521,10 +559,6 @@ class EventoList(generics.ListCreateAPIView):
             lead = get_or_none(Lead, id=eventoIterador["lead"])
             estadoEvento = get_or_none(
                 EstadoEvento, id=eventoIterador["estadoEvento"])
-            userCreador = get_or_none(
-                User, id=eventoIterador["usuarioCreador"])
-            userActualizador = get_or_none(
-                User, id=eventoIterador["usuarioActualizador"])
 
             estadoEventoSerializer = EstadoEventoSerializer(
                 estadoEvento) if estadoEvento else None
@@ -533,16 +567,9 @@ class EventoList(generics.ListCreateAPIView):
             tipoSerializer = TipoEventoSerializer(tipo) if tipo else None
             leadSerializer = LeadSerializer(lead) if lead else None
 
-            userCreadorSerializer = UserSerializer(userCreador, fields=(
-                'id', 'first_name', 'last_name', 'username')) if userCreador else None
-            userActualizadorializer = UserSerializer(userActualizador, fields=(
-                'id', 'first_name', 'last_name', 'username')) if userActualizador else None
-
-            eventoIterador["asesor"] = userAsesorSerializer.data if userAsesorSerializer else {
-            }
+            eventoIterador["asesor"] = userAsesorSerializer.data if userAsesorSerializer else None
             eventoIterador["tipo"] = tipoSerializer.data if tipoSerializer else None
             eventoIterador["estadoEvento"] = estadoEventoSerializer.data if estadoEventoSerializer else None
-
             eventoIterador["lead"] = leadSerializer.data if leadSerializer else None
 
         return Response(evento_data)
@@ -576,24 +603,27 @@ class EventoDetail(generics.RetrieveUpdateDestroyAPIView):
 
     def retrieve(self, request, pk=None):
         if not (bool(request.user.groups.first().permissions.filter(codename=PermissionEvento.CAN_VIEW) or request.user.is_superuser)):
-            return Response({"message": "Usuario no tiene permisos para ver eventos"}, status=403)
+            return Response({"message": "Usuario no tiene permisos para ver eventos"}, status.HTTP_403_FORBIDDEN)
         try:
             evento = Evento.objects.get(id=pk)
         except:
-            return Response({"message": "El evento no existe"}, status=404)
+            return Response({"message": "El evento no existe"}, status.HTTP_404_NOT_FOUND)
 
-        asesor = get_or_none(User, id=evento.asesor.pk)
-        tipo = get_or_none(TipoEvento, id=evento.tipo.pk)
-        estadoEvento = get_or_none(EstadoEvento, id=evento.estadoEvento.pk)
+        evento_dataJson = EventoSerializer(evento).data
 
-        asesorSerlializer = UserSerializer(asesor, fields=(
-            'id', 'first_name', 'last_name', 'username')) if asesor else None
+        asesor = get_or_none(User, id=evento_dataJson["asesor"])
+        tipo = get_or_none(TipoEvento, id=evento_dataJson["tipo"])
+        estadoEvento =  get_or_none(EstadoEvento, id=evento_dataJson["estadoEvento"])
+
+
+        asesorSerlializer = UserSerializer(asesor, fields=('id', 'first_name', 'last_name', 'username')) if asesor else None
+        tipoSerializer = TipoEventoSerializer(tipo) if tipo else None
+        estadoEventoSerializer = EstadoEventoSerializer(estadoEvento) if estadoEvento else None
 
         tipoSerializer = TipoEventoSerializer(tipo) if tipo else None
         estadoEventoSerializer = EstadoEventoSerializer(
             estadoEvento) if estadoEvento else None
 
-        evento_dataJson = EventoSerializer(evento).data
         evento_dataJson["asesor"] = asesorSerlializer.data if asesorSerlializer else None
         evento_dataJson["tipo"] = tipoSerializer.data if tipoSerializer else None
         evento_dataJson["estadoEvento"] = estadoEventoSerializer.data if estadoEventoSerializer else None
@@ -631,7 +661,7 @@ class ProductoList(generics.ListCreateAPIView):
     def list(self, request):
 
         if not (bool(request.user.groups.first().permissions.filter(codename=PermissionProducto.CAN_VIEW) or request.user.is_superuser)):
-            return Response({"message": "Usuario no tiene permisos para ver productos"}, status=403)
+            return Response({"message": "Usuario no tiene permisos para ver productos"}, status.HTTP_403_FORBIDDEN)
 
         estado = request.query_params.get('estado')
         print(estado)
@@ -649,17 +679,11 @@ class ProductoList(generics.ListCreateAPIView):
         for i in producto_datajson:
             tipoProducto = get_or_none(TipoProducto, id=i["tipo"])
             proyecto = get_or_none(Proyecto, id=i["proyecto"])
-            userCreador = get_or_none(User, id=i["usuarioCreador"])
-            userActualizador = get_or_none(User, id=i["usuarioActualizador"])
 
             tipoProductoSerializer = ProyectoSerializer(
                 tipoProducto) if tipoProducto else None
             proyectoSerializer = ProyectoSerializer(
                 proyecto) if proyecto else None
-            userCreadorSerializer = UserSerializer(userCreador, fields=(
-                'id', 'first_name', 'last_name', 'username')) if userCreador else None
-            userActualizadorializer = UserSerializer(userActualizador, fields=(
-                'id', 'first_name', 'last_name', 'username')) if userActualizador else None
 
             i["tipo"] = tipoProductoSerializer.data if tipoProductoSerializer else None
             i["proyecto"] = proyectoSerializer.data if proyectoSerializer else None
@@ -704,27 +728,21 @@ class ProductoDetail(generics.RetrieveUpdateDestroyAPIView):
 
     def retrieve(self, request, pk=None):
         if not (bool(request.user.groups.first().permissions.filter(codename=PermissionProducto.CAN_VIEW) or request.user.is_superuser)):
-            return Response({"message": "Usuario no tiene permisos para ver productos"}, status=403)
+            return Response({"message": "Usuario no tiene permisos para ver productos"}, status.HTTP_403_FORBIDDEN)
 
         try:
             producto = Producto.objects.get(id=pk)
             producto_datajson = ProductoSerializer(producto).data
         except:
-            return Response({"message": "El producto no existe"}, status=404)
+            return Response({"message": "El producto no existe"}, status.HTTP_404_NOT_FOUND)
 
-        tipoProducto = get_or_none(TipoProducto, id=producto.tipo.pk)
-        proyecto = get_or_none(Proyecto, id=producto.proyecto.pk)
-        userCreador = get_or_none(User, id=producto.usuarioCreador.pk)
-        userActualizador = get_or_none(
-            User, id=producto.usuarioActualizador.pk)
+        tipoProducto =get_or_none(TipoProducto, id=producto_datajson["tipo"])
+        proyecto = get_or_none(Proyecto, id=producto_datajson["proyecto"])
 
         tipoProductoSerializer = ProyectoSerializer(
             tipoProducto) if tipoProducto else None
         proyectoSerializer = ProyectoSerializer(proyecto) if proyecto else None
-        userCreadorSerializer = UserSerializer(userCreador, fields=(
-            'id', 'first_name', 'last_name', 'username')) if userCreador else None
-        userActualizadorializer = UserSerializer(userActualizador, fields=(
-            'id', 'first_name', 'last_name', 'username')) if userActualizador else None
+
 
         producto_datajson["tipo"] = tipoProductoSerializer.data if tipoProductoSerializer else None
         producto_datajson["proyecto"] = proyectoSerializer.data if proyectoSerializer else None
@@ -983,6 +1001,14 @@ class HistoricoLeadAsesorList(generics.ListCreateAPIView):
         queryset = HistoricoLeadAsesor.objects.all()
         lead_queryset = Lead.objects.all()
         user_queryset = User.objects.all()
+
+        desde = request.query_params.get('desde')
+        hasta = request.query_params.get('hasta')
+
+        if desde and hasta:
+            queryset = queryset.filter(fecha_fecha_creacion__range=[desde, hasta])
+
+
         dataJson = HistoricoLeadAsesorSerlializer(queryset, many=True).data
 
         for i in dataJson:

@@ -39,7 +39,7 @@ class LeadList(generics.ListCreateAPIView):
     def list(self, request):
 
         if not (bool(request.user.groups.first().permissions.filter(codename=PermissionLead.CAN_VIEW) or request.user.is_superuser)):
-            return Response({"message": "Usuario no tiene permisos para ver leads"}, status=403)
+            return Response({"message": "Usuario no tiene permisos para ver leads"}, status.HTTP_403_FORBIDDEN)
 
         fecha_limite = timezone.now() - timedelta(days=60)
 
@@ -49,11 +49,10 @@ class LeadList(generics.ListCreateAPIView):
         asignado = request.query_params.get('asignado')
         recienCreado = request.query_params.get('recienCreado')
 
-        print(asignado)
+        print(request.user.isAdmin)
 
         if asignado == "False":
             print(asignado)
-
             lead_queryset = Lead.objects.filter(asignado=False)
             if request.user.groups.first().name == "marketing":
                 if desde and hasta:
@@ -64,12 +63,20 @@ class LeadList(generics.ListCreateAPIView):
                         fecha_creacion__gte=fecha_limite).order_by('-fecha_creacion')
 
             elif request.user.groups.first().name == "asesor":
-                if desde and hasta:
-                    lead_queryset = lead_queryset.filter(fecha_desasignacion__range=[
-                                                         desde, hasta]).order_by('-fecha_desasignacion')
-                else:
-                    lead_queryset = lead_queryset.filter(
-                        fecha_desasignacion__gte=fecha_limite).order_by('-fecha_desasignacion')
+                if request.user.isAdmin == True:
+                    if desde and hasta:
+                        lead_queryset = lead_queryset.filter(fecha_desasignacion__range=[
+                                                            desde, hasta]).order_by('-fecha_desasignacion')
+                    else:
+                        lead_queryset = lead_queryset.filter(
+                            fecha_desasignacion__gte=fecha_limite).order_by('-fecha_desasignacion')
+                else :
+                    if desde and hasta:
+                        lead_queryset = lead_queryset.filter(fecha_desasignacion__range=[
+                                                            desde, hasta], asesor = request.user.pk).order_by('-fecha_desasignacion')
+                    else:
+                        lead_queryset = lead_queryset.filter(
+                            fecha_desasignacion__gte=fecha_limite,  asesor = request.user.pk).order_by('-fecha_desasignacion')
             else:
                 if desde and hasta:
                     lead_queryset = lead_queryset.filter(fecha_desasignacion__range=[
@@ -77,6 +84,39 @@ class LeadList(generics.ListCreateAPIView):
                 else:
                     lead_queryset = lead_queryset.filter(
                         fecha_desasignacion__gte=fecha_limite).order_by('-fecha_desasignacion')
+
+        elif asignado == "True":
+            lead_queryset = Lead.objects.filter(asignado=True)
+            if request.user.groups.first().name == "marketing":
+                if desde and hasta:
+                    lead_queryset = lead_queryset.filter(
+                        fecha_creacion__range=[desde, hasta]).order_by('-fecha_creacion')
+                else:
+                    lead_queryset = lead_queryset.filter(
+                        fecha_creacion__gte=fecha_limite).order_by('-fecha_creacion')
+
+            elif request.user.groups.first().name == "asesor":
+                if request.user.isAdmin == True:
+                    if desde and hasta:
+                        lead_queryset = lead_queryset.filter(
+                            fecha_asignacion__range=[desde, hasta]).order_by('-fecha_asignacion')
+                    else:
+                        lead_queryset = lead_queryset.filter(
+                            fecha_asignacion__gte=fecha_limite).order_by('-fecha_asignacion')
+                else :
+                    if desde and hasta:
+                        lead_queryset =lead_queryset.filter(
+                            fecha_asignacion__range=[desde, hasta],asesor = request.user.pk).order_by('-fecha_asignacion')
+                    else:
+                        lead_queryset = lead_queryset.filter(
+                            fecha_asignacion__gte=fecha_limite,asesor = request.user.pk).order_by('-fecha_asignacion')
+            else:
+                if desde and hasta:
+                    lead_queryset = lead_queryset.filter(
+                        fecha_asignacion__range=[desde, hasta]).order_by('-fecha_asignacion')
+                else:
+                    lead_queryset = lead_queryset.filter(
+                        fecha_asignacion__gte=fecha_limite).order_by('-fecha_asignacion')
 
         else:
             if request.user.groups.first().name == "marketing":
@@ -88,12 +128,20 @@ class LeadList(generics.ListCreateAPIView):
                         fecha_creacion__gte=fecha_limite).order_by('-fecha_creacion')
 
             elif request.user.groups.first().name == "asesor":
-                if desde and hasta:
-                    lead_queryset = Lead.objects.filter(
-                        fecha_asignacion__range=[desde, hasta]).order_by('-fecha_asignacion')
-                else:
-                    lead_queryset = Lead.objects.filter(
-                        fecha_asignacion__gte=fecha_limite).order_by('-fecha_asignacion')
+                if request.user.isAdmin == True:
+                    if desde and hasta:
+                        lead_queryset = Lead.objects.filter(
+                            fecha_asignacion__range=[desde, hasta]).order_by('-fecha_asignacion')
+                    else:
+                        lead_queryset = Lead.objects.filter(
+                            fecha_asignacion__gte=fecha_limite).order_by('-fecha_asignacion')
+                else :
+                    if desde and hasta:
+                        lead_queryset =Lead.objects.filter(
+                            fecha_asignacion__range=[desde, hasta],asesor = request.user.pk).order_by('-fecha_asignacion')
+                    else:
+                        lead_queryset = Lead.objects.filter(
+                            fecha_asignacion__gte=fecha_limite,asesor = request.user.pk).order_by('-fecha_asignacion')
             else:
                 if desde and hasta:
                     lead_queryset = Lead.objects.filter(
@@ -101,7 +149,7 @@ class LeadList(generics.ListCreateAPIView):
                 else:
                     lead_queryset = Lead.objects.filter(
                         fecha_asignacion__gte=fecha_limite).order_by('-fecha_asignacion')
-
+            
         if estado:
             lead_queryset = lead_queryset.filter(estado=estado)
 
@@ -171,7 +219,7 @@ class LeadDetail(generics.RetrieveUpdateDestroyAPIView):
         usuario = request.user
 
         if not (bool(request.user.groups.first().permissions.filter(codename=PermissionLead.CAN_VIEW) or request.user.is_superuser)):
-            return Response({"message": "Usuario no tiene permisos para ver leads"}, status=403)
+            return Response({"message": "Usuario no tiene permisos para ver leads"}, status.HTTP_403_FORBIDDEN)
 
         if request.user.isAdmin == True or request.user.groups.first().name == "marketing" or "administrador":
             lead = get_or_none(Lead, id=pk)
@@ -460,7 +508,7 @@ class EventoList(generics.ListCreateAPIView):
 
     def post(self, request):
         if not (bool(request.user.groups.first().permissions.filter(codename=PermissionEvento.CAN_ADD) or request.user.is_superuser)):
-            return Response({"message": "Usuario no tiene permisos para crear eventos"}, status=403)
+            return Response({"message": "Usuario no tiene permisos para crear eventos"}, status.HTTP_403_FORBIDDEN)
         idUsuario = request.user.pk
         print("id user", idUsuario)
         try:
@@ -478,7 +526,7 @@ class EventoList(generics.ListCreateAPIView):
         usuarioId = request.user.pk
 
         if not (bool(request.user.groups.first().permissions.filter(codename=PermissionEvento.CAN_VIEW) or request.user.is_superuser)):
-            return Response({"message": "Usuario no tiene permisos para ver eventos"}, status=403)
+            return Response({"message": "Usuario no tiene permisos para ver eventos"}, status.HTTP_403_FORBIDDEN)
 
         evento_queryset = Evento.objects.all()
         estado = request.query_params.get('estado')
@@ -613,7 +661,7 @@ class ProductoList(generics.ListCreateAPIView):
     def list(self, request):
 
         if not (bool(request.user.groups.first().permissions.filter(codename=PermissionProducto.CAN_VIEW) or request.user.is_superuser)):
-            return Response({"message": "Usuario no tiene permisos para ver productos"}, status=403)
+            return Response({"message": "Usuario no tiene permisos para ver productos"}, status.HTTP_403_FORBIDDEN)
 
         estado = request.query_params.get('estado')
         print(estado)

@@ -144,7 +144,11 @@ export const ComponentWhatsapp = ({
                     >
                       <TableCell>{index + 1}</TableCell>
                       <TableCell>{element["detalle"]}</TableCell>
-                      <TableCell>{element["fecha_creacion"]}</TableCell>
+                      <TableCell>
+                        {formatDate_ISO861_to_formatdate(
+                          element["fecha_creacion"]
+                        )}
+                      </TableCell>
                     </TableRow>
                   ))}
                 </TableBody>

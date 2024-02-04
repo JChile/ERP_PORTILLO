@@ -136,7 +136,7 @@ export const DialogForm = ({ isOpen, onClose, onCreateRegistroEvento }) => {
             </Typography>
           ))}
         </DialogContent>
-        <DialogActions className="bg-dark-purple">
+        <DialogActions>
           <Button
             variant="contained"
             color="inherit"

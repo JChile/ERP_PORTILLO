@@ -14,9 +14,10 @@ import ListItem from "@mui/material/ListItem";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
-import { MdMenu } from "react-icons/md";
+import { MdBarChart, MdMenu } from "react-icons/md";
 import { Link, NavLink } from "react-router-dom";
 import { DynamicIcon } from "./DynamicIcon";
+import { Button } from "@mui/material";
 
 const drawerWidth = 240;
 
@@ -53,8 +54,18 @@ export const MainContainerApp = ({ children }) => {
           <div style={{ flex: 1 }} />
           <div className="flex flex-row gap-x-3 items-center">
             <div>
-              <Link to="/reportes"> 
-                <p className="font-semi-bold text-xs text-[gray]">Reportes</p>
+              <Link to="/reportes">
+                <Button
+                  variant="outlined"
+                  sx={{
+                    textTransform: "capitalize",
+                    color: "white",
+                    fontWeight: "100",
+                  }}
+                  startIcon={<MdBarChart />}
+                >
+                  Reportes
+                </Button>
               </Link>
             </div>
             <div>

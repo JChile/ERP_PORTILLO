@@ -29,7 +29,7 @@ export const AuthProvider = ({ children }) => {
   );
 
   // funcion para logearse
-  const loginUser = async (username, password) => {
+  const loginUser = async (username, password, setVisibleProgress) => {
     const permissions_user = [];
     const DOMAIN = process.env.VITE_BACKEND_URL;
     const ENDPOINT = `${DOMAIN}/api/token/`;
@@ -73,9 +73,11 @@ export const AuthProvider = ({ children }) => {
 
       localStorage.setItem("authTokens", JSON.stringify(data));
       localStorage.setItem("permissions", JSON.stringify(permissions_user));
+      setVisibleProgress(false);
       navigate(`/home`);
     }
     if (response.status == 401) {
+      setVisibleProgress(false);
       return data;
     }
   };

@@ -25,6 +25,7 @@ export const RowItemLeadNoAsignado = ({ item, checkedElement }) => {
         />
         <CustomMoreVerticalActions
           activeOnDelete={false}
+          activeOnActive={false}
           onEdit={onEditItemSelected}
         />
       </TableCell>

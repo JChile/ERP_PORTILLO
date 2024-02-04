@@ -23,11 +23,6 @@ export const ListMarketingLead = () => {
   const onSubmitFilter = (event) => {
     // cambiamos el flag de reload
     setFlagReload((prev) => !prev);
-    // reseteamos la fecha
-    setFilterDate({
-      startDate: null,
-      endDate: null,
-    });
   };
 
   // funcion para cambiar fecha desde

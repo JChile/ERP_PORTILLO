@@ -8,31 +8,43 @@ import { MdClear, MdFilterAlt, MdFilterList } from "react-icons/md";
 import { CustomDatePicker } from "../../../../components";
 
 const ListJefeVentasLead = () => {
+  // flag reload
+  const [flagReload, setFlagReload] = useState(false);
+
   // filtros de fechas
-  const [filterState, setFilterState] = useState({
+  const [filterDate, setFilterDate] = useState({
     startDate: null,
     endDate: null,
   });
+  const { startDate, endDate } = filterDate;
 
-  // manejadores de tabs
-  const [value, setValue] = useState(0);
-  const handleChange = (event, newValue) => setValue(newValue);
-
-  const handleSearchButton = (searchText) => {};
+  // change flag
+  const onSubmitFilter = (event) => {
+    // cambiamos el flag de reload
+    setFlagReload((prev) => !prev);
+  };
 
   // funcion para cambiar fecha desde
   const onChangeDatePickerFechaDesde = (newDate) => {
-    console.log(newDate);
+    // actualizamos la fecha
+    setFilterDate({
+      ...filterDate,
+      startDate: newDate,
+    });
   };
 
   // funcion para cambiar fecha hasta
   const onChangeDatePickerFechaHasta = (newDate) => {
-    console.log(newDate);
+    // actualizamos la fecha
+    setFilterDate({
+      ...filterDate,
+      endDate: newDate,
+    });
   };
 
-  const onSubmitFilter = () => {
-    console.log("Click tareas");
-  };
+  // manejadores de tabs
+  const [value, setValue] = useState(0);
+  const handleChange = (event, newValue) => setValue(newValue);
 
   return (
     <React.Fragment>
@@ -44,10 +56,12 @@ const ListJefeVentasLead = () => {
           {/* Filtro de fechas */}
           <div className="flex gap-x-2">
             <CustomDatePicker
+              defaultValue={startDate}
               onNewFecha={onChangeDatePickerFechaDesde}
               label="Fecha Desde"
             />
             <CustomDatePicker
+              defaultValue={endDate}
               onNewFecha={onChangeDatePickerFechaHasta}
               label="Fecha Hasta"
             />
@@ -90,10 +104,18 @@ const ListJefeVentasLead = () => {
         </Tabs>
 
         <CustomTabPanel value={value} index={0}>
-          <ViewLeadAsignados />
+          <ViewLeadAsignados
+            startDate={startDate}
+            endDate={endDate}
+            flagReload={flagReload}
+          />
         </CustomTabPanel>
         <CustomTabPanel value={value} index={1}>
-          <ViewLeadsNoAsignados />
+          <ViewLeadsNoAsignados
+            startDate={startDate}
+            endDate={endDate}
+            flagReload={flagReload}
+          />
         </CustomTabPanel>
       </div>
     </React.Fragment>

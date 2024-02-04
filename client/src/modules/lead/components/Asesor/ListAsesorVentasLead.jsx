@@ -82,11 +82,6 @@ export const ListAsesorVentasLead = () => {
   const onSubmitFilter = (event) => {
     // cambiamos el flag de reload
     setFlagReload((prev) => !prev);
-    // reseteamos la fecha
-    setFilterDate({
-      startDate: null,
-      endDate: null,
-    });
   };
 
   // funcion para cambiar fecha desde
@@ -226,7 +221,7 @@ export const ListAsesorVentasLead = () => {
     setVisibleProgress(true);
     setCountSelectedElements(0);
     try {
-      let query = "estado=A&asignado=True";
+      let query = "estado=A";
       if (startDate && endDate) {
         query += `&desde=${startDate}T00:00:00&hasta=${endDate}T23:59:59`;
       }
@@ -243,7 +238,6 @@ export const ListAsesorVentasLead = () => {
       setAuxLeads(formatData);
       setVisibleProgress(false);
     } catch (error) {
-      console.log(error);
       const pilaError = combinarErrores(error);
       setFeedbackMessages({
         style_message: "error",

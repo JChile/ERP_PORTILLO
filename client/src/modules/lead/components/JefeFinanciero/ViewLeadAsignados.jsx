@@ -22,11 +22,15 @@ import {
 } from "../../../../components/select";
 import SelectAsesor from "../../../../components/select/asesor-filter/SelectAsesor";
 import { useAlertMUI, useCustomTablePagination } from "../../../../hooks";
-import { combinarErrores } from "../../../../utils";
+import { combinarErrores, formatDate_ISO861_to_date } from "../../../../utils";
 import MassActionsViewLeadsAsignados from "./acciones-masivas/MassActionsViewLeadsAsignados";
-import { CustomAlert, CustomCircularProgress } from "../../../../components";
+import {
+  CustomAlert,
+  CustomCircularProgress,
+  CustomDatePickerFilter,
+} from "../../../../components";
 
-const ViewLeadAsignados = () => {
+const ViewLeadAsignados = ({ startDate, endDate, flagReload }) => {
   const { authTokens } = useContext(AuthContext);
   const [leadAsignados, setLeadsAsignados] = useState([]);
   const [auxLeadsAsignados, setAuxLeadsAsignados] = useState([]);
@@ -35,14 +39,12 @@ const ViewLeadAsignados = () => {
   const [filterData, setFilterData] = useState({
     celular: "",
     nombre: "",
-    apellido: "",
     proyecto: "",
-    estadoLead: "",
     asesor: "",
+    fecha_asignacion: "",
   });
 
-  const { celular, nombre, apellido, proyecto, estadoLead, asesor } =
-    filterData;
+  const { celular, nombre, proyecto, asesor, fecha_asignacion } = filterData;
 
   // flag reset
   const [flagReset, setFlagReset] = useState();
@@ -70,12 +72,12 @@ const ViewLeadAsignados = () => {
     setVisibleProgress(true);
     const dataFilter = leadAsignados.filter((element) => {
       const celularElement = element["celular"].toString().toLowerCase();
-      const nombreElement = element["nombre"].toString().toLowerCase();
-      const apellidoElement = element["apellido"].toString().toLowerCase();
+      const nombreElement = `${element["nombre"]
+        .toString()
+        .toLowerCase()} ${element["apellido"].toString().toLowerCase()}`;
       const proyectoElement = element["campania"]["proyecto"]["nombre"]
         .toString()
         .toLowerCase();
-      const estadoLeadElement = element["estadoLead"].toString().toLowerCase();
       // Componente nombre completo
       const asesorNombre = element["asesor"]["first_name"]
         .toString()
@@ -83,24 +85,23 @@ const ViewLeadAsignados = () => {
       const asesorApellido = element["asesor"]["last_name"]
         .toString()
         .toLowerCase();
-      //
+
       const asesorElement = `${asesorNombre} ${asesorApellido}`;
+      const fechaAsignacionElement = formatDate_ISO861_to_date(
+        element["fecha_asignacion"]
+      );
 
       if (
         (filterData["celular"] !== "" &&
           !celularElement.includes(filterData["celular"].toLowerCase())) ||
         (filterData["nombre"] !== "" &&
           !nombreElement.includes(filterData["nombre"].toLowerCase())) ||
-        (filterData["apellido"] !== "" &&
-          !apellidoElement.includes(filterData["apellido"].toLowerCase())) ||
         (filterData["proyecto"] !== "" &&
           !proyectoElement.includes(filterData["proyecto"].toLowerCase())) ||
-        (filterData["estadoLead"] !== "" &&
-          !estadoLeadElement.includes(
-            filterData["estadoLead"].toLowerCase()
-          )) ||
         (filterData["asesor"] !== "" &&
-          !asesorElement.includes(filterData["asesor"].toLowerCase()))
+          !asesorElement.includes(filterData["asesor"].toLowerCase())) ||
+        (filterData["fecha_asignacion"] !== "" &&
+          !fechaAsignacionElement.includes(filterData["fecha_asignacion"]))
       ) {
         return false;
       }
@@ -123,8 +124,8 @@ const ViewLeadAsignados = () => {
       nombre: "",
       apellido: "",
       proyecto: "",
-      estadoLead: "",
       asesor: "",
+      fecha_asignacion: "",
     });
     setFlagReset(false);
   };
@@ -143,6 +144,15 @@ const ViewLeadAsignados = () => {
     setFilterData({
       ...filterData,
       [name]: value,
+    });
+    setFlagReset(false);
+  };
+
+  // manejador de filtros para date values
+  const handledFilterDateValues = (newDate, filterName) => {
+    setFilterData({
+      ...filterData,
+      [filterName]: newDate,
     });
     setFlagReset(false);
   };
@@ -193,10 +203,12 @@ const ViewLeadAsignados = () => {
     setVisibleProgress(true);
     setCountSelectedElements(0);
     try {
-      const rowData = await getLeads(
-        authTokens["access"],
-        "asignado=True&estado=A"
-      );
+      let query = "asignado=True&estado=A";
+      if (startDate && endDate) {
+        query += `&desde=${startDate}T00:00:00&hasta=${endDate}T23:59:59`;
+      }
+
+      const rowData = await getLeads(authTokens["access"], query);
       const formatData = rowData.map((element) => {
         return {
           ...element,
@@ -219,7 +231,7 @@ const ViewLeadAsignados = () => {
 
   useEffect(() => {
     traerLeadAsiganados();
-  }, []);
+  }, [flagReload]);
 
   return (
     <React.Fragment>
@@ -276,8 +288,8 @@ const ViewLeadAsignados = () => {
                 <TableCell>Número</TableCell>
                 <TableCell>Nombre</TableCell>
                 <TableCell>Proyecto</TableCell>
-                <TableCell>Estado</TableCell>
                 <TableCell>Asesor</TableCell>
+                <TableCell>Fecha asignacion</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -338,17 +350,17 @@ const ViewLeadAsignados = () => {
                   />
                 </TableCell>
                 <TableCell>
-                  <SelectEstadoLead
-                    size="small"
-                    onNewInput={handledFilterSelectValues}
-                    defaultValue={estadoLead}
-                  />
-                </TableCell>
-                <TableCell>
                   <SelectAsesor
                     size="small"
                     onNewInput={handledFilterSelectValues}
                     defaultValue={asesor}
+                  />
+                </TableCell>
+                <TableCell>
+                  <CustomDatePickerFilter
+                    onNewFecha={handledFilterDateValues}
+                    filterName="fecha_asignacion"
+                    defaultValue={fecha_asignacion}
                   />
                 </TableCell>
               </TableRow>

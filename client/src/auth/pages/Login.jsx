@@ -57,7 +57,7 @@ export const Login = () => {
     // si los campos enviados son validos
     if (validate.length === 0) {
       try {
-        const result = await loginUser(username, password);
+        const result = await loginUser(username, password, setVisibleProgress);
         const { detail } = result;
         // si no hubo error al obtener el detail mostramos el error
         setFeedbackMessages({

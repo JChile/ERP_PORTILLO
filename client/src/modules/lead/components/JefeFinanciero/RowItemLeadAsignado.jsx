@@ -2,6 +2,7 @@ import React from "react";
 import { Checkbox, TableCell, TableRow } from "@mui/material";
 import { CustomMoreVerticalActions } from "../../../../components";
 import { useNavigate, Link } from "react-router-dom";
+import { formatDate_ISO861_to_formatdate } from "../../../../utils";
 
 const RowItemLeadAsignado = ({ item, checkedElement }) => {
   const { id } = item;
@@ -22,6 +23,7 @@ const RowItemLeadAsignado = ({ item, checkedElement }) => {
         />
         <CustomMoreVerticalActions
           activeOnDelete={false}
+          activeOnActive={false}
           onEdit={onEditItemSelected}
         />
       </TableCell>
@@ -45,11 +47,13 @@ const RowItemLeadAsignado = ({ item, checkedElement }) => {
           {item.celular}
         </Link>
       </TableCell>
-      <TableCell>{item.nombre}</TableCell>
+      <TableCell>{`${item.nombre} ${item.apellido}`}</TableCell>
       <TableCell>{item.campania.proyecto.nombre}</TableCell>
-      <TableCell>{item.estadoLead}</TableCell>
       <TableCell>
         {item.asesor.first_name} {item.asesor.last_name}
+      </TableCell>
+      <TableCell>
+        {formatDate_ISO861_to_formatdate(item["fecha_asignacion"])}
       </TableCell>
     </TableRow>
   );

@@ -25,7 +25,7 @@ import {
 import { MassActionsViewLeadsNoAsignados } from "./acciones-masivas/MassActionsViewLeadsNoAsignados";
 import { combinarErrores } from "../../../../utils";
 
-export const ViewLeadsNoAsignados = () => {
+export const ViewLeadsNoAsignados = ({ startDate, endDate, flagReload }) => {
   // auth token
   const { authTokens } = useContext(AuthContext);
   // leads traidos de la peticion
@@ -191,11 +191,12 @@ export const ViewLeadsNoAsignados = () => {
     setVisibleProgress(true);
     setCountSelectedElements(0);
     try {
+      let query = "asignado=False&estado=A";
+      if (startDate && endDate) {
+        query += `&desde=${startDate}T00:00:00&hasta=${endDate}T23:59:59`;
+      }
       // se debe traer en un rango de 30 dias
-      const result = await getLeads(
-        authTokens["access"],
-        "asignado=False&estado=A"
-      );
+      const result = await getLeads(authTokens["access"], query);
       const formatData = result.map((element) => {
         return {
           ...element,
@@ -222,7 +223,7 @@ export const ViewLeadsNoAsignados = () => {
   // eventos que se ejecutan antes de renderizar el componente
   useEffect(() => {
     traerInformacionLeadNoAsociados();
-  }, []);
+  }, [flagReload]);
 
   return (
     <>

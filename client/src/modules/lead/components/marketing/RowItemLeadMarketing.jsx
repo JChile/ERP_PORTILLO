@@ -2,11 +2,18 @@ import React from "react";
 import { formatDate_ISO861_to_formatdate } from "../../../../utils";
 import { Checkbox, TableCell, TableRow } from "@mui/material";
 import { FiCheckCircle, FiXCircle } from "react-icons/fi";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { CustomMoreVerticalActions } from "../../../../components";
 
 export const RowItemLeadMarketing = ({ item, checkedElement }) => {
-  const { campania } = item;
+  const { campania, id } = item;
   const { proyecto } = campania;
+
+  const navigate = useNavigate();
+
+  const onEditItemSelected = () => {
+    navigate(`/lead/update/${id}`);
+  };
 
   return (
     <TableRow>
@@ -17,6 +24,10 @@ export const RowItemLeadMarketing = ({ item, checkedElement }) => {
             checkedElement(e, item.id);
           }}
           inputProps={{ "aria-label": "controlled" }}
+        />
+        <CustomMoreVerticalActions
+          onEdit={onEditItemSelected}
+          activeOnDelete={false}
         />
       </TableCell>
       <TableCell>

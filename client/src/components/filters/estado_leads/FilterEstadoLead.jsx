@@ -4,8 +4,8 @@ import { Autocomplete, TextField } from "@mui/material";
 import { AuthContext } from "../../../auth";
 
 const defaultOption = {
-  value: 0,
-  label: "Selecione un estado",
+  value: null,
+  label: "Selecione un estado de lead",
   id: null,
 };
 
@@ -13,7 +13,7 @@ export const FilterEstadoLead = ({
   defaultValue = null,
   onNewInput,
   label = "",
-  size = "small"
+  size = "small",
 }) => {
   const [options, setOptions] = useState([defaultOption]);
   const [value, setValue] = useState(defaultOption);
@@ -44,14 +44,22 @@ export const FilterEstadoLead = ({
 
   const handleChange = (event, value) => {
     onNewInput(value);
-    setValue(value);
+    // setValue(value);
   };
 
   useEffect(() => {
-    const controller = new AbortController();
-    obtenerEstadosLead();
-    return () => controller.abort();
+    // verficar si defualtvalue coincide
+    const defaultValueOption = options.find(
+      (option) => option.id === defaultValue
+    );
+    if (defaultValueOption) {
+      setValue(defaultValueOption);
+    }
   }, [defaultValue]);
+
+  useEffect(() => {
+    obtenerEstadosLead();
+  }, []);
 
   return (
     <Autocomplete

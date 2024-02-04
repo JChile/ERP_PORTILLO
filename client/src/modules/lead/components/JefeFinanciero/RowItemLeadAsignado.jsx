@@ -4,6 +4,14 @@ import { CustomMoreVerticalActions } from "../../../../components";
 import { useNavigate, Link } from "react-router-dom";
 
 const RowItemLeadAsignado = ({ item, checkedElement }) => {
+  const { id } = item;
+
+  const navigate = useNavigate();
+
+  const onEditItemSelected = () => {
+    navigate(`/lead/update/${id}`);
+  };
+
   return (
     <TableRow>
       <TableCell>
@@ -12,7 +20,10 @@ const RowItemLeadAsignado = ({ item, checkedElement }) => {
           onChange={(e) => checkedElement(e, item.id)}
           inputProps={{ "aria-label": "controlled" }}
         />
-        <CustomMoreVerticalActions />
+        <CustomMoreVerticalActions
+          activeOnDelete={false}
+          onEdit={onEditItemSelected}
+        />
       </TableCell>
       <TableCell>
         <Link

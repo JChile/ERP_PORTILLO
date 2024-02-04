@@ -20,7 +20,11 @@ import { ComponentLlamadas, ComponentWhatsapp } from "../components";
 import { AuthContext } from "../../../auth";
 import { CustomAlert, CustomCircularProgress } from "../../../components";
 import { useAlertMUI } from "../../../hooks";
-import { combinarErrores, validIdURL } from "../../../utils";
+import {
+  combinarErrores,
+  formatDate_ISO861_to_formatdate,
+  validIdURL,
+} from "../../../utils";
 import { MdArrowBack } from "react-icons/md";
 import ComponentEventos from "../components/ComponentEventos";
 import { createEvent, updateEvent } from "../../ventas/helpers/eventCases";
@@ -35,15 +39,12 @@ export const DetailLead = () => {
   const [lead, setLead] = useState({
     nombre: "",
     apellido: "",
+    asignado: false,
     celular: "",
-    telefono: "",
+    celular2: "",
     comentario: "",
     llamar: true,
-    asesor: {
-      user: {
-        username: "",
-      },
-    },
+    asesor: null,
     estado: "A",
     estadoLead: "EP",
     objecion: {
@@ -55,13 +56,18 @@ export const DetailLead = () => {
     llamadas: [],
     whatsapps: [],
     eventos: [],
+    fecha_actualizacion: null,
+    fecha_asignacion: null,
+    fecha_creacion: null,
+    fecha_desasignacion: null,
+    horaRecepcion: null,
   });
 
   const {
     nombre,
     apellido,
     celular,
-    telefono,
+    celular2,
     comentario,
     llamar,
     asesor,
@@ -72,6 +78,12 @@ export const DetailLead = () => {
     llamadas,
     whatsapps,
     eventos,
+    asignado,
+    fecha_actualizacion,
+    fecha_asignacion,
+    fecha_creacion,
+    fecha_desasignacion,
+    horaRecepcion,
   } = lead;
 
   const {
@@ -218,14 +230,13 @@ export const DetailLead = () => {
     }
   };
 
-  console.log(lead);
-
   // obtener informacion del lead
   const obtenerLead = async () => {
     if (validIdURL(numericId)) {
       try {
         setVisibleProgress(true);
         const auxLead = await getLead(numericId, authTokens.access);
+        console.log(auxLead);
         setLead(auxLead);
         // comprobar si se realizo con exito la creación del usuario
         setVisibleProgress(false);
@@ -288,21 +299,21 @@ export const DetailLead = () => {
                 <span className="block text-sm">{apellido || ""}</span>
               </label>
 
-              <label className="flex gap-y-1 ">
+              <label className="flex gap-y-1">
                 <span className="block text-sm font-medium min-w-[10rem] text-zinc-500">
                   Celular:
                 </span>
                 <span className="block text-sm">{celular || ""}</span>
               </label>
 
-              <div className="w-full flex flex-col gap-y-1">
+              <div className="flex gap-y-1">
                 <span className="block text-sm font-medium min-w-[10rem] text-zinc-500">
                   Celular2:
                 </span>
-                <span className="block text-sm">{telefono || ""}</span>
+                <span className="block text-sm">{celular2 || ""}</span>
               </div>
 
-              <label className="flex gap-y-1 ">
+              <label className="flex gap-y-1 items-center">
                 <span className="block text-sm font-medium min-w-[10rem] text-zinc-500">
                   Llamar:
                 </span>
@@ -313,6 +324,32 @@ export const DetailLead = () => {
                   inputProps={{ "aria-label": "controlled" }}
                 />
               </label>
+              {/* FECHA ENTREGA */}
+              {horaRecepcion && (
+                <label className="flex gap-y-1 ">
+                  <span className="block text-sm font-medium min-w-[10rem] text-zinc-500">
+                    Fecha recepción:
+                  </span>
+                  <span className="block text-sm">
+                    <span className="block text-sm">
+                      {formatDate_ISO861_to_formatdate(horaRecepcion)}
+                    </span>
+                  </span>
+                </label>
+              )}
+              {/* FECHA ASIGNACION */}
+              {fecha_asignacion && (
+                <label className="flex gap-y-1 ">
+                  <span className="block text-sm font-medium min-w-[10rem] text-zinc-500">
+                    Fecha asignación:
+                  </span>
+                  <span className="block text-sm">
+                    <span className="block text-sm">
+                      {formatDate_ISO861_to_formatdate(fecha_asignacion)}
+                    </span>
+                  </span>
+                </label>
+              )}
             </div>
 
             <div className="w-full flex flex-col gap-y-3">
@@ -332,10 +369,21 @@ export const DetailLead = () => {
 
               <label className="flex gap-y-1 ">
                 <span className="block text-sm font-medium min-w-[10rem] text-zinc-500">
+                  ¿Asignado?:
+                </span>
+                <span className="block text-sm">
+                  {asignado ? "Asignado" : "No asignado"}
+                </span>
+              </label>
+
+              <label className="flex gap-y-1 ">
+                <span className="block text-sm font-medium min-w-[10rem] text-zinc-500">
                   Asesor:
                 </span>
                 <span className="block text-sm">
-                  {asesor.asignado ? "No asignado" : "Asignado"}
+                  {asesor
+                    ? `${asesor["user"]["first_name"]} ${asesor["user"]["last_name"]}`
+                    : "Asesor no asignado"}
                 </span>
               </label>
 
@@ -349,6 +397,45 @@ export const DetailLead = () => {
                   </span>
                 </span>
               </label>
+              {/* FECHA DE CREACION */}
+              {fecha_creacion && (
+                <label className="flex gap-y-1 ">
+                  <span className="block text-sm font-medium min-w-[10rem] text-zinc-500">
+                    Fecha creación:
+                  </span>
+                  <span className="block text-sm">
+                    <span className="block text-sm">
+                      {formatDate_ISO861_to_formatdate(fecha_creacion)}
+                    </span>
+                  </span>
+                </label>
+              )}
+              {/* FECHA ACTUALIZACION */}
+              {
+                <label className="flex gap-y-1 ">
+                  <span className="block text-sm font-medium min-w-[10rem] text-zinc-500">
+                    Fecha actualización:
+                  </span>
+                  <span className="block text-sm">
+                    <span className="block text-sm">
+                      {formatDate_ISO861_to_formatdate(fecha_actualizacion)}
+                    </span>
+                  </span>
+                </label>
+              }
+              {/* FECHA DESASIGNACION */}
+              {fecha_desasignacion && (
+                <label className="flex gap-y-1 ">
+                  <span className="block text-sm font-medium min-w-[10rem] text-zinc-500">
+                    Fecha desasignación:
+                  </span>
+                  <span className="block text-sm">
+                    <span className="block text-sm">
+                      {formatDate_ISO861_to_formatdate(fecha_desasignacion)}
+                    </span>
+                  </span>
+                </label>
+              )}
             </div>
           </div>
 

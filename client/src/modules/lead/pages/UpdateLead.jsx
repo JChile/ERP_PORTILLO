@@ -7,7 +7,6 @@ import { useAlertMUI } from "../../../hooks";
 import {
   CustomAlert,
   CustomCircularProgress,
-  FilterCampania,
   FilterEstadoLead,
 } from "../../../components";
 import { FilterObjecion } from "../../../components/filters/objecion/FilterObjecion";
@@ -16,8 +15,10 @@ import { AuthContext } from "../../../auth";
 import { MuiTelInput } from "mui-tel-input";
 import {
   combinarErrores,
+  formatCelular,
   obtenerHoraActualFormatPostgress,
 } from "../../../utils";
+import { FilterProyectoCampania } from "../../../components/multiple-filters/proyecto-campania/FilterProyectoCampania";
 
 export const UpdateLead = () => {
   const { idLead } = useParams();
@@ -34,6 +35,7 @@ export const UpdateLead = () => {
     estadoLead: null,
     objecion: null,
     campania: null,
+    campaniaName: "",
   });
 
   const {
@@ -47,6 +49,7 @@ export const UpdateLead = () => {
     estadoLead,
     objecion,
     campania,
+    campaniaName,
   } = lead;
 
   const {
@@ -61,29 +64,38 @@ export const UpdateLead = () => {
 
   const obtenerLead = async (idLead) => {
     const result = await getLead(idLead, authTokens["access"]);
+    console.log(result);
     setLead({
       ...result,
-      asesor: Object.keys(result.asesor).length !== 0 ? result.asesor.id : null,
-      campania:
-        Object.keys(result.campania).length !== 0 ? result.campania.id : null,
-      objecion:
-        Object.keys(result.objecion).length !== 0 ? result.objecion.id : null,
-      estadoLead: result.estadoLead !== null ? result.estadoLead : null,
+      asesor: result.asesor ? result.asesor["id"] : null,
+      campania: result.campania ? result.campania["id"] : null,
+      campaniaName: result.campania ? result.campania["nombre"] : "",
+      objecion: result.objecion ? result.objecion["id"] : null,
+      estadoLead: result.estadoLead ? result.estadoLead : null,
     });
   };
-
+  // change check llamada
   const onAddCheckInputLlamar = (event) => {
     setLead({ ...lead, llamar: !llamar });
   };
+
+  // change campaña
   const onAddCampania = (item) => {
-    setLead({ ...lead, campania: item.id });
+    const label = item["id"] ? item["label"] : "";
+    setLead({ ...lead, campania: item.id, campaniaName: label });
   };
+
+  // change estado lead
   const onAddEstadoLead = (item) => {
     setLead({ ...lead, estadoLead: item.id });
   };
+
+  // change asesor
   const onAddAsesor = (item) => {
     setLead({ ...lead, asesor: item.id });
   };
+
+  // change objecion
   const onAddObjecion = (item) => {
     setLead({ ...lead, objecion: item.id });
   };
@@ -100,7 +112,9 @@ export const UpdateLead = () => {
           errors.push("El celular no cumple con el formato adecuado");
         }
       } else {
-        errors.push("El celular no cumple con el formato adecuado");
+        if (!/^9\d{8}$/.test(celular)) {
+          errors.push("El celular no cumple con el formato adecuado");
+        }
       }
     } else {
       errors.push("El celular es obligatorio");
@@ -115,7 +129,9 @@ export const UpdateLead = () => {
           errors.push("El celular 2 no cumple con el formato adecuado");
         }
       } else {
-        errors.push("El celular 2 no cumple con el formato adecuado");
+        if (!/^9\d{8}$/.test(celular2)) {
+          errors.push("El celular no cumple con el formato adecuado");
+        }
       }
     }
 
@@ -148,6 +164,7 @@ export const UpdateLead = () => {
 
     const validationMessage = validateLead();
     if (validationMessage) {
+      setVisibleProgress(false);
       // Si hay campos faltantes, mostrar una alerta con los mensajes de error concatenados
       setFeedbackMessages({
         style_message: "warning",
@@ -158,18 +175,29 @@ export const UpdateLead = () => {
       try {
         const formatLead = {
           ...lead,
-          celular: formatCelular(lead["celular"]),
+          celular: /^9\d{8}$/.test(lead["celular"])
+            ? lead["celular"]
+            : formatCelular(lead["celular"]),
           celular2:
             celular2.length !== 0 && celular2 !== "+51"
-              ? formatCelular(lead["celular2"])
+              ? /^9\d{8}$/.test(lead["celular2"])
+                ? lead["celular2"]
+                : formatCelular(lead["celular2"])
               : "",
           usuarioActualizador: currentUser["user_id"],
           fecha_actualizacion: obtenerHoraActualFormatPostgress(),
         };
-        const result = await updateLead(idLead, formatLead);
+
+        console.log(formatLead);
+        const result = await updateLead(
+          idLead,
+          formatLead,
+          authTokens["access"]
+        );
         setVisibleProgress(false);
         onNavigateBack();
       } catch (error) {
+        console.log(error);
         // ocultar el progress
         setVisibleProgress(false);
         const pilaError = combinarErrores(error);
@@ -297,12 +325,16 @@ export const UpdateLead = () => {
               <FilterAsesor defaultValue={asesor} onNewInput={onAddAsesor} />
             </label>
 
-            <label className="block flex flex-col gap-y-1">
-              <span className="block text-sm font-medium">Campaña</span>
-              <FilterCampania
-                defaultValue={campania}
-                onNewInput={onAddCampania}
-              />
+            <label className="flex content-center gap-x-2">
+              <span className="block text-sm font-medium flex items-center">
+                <span className="mr-2">Campaña: </span>
+                {campaniaName.length !== 0 && (
+                  <span className="inline-block px-2 py-1 text-sm font-semibold leading-none bg-blue-500 text-white rounded-full">
+                    {campaniaName}
+                  </span>
+                )}
+              </span>
+              <FilterProyectoCampania onAddCampania={onAddCampania} />
             </label>
 
             <label className="block flex flex-col gap-y-1">

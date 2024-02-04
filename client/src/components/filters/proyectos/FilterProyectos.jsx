@@ -12,7 +12,7 @@ export const FilterProyectos = ({
   defaultValue = null,
   onNewInput,
   label = "",
-  size = "small"
+  size = "small",
 }) => {
   const { authTokens } = useContext(AuthContext);
   const [options, setOptions] = useState([defaultOption]);
@@ -42,12 +42,23 @@ export const FilterProyectos = ({
 
   const handleChange = (event, value) => {
     onNewInput(value);
-    setValue(value);
+    // setValue(value);
   };
+
+  // use effect cuando hay cambios en el valor por defecto
+  useEffect(() => {
+    // verficar si defualtvalue coincide
+    const defaultValueOption = options.find(
+      (option) => option.id === defaultValue
+    );
+    if (defaultValueOption) {
+      setValue(defaultValueOption);
+    }
+  }, [defaultValue]);
 
   useEffect(() => {
     obtenerProyectos();
-  }, [defaultValue]);
+  }, []);
 
   return (
     <Autocomplete

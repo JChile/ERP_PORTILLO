@@ -23,7 +23,7 @@ import { useNavigate } from "react-router-dom";
 import { RiFileExcel2Fill } from "react-icons/ri";
 import { AuthContext } from "../../../../auth";
 import { useAlertMUI, useCustomTablePagination } from "../../../../hooks";
-import { MdClose, MdSearch } from "react-icons/md";
+import { MdClose, MdFilterAlt, MdSearch } from "react-icons/md";
 import { SelectBoolean, SelectProyecto } from "../../../../components/select";
 import { combinarErrores, formatDate_ISO861_to_date } from "../../../../utils";
 import { getLeads } from "../../helpers";
@@ -39,6 +39,10 @@ export const ListMarketingLead = () => {
 
   // flag reload
   const [flagReload, setFlagReload] = useState(false);
+  // change flag
+  const onSubmitFilter = (event) => {
+    setFlagReload((prev) => !prev);
+  };
 
   // flag reset
   const [flagReset, setFlagReset] = useState();
@@ -228,7 +232,7 @@ export const ListMarketingLead = () => {
     try {
       let query = "recienCreado=True";
       if (startDate && endDate) {
-        query = `?desde=${startDate}&hasta=${endDate}`;
+        query += `&desde=${startDate}T00:00:00&hasta=${endDate}T23:59:59`;
       }
       const rowData = await getLeads(authTokens["access"], query);
       console.log(rowData);
@@ -271,6 +275,14 @@ export const ListMarketingLead = () => {
               onNewFecha={onChangeDatePickerFechaHasta}
               label="Fecha Hasta"
             />
+            <Button
+              startIcon={<MdFilterAlt />}
+              variant="contained"
+              sx={{ textTransform: "capitalize" }}
+              onClick={onSubmitFilter}
+            >
+              Filtrar
+            </Button>
           </div>
           {/* Acciones de agregar */}
           <div className="flex items-end gap-x-2">

@@ -147,11 +147,10 @@ class LeadList(generics.ListCreateAPIView):
         proyecto = Proyecto.objects.get(campania=campania)
         lead_queryset = Lead.objects.filter(
             campania__in=proyecto.campania_set.all())
-        print(proyecto.campania_set.all().prefetch_related('lead_set'))
         registros_existentes = lead_queryset.filter(
             celular=request.data.get("celular"), fecha_creacion__gte=dos_meses_atras)
         if registros_existentes.exists():
-            return Response({'response': {'data': {'celular': 'El número de celular ya ha sido utilizado en los últimos dos meses.'}}})
+            return Response({'celular': f'Ya existe el número: {data["celular"]} en el proyecto {proyecto.nombre} en los últimos dos meses.'}, status.HTTP_400_BAD_REQUEST)
 
         if data.get("asesor") != None:
             data["fecha_asignacion"] = timezone.now()

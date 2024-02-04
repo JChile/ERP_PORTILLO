@@ -37,16 +37,10 @@ class LeadList(generics.ListCreateAPIView):
     queryset = Lead.objects.all()
 
     def list(self, request):
-        
+
         if not (bool(request.user.groups.first().permissions.filter(codename=PermissionLead.CAN_VIEW) or request.user.is_superuser)):
             return Response({"message": "Usuario no tiene permisos para ver leads"}, status=403)
 
-<<<<<<< HEAD
-        # asesor_queryset = User.objects.filter(is_active=True, estado= 'A').filter(groups__name__in=["asesor" or "Asesor" or "ASESOR"])
-
-=======
-   
->>>>>>> 33b3925707cd7bc76a58f2d1714463a7707c3df6
         fecha_limite = timezone.now() - timedelta(days=60)
 
         estado = request.query_params.get('estado')
@@ -251,34 +245,35 @@ class LeadDetail(generics.RetrieveUpdateDestroyAPIView):
             instancia = Lead.objects.get(pk=pk)
         except Lead.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
-        
+
         data = request.data
-        
-        if instancia.asesor != None :
+
+        if instancia.asesor != None:
             if data.get("asesor") != None and data.get("asesor") != instancia.asesor.pk:
                 data["fecha_asignacion"] = timezone.now()
                 data["fecha_desasignacion"] = timezone.now()
-                DesasignacionLeadAsesor.objects.create(lead = instancia, usuario = instancia.asesor)
-                asesor = get_or_none(User, id = data["asesor"])
-                HistoricoLeadAsesor.objects.create(lead = instancia, usuario = asesor)
+                DesasignacionLeadAsesor.objects.create(
+                    lead=instancia, usuario=instancia.asesor)
+                asesor = get_or_none(User, id=data["asesor"])
+                HistoricoLeadAsesor.objects.create(
+                    lead=instancia, usuario=asesor)
             else:
                 data["fecha_desasignacion"] = timezone.now()
-                DesasignacionLeadAsesor.objects.create(lead = instancia, usuario = instancia.asesor)
-        else :
+                DesasignacionLeadAsesor.objects.create(
+                    lead=instancia, usuario=instancia.asesor)
+        else:
             if data.get("asesor") != None:
                 data["fecha_asignacion"] = timezone.now()
-                asesor = get_or_none(User, id = data["asesor"])
-                HistoricoLeadAsesor.objects.create(lead = instancia, usuario = asesor)
-
-
+                asesor = get_or_none(User, id=data["asesor"])
+                HistoricoLeadAsesor.objects.create(
+                    lead=instancia, usuario=asesor)
 
         serializer = LeadSerializer(instancia, data=data)
         print(serializer)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
-        
- 
+
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 

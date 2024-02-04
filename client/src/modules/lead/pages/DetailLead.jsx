@@ -193,6 +193,7 @@ export const DetailLead = () => {
 
   const createEventoLead = async (itemData) => {
     try {
+      console.log(itemData)
       const result = await createEvent(itemData, authTokens["access"]);
       const createDataEvento = [...eventos, result];
       setLead({
@@ -211,6 +212,7 @@ export const DetailLead = () => {
 
   const updateEventoLead = async (id, itemData) => {
     try {
+      console.log(itemData)
       const result = await updateEvent(id, itemData, authTokens["access"]);
       const updateDataEvento = eventos.map((elemento) => {
         return elemento.id === id ? result : elemento;
@@ -258,6 +260,9 @@ export const DetailLead = () => {
   useEffect(() => {
     obtenerLead();
   }, []);
+
+
+  console.log(lead)
 
   return (
     <>

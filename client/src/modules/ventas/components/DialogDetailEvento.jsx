@@ -33,8 +33,6 @@ export const DialogDetailEvento = ({
   const [originalData, setOriginalData] = useState(selectedEvent);
   const [dataAuxEvento, setDataAuxEvento] = useState(originalData);
 
-  console.log(dataAuxEvento)
-
   const {
     id,
     separado,
@@ -49,6 +47,7 @@ export const DialogDetailEvento = ({
   } = dataAuxEvento;
 
   const [editData, setEditData] = useState(false);
+
 
   const handleChangeValue = ({ target }) => {
     const { value, name } = target;
@@ -253,6 +252,7 @@ export const DialogDetailEvento = ({
               fullWidth
               onChange={handleChangeValue}
               size="small"
+              name="observacion"
             />
             <Typography variant="subtitle1" sx={{ fontWeight: "bold" }}>
               Objección

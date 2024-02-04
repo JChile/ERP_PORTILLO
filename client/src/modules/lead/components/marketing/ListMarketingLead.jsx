@@ -48,6 +48,8 @@ export const ListMarketingLead = () => {
   // manejadores de tabs
   const [value, setValue] = useState(0);
   const handleChange = (event, newValue) => setValue(newValue);
+  const navigate = useNavigate()
+
 
   return (
     <>

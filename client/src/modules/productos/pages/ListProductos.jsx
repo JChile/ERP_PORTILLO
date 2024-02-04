@@ -194,20 +194,6 @@ export const ListProductos = () => {
     }
   };
 
-  const handleSearchButton = (pattern) => {
-    const filteredData = productos.filter((item) => {
-      const { nombre, proyecto } = item;
-      const projectName = proyecto.nombre.toLowerCase();
-      const searchPattern = pattern.toLowerCase();
-
-      return (
-        nombre.toLowerCase().includes(searchPattern) ||
-        projectName.includes(searchPattern)
-      );
-    });
-    setProductosTemporal(filteredData);
-  };
-
   useEffect(() => {
     obtenerProductos();
   }, [activeButton]);

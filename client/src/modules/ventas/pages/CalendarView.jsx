@@ -89,14 +89,6 @@ export const CalendarView = () => {
   const [desdeValue, setDesdeValue] = useState(null);
   const [hastaValue, setHastaValue] = useState(null);
 
-  const {
-    feedbackCreate,
-    feedbackMessages,
-    setFeedbackMessages,
-    handleCloseFeedback,
-    handleClickFeedback,
-  } = useAlertMUI();
-
   const handleTempFilters = (event) => {
     const { name, checked } = event.target;
     const updatedFilters = {

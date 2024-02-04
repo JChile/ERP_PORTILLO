@@ -4,7 +4,7 @@ import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { ViewLeadsNoAsignados } from "./ViewLeadsNoAsignados";
 import ViewLeadAsignados from "./ViewLeadAsignados";
-import { MdClear, MdFilterList } from "react-icons/md";
+import { MdClear, MdFilterAlt, MdFilterList } from "react-icons/md";
 import { CustomDatePicker } from "../../../../components";
 
 const ListJefeVentasLead = () => {
@@ -62,6 +62,10 @@ const ListJefeVentasLead = () => {
     });
   };
 
+  const onSubmitFilter = () => {
+    console.log("Click tareas")
+  }
+
   return (
     <React.Fragment>
       <h1 className="font-semibold text-2xl mt-2">
@@ -79,6 +83,14 @@ const ListJefeVentasLead = () => {
               onNewFecha={onChangeDatePickerFechaHasta}
               label="Fecha Hasta"
             />
+            <Button
+              startIcon={<MdFilterAlt />}
+              variant="contained"
+              sx={{ textTransform: "capitalize" }}
+              onClick={onSubmitFilter}
+            >
+              Filtrar
+            </Button>
           </div>
         </div>
         <Tabs

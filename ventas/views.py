@@ -173,7 +173,7 @@ class LeadDetail(generics.RetrieveUpdateDestroyAPIView):
         if not (bool(request.user.groups.first().permissions.filter(codename=PermissionLead.CAN_VIEW) or request.user.is_superuser)):
             return Response({"message": "Usuario no tiene permisos para ver leads"}, status=403)
 
-        if request.user.isAdmin == True:
+        if request.user.isAdmin == True or request.user.groups.first().name == "marketing" or "administrador":
             lead = get_or_none(Lead, id=pk)
             if lead == None:
                 return Response({"message": "No existe lead"}, status=404)

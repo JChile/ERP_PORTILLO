@@ -37,6 +37,7 @@ export const RowItemLeadMarketing = ({
           onEdit={onEditItemSelected}
           activeOnDelete={item["estado"] === "A"}
           onActive={onChangeLeadSelected}
+          onDelete={onChangeLeadSelected}
         />
       </TableCell>
       <TableCell>

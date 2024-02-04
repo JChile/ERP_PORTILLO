@@ -16,6 +16,9 @@ import { AuthContext } from "../../../auth";
 export const UpdateUsuarios = () => {
   const { authTokens, currentUser, logoutUser } = useContext(AuthContext);
   const { idUsuario } = useParams();
+
+  const [flagLoading, setFlagLoading] = useState(false);
+
   const numericId = parseInt(idUsuario);
   // usuario
   const [usuario, setUsuario] = useState({
@@ -231,6 +234,7 @@ export const UpdateUsuarios = () => {
         const groupsBefore = result["groups"];
         setUsuario({ ...result, groups, codigoAsesorBefore, groupsBefore });
         setVisibleProgress(false);
+        setFlagLoading(true);
       } catch (error) {
         setVisibleProgress(false);
         const pilaError = combinarErrores(error);
@@ -281,93 +285,95 @@ export const UpdateUsuarios = () => {
           <h2 className="text-xl">Login y rol de usuario</h2>
           <hr />
 
-          <div className="flex flex-col md:flex-row min-w-[242px] gap-x-2 gap-y-3">
-            <div className="w-full flex flex-col gap-y-3">
-              <label className="block flex gap-y-1 ">
-                <span className="block text-sm font-medium min-w-[10rem] text-zinc-500">
-                  Email trabajo
-                </span>
-                <CustomTextField
-                  name={"email"}
-                  value={email}
-                  handledForm={handledForm}
-                />
-              </label>
-
-              <label className="block flex gap-y-1 ">
-                <span className="block text-sm font-medium min-w-[10rem] text-zinc-500">
-                  Apellidos
-                </span>
-                <CustomTextField
-                  name={"last_name"}
-                  value={last_name}
-                  handledForm={handledForm}
-                />
-              </label>
-
-              <label className="block flex flex-row gap-y-1">
-                <span className="block text-sm font-medium text-zinc-500 flex items-center me-2">
-                  Activo
-                </span>
-                <Checkbox
-                  checked={is_active}
-                  name="is_active"
-                  onChange={onAddCheckInput}
-                  inputProps={{ "aria-label": "controlled" }}
-                />
-              </label>
-            </div>
-
-            <div className="w-full flex flex-col gap-y-3">
-              <label className="block flex gap-y-1 ">
-                <span className="block text-sm font-medium min-w-[10rem] text-zinc-500">
-                  Nombres
-                </span>
-                <CustomTextField
-                  name={"first_name"}
-                  value={first_name}
-                  handledForm={handledForm}
-                />
-              </label>
-
-              <label className="block flex gap-y-1">
-                <span className="block text-sm font-medium min-w-[10rem] text-zinc-500">
-                  Rol
-                </span>
-                <div className="flex-1">
-                  <FilterRol
-                    defaultValue={groups["id"]}
-                    onNewInput={onAddGroup}
-                  />
-                </div>
-              </label>
-
-              {groups["name"] === "asesor" && (
+          {flagLoading && (
+            <div className="flex flex-col md:flex-row min-w-[242px] gap-x-2 gap-y-3">
+              <div className="w-full flex flex-col gap-y-3">
                 <label className="block flex gap-y-1 ">
                   <span className="block text-sm font-medium min-w-[10rem] text-zinc-500">
-                    Código asesor
+                    Email trabajo
                   </span>
                   <CustomTextField
-                    name={"codigoAsesor"}
-                    value={codigoAsesor === null ? "" : codigoAsesor}
+                    name={"email"}
+                    value={email}
                     handledForm={handledForm}
                   />
                 </label>
-              )}
 
-              <label className="block flex flex-row gap-y-1">
-                <span className="block text-sm font-medium text-zinc-500 flex items-center me-2">
-                  Es administrador
-                </span>
-                <Checkbox
-                  checked={isAdmin}
-                  name="isAdmin"
-                  onChange={onAddCheckInput}
-                  inputProps={{ "aria-label": "controlled" }}
-                />
-              </label>
+                <label className="block flex gap-y-1 ">
+                  <span className="block text-sm font-medium min-w-[10rem] text-zinc-500">
+                    Apellidos
+                  </span>
+                  <CustomTextField
+                    name={"last_name"}
+                    value={last_name}
+                    handledForm={handledForm}
+                  />
+                </label>
+
+                <label className="block flex flex-row gap-y-1">
+                  <span className="block text-sm font-medium text-zinc-500 flex items-center me-2">
+                    Activo
+                  </span>
+                  <Checkbox
+                    checked={is_active}
+                    name="is_active"
+                    onChange={onAddCheckInput}
+                    inputProps={{ "aria-label": "controlled" }}
+                  />
+                </label>
+              </div>
+
+              <div className="w-full flex flex-col gap-y-3">
+                <label className="block flex gap-y-1 ">
+                  <span className="block text-sm font-medium min-w-[10rem] text-zinc-500">
+                    Nombres
+                  </span>
+                  <CustomTextField
+                    name={"first_name"}
+                    value={first_name}
+                    handledForm={handledForm}
+                  />
+                </label>
+
+                <label className="block flex gap-y-1">
+                  <span className="block text-sm font-medium min-w-[10rem] text-zinc-500">
+                    Rol
+                  </span>
+                  <div className="flex-1">
+                    <FilterRol
+                      defaultValue={groups["id"]}
+                      onNewInput={onAddGroup}
+                    />
+                  </div>
+                </label>
+
+                {groups["name"] === "asesor" && (
+                  <label className="block flex gap-y-1 ">
+                    <span className="block text-sm font-medium min-w-[10rem] text-zinc-500">
+                      Código asesor
+                    </span>
+                    <CustomTextField
+                      name={"codigoAsesor"}
+                      value={codigoAsesor === null ? "" : codigoAsesor}
+                      handledForm={handledForm}
+                    />
+                  </label>
+                )}
+
+                <label className="block flex flex-row gap-y-1">
+                  <span className="block text-sm font-medium text-zinc-500 flex items-center me-2">
+                    Es administrador
+                  </span>
+                  <Checkbox
+                    checked={isAdmin}
+                    name="isAdmin"
+                    onChange={onAddCheckInput}
+                    inputProps={{ "aria-label": "controlled" }}
+                  />
+                </label>
+              </div>
             </div>
-          </div>
+          )}
         </div>
       </div>
       <div className="flex justify-center mt-4">

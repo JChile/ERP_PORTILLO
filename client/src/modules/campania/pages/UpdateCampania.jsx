@@ -21,6 +21,8 @@ export const UpdateCampania = () => {
   const { idCampania } = useParams();
   const { authTokens, currentUser } = useContext(AuthContext);
 
+  const [flagLoading, setFlagLoading] = useState(false);
+
   const [campaign, setCampaign] = useState({
     nombre: "",
     fecha_estimada: "",
@@ -198,6 +200,7 @@ export const UpdateCampania = () => {
         descripcion: result.descripcion === null ? "" : result.descripcion,
       });
       setVisibleProgress(false);
+      setFlagLoading(true);
     } catch (error) {
       // ocultar el progress
       setVisibleProgress(false);
@@ -220,150 +223,148 @@ export const UpdateCampania = () => {
       <div className="relative border-2 rounded-md border-inherit p-5">
         <h1 className="text-lg font-bold">Actualizar campaña</h1>
         <hr className="my-4"></hr>
-        <form
-          method="post"
-          className="min-w-[242px] flex flex-col gap-y-6 gap-x-8"
-        >
-          <div className="flex flex-row gap-y-6 gap-x-8">
-            <div className="w-6/12 flex flex-col gap-y-5">
-              <label className="block flex flex-col gap-y-1 ">
-                <span className="after:content-['*'] after:ml-0.5 after:text-yellow-500 block text-sm font-medium">
-                  Nombre de la campaña
-                </span>
-                <input
-                  type="text"
-                  name="nombre"
-                  className="mt-1 px-3 py-2 bg-white border shadow-sm border-slate-300 placeholder-slate-400 focus:outline-none focus:border-sky-500 focus:ring-sky-500 block w-full rounded-md sm:text-sm focus:ring-1"
-                  placeholder="Nombre de la campaña"
-                  value={nombre}
-                  onChange={handledForm}
-                />
-              </label>
+        {flagLoading && (
+          <form
+            method="post"
+            className="min-w-[242px] flex flex-col gap-y-6 gap-x-8"
+          >
+            <div className="flex flex-row gap-y-6 gap-x-8">
+              <div className="w-6/12 flex flex-col gap-y-5">
+                <label className="block flex flex-col gap-y-1 ">
+                  <span className="after:content-['*'] after:ml-0.5 after:text-yellow-500 block text-sm font-medium">
+                    Nombre de la campaña
+                  </span>
+                  <input
+                    type="text"
+                    name="nombre"
+                    className="mt-1 px-3 py-2 bg-white border shadow-sm border-slate-300 placeholder-slate-400 focus:outline-none focus:border-sky-500 focus:ring-sky-500 block w-full rounded-md sm:text-sm focus:ring-1"
+                    placeholder="Nombre de la campaña"
+                    value={nombre}
+                    onChange={handledForm}
+                  />
+                </label>
 
-              <label className="block flex flex-col gap-y-1">
-                <span className="after:content-['*'] after:ml-0.5 after:text-yellow-500 block text-sm font-medium">
-                  Costo estimado
-                </span>
-                <input
-                  type="number"
-                  name="coste_estimado"
-                  className="mt-1 px-3 py-2  bg-white border shadow-sm border-slate-300 placeholder-slate-400 focus:outline-none focus:border-sky-500 focus:ring-sky-500 block w-full rounded-md sm:text-sm focus:ring-1"
-                  placeholder="Costo estimado"
-                  value={coste_estimado}
-                  onChange={handledForm}
-                />
-              </label>
+                <label className="block flex flex-col gap-y-1">
+                  <span className="after:content-['*'] after:ml-0.5 after:text-yellow-500 block text-sm font-medium">
+                    Costo estimado
+                  </span>
+                  <input
+                    type="number"
+                    name="coste_estimado"
+                    className="mt-1 px-3 py-2  bg-white border shadow-sm border-slate-300 placeholder-slate-400 focus:outline-none focus:border-sky-500 focus:ring-sky-500 block w-full rounded-md sm:text-sm focus:ring-1"
+                    placeholder="Costo estimado"
+                    value={coste_estimado}
+                    onChange={handledForm}
+                  />
+                </label>
 
-              <label
-                htmlFor="fecha_estimada"
-                className="block flex flex-col gap-y-1"
-              >
-                <span className="after:content-['*'] after:ml-0.5 after:text-yellow-500 block text-sm font-medium">
-                  Fecha estimado
-                </span>
-                <CustomDatePicker
-                  onNewFecha={handleFechaInicioEstimado}
-                  defaultValue={fecha_estimada}
-                />
-              </label>
+                <label
+                  htmlFor="fecha_estimada"
+                  className="block flex flex-col gap-y-1"
+                >
+                  <span className="after:content-['*'] after:ml-0.5 after:text-yellow-500 block text-sm font-medium">
+                    Fecha estimado
+                  </span>
+                  <CustomDatePicker
+                    onNewFecha={handleFechaInicioEstimado}
+                    defaultValue={fecha_estimada}
+                  />
+                </label>
 
-              <label className="block flex flex-col gap-y-1">
-                <span className="after:content-['*'] after:ml-0.5 after:text-yellow-500 block text-sm font-medium">
-                  Proyecto
-                </span>
-                {proyecto && (
+                <label className="block flex flex-col gap-y-1">
+                  <span className="after:content-['*'] after:ml-0.5 after:text-yellow-500 block text-sm font-medium">
+                    Proyecto
+                  </span>
                   <FilterProyectos
                     defaultValue={proyecto}
                     onNewInput={onAddProject}
                   />
-                )}
-              </label>
-            </div>
+                </label>
+              </div>
 
-            <div className="w-6/12 flex flex-col gap-y-5">
-              <label className="block flex flex-col gap-y-1">
-                <span className="after:content-['*'] after:ml-0.5 after:text-yellow-500 block text-sm font-medium">
-                  Estado inicial
-                </span>
-                <Select
-                  name="estado"
-                  value={estado}
-                  onChange={handledForm}
-                  style={{
-                    height: "2.64rem", // Ajusta el valor según tus necesidades
-                    paddingTop: "1rem", // Ajusta el valor según tus necesidades
-                    paddingBottom: "1rem",
-                  }}
-                  className="bg-white border shadow-sm border-slate-300 placeholder-slate-400 focus:outline-none focus:border-sky-500 focus:ring-sky-500 block w-full rounded-md sm:text-sm focus:ring-1"
-                >
-                  <MenuItem value="A">Activo</MenuItem>
-                  <MenuItem value="I">Inactivo</MenuItem>
-                </Select>
-              </label>
+              <div className="w-6/12 flex flex-col gap-y-5">
+                <label className="block flex flex-col gap-y-1">
+                  <span className="after:content-['*'] after:ml-0.5 after:text-yellow-500 block text-sm font-medium">
+                    Estado inicial
+                  </span>
+                  <Select
+                    name="estado"
+                    value={estado}
+                    onChange={handledForm}
+                    style={{
+                      height: "2.64rem", // Ajusta el valor según tus necesidades
+                      paddingTop: "1rem", // Ajusta el valor según tus necesidades
+                      paddingBottom: "1rem",
+                    }}
+                    className="bg-white border shadow-sm border-slate-300 placeholder-slate-400 focus:outline-none focus:border-sky-500 focus:ring-sky-500 block w-full rounded-md sm:text-sm focus:ring-1"
+                  >
+                    <MenuItem value="A">Activo</MenuItem>
+                    <MenuItem value="I">Inactivo</MenuItem>
+                  </Select>
+                </label>
 
-              <label className="block flex flex-col gap-y-1">
-                <span className="after:content-['*'] after:ml-0.5 after:text-yellow-500 block text-sm font-medium">
-                  Costo real
-                </span>
-                <input
-                  type="number"
-                  name="coste_real"
-                  className="mt-1 px-3 py-2 bg-white border shadow-sm border-slate-300 placeholder-slate-400 focus:outline-none focus:border-sky-500 focus:ring-sky-500 block w-full rounded-md sm:text-sm focus:ring-1"
-                  placeholder="Costo real"
-                  value={coste_real}
-                  onChange={handledForm}
-                />
-              </label>
+                <label className="block flex flex-col gap-y-1">
+                  <span className="after:content-['*'] after:ml-0.5 after:text-yellow-500 block text-sm font-medium">
+                    Costo real
+                  </span>
+                  <input
+                    type="number"
+                    name="coste_real"
+                    className="mt-1 px-3 py-2 bg-white border shadow-sm border-slate-300 placeholder-slate-400 focus:outline-none focus:border-sky-500 focus:ring-sky-500 block w-full rounded-md sm:text-sm focus:ring-1"
+                    placeholder="Costo real"
+                    value={coste_real}
+                    onChange={handledForm}
+                  />
+                </label>
 
-              <label className="block flex flex-col gap-y-1">
-                <span className="after:content-['*'] after:ml-0.5 after:text-yellow-500 block text-sm font-medium">
-                  Fecha estimado cierre
-                </span>
-                <CustomDatePicker
-                  defaultValue={fecha_cierre}
-                  onNewFecha={handleFechaCierreEstimado}
-                  disabledPast={true}
-                />
-              </label>
+                <label className="block flex flex-col gap-y-1">
+                  <span className="after:content-['*'] after:ml-0.5 after:text-yellow-500 block text-sm font-medium">
+                    Fecha estimado cierre
+                  </span>
+                  <CustomDatePicker
+                    defaultValue={fecha_cierre}
+                    onNewFecha={handleFechaCierreEstimado}
+                    disabledPast={true}
+                  />
+                </label>
 
-              <label className="block flex flex-col gap-y-1">
-                <span className="after:content-['*'] after:ml-0.5 after:text-yellow-500 block text-sm font-medium">
-                  Subcategoria
-                </span>
-                {categoria && (
+                <label className="block flex flex-col gap-y-1">
+                  <span className="after:content-['*'] after:ml-0.5 after:text-yellow-500 block text-sm font-medium">
+                    Subcategoria
+                  </span>
                   <FilterSubcategoria
                     defaultValue={categoria}
                     onNewInput={onAddCategory}
                   />
-                )}
+                </label>
+              </div>
+            </div>
+            <div>
+              <label
+                htmlFor="descripcion"
+                className="block flex flex-col gap-y-1"
+              >
+                <span className="after:content-['*'] after:ml-0.5 after:text-yellow-500 block text-sm font-medium">
+                  Descripción
+                </span>
+                <TextField
+                  name="descripcion"
+                  onChange={handledForm}
+                  id="descripcion"
+                  value={descripcion}
+                  multiline
+                  rows={2}
+                  inputProps={{
+                    style: {
+                      width: "100%",
+                      overflowWrap: "break-word",
+                    },
+                  }}
+                />
               </label>
             </div>
-          </div>
-          <div>
-            <label
-              htmlFor="descripcion"
-              className="block flex flex-col gap-y-1"
-            >
-              <span className="after:content-['*'] after:ml-0.5 after:text-yellow-500 block text-sm font-medium">
-                Descripción
-              </span>
-              <TextField
-                name="descripcion"
-                onChange={handledForm}
-                id="descripcion"
-                value={descripcion}
-                multiline
-                rows={2}
-                inputProps={{
-                  style: {
-                    width: "100%",
-                    overflowWrap: "break-word",
-                  },
-                }}
-              />
-            </label>
-          </div>
-        </form>
+          </form>
+        )}
       </div>
       <div className="flex justify-center mt-4 mb-4">
         <button

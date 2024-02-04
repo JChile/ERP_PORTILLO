@@ -74,6 +74,7 @@ export const ComponentWhatsapp = ({
     const formatData = {
       ...body,
       lead: lead,
+      asesor: currentUser["user_id"],
       usuarioCreador: currentUser["user_id"],
     };
     onCreateDataWhatsapp(formatData);

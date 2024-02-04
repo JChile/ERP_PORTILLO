@@ -61,7 +61,7 @@ export const FilterSubcategoria = ({ onNewInput, defaultValue = null }) => {
       disableClearable
       getOptionLabel={(option) => option.label}
       onChange={handleChange}
-      isOptionEqualToValue={(option, value) => option.id == value.id}
+      isOptionEqualToValue={(option, value) => option.id === value.id}
       renderInput={(params) => <TextField {...params} size="small" />}
     />
   );

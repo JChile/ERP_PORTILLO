@@ -16,14 +16,18 @@ import {
 } from "@mui/material";
 import { RowItemLeadNoAsignado } from "./RowItemLeadNoAsignado";
 import { MdClose, MdSearch } from "react-icons/md";
-import { CustomAlert, CustomCircularProgress } from "../../../../components";
+import {
+  CustomAlert,
+  CustomCircularProgress,
+  CustomDatePickerFilter,
+} from "../../../../components";
 import { useAlertMUI, useCustomTablePagination } from "../../../../hooks";
 import {
   SelectEstadoLead,
   SelectProyecto,
 } from "../../../../components/select";
 import { MassActionsViewLeadsNoAsignados } from "./acciones-masivas/MassActionsViewLeadsNoAsignados";
-import { combinarErrores } from "../../../../utils";
+import { combinarErrores, formatDate_ISO861_to_date } from "../../../../utils";
 
 export const ViewLeadsNoAsignados = ({ startDate, endDate, flagReload }) => {
   // auth token
@@ -38,11 +42,10 @@ export const ViewLeadsNoAsignados = ({ startDate, endDate, flagReload }) => {
   const [filterData, setFilterData] = useState({
     celular: "",
     nombre: "",
-    apellido: "",
     proyecto: "",
-    estadoLead: "",
+    fecha_desasignacion: "",
   });
-  const { celular, nombre, apellido, proyecto, estadoLead } = filterData;
+  const { celular, nombre, proyecto, fecha_desasignacion } = filterData;
 
   // flag reset
   const [flagReset, setFlagReset] = useState(false);
@@ -72,12 +75,15 @@ export const ViewLeadsNoAsignados = ({ startDate, endDate, flagReload }) => {
     setVisibleProgress(true);
     const dataFilter = leadsNoAsignados.filter((element) => {
       const celularElement = element["celular"].toString().toLowerCase();
-      const nombreElement = element["nombre"].toString().toLowerCase();
-      const apellidoElement = element["apellido"].toString().toLowerCase();
+      const nombreElement = `${element["nombre"]
+        .toString()
+        .toLowerCase()} ${element["apellido"].toString().toLowerCase()}`;
       const proyectoElement = element["campania"]["proyecto"]["nombre"]
         .toString()
         .toLowerCase();
-      const estadoLeadElement = element["estadoLead"].toString().toLowerCase();
+      const fechaDesasignacionElement = formatDate_ISO861_to_date(
+        element["fecha_desasignacion"]
+      );
 
       // Verifica si alguna propiedad de filterData está vacía y omite el filtro
       if (
@@ -85,12 +91,12 @@ export const ViewLeadsNoAsignados = ({ startDate, endDate, flagReload }) => {
           !celularElement.includes(filterData["celular"].toLowerCase())) ||
         (filterData["nombre"] !== "" &&
           !nombreElement.includes(filterData["nombre"].toLowerCase())) ||
-        (filterData["apellido"] !== "" &&
-          !apellidoElement.includes(filterData["apellido"].toLowerCase())) ||
         (filterData["proyecto"] !== "" &&
           !proyectoElement.includes(filterData["proyecto"].toLowerCase())) ||
-        (filterData["estadoLead"] !== "" &&
-          !estadoLeadElement.includes(filterData["estadoLead"].toLowerCase()))
+        (filterData["fecha_desasignacion"] !== "" &&
+          !fechaDesasignacionElement.includes(
+            filterData["fecha_desasignacion"].toLowerCase()
+          ))
       ) {
         return false;
       }
@@ -116,9 +122,8 @@ export const ViewLeadsNoAsignados = ({ startDate, endDate, flagReload }) => {
     setFilterData({
       celular: "",
       nombre: "",
-      apellido: "",
       proyecto: "",
-      estadoLead: "",
+      fecha_desasignacion: "",
     });
     // cambiamos el flag de reset
     setFlagReset(false);
@@ -143,6 +148,15 @@ export const ViewLeadsNoAsignados = ({ startDate, endDate, flagReload }) => {
       [name]: value,
     });
     // cuando se detecte un cambio, cambiamos el valor del flag de reset
+    setFlagReset(false);
+  };
+
+  // manejador de filtros para date values
+  const handledFilterDateValues = (newDate, filterName) => {
+    setFilterData({
+      ...filterData,
+      [filterName]: newDate,
+    });
     setFlagReset(false);
   };
 
@@ -191,7 +205,7 @@ export const ViewLeadsNoAsignados = ({ startDate, endDate, flagReload }) => {
     setVisibleProgress(true);
     setCountSelectedElements(0);
     try {
-      let query = "asignado=False&estado=A";
+      let query = "asignado=False&estado=A&recienCreado=False";
       if (startDate && endDate) {
         query += `&desde=${startDate}T00:00:00&hasta=${endDate}T23:59:59`;
       }
@@ -278,9 +292,8 @@ export const ViewLeadsNoAsignados = ({ startDate, endDate, flagReload }) => {
                 </TableCell>
                 <TableCell>Celular</TableCell>
                 <TableCell>Nombre</TableCell>
-                <TableCell>Apellido</TableCell>
                 <TableCell>Proyecto</TableCell>
-                <TableCell>Estado lead</TableCell>
+                <TableCell>Fecha desasignacion</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -337,17 +350,6 @@ export const ViewLeadsNoAsignados = ({ startDate, endDate, flagReload }) => {
                   />
                 </TableCell>
                 <TableCell>
-                  <TextField
-                    variant="outlined"
-                    placeholder="Apellido"
-                    size="small"
-                    type="text"
-                    name="apellido"
-                    value={apellido}
-                    onChange={handledFilterInputValues}
-                  />
-                </TableCell>
-                <TableCell>
                   <SelectProyecto
                     onNewInput={handledFilterSelectValues}
                     size="small"
@@ -355,10 +357,10 @@ export const ViewLeadsNoAsignados = ({ startDate, endDate, flagReload }) => {
                   />
                 </TableCell>
                 <TableCell>
-                  <SelectEstadoLead
-                    onNewInput={handledFilterSelectValues}
-                    size="small"
-                    defaultValue={estadoLead}
+                  <CustomDatePickerFilter
+                    onNewFecha={handledFilterDateValues}
+                    filterName="fecha_desasignacion"
+                    defaultValue={fecha_desasignacion}
                   />
                 </TableCell>
               </TableRow>

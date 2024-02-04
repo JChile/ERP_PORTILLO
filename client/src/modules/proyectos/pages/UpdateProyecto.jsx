@@ -17,6 +17,9 @@ import CarouselComponentVideoAdd from "../components/CarouselVideoAdd";
 export const UpdateProyecto = () => {
   const { authTokens, currentUser } = useContext(AuthContext);
   const { idProyecto } = useParams();
+
+  const [flagLoading, setFlagLoading] = useState(false);
+
   const numericId = parseInt(idProyecto);
   const [project, setProject] = useState({
     nombre: "",
@@ -52,6 +55,7 @@ export const UpdateProyecto = () => {
           videos: result.videos,
         });
         setVisibleProgress(false);
+        setFlagLoading(true);
       } catch (error) {
         setVisibleProgress(false);
         const pilaError = combinarErrores(error);
@@ -237,118 +241,120 @@ export const UpdateProyecto = () => {
       <div className="relative p-5">
         <h1 className="text-lg font-bold">Modificar Proyecto</h1>
         <hr className="my-4"></hr>
-        <form
-          method="post"
-          className="min-w-[242px] flex flex-col gap-y-6 gap-x-8"
-        >
-          <div className="flex flex-row gap-y-6 gap-x-8">
-            <div className="w-6/12 flex flex-col gap-y-5">
-              <label className="flex flex-col gap-y-1 ">
-                <span className="after:content-['*'] after:ml-0.5 after:text-yellow-500 block text-sm font-medium">
-                  Nombre del proyecto
-                </span>
-                <input
-                  type="text"
-                  name="nombre"
-                  className="mt-1 px-3 py-2 bg-white border shadow-sm border-slate-300 placeholder-slate-400 focus:outline-none focus:border-sky-500 focus:ring-sky-500 block w-full rounded-md sm:text-sm focus:ring-1"
-                  placeholder="Nombre del proyecto"
-                  autoComplete="off"
-                  value={nombre}
-                  onChange={handledForm}
-                />
-              </label>
-            </div>
+        {flagLoading && (
+          <form
+            method="post"
+            className="min-w-[242px] flex flex-col gap-y-6 gap-x-8"
+          >
+            <div className="flex flex-row gap-y-6 gap-x-8">
+              <div className="w-6/12 flex flex-col gap-y-5">
+                <label className="flex flex-col gap-y-1 ">
+                  <span className="after:content-['*'] after:ml-0.5 after:text-yellow-500 block text-sm font-medium">
+                    Nombre del proyecto
+                  </span>
+                  <input
+                    type="text"
+                    name="nombre"
+                    className="mt-1 px-3 py-2 bg-white border shadow-sm border-slate-300 placeholder-slate-400 focus:outline-none focus:border-sky-500 focus:ring-sky-500 block w-full rounded-md sm:text-sm focus:ring-1"
+                    placeholder="Nombre del proyecto"
+                    autoComplete="off"
+                    value={nombre}
+                    onChange={handledForm}
+                  />
+                </label>
+              </div>
 
-            <div className="w-6/12 flex flex-col gap-y-5">
-              <label htmlFor="ubicacion" className="flex flex-col gap-y-1">
+              <div className="w-6/12 flex flex-col gap-y-5">
+                <label htmlFor="ubicacion" className="flex flex-col gap-y-1">
+                  <span className="after:content-['*'] after:ml-0.5 after:text-yellow-500 block text-sm font-medium">
+                    Ubicacion
+                  </span>
+                  <input
+                    type="text"
+                    name="ubicacion"
+                    id="ubicacion"
+                    placeholder="Ubicacion"
+                    value={ubicacion}
+                    onChange={handledForm}
+                    className="mt-1 px-3 py-2 bg-white border shadow-sm border-slate-300 placeholder-slate-400 focus:outline-none focus:border-sky-500 focus:ring-sky-500 block w-full rounded-md sm:text-sm focus:ring-1"
+                  />
+                </label>
+
+                <label className="block flex flex-col gap-y-1">
+                  <span className="after:content-['*'] after:ml-0.5 after:text-yellow-500 block text-sm font-medium">
+                    Estado inicial
+                  </span>
+                  <Select
+                    name="estado"
+                    value={estado}
+                    onChange={handledForm}
+                    style={{
+                      height: "2.64rem", // Ajusta el valor según tus necesidades
+                      paddingTop: "1rem", // Ajusta el valor según tus necesidades
+                      paddingBottom: "1rem",
+                    }}
+                    className="bg-white border shadow-sm border-slate-300 placeholder-slate-400 focus:outline-none focus:border-sky-500 focus:ring-sky-500 block w-full rounded-md sm:text-sm focus:ring-1"
+                  >
+                    <MenuItem value="A">Activo</MenuItem>
+                    <MenuItem value="I">Inactivo</MenuItem>
+                  </Select>
+                </label>
+              </div>
+            </div>
+            <div>
+              <label htmlFor="descripcion" className=" flex flex-col gap-y-1">
                 <span className="after:content-['*'] after:ml-0.5 after:text-yellow-500 block text-sm font-medium">
-                  Ubicacion
+                  Descripción
                 </span>
-                <input
-                  type="text"
-                  name="ubicacion"
-                  id="ubicacion"
-                  placeholder="Ubicacion"
-                  value={ubicacion}
+                <TextField
+                  name="descripcion"
                   onChange={handledForm}
-                  className="mt-1 px-3 py-2 bg-white border shadow-sm border-slate-300 placeholder-slate-400 focus:outline-none focus:border-sky-500 focus:ring-sky-500 block w-full rounded-md sm:text-sm focus:ring-1"
-                />
-              </label>
-              
-              <label className="block flex flex-col gap-y-1">
-                <span className="after:content-['*'] after:ml-0.5 after:text-yellow-500 block text-sm font-medium">
-                  Estado inicial
-                </span>
-                <Select
-                  name="estado"
-                  value={estado}
-                  onChange={handledForm}
-                  style={{
-                    height: "2.64rem", // Ajusta el valor según tus necesidades
-                    paddingTop: "1rem", // Ajusta el valor según tus necesidades
-                    paddingBottom: "1rem",
+                  id="descripcion"
+                  value={descripcion}
+                  multiline
+                  rows={2}
+                  inputProps={{
+                    style: {
+                      width: "100%",
+                      overflowWrap: "break-word",
+                    },
                   }}
-                  className="bg-white border shadow-sm border-slate-300 placeholder-slate-400 focus:outline-none focus:border-sky-500 focus:ring-sky-500 block w-full rounded-md sm:text-sm focus:ring-1"
-                >
-                  <MenuItem value="A">Activo</MenuItem>
-                  <MenuItem value="I">Inactivo</MenuItem>
-                </Select>
+                />
               </label>
             </div>
-          </div>
-          <div>
-            <label htmlFor="descripcion" className=" flex flex-col gap-y-1">
-              <span className="after:content-['*'] after:ml-0.5 after:text-yellow-500 block text-sm font-medium">
-                Descripción
-              </span>
-              <TextField
-                name="descripcion"
-                onChange={handledForm}
-                id="descripcion"
-                value={descripcion}
-                multiline
-                rows={2}
-                inputProps={{
-                  style: {
-                    width: "100%",
-                    overflowWrap: "break-word",
-                  },
-                }}
-              />
-            </label>
-          </div>
-          <div className="flex flex-row gap-y-6 gap-x-8">
-            <div className="w-6/12 flex flex-col gap-y-5 border border-gray-300 p-4 rounded-md">
-              <h3>Imagenes</h3>
-              <div className="items-center mx-auto">
-                <CarouselComponentImageAdd
-                  images={imagenes}
-                  handleFileSelect={handleFileSelect}
-                  obtenerProyecto={obtenerProyecto}
-                />
+            <div className="flex flex-row gap-y-6 gap-x-8">
+              <div className="w-6/12 flex flex-col gap-y-5 border border-gray-300 p-4 rounded-md">
+                <h3>Imagenes</h3>
+                <div className="items-center mx-auto">
+                  <CarouselComponentImageAdd
+                    images={imagenes}
+                    handleFileSelect={handleFileSelect}
+                    obtenerProyecto={obtenerProyecto}
+                  />
+                </div>
+                <div
+                  className="flex gap-2 mt-4"
+                  id="preview-containerImage"
+                ></div>
               </div>
-              <div
-                className="flex gap-2 mt-4"
-                id="preview-containerImage"
-              ></div>
-            </div>
 
-            <div className="w-6/12 flex flex-col gap-y-5 border border-gray-300 p-4 rounded-md">
-              <h3>Videos</h3>
-              <div className="items-center mx-auto">
-                <CarouselComponentVideoAdd
-                  videos={videos}
-                  handleFileSelect={handleFileSelect}
-                  obtenerProyecto={obtenerProyecto}
-                />
+              <div className="w-6/12 flex flex-col gap-y-5 border border-gray-300 p-4 rounded-md">
+                <h3>Videos</h3>
+                <div className="items-center mx-auto">
+                  <CarouselComponentVideoAdd
+                    videos={videos}
+                    handleFileSelect={handleFileSelect}
+                    obtenerProyecto={obtenerProyecto}
+                  />
+                </div>
+                <div
+                  className="flex gap-2 mt-4"
+                  id="preview-containerVideo"
+                ></div>
               </div>
-              <div
-                className="flex gap-2 mt-4"
-                id="preview-containerVideo"
-              ></div>
             </div>
-          </div>
-        </form>
+          </form>
+        )}
       </div>
       <div className="flex justify-center mt-4 mb-4">
         <button

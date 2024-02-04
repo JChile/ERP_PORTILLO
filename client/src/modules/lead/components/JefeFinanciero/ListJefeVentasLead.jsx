@@ -8,7 +8,6 @@ import { MdClear, MdFilterList } from "react-icons/md";
 import { CustomDatePicker } from "../../../../components";
 
 const ListJefeVentasLead = () => {
-  const [error, setError] = useState(false);
   const [value, setValue] = useState(0);
   // filtros de fechas
   const [filterState, setFilterState] = useState({

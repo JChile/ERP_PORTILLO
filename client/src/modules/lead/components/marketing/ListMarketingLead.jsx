@@ -37,6 +37,9 @@ export const ListMarketingLead = () => {
   const [auxLeads, setAuxLeads] = useState([]);
   const [checked, setChecked] = useState(false);
 
+  // flag reload
+  const [flagReload, setFlagReload] = useState(false);
+
   // flag reset
   const [flagReset, setFlagReset] = useState();
   const [countSelectedElements, setCountSelectedElements] = useState(0);
@@ -64,10 +67,11 @@ export const ListMarketingLead = () => {
   const [visibleProgress, setVisibleProgress] = useState(false);
 
   // filtros de fechas
-  const [filterState, setFilterState] = useState({
+  const [filterDate, setFilterDate] = useState({
     startDate: null,
     endDate: null,
   });
+  const { startDate, endDate } = filterDate;
 
   // numero de items seleccionados
   const [filterData, setFilterData] = useState({
@@ -83,12 +87,18 @@ export const ListMarketingLead = () => {
 
   // funcion para cambiar fecha desde
   const onChangeDatePickerFechaDesde = (newDate) => {
-    console.log(newDate);
+    setFilterDate({
+      ...filterDate,
+      startDate: newDate,
+    });
   };
 
   // funcion para cambiar fecha hasta
   const onChangeDatePickerFechaHasta = (newDate) => {
-    console.log(newDate);
+    setFilterDate({
+      ...filterDate,
+      endDate: newDate,
+    });
   };
 
   const handledFilterData = () => {
@@ -216,7 +226,11 @@ export const ListMarketingLead = () => {
     setVisibleProgress(true);
     setCountSelectedElements(0);
     try {
-      const rowData = await getLeads(authTokens["access"], "recienCreado=True");
+      let query = "recienCreado=True";
+      if (startDate && endDate) {
+        query = `?desde=${startDate}&hasta=${endDate}`;
+      }
+      const rowData = await getLeads(authTokens["access"], query);
       console.log(rowData);
       const formatData = rowData.map((element) => {
         return {
@@ -240,7 +254,7 @@ export const ListMarketingLead = () => {
 
   useEffect(() => {
     traerLeads();
-  }, []);
+  }, [flagReload]);
 
   return (
     <>

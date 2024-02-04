@@ -192,7 +192,10 @@ export const ViewLeadsNoAsignados = () => {
     setCountSelectedElements(0);
     try {
       // se debe traer en un rango de 30 dias
-      const result = await getLeads(authTokens["access"], "asignado=False");
+      const result = await getLeads(
+        authTokens["access"],
+        "asignado=False&estado=A"
+      );
       const formatData = result.map((element) => {
         return {
           ...element,

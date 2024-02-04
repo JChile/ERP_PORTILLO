@@ -3,9 +3,9 @@ import { getProyectos } from "./getProyectos";
 import { Autocomplete, TextField } from "@mui/material";
 import { AuthContext } from "../../../auth";
 const defaultOption = {
-  value: 0,
+  value: null,
   label: "Seleccione un proyecto",
-  id: 0,
+  id: null,
 };
 
 export const FilterProyectos = ({
@@ -51,6 +51,7 @@ export const FilterProyectos = ({
     const defaultValueOption = options.find(
       (option) => option.id === defaultValue
     );
+    console.log(defaultValueOption);
     if (defaultValueOption) {
       setValue(defaultValueOption);
     }

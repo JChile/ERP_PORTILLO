@@ -27,6 +27,7 @@ export const RowItemLeadsAsesor = ({ item, checkedElement }) => {
         />
         <CustomMoreVerticalActions
           activeOnDelete={false}
+          activeOnActive={false}
           onEdit={onEditItemSelected}
         />
       </TableCell>
@@ -50,25 +51,10 @@ export const RowItemLeadsAsesor = ({ item, checkedElement }) => {
           </div>
         </Link>
       </TableCell>
+      <TableCell>{`${item["nombre"]} ${item["apellido"]}`}</TableCell>
       <TableCell>{proyecto["nombre"]}</TableCell>
-      <TableCell align="center">
-        {item["asignado"] === true ? (
-          <FiCheckCircle
-            color="green"
-            style={{ margin: "auto", display: "block", fontSize: "20px" }}
-          />
-        ) : (
-          <FiXCircle
-            color="red"
-            style={{ margin: "auto", display: "block", fontSize: "20px" }}
-          />
-        )}
-      </TableCell>
       <TableCell>
-        {formatDate_ISO861_to_formatdate(item["horaRecepcion"])}
-      </TableCell>
-      <TableCell>
-        {formatDate_ISO861_to_formatdate(item["fecha_creacion"])}
+        {formatDate_ISO861_to_formatdate(item["fecha_asignacion"])}
       </TableCell>
     </TableRow>
   );

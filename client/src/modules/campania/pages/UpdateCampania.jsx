@@ -29,8 +29,8 @@ export const UpdateCampania = () => {
     coste_real: 0,
     descripcion: "",
     estado: "",
-    proyecto: 0,
-    categoria: 0,
+    proyecto: null,
+    categoria: null,
   });
 
   const {
@@ -193,8 +193,8 @@ export const UpdateCampania = () => {
       console.log(result);
       setCampaign({
         ...result,
-        proyecto: result.proyecto.id,
-        categoria: result.categoria.id,
+        proyecto: result.proyecto["id"],
+        categoria: result.categoria["id"],
         descripcion: result.descripcion === null ? "" : result.descripcion,
       });
       setVisibleProgress(false);
@@ -271,10 +271,12 @@ export const UpdateCampania = () => {
                 <span className="after:content-['*'] after:ml-0.5 after:text-yellow-500 block text-sm font-medium">
                   Proyecto
                 </span>
-                <FilterProyectos
-                  defaultValue={proyecto}
-                  onNewInput={onAddProject}
-                />
+                {proyecto && (
+                  <FilterProyectos
+                    defaultValue={proyecto}
+                    onNewInput={onAddProject}
+                  />
+                )}
               </label>
             </div>
 
@@ -328,10 +330,12 @@ export const UpdateCampania = () => {
                 <span className="after:content-['*'] after:ml-0.5 after:text-yellow-500 block text-sm font-medium">
                   Subcategoria
                 </span>
-                <FilterSubcategoria
-                  defaultValue={categoria}
-                  onNewInput={onAddCategory}
-                />
+                {categoria && (
+                  <FilterSubcategoria
+                    defaultValue={categoria}
+                    onNewInput={onAddCategory}
+                  />
+                )}
               </label>
             </div>
           </div>

@@ -193,7 +193,10 @@ const ViewLeadAsignados = () => {
     setVisibleProgress(true);
     setCountSelectedElements(0);
     try {
-      const rowData = await getLeads(authTokens["access"], "asignado=True");
+      const rowData = await getLeads(
+        authTokens["access"],
+        "asignado=True&estado=A"
+      );
       const formatData = rowData.map((element) => {
         return {
           ...element,

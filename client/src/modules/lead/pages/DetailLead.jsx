@@ -382,7 +382,7 @@ export const DetailLead = () => {
                 </span>
                 <span className="block text-sm">
                   {asesor
-                    ? `${asesor["user"]["first_name"]} ${asesor["user"]["last_name"]}`
+                    ? `${asesor["first_name"]} ${asesor["last_name"]}`
                     : "Asesor no asignado"}
                 </span>
               </label>

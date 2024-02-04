@@ -1,36 +1,9 @@
-import React, { useContext, useEffect, useState } from "react";
-import {
-  Button,
-  Checkbox,
-  Paper,
-  Tab,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TablePagination,
-  TableRow,
-  Tabs,
-  TextField,
-} from "@mui/material";
-import {
-  CustomAlert,
-  CustomCircularProgress,
-  CustomDatePicker,
-  CustomDatePickerFilter,
-} from "../../../../components";
+import React, { useState } from "react";
+import { Button, Tab, Tabs } from "@mui/material";
+import { CustomDatePicker } from "../../../../components";
 import { HiUserGroup } from "react-icons/hi";
-import { useNavigate } from "react-router-dom";
 import { RiFileExcel2Fill } from "react-icons/ri";
-import { AuthContext } from "../../../../auth";
-import { useAlertMUI, useCustomTablePagination } from "../../../../hooks";
-import { MdClose, MdFilterAlt, MdSearch } from "react-icons/md";
-import { SelectBoolean, SelectProyecto } from "../../../../components/select";
-import { combinarErrores, formatDate_ISO861_to_date } from "../../../../utils";
-import { deleteLead, getLeads } from "../../helpers";
-import { RowItemLeadMarketing } from "./RowItemLeadMarketing";
-import { MassActionsViewLeadsMarketing } from "./acciones-masivas/MassActionsViewLeadsMarketing";
+import { MdFilterAlt } from "react-icons/md";
 import { ViewLeadMarketingRecienCreado } from "./ViewLeadMarketingRecienCreado";
 import { ViewLeadMarketingActivo } from "./ViewLeadMarketingActivo";
 import { ViewLeadMarketingInactivo } from "./ViewLeadMarketingInactivo";

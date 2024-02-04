@@ -17,11 +17,13 @@ import {
   combinarErrores,
   formatCelular,
   obtenerHoraActualFormatPostgress,
+  validIdURL,
 } from "../../../utils";
 import { FilterProyectoCampania } from "../../../components/multiple-filters/proyecto-campania/FilterProyectoCampania";
 
 export const UpdateLead = () => {
   const { idLead } = useParams();
+  const numericId = parseInt(idLead);
   const { authTokens, currentUser } = useContext(AuthContext);
 
   const [lead, setLead] = useState({
@@ -63,16 +65,33 @@ export const UpdateLead = () => {
   const [visibleProgress, setVisibleProgress] = useState(false);
 
   const obtenerLead = async (idLead) => {
-    const result = await getLead(idLead, authTokens["access"]);
-    console.log(result);
-    setLead({
-      ...result,
-      asesor: result.asesor ? result.asesor["id"] : null,
-      campania: result.campania ? result.campania["id"] : null,
-      campaniaName: result.campania ? result.campania["nombre"] : "",
-      objecion: result.objecion ? result.objecion["id"] : null,
-      estadoLead: result.estadoLead ? result.estadoLead : null,
-    });
+    if (validIdURL(numericId)) {
+      try {
+        setVisibleProgress(true);
+        const result = await getLead(idLead, authTokens["access"]);
+        setLead({
+          ...result,
+          asesor: result.asesor ? result.asesor["id"] : null,
+          campania: result.campania ? result.campania["id"] : null,
+          campaniaName: result.campania ? result.campania["nombre"] : "",
+          objecion: result.objecion ? result.objecion["id"] : null,
+          estadoLead: result.estadoLead ? result.estadoLead : null,
+        });
+        // comprobar si se realizo con exito la creación del usuario
+        setVisibleProgress(false);
+      } catch (error) {
+        setVisibleProgress(false);
+        const pilaError = combinarErrores(error);
+        // mostramos feedback de error
+        setFeedbackMessages({
+          style_message: "error",
+          feedback_description_error: pilaError,
+        });
+        handleClickFeedback();
+      }
+    } else {
+      onNavigateBack();
+    }
   };
   // change check llamada
   const onAddCheckInputLlamar = (event) => {
@@ -306,23 +325,29 @@ export const UpdateLead = () => {
           <div className="flex-1 flex flex-col gap-y-6">
             <label className="block flex flex-col gap-y-1">
               <span className="block text-sm font-medium">Estado Lead</span>
-              <FilterEstadoLead
-                defaultValue={estadoLead}
-                onNewInput={onAddEstadoLead}
-              />
+              {estadoLead && (
+                <FilterEstadoLead
+                  defaultValue={estadoLead}
+                  onNewInput={onAddEstadoLead}
+                />
+              )}
             </label>
 
             <label className="block flex flex-col gap-y-1">
               <span className="block text-sm font-medium">Objeciones</span>
-              <FilterObjecion
-                defaultValue={objecion}
-                onNewInput={onAddObjecion}
-              />
+              {objecion && (
+                <FilterObjecion
+                  defaultValue={objecion}
+                  onNewInput={onAddObjecion}
+                />
+              )}
             </label>
 
             <label className="block flex flex-col gap-y-1">
               <span className="block text-sm font-medium">Asesor Asignado</span>
-              <FilterAsesor defaultValue={asesor} onNewInput={onAddAsesor} />
+              {asesor && (
+                <FilterAsesor defaultValue={asesor} onNewInput={onAddAsesor} />
+              )}
             </label>
 
             <label className="flex content-center gap-x-2">

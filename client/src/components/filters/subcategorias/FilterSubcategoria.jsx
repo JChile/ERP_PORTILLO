@@ -36,7 +36,7 @@ export const FilterSubcategoria = ({ onNewInput, defaultValue = null }) => {
 
   const handleChange = (event, value) => {
     onNewInput(value);
-    // setValue(value);
+    setValue(value);
   };
 
   // use effect cuando hay cambios en el valor por defecto

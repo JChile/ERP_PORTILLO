@@ -404,7 +404,7 @@ class AsesorLead(APIView):
                 'id', 'first_name', 'last_name', 'username'))
             dataJson = asesorSerializer.data
             dataJson["leads"] = LeadSerializer(Lead.objects.filter(
-                asesor=asesor_queryset.pk), many=True).data
+                asesor=asesor_queryset.pk, estado="A"), many=True).data
             for leadIter in dataJson["leads"]:
                 leadIter["campania"] = CampaniaSerializer(Campania.objects.filter(
                     pk=leadIter["campania"]).first()).data

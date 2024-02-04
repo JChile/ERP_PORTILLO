@@ -21,6 +21,7 @@ export const CustomMoreVerticalActions = ({
   onActive = () => console.log("active"),
   activeOnDelete = true,
   activeOnEdit = true,
+  activeOnActive = true,
   titleDialog = "Dialogo de confirmación",
   descriptionDialog = "¿Estas seguro de eliminar este registro?",
 }) => {
@@ -73,7 +74,7 @@ export const CustomMoreVerticalActions = ({
             onCloseMenu={handleClose}
           />
         )}
-        {!activeOnDelete && (
+        {!activeOnDelete && activeOnActive && (
           <MenuItem key={"Activar"} onClick={onActive}>
             <FiCheckCircle />
             <span className="ps-2">Activar</span>

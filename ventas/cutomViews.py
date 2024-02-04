@@ -199,20 +199,41 @@ class leadMultipleCreationAutomatic(APIView):
         response = {}
         data = request.data
 
-        asesores = User.objects.filter(
-            estado='A').exclude(codigoAsesor__isnull=True)
+        proyectoId = request.query_params.get('proyecto')
+        autoAsignar = request.query_params.get('autoasignar')
+
+        print("SE EJECUTA AUTOMATICO (Proyecto)", proyectoId)
+
+
+        try:
+            proyectoObject = Proyecto.objects.get(id = proyectoId)
+        except:
+            return Response({"error","No existe proyecto"}, status.HTTP_404_NOT_FOUND)
+
+        for leadIter in data:
+            print("Lead : ", leadIter)
+            if not Campania.objects.filter(nombre = leadIter["campania"]):
+                leadIter["campania"] = str(proyectoObject.nombre+"_organico")
+            if autoAsignar == "True":
+                leadIter["fecha_asignacion"] = timezone.now()
+
+        
+        print(data)
+
+        if autoAsignar == "True":
+            asesores = User.objects.filter(is_active=True, estado='A').filter(groups__name__in=["asesor"])
+        else:
+            asesores = []
+
         nextAsesor = LeadAssigner(asesores)
 
         guardados = []
         no_guardados = []
 
+
         thirty_days = timezone.now() - timedelta(days=60)
-        phone_numbers = set(
-            Lead.objects.filter(horaRecepcion__gte=thirty_days,
-                                estado="A")
-            .values_list('celular', 'campania__proyecto')
-            .distinct()
-        )
+        phone_numbers = set(Lead.objects.filter(fecha_asignacion__gte=thirty_days,estado="A").values_list('celular', 'campania__proyecto').distinct())
+
 
         for i in data:
             lead_class = leadCreation(i, phone_numbers)
@@ -235,6 +256,7 @@ class leadMultipleCreationAutomatic(APIView):
 
         response["guardados"] = guardados
         response["no guardados"] = no_guardados
+
 
         return Response(response)
 

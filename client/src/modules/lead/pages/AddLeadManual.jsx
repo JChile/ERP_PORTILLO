@@ -298,7 +298,7 @@ export const AddLeadManual = () => {
 
             <label className="flex flex-col gap-y-1">
               <span className="block text-sm font-medium">Asesor Asignado</span>
-              <FilterAsesor onNewInput={onAddAsesor} />
+              <FilterAsesor defaultValue={asesor} onNewInput={onAddAsesor} />
             </label>
 
             <label className="flex content-center gap-x-2">

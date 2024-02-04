@@ -4,7 +4,7 @@ import { Autocomplete, TextField } from "@mui/material";
 import { AuthContext } from "../../../auth";
 
 const defaultOption = {
-  value: 0,
+  value: null,
   label: "Seleccione un asesor",
   id: null,
 };
@@ -77,7 +77,7 @@ export const FilterAsesor = ({
       disableClearable
       getOptionLabel={(option) => option.label}
       onChange={handleChange}
-      isOptionEqualToValue={(option, value) => option.id == value.id}
+      isOptionEqualToValue={(option, value) => option.id === value.id}
       renderInput={(params) => (
         <TextField {...params} size={size} label={label} />
       )}

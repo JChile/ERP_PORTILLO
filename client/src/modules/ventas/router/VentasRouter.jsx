@@ -1,13 +1,12 @@
 import React from "react";
 import { Route, Routes } from "react-router-dom";
 import { CalendarView } from "../pages";
-import JefeVentasDashboardProject from "../pages/JefeVentasDashboardProject";
+import EventosController from "../controllers/EventosController";
 
 export const VentasRouter = () => {
   return (
     <Routes>
-      <Route path="" element={<CalendarView />} />
-      <Route path="proyecto/:id" element={<JefeVentasDashboardProject />} />
+      <Route path="" element={<EventosController />} />
     </Routes>
   );
 };

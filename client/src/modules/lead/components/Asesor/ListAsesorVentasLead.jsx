@@ -9,7 +9,7 @@ import {
 import { AuthContext } from "../../../../auth";
 import { useNavigate } from "react-router-dom";
 import { useAlertMUI, useCustomTablePagination } from "../../../../hooks";
-import { combinarErrores } from "../../../../utils";
+import { combinarErrores, formatDate_ISO861_to_date } from "../../../../utils";
 import {
   Button,
   Checkbox,

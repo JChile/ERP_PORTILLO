@@ -90,15 +90,6 @@ export const CalendarView = () => {
   const [hastaValue, setHastaValue] = useState(null);
 
 
-  const {
-    feedbackCreate,
-    feedbackMessages,
-    setFeedbackMessages,
-    handleCloseFeedback,
-    handleClickFeedback,
-  } = useAlertMUI();
-
-
   const handleTempFilters = (event) => {
     const { name, checked } = event.target;
     const updatedFilters = {
@@ -180,6 +171,7 @@ export const CalendarView = () => {
   }, [flagLoader]);
 
   return (
+
     <React.Fragment>
       <div className="flex flex-col gap-y-3">
         <Typography variant="h5">Eventos Registrados</Typography>

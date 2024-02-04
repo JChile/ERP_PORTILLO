@@ -1,11 +1,12 @@
 import React from 'react'
 import { Route, Routes } from 'react-router-dom'
-import ReportesHome from '../pages/ReportesHome'
+import { ReporteRetornoCampania, ReportesHome } from '../pages'
 
-const ReportesRoutes = () => {
+export const ReportesRoutes = () => {
   return (
     <Routes>
         <Route path="" element={<ReportesHome />} />
+        <Route path="retornoCampania/" element={<ReporteRetornoCampania />} />
     </Routes>
   )
 }

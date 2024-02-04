@@ -34,7 +34,7 @@ export const AppRouter = () => {
                   {/* <Route path="cotizaciones/*" element={<CotizacionRouter />} /> */}
                   <Route path="proyecto/*" element={<ProyectoRoutes />} />
                   <Route path="producto/*" element={<ProductoRoutes />} />
-                  <Route path="reportes/" element={<ReportesRoutes />} />
+                  <Route path="reportes/*" element={<ReportesRoutes />} />
                 </Routes>
               </MainContainerApp>
             }

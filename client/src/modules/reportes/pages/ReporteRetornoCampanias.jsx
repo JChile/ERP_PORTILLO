@@ -9,7 +9,6 @@ import {
 import React, { useEffect, useState } from "react";
 import { FilterProyectos } from "../../../components";
 import { getProyectoCampania, getProyectosCampania } from "../helpers";
-import { CampaniasBarChart } from "../components/CampaniasBarChart";
 
 export const ReporteRetornoCampania = () => {
   const [activeButton, setActiveButton] = useState(true);

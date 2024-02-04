@@ -23,19 +23,49 @@ class ReporteAsesorLead(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
-        if not (bool(request.user.groups.first().permissions.filter(codename=PermissionLead.CAN_VIEW) or request.user.is_superuser)):
-            return Response({"message": "Usuario no tiene permisos para ver leads"}, status=403)
+        asesor_queryset = User.objects.all()
+        asesor_data = UserSerializer(asesor_queryset, fields=( 'id', 'first_name', 'last_name', 'username'), many = True).data
 
-        if request.user.isAdmin == True:
-            asesor_queryset = User.objects.filter(is_active=True).filter(groups__in=[1])
-            asesor_data = UserSerializer(asesor_queryset, fields=( 'id', 'first_name', 'last_name', 'username'), many = True).data
+        for asesor_iter in asesor_data:
+            asesor_iter["leads"] = LeadSerializer(Lead.objects.filter(asesor = asesor_iter["id"]),fields=( 'id', 'nombre', "asesor",'apelldos', 'celular') ,many=True).data
+            for leadIter in asesor_iter["leads"] :
+                leadIter["numeroWhatsapps"]= WhatsApp.objects.filter(lead = leadIter["id"], asesor = leadIter["asesor"]).count()
+                leadIter["numeroLlamadas"]= Llamada.objects.filter(lead = leadIter["id"], asesor = leadIter["asesor"]).count()
 
-            for asesor_iter in asesor_data:
-                asesor_iter["leads"] = LeadSerializer(Lead.objects.filter(asesor = asesor_iter["id"]),fields=( 'id', 'nombre', "asesor",'apelldos', 'celular') ,many=True).data
-                for leadIter in asesor_iter["leads"] :
-                    leadIter["numeroWhatsapps"]= WhatsApp.objects.filter(lead = leadIter["id"], asesor = leadIter["asesor"]).count()
-                    leadIter["numeroLlamadas"]= Llamada.objects.filter(lead = leadIter["id"], asesor = leadIter["asesor"]).count()
+        return Response(asesor_data)
 
-            return Response(asesor_data)
-        else :
-            return Response({"message": "Usuario no es admin"})
+
+
+class ReporteProyectoCampaniaList(APIView):
+    def get(self, request):
+        proyecto_queryset = Proyecto.objects.all()
+        proyectoSerializer = ProyectoSerializer(proyecto_queryset, many=True)
+        proyecto_data = proyectoSerializer.data
+
+        campania_queryset = proyecto_queryset.prefetch_related('campania_set')
+
+        for proyectoIter in proyecto_data:
+            proyectoIter["campanias"] = ProyectoSerializer(Proyecto.objects.filter(pk = proyectoIter["id"]), many = True).data
+
+        print(campania_queryset)
+
+
+
+        return Response(proyectoSerializer.data, status.HTTP_200_OK)
+
+        pass
+
+
+class ReporteProyectoCampaniaDetail(APIView):
+    def get(self, request, pk=None):
+        try:
+            proyecto = Proyecto.objects.get(id = pk)
+        except:
+            return Response({"detail":"No existe proyecto"}, status.HTTP_404_NOT_FOUND)
+        proyectoSerializer = ProyectoSerializer(proyecto)
+
+        proyecto_data = proyectoSerializer.data
+
+        proyecto_data["campanias"] = CampaniaSerializer(proyecto.campania_set.all(), many = True).data
+
+        return Response(proyecto_data, status.HTTP_200_OK)

@@ -68,14 +68,16 @@ const ComponentEventos = ({
       ...body,
       usuarioActualizador: currentUser["user_id"],
       fecha_actualizacion: obtenerHoraActualFormatPostgress(),
+      asesor: currentUser["user_id"]
     };
     onUpdateDataEvento(id, formatData);
   };
 
   return (
     <React.Fragment>
-      <Card sx={{ minHeight: "200px" }}>
+      <Card sx={{ minHeight: "200px", marginY: "1rem" }}>
         <CardHeader
+          
           sx={{
             backgroundColor: "#ed6c02",
             color: "white",
@@ -193,7 +195,7 @@ const transformToEvent = (oldEvent) => {
     tipo: oldEvent.tipo,
     estadoEvento: oldEvent.estadoEvento,
     observacion: oldEvent.observacion,
-    objecion: oldEvent.objecion,
+    objecion: oldEvent.objecion
   };
 };
 

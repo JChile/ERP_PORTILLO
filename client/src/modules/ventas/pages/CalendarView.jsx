@@ -77,7 +77,7 @@ const initialState = {
 };
 
 export const CalendarView = () => {
-  const { authTokens } = useContext(AuthContext);
+  const { authTokens, currentUser } = useContext(AuthContext);
   const [state, dispatch] = useReducer(reducer, initialState);
   const [flagLoader, setFlagLoader] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState(null);
@@ -145,10 +145,12 @@ export const CalendarView = () => {
   const updateEventSelected = async (id, event) => {
     const dataToSave = {
       ...event,
+      asesor: currentUser["user_id"],
       fecha_actualizacion: obtenerHoraActualFormatPostgress(),
     };
     const response = await updateEvent(id, dataToSave, authTokens["access"]);
   };
+
 
   const onChangeDatePickerFechaDesde = (newDate) => {
     setDesdeValue(newDate);

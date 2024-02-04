@@ -5,11 +5,19 @@ import { FiCheckCircle, FiXCircle } from "react-icons/fi";
 import { Link, useNavigate } from "react-router-dom";
 import { CustomMoreVerticalActions } from "../../../../components";
 
-export const RowItemLeadMarketing = ({ item, checkedElement }) => {
+export const RowItemLeadMarketing = ({
+  item,
+  checkedElement,
+  onChangeLead,
+}) => {
   const { campania, id } = item;
   const { proyecto } = campania;
 
   const navigate = useNavigate();
+
+  const onChangeLeadSelected = () => {
+    onChangeLead(item);
+  };
 
   const onEditItemSelected = () => {
     navigate(`/lead/update/${id}`);
@@ -27,7 +35,8 @@ export const RowItemLeadMarketing = ({ item, checkedElement }) => {
         />
         <CustomMoreVerticalActions
           onEdit={onEditItemSelected}
-          activeOnDelete={false}
+          activeOnDelete={item["estado"] === "A"}
+          onActive={onChangeLeadSelected}
         />
       </TableCell>
       <TableCell>

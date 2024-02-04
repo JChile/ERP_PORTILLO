@@ -397,6 +397,17 @@ export const DetailLead = () => {
                   </span>
                 </span>
               </label>
+              {/* Estado activo */}
+              <label className="flex gap-y-1 ">
+                <span className="block text-sm font-medium min-w-[10rem] text-zinc-500">
+                  ¿Activo?:
+                </span>
+                <span className="block text-sm">
+                  <span className="block text-sm">
+                    {estado === "A" ? "Activo" : "Inactivo"}
+                  </span>
+                </span>
+              </label>
               {/* FECHA DE CREACION */}
               {fecha_creacion && (
                 <label className="flex gap-y-1 ">

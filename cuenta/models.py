@@ -27,7 +27,6 @@ class User(AbstractUser):
     def __str__(self):
         return self.username
 
-
 class Modulo(models.Model):
     nombre = models.CharField(max_length=100, null=True, default=None)
     url = models.CharField(max_length=50, null=True, default=None)

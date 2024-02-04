@@ -2,7 +2,7 @@ import React from 'react';
 import { LineChart, Line, CartesianGrid, XAxis, YAxis, Tooltip, BarChart, Bar } from 'recharts';
 
 const data = [
-  { name: 'Año Nuevo', coste_estimado: 700, coste_real: 800 },
+  { name: 'Año Nuevo Portillo', coste_estimado: 700, coste_real: 800 },
   { name: 'ProyectoX_organico', coste_estimado: 0, coste_real: 0 },
 ];
 

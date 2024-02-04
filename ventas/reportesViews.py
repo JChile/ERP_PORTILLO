@@ -54,6 +54,8 @@ class ReporteProyectoCampaniaList(APIView):
                 proyectoIter["campanias"] = CampaniaSerializer(Campania.objects.filter(proyecto = proyectoIter["id"], estado = estadoCampania), many = True).data
             else:    
                 proyectoIter["campanias"] = CampaniaSerializer(Campania.objects.filter(proyecto = proyectoIter["id"]), many = True).data
+            for campaniaIter in proyectoIter["campanias"]:
+                campaniaIter["leads"] = LeadListSerializer(Lead.objects.filter(campania = campaniaIter["id"]), many =True).data
 
         return Response(proyectoSerializer.data, status.HTTP_200_OK)
 
@@ -76,5 +78,8 @@ class ReporteProyectoCampaniaDetail(APIView):
             proyecto_data["campanias"] = CampaniaSerializer(Campania.objects.filter(proyecto = proyecto.pk, estado = estadoCampania), many = True).data
         else:    
             proyecto_data["campanias"] = CampaniaSerializer(proyecto.campania_set.all(), many = True).data
+        
+        for campaniaIter in proyecto_data["campanias"]:
+                campaniaIter["leads"] = LeadListSerializer(Lead.objects.filter(campania = campaniaIter["id"]), many =True).data
 
         return Response(proyecto_data, status.HTTP_200_OK)

@@ -122,11 +122,11 @@ class LeadList(generics.ListCreateAPIView):
             objecionSerializer = ObjecionSerializer(
                 objecion_data) if objecion_data else None
 
-            i["asesor"] = userSerializer.data if userSerializer else {}
-            i["campania"] = campaniaSerializer.data if campaniaSerializer else {}
+            i["asesor"] = userSerializer.data if userSerializer else None
+            i["campania"] = campaniaSerializer.data if campaniaSerializer else None
             i["campania"]["proyecto"] = ProyectoSerializer(
                 Proyecto.objects.filter(pk=i["campania"]["proyecto"]).first()).data
-            i["objecion"] = objecionSerializer.data if objecionSerializer else {}
+            i["objecion"] = objecionSerializer.data if objecionSerializer else None
 
         return Response(leadData)
     
@@ -534,10 +534,10 @@ class EventoList(generics.ListCreateAPIView):
 
             eventoIterador["asesor"] = userAsesorSerializer.data if userAsesorSerializer else {
             }
-            eventoIterador["tipo"] = tipoSerializer.data if tipoSerializer else {}
-            eventoIterador["estadoEvento"] = estadoEventoSerializer.data if estadoEventoSerializer else {}
+            eventoIterador["tipo"] = tipoSerializer.data if tipoSerializer else None
+            eventoIterador["estadoEvento"] = estadoEventoSerializer.data if estadoEventoSerializer else None
 
-            eventoIterador["lead"] = leadSerializer.data if leadSerializer else {}
+            eventoIterador["lead"] = leadSerializer.data if leadSerializer else None
 
         return Response(evento_data)
 
@@ -589,10 +589,9 @@ class EventoDetail(generics.RetrieveUpdateDestroyAPIView):
 
 
         evento_dataJson = EventoSerializer(evento).data
-        evento_dataJson["asesor"] = asesorSerlializer.data if asesorSerlializer else {
-        }
-        evento_dataJson["tipo"] = tipoSerializer.data if tipoSerializer else {}
-        evento_dataJson["estadoEvento"] = estadoEventoSerializer.data if estadoEventoSerializer else {}
+        evento_dataJson["asesor"] = asesorSerlializer.data if asesorSerlializer else None
+        evento_dataJson["tipo"] = tipoSerializer.data if tipoSerializer else None
+        evento_dataJson["estadoEvento"] = estadoEventoSerializer.data if estadoEventoSerializer else None
 
         return Response(evento_dataJson)
 
@@ -657,8 +656,8 @@ class ProductoList(generics.ListCreateAPIView):
             userActualizadorializer = UserSerializer(userActualizador, fields=(
                 'id', 'first_name', 'last_name', 'username')) if userActualizador else None
 
-            i["tipo"] = tipoProductoSerializer.data if tipoProductoSerializer else {}
-            i["proyecto"] = proyectoSerializer.data if proyectoSerializer else {}
+            i["tipo"] = tipoProductoSerializer.data if tipoProductoSerializer else None
+            i["proyecto"] = proyectoSerializer.data if proyectoSerializer else None
             i["videos"] = VideoProductoSerializer(
                 VideoProducto.objects.filter(producto=i["id"]), many=True).data
             i["imagenes"] = ImagenProductoSerializer(
@@ -722,10 +721,8 @@ class ProductoDetail(generics.RetrieveUpdateDestroyAPIView):
         userActualizadorializer = UserSerializer(userActualizador, fields=(
             'id', 'first_name', 'last_name', 'username')) if userActualizador else None
 
-        producto_datajson["tipo"] = tipoProductoSerializer.data if tipoProductoSerializer else {
-        }
-        producto_datajson["proyecto"] = proyectoSerializer.data if proyectoSerializer else {
-        }
+        producto_datajson["tipo"] = tipoProductoSerializer.data if tipoProductoSerializer else None
+        producto_datajson["proyecto"] = proyectoSerializer.data if proyectoSerializer else None
 
         producto_datajson["videos"] = VideoProductoSerializer(
             VideoProducto.objects.filter(producto=producto_datajson["id"]), many=True).data

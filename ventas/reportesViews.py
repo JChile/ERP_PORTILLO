@@ -38,13 +38,22 @@ class ReporteAsesorLead(APIView):
 
 class ReporteProyectoCampaniaList(APIView):
     def get(self, request):
+
         proyecto_queryset = Proyecto.objects.all()
+        estadoProyecto = request.query_params.get('estadoProyecto')
+        estadoCampania = request.query_params.get('estadoCampania')
+
+        if estadoProyecto:
+            proyecto_queryset = proyecto_queryset.filter(estado=estadoProyecto)
+
         proyectoSerializer = ProyectoSerializer(proyecto_queryset, many=True)
         proyecto_data = proyectoSerializer.data
 
-
         for proyectoIter in proyecto_data:
-            proyectoIter["campanias"] = CampaniaSerializer(Campania.objects.filter(proyecto = proyectoIter["id"]), many = True).data
+            if estadoCampania:
+                proyectoIter["campanias"] = CampaniaSerializer(Campania.objects.filter(proyecto = proyectoIter["id"], estado = estadoCampania), many = True).data
+            else:    
+                proyectoIter["campanias"] = CampaniaSerializer(Campania.objects.filter(proyecto = proyectoIter["id"]), many = True).data
 
         return Response(proyectoSerializer.data, status.HTTP_200_OK)
 
@@ -59,8 +68,13 @@ class ReporteProyectoCampaniaDetail(APIView):
             return Response({"detail":"No existe proyecto"}, status.HTTP_404_NOT_FOUND)
         proyectoSerializer = ProyectoSerializer(proyecto)
 
+        estadoCampania = request.query_params.get('estadoCampania')
+
         proyecto_data = proyectoSerializer.data
 
-        proyecto_data["campanias"] = CampaniaSerializer(proyecto.campania_set.all(), many = True).data
+        if estadoCampania:
+            proyecto_data["campanias"] = CampaniaSerializer(Campania.objects.filter(proyecto = proyecto.pk, estado = estadoCampania), many = True).data
+        else:    
+            proyecto_data["campanias"] = CampaniaSerializer(proyecto.campania_set.all(), many = True).data
 
         return Response(proyecto_data, status.HTTP_200_OK)

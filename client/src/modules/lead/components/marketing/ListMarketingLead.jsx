@@ -7,6 +7,7 @@ import { MdFilterAlt } from "react-icons/md";
 import { ViewLeadMarketingRecienCreado } from "./ViewLeadMarketingRecienCreado";
 import { ViewLeadMarketingActivo } from "./ViewLeadMarketingActivo";
 import { ViewLeadMarketingInactivo } from "./ViewLeadMarketingInactivo";
+import { useNavigate } from "react-router-dom";
 
 export const ListMarketingLead = () => {
   // flag reload
@@ -46,6 +47,8 @@ export const ListMarketingLead = () => {
   // manejadores de tabs
   const [value, setValue] = useState(0);
   const handleChange = (event, newValue) => setValue(newValue);
+  const navigate = useNavigate()
+
 
   return (
     <>

@@ -15,12 +15,18 @@ export const SelectRol = ({
 
   const obtenerRoles = async () => {
     const result = await getRoles({ authToken: authTokens["access"] });
-    const formatSelect = result.map((element) => {
-      return {
-        value: element.id,
-        label: element.name,
-      };
-    });
+    const formatSelect = [
+      {
+        value: "sin rol",
+        label: "Sin rol",
+      },
+      ...result.map((element) => {
+        return {
+          value: element.id,
+          label: element.name,
+        };
+      }),
+    ];
     setOptions(formatSelect);
   };
 

@@ -8,64 +8,43 @@ import { MdClear, MdFilterAlt, MdFilterList } from "react-icons/md";
 import { CustomDatePicker } from "../../../../components";
 
 const ListJefeVentasLead = () => {
-  const [error, setError] = useState(false);
-  const [value, setValue] = useState(0);
+  // flag reload
+  const [flagReload, setFlagReload] = useState(false);
+
   // filtros de fechas
-  const [filterState, setFilterState] = useState({
+  const [filterDate, setFilterDate] = useState({
     startDate: null,
     endDate: null,
   });
+  const { startDate, endDate } = filterDate;
 
-  const handleChange = (event, newValue) => setValue(newValue);
-
-  const handleSearchButton = (searchText) => {};
+  // change flag
+  const onSubmitFilter = (event) => {
+    // cambiamos el flag de reload
+    setFlagReload((prev) => !prev);
+  };
 
   // funcion para cambiar fecha desde
   const onChangeDatePickerFechaDesde = (newDate) => {
-    console.log(newDate);
+    // actualizamos la fecha
+    setFilterDate({
+      ...filterDate,
+      startDate: newDate,
+    });
   };
 
   // funcion para cambiar fecha hasta
   const onChangeDatePickerFechaHasta = (newDate) => {
-    console.log(newDate);
-  };
-
-  const onHandleFilterClick = () => {
-    const filtered = leads.filter((lead) => {
-      // Filtrar por fecha de inicio
-      if (filterState.startDate) {
-        const startDate = new Date(filterState.startDate);
-        const leadDate = new Date(lead.horaRecepcion);
-        if (leadDate < startDate) {
-          return false;
-        }
-      }
-      // Filtrar por fecha de fin
-      if (filterState.endDate) {
-        const endDate = new Date(filterState.endDate);
-        const leadDate = new Date(lead.horaRecepcion);
-        if (leadDate > endDate) {
-          return false;
-        }
-      }
-      return true;
-    });
-    setFilteredLeads(filtered);
-  };
-
-  const onHandleCleanFilter = () => {
-    setFilterState(() => {
-      onHandleFilterClick();
-      return {
-        startDate: null,
-        endDate: null,
-      };
+    // actualizamos la fecha
+    setFilterDate({
+      ...filterDate,
+      endDate: newDate,
     });
   };
 
-  const onSubmitFilter = () => {
-    console.log("Click tareas")
-  }
+  // manejadores de tabs
+  const [value, setValue] = useState(0);
+  const handleChange = (event, newValue) => setValue(newValue);
 
   return (
     <React.Fragment>
@@ -77,10 +56,12 @@ const ListJefeVentasLead = () => {
           {/* Filtro de fechas */}
           <div className="flex gap-x-2">
             <CustomDatePicker
+              defaultValue={startDate}
               onNewFecha={onChangeDatePickerFechaDesde}
               label="Fecha Desde"
             />
             <CustomDatePicker
+              defaultValue={endDate}
               onNewFecha={onChangeDatePickerFechaHasta}
               label="Fecha Hasta"
             />
@@ -123,10 +104,18 @@ const ListJefeVentasLead = () => {
         </Tabs>
 
         <CustomTabPanel value={value} index={0}>
-          <ViewLeadAsignados />
+          <ViewLeadAsignados
+            startDate={startDate}
+            endDate={endDate}
+            flagReload={flagReload}
+          />
         </CustomTabPanel>
         <CustomTabPanel value={value} index={1}>
-          <ViewLeadsNoAsignados />
+          <ViewLeadsNoAsignados
+            startDate={startDate}
+            endDate={endDate}
+            flagReload={flagReload}
+          />
         </CustomTabPanel>
       </div>
     </React.Fragment>

@@ -105,8 +105,8 @@ class WhatsApp(models.Model):
     estado = models.ForeignKey(
         EstadoRegistro, on_delete=models.SET_NULL, default='A', null=True)
     respondio = models.BooleanField(default=False)
-    objecion = models.ForeignKey(
-        Objecion, on_delete=models.SET_NULL, null=True)
+    objecion = models.ForeignKey(Objecion, null=True, blank=True, on_delete=models.CASCADE)
+
     usuarioCreador = models.ForeignKey(
         User, on_delete=models.SET_NULL, null=True, blank=True, related_name='usuarioCreadorWhatsapp')
     usuarioActualizador = models.ForeignKey(
@@ -114,6 +114,16 @@ class WhatsApp(models.Model):
     fecha_creacion = models.DateTimeField(default = timezone.now)
     fecha_actualizacion = models.DateTimeField(auto_now=True)
 
+    def actualizar_objecion(self):
+        if not self.objecion:
+            try:
+                objecion = Objecion.objects.get(nombre="Ninguna")
+                self.objecion = objecion 
+            except:
+                pass
+    def save(self, *args, **kwargs):
+        self.actualizar_objecion()
+        super().save(*args, **kwargs)
 
 class HistoricoLeadAsesor(models.Model):
     lead = models.ForeignKey(Lead, on_delete=models.SET_NULL, null=True)
@@ -128,14 +138,25 @@ class Llamada(models.Model):
     estado = models.ForeignKey(
         EstadoRegistro, on_delete=models.SET_NULL, default='A', null=True)
     contesto = models.BooleanField(default=False)
-    objecion = models.ForeignKey(
-        Objecion, on_delete=models.SET_NULL, null=True)
+    objecion = models.ForeignKey(Objecion, null=True, blank=True, on_delete=models.CASCADE)
+
     usuarioCreador = models.ForeignKey(
         User, on_delete=models.SET_NULL, null=True,  blank=True,related_name='usuarioCreadorLlamada')
     usuarioActualizador = models.ForeignKey(
         User, on_delete=models.SET_NULL, null=True, blank=True, related_name='usuarioActualizadorLlamada')
     fecha_creacion = models.DateTimeField(default = timezone.now)
     fecha_actualizacion = models.DateTimeField(auto_now=True)
+
+    def actualizar_objecion(self):
+        if not self.objecion:
+            try:
+                objecion = Objecion.objects.get(nombre="Ninguna")
+                self.objecion = objecion 
+            except:
+                pass
+    def save(self, *args, **kwargs):
+        self.actualizar_objecion()
+        super().save(*args, **kwargs)
 
 class EstadoEvento(models.Model):
     nombre = models.CharField(max_length=20, null=True)
@@ -148,13 +169,13 @@ class EstadoEvento(models.Model):
 
 class Evento(models.Model):
     asesor = models.ForeignKey(
-        User,  on_delete=models.CASCADE, null=True, blank=True)
+        User,  on_delete=models.CASCADE)
     lead = models.ForeignKey(
         Lead, on_delete=models.CASCADE, null=True, blank=True)
 
     titulo = models.CharField(max_length=100, null=True)
-    duracion = models.IntegerField(null=True, blank=True)
-    fecha_visita = models.DateTimeField(null=True, blank=True)
+    duracion = models.IntegerField(default = 0)
+    fecha_visita = models.DateTimeField()
     tipo = models.ForeignKey(TipoEvento,  null=True, blank=True, on_delete=models.CASCADE)
     observacion = models.TextField(null=True, blank=True)
     estado = models.ForeignKey(
@@ -195,13 +216,13 @@ class TipoProducto(models.Model):
 
 
 class Producto(models.Model):
-    nombre = models.CharField(max_length=100, null=False, blank=True)
+    nombre = models.CharField(max_length=100)
     codigo = models.CharField(
         max_length=100, null=False, blank=True, unique=True)
     tipo = models.ForeignKey(
-        TipoProducto, on_delete=models.CASCADE, null=True, blank=True)
+        TipoProducto, on_delete=models.CASCADE)
     proyecto = models.ForeignKey(
-        Proyecto, on_delete=models.CASCADE, null=True, blank=True)
+        Proyecto, on_delete=models.CASCADE)
     reservado = models.BooleanField(default=False)
     numero = models.IntegerField(null=True, blank=True, default=0)
     area = models.FloatField(null=True, blank=True, default=0)

@@ -12,7 +12,6 @@ export const getLeads = async (token, query) => {
   return data;
 };
 
-
 /** Endpoints para realizar solitudes de leads por asesor,
  *  endpoints relacionados al area de ventas
  *  @param {string} token, user access token

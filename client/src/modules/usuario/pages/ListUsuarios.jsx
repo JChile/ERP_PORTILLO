@@ -71,7 +71,10 @@ export const ListUsuarios = () => {
       const nombreElement = `${element["first_name"]
         .toString()
         .toLowerCase()} ${element["last_name"].toString().toLowerCase()}`;
-      const rolElement = element["groups"][0]["name"].toString().toLowerCase();
+      const rolElement =
+        element["groups"].length === 0
+          ? "sin rol"
+          : element["groups"][0]["name"].toString().toLowerCase();
       const usernameElement = element["username"].toString().toLowerCase();
       const correoElement = element["email"].toString().toLowerCase();
 
@@ -167,7 +170,6 @@ export const ListUsuarios = () => {
         `is_active=${activeButton ? "True" : "False"}`,
         authTokens["access"]
       );
-      console.log(result);
       setUsuarios(result);
       setauxUsuarios(result);
       setVisibleProgress(false);

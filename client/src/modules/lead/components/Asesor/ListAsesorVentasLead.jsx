@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import { getAsesorLeads } from "../../helpers";
+import { getLeads } from "../../helpers";
 import {
   CustomAlert,
   CustomCircularProgress,
@@ -23,7 +23,7 @@ import {
   TableRow,
   TextField,
 } from "@mui/material";
-import { MdClose, MdSearch } from "react-icons/md";
+import { MdClose, MdFilterAlt, MdSearch } from "react-icons/md";
 import { SelectBoolean, SelectProyecto } from "../../../../components/select";
 import { RowItemLeadsAsesor } from "./RowItemLeadsAsesor";
 import { MassActionsViewLeadsAsesor } from "./acciones-masivas/MassActionsViewLeadsAsesor";
@@ -55,66 +55,74 @@ export const ListAsesorVentasLead = () => {
     setFeedbackMessages,
   } = useAlertMUI();
 
-  // hook navegacion
-  const navigate = useNavigate();
   // visible progress
   const [visibleProgress, setVisibleProgress] = useState(false);
 
-  const [filteredLeads, setFilteredLeads] = useState([]);
+  // numero de items seleccionados
+  const [filterData, setFilterData] = useState({
+    nombre: "",
+    celular: "",
+    proyecto: "",
+    fecha_asignacion: "",
+  });
+
+  const { nombre, celular, proyecto, fecha_asignacion } = filterData;
+
+  // flag reload
+  const [flagReload, setFlagReload] = useState(false);
+
   // filtros de fechas
-  const [filterState, setFilterState] = useState({
+  const [filterDate, setFilterDate] = useState({
     startDate: null,
     endDate: null,
   });
+  const { startDate, endDate } = filterDate;
 
-  // numero de items seleccionados
-  const [filterData, setFilterData] = useState({
-    celular: "",
-    proyecto: "",
-    asignado: "",
-    horaRecepcion: "",
-    fecha_creacion: "",
-  });
-
-  const { celular, asignado, proyecto, horaRecepcion, fecha_creacion } =
-    filterData;
+  // change flag
+  const onSubmitFilter = (event) => {
+    // cambiamos el flag de reload
+    setFlagReload((prev) => !prev);
+  };
 
   // funcion para cambiar fecha desde
   const onChangeDatePickerFechaDesde = (newDate) => {
-    console.log(newDate);
+    setFilterDate({
+      ...filterDate,
+      startDate: newDate,
+    });
   };
 
   // funcion para cambiar fecha hasta
   const onChangeDatePickerFechaHasta = (newDate) => {
-    console.log(newDate);
+    setFilterDate({
+      ...filterDate,
+      endDate: newDate,
+    });
   };
 
   const handledFilterData = () => {
     setVisibleProgress(true);
     const dataFilter = leads.filter((element) => {
+      const nombreElement = `${element["nombre"]
+        .toString()
+        .toLowerCase()} ${element["apellido"].toString().toLowerCase()}`;
       const celularElement = element["celular"].toString().toLowerCase();
       const proyectoElement = element["campania"]["proyecto"]["nombre"]
         .toString()
         .toLowerCase();
-      const asignadoElement = element["asignado"];
-      const horaRecepcionElement = formatDate_ISO861_to_date(
-        element["horaRecepcion"]
-      );
-      const fechaCreacionElement = formatDate_ISO861_to_date(
-        element["fecha_creacion"]
+      const fechaAsignacionElement = formatDate_ISO861_to_date(
+        element["fecha_asignacion"]
       );
 
       if (
+        (filterData["nombre"] !== "" &&
+          !nombreElement.includes(filterData["nombre"].toLowerCase())) ||
         (filterData["celular"] !== "" &&
           !celularElement.includes(filterData["celular"].toLowerCase())) ||
         (filterData["proyecto"] !== "" &&
           !proyectoElement.includes(filterData["proyecto"].toLowerCase())) ||
-        (filterData["asignado"] !== "" &&
-          !filterData["asignado"] === asignadoElement) ||
-        (filterData["horaRecepcion"] !== "" &&
-          !horaRecepcionElement.includes(filterData["horaRecepcion"])) ||
-        (filterData["fecha_creacion"] !== "" &&
-          !fechaCreacionElement.includes(filterData["fecha_creacion"]))
+        (filterData["fecha_asignacion"] !== "" &&
+          !fechaAsignacionElement.includes(filterData["fecha_asignacion"]))
       ) {
         return false;
       }
@@ -133,11 +141,10 @@ export const ListAsesorVentasLead = () => {
     setAuxLeads(resetDate);
     // reset filtros
     setFilterData({
+      nombre: "",
       celular: "",
       proyecto: "",
-      asignado: "",
-      horaRecepcion: "",
-      fecha_creacion: "",
+      fecha_asignacion: "",
     });
     setFlagReset(false);
   };
@@ -214,9 +221,13 @@ export const ListAsesorVentasLead = () => {
     setVisibleProgress(true);
     setCountSelectedElements(0);
     try {
-      const rowData = await getAsesorLeads(authTokens["access"]);
-      const { leads } = rowData;
-      const formatData = leads.map((element) => {
+      let query = "estado=A";
+      if (startDate && endDate) {
+        query += `&desde=${startDate}T00:00:00&hasta=${endDate}T23:59:59`;
+      }
+
+      const rowData = await getLeads(authTokens["access"], query);
+      const formatData = rowData.map((element) => {
         return {
           ...element,
           isSelected: false,
@@ -227,7 +238,6 @@ export const ListAsesorVentasLead = () => {
       setAuxLeads(formatData);
       setVisibleProgress(false);
     } catch (error) {
-      console.log(error);
       const pilaError = combinarErrores(error);
       setFeedbackMessages({
         style_message: "error",
@@ -240,7 +250,7 @@ export const ListAsesorVentasLead = () => {
 
   useEffect(() => {
     traerLeadByAsesor();
-  }, []);
+  }, [flagReload]);
 
   return (
     <>
@@ -250,13 +260,23 @@ export const ListAsesorVentasLead = () => {
           {/* Filtro de fechas */}
           <div className="flex gap-x-2">
             <CustomDatePicker
+              defaultValue={startDate}
               onNewFecha={onChangeDatePickerFechaDesde}
               label="Fecha Desde"
             />
             <CustomDatePicker
+              defaultValue={endDate}
               onNewFecha={onChangeDatePickerFechaHasta}
               label="Fecha Hasta"
             />
+            <Button
+              startIcon={<MdFilterAlt />}
+              variant="contained"
+              sx={{ textTransform: "capitalize" }}
+              onClick={onSubmitFilter}
+            >
+              Filtrar
+            </Button>
           </div>
         </div>
 
@@ -316,10 +336,9 @@ export const ListAsesorVentasLead = () => {
                       />
                     </TableCell>
                     <TableCell>Celular</TableCell>
+                    <TableCell>Nombre</TableCell>
                     <TableCell>Proyecto</TableCell>
-                    <TableCell align="center">Asignado</TableCell>
-                    <TableCell>Fecha recepción</TableCell>
-                    <TableCell>Fecha creación</TableCell>
+                    <TableCell>Fecha asignacion</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
@@ -365,31 +384,28 @@ export const ListAsesorVentasLead = () => {
                       />
                     </TableCell>
                     <TableCell>
+                      <TextField
+                        size="small"
+                        variant="outlined"
+                        placeholder="Número"
+                        type="text"
+                        name="nombre"
+                        value={nombre}
+                        onChange={handledFilterInputValues}
+                      />
+                    </TableCell>
+                    <TableCell>
                       <SelectProyecto
                         size="small"
                         onNewInput={handledFilterSelectValues}
                         defaultValue={proyecto}
                       />
                     </TableCell>
-                    <TableCell align="center">
-                      <SelectBoolean
-                        filterName="asignado"
-                        onNewInput={handledFilterSelectValues}
-                        defaultValue={asignado}
-                      />
-                    </TableCell>
                     <TableCell>
                       <CustomDatePickerFilter
                         onNewFecha={handledFilterDateValues}
-                        filterName="horaRecepcion"
-                        defaultValue={horaRecepcion}
-                      />
-                    </TableCell>
-                    <TableCell>
-                      <CustomDatePickerFilter
-                        onNewFecha={handledFilterDateValues}
-                        filterName="fecha_creacion"
-                        defaultValue={fecha_creacion}
+                        filterName="fecha_asignacion"
+                        defaultValue={fecha_asignacion}
                       />
                     </TableCell>
                   </TableRow>

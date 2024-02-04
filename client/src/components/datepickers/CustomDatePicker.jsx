@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { TextField } from "@mui/material";
 import { DatePicker } from "@mui/x-date-pickers";
 import dayjs from "dayjs";
@@ -21,6 +21,10 @@ export const CustomDatePicker = ({
   const handleKeyDown = (event) => {
     event.preventDefault();
   };
+
+  useEffect(() => {
+    setValue(dayjs(defaultValue));
+  }, [defaultValue]);
 
   return (
     <DatePicker

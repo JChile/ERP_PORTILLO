@@ -28,6 +28,7 @@ export const MassActionsViewLeadsMarketing = ({
   handleClickFeedback,
   setVisibleProgress,
   onLoadData,
+  activeMassActions = true,
 }) => {
   const { authTokens } = useContext(AuthContext);
   const [anchorEl, setAnchorEl] = useState(null);
@@ -110,11 +111,13 @@ export const MassActionsViewLeadsMarketing = ({
           },
         }}
       >
-        <DialogAsignacionAsesorMasiva
-          handleConfirm={asignarAsesorLeadsSeleccionado}
-          onCloseMenu={handleClose}
-          disabled={data.length === 0}
-        />
+        {activeMassActions && (
+          <DialogAsignacionAsesorMasiva
+            handleConfirm={asignarAsesorLeadsSeleccionado}
+            onCloseMenu={handleClose}
+            disabled={data.length === 0}
+          />
+        )}
         <MenuItem
           key={"exportar"}
           onClick={exportLeadsSeleccionados}

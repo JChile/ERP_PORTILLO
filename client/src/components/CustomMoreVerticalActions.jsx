@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import IconButton from "@mui/material/IconButton";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
+import { FiCheckCircle } from "react-icons/fi";
 import { FiMoreVertical, FiEdit2, FiDelete } from "react-icons/fi";
 import {
   Button,
@@ -17,8 +18,10 @@ const ITEM_HEIGHT = 48;
 export const CustomMoreVerticalActions = ({
   onDelete = () => console.log("delete"),
   onEdit = () => console.log("edit"),
+  onActive = () => console.log("active"),
   activeOnDelete = true,
   activeOnEdit = true,
+  activeOnActive = true,
   titleDialog = "Dialogo de confirmación",
   descriptionDialog = "¿Estas seguro de eliminar este registro?",
 }) => {
@@ -70,6 +73,12 @@ export const CustomMoreVerticalActions = ({
             handleConfirm={onDelete}
             onCloseMenu={handleClose}
           />
+        )}
+        {!activeOnDelete && activeOnActive && (
+          <MenuItem key={"Activar"} onClick={onActive}>
+            <FiCheckCircle />
+            <span className="ps-2">Activar</span>
+          </MenuItem>
         )}
       </Menu>
     </>

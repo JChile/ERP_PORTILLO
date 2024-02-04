@@ -2,7 +2,7 @@ import React, { useContext, useState } from "react";
 import { AuthContext } from "../context";
 import PortilloLogo from "../../assets/portillo-logo-port.png";
 import { useAlertMUI } from "../../hooks";
-import { CustomAlert } from "../../components";
+import { CustomAlert, CustomCircularProgress } from "../../components";
 
 export const Login = () => {
   // context
@@ -18,6 +18,9 @@ export const Login = () => {
     handleCloseFeedback,
     handleClickFeedback,
   } = useAlertMUI();
+
+  // estado de progress
+  const [visibleProgress, setVisibleProgress] = useState(false);
 
   // handler credenciales
   const onFormChange = (event) => {
@@ -49,11 +52,12 @@ export const Login = () => {
   // funcion de logeo
   const login = async (e) => {
     e.preventDefault();
+    setVisibleProgress(true);
     const validate = validarDatosAutenticacion(username, password);
     // si los campos enviados son validos
     if (validate.length === 0) {
       try {
-        const result = await loginUser(username, password);
+        const result = await loginUser(username, password, setVisibleProgress);
         const { detail } = result;
         // si no hubo error al obtener el detail mostramos el error
         setFeedbackMessages({
@@ -64,6 +68,8 @@ export const Login = () => {
         // vaceamos los campos del form
         vaciarForm();
       } catch (error) {
+        // set visible
+        setVisibleProgress(false);
         // mostramos el error
         setFeedbackMessages({
           style_message: "error",
@@ -72,6 +78,7 @@ export const Login = () => {
         handleClickFeedback();
       }
     } else {
+      setVisibleProgress(false);
       // mostramos feedback
       setFeedbackMessages({
         style_message: "warning",
@@ -135,7 +142,9 @@ export const Login = () => {
           </form>
         </div>
       </div>
-    
+      {/* CIRCULAR PROGRESS */}
+      {visibleProgress && <CustomCircularProgress />}
+
       {/* COMPONENTE ALERTA */}
       <CustomAlert
         feedbackCreate={feedbackCreate}

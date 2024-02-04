@@ -89,7 +89,6 @@ export const CalendarView = () => {
   const [desdeValue, setDesdeValue] = useState(null);
   const [hastaValue, setHastaValue] = useState(null);
 
-
   const handleTempFilters = (event) => {
     const { name, checked } = event.target;
     const updatedFilters = {
@@ -108,12 +107,10 @@ export const CalendarView = () => {
     setSelectedFilters(tempFilters);
   };
 
-  // http://127.0.0.1:8000/api/evento/?desde=2020-2-2&hasta=2020-2-2
-
   const getCalendarData = async (authTokens) => {
     let query = "";
     if (desdeValue && hastaValue) {
-      query = `desde=${desdeValue}&hasta=${hastaValue}`;
+      query = `desde=${desdeValue}T00:00:00&hasta=${hastaValue}T23:59:59`;
     }
     try {
       const events = await getEvents(authTokens, query);
@@ -162,7 +159,6 @@ export const CalendarView = () => {
   };
 
   const onSubmitFilter = (event) => {
-    
     setFlagLoader((prev) => !prev);
   };
 
@@ -171,7 +167,6 @@ export const CalendarView = () => {
   }, [flagLoader]);
 
   return (
-
     <React.Fragment>
       <div className="flex flex-col gap-y-3">
         <Typography variant="h5">Eventos Registrados</Typography>

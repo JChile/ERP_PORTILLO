@@ -55,6 +55,7 @@ export const DetailUsuarios = () => {
       setVisibleProgress(true);
       try {
         const result = await getUsuarioPerfil(idUsuario, authTokens["access"]);
+        console.log(result);
         setUsuario(result);
         setVisibleProgress(false);
       } catch (error) {
@@ -156,10 +157,12 @@ export const DetailUsuarios = () => {
                 <span className="block text-sm font-medium min-w-[10rem] text-zinc-500">
                   Rol
                 </span>
-                <span className="block text-sm">{groups["name"]}</span>
+                <span className="block text-sm">
+                  {groups.length === 0 ? "Sin rol" : groups["name"]}
+                </span>
               </label>
 
-              {groups["name"] === "asesor" && (
+              {groups.length !== 0 && groups["name"] === "asesor" && (
                 <label className="block flex gap-y-1 ">
                   <span className="block text-sm font-medium min-w-[10rem] text-zinc-500">
                     Codigo asesor

@@ -5,6 +5,7 @@ from . import views
 from . import cutomViews, reportesViews
 
 urlpatterns = [
+    path('', include('ventas.reportesUrls')),
     re_path(r'^lead/$', views.LeadList.as_view()),
     re_path(r'^lead/(?P<pk>[0-9]+)$', views.LeadDetail.as_view()),
     re_path(r'^leadActivo/$', views.LeadListActivos.as_view()),
@@ -115,10 +116,6 @@ urlpatterns = [
 
 
     re_path(r'^estadoEvento/$', views.EstadoEventoList.as_view()),
-    re_path(r'^estadoEvento/(?P<pk>[\w-]+)$',
-            views.EstadoEventoDetail.as_view()),
-
-    re_path(r'^reporteAsesorLead/$', reportesViews.ReporteAsesorLead.as_view()),
-
+    re_path(r'^estadoEvento/(?P<pk>[\w-]+)$',views.EstadoEventoDetail.as_view()),
 
 ]

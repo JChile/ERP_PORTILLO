@@ -9,6 +9,7 @@ import {
 import React, { useEffect, useState } from "react";
 import { FilterProyectos } from "../../../components";
 import { getProyectoCampania, getProyectosCampania } from "../helpers";
+import { DiagramRetornoLeadCampania } from "../components";
 
 export const ReporteRetornoCampania = () => {
   const [activeButton, setActiveButton] = useState(true);
@@ -139,7 +140,7 @@ export const ReporteRetornoCampania = () => {
           </TableBody>
         </Table>
         <div className="flex flex-col items-center justify-start h-screen mt-4">
-            <CampaniasBarChart data={auxData}/>
+            <DiagramRetornoLeadCampania data={auxData}/>
         </div>
       </div>
     </div>

@@ -42,18 +42,13 @@ class ReporteProyectoCampaniaList(APIView):
         proyectoSerializer = ProyectoSerializer(proyecto_queryset, many=True)
         proyecto_data = proyectoSerializer.data
 
-        campania_queryset = proyecto_queryset.prefetch_related('campania_set')
 
         for proyectoIter in proyecto_data:
-            proyectoIter["campanias"] = ProyectoSerializer(Proyecto.objects.filter(pk = proyectoIter["id"]), many = True).data
-
-        print(campania_queryset)
-
-
+            proyectoIter["campanias"] = CampaniaSerializer(Campania.objects.filter(proyecto = proyectoIter["id"]), many = True).data
 
         return Response(proyectoSerializer.data, status.HTTP_200_OK)
 
-        pass
+ 
 
 
 class ReporteProyectoCampaniaDetail(APIView):

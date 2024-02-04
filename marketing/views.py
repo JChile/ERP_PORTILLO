@@ -108,7 +108,7 @@ class ProyectoDetail(generics.RetrieveUpdateDestroyAPIView):
                 asesor = get_or_none(User, id = i["asesor"])
                 userSerializer = UserSerializer(asesor, fields=(
                 'id', 'first_name', 'last_name', 'username')) if asesor else None
-                i["asesor"] = userSerializer.data if userSerializer else {}
+                i["asesor"] = userSerializer.data if userSerializer else None
             proyecto_data["lead"] = lead_datajson
             #proyecto_data["asesor"] = asesor_data if asesor_data else []
         
@@ -183,9 +183,9 @@ class CampaniaDetail(generics.RetrieveUpdateDestroyAPIView):
         proyectoSerializer = ProyectoSerializer(proyecto)
         # userSerializer = UserSerializer(user)
         categoriaSerializer = CategoriaSerializer(categoria)
-        dataJson["proyecto"] = proyectoSerializer.data if proyecto != None else {}
+        dataJson["proyecto"] = proyectoSerializer.data if proyecto != None else None
         # dataJson["user"] = userSerializer.data
-        dataJson["categoria"] = categoriaSerializer.data if categoria != None else {}
+        dataJson["categoria"] = categoriaSerializer.data if categoria != None else None
         return Response(dataJson)
 
 class ProyectoCampaniaList(APIView):

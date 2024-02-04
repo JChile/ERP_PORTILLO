@@ -72,12 +72,9 @@ class ReporteProyectoCampaniaDetail(APIView):
 
         proyecto_data = proyectoSerializer.data
 
-
         if estadoCampania:
             proyecto_data["campanias"] = CampaniaSerializer(Campania.objects.filter(proyecto = proyecto.pk, estado = estadoCampania), many = True).data
         else:    
             proyecto_data["campanias"] = CampaniaSerializer(proyecto.campania_set.all(), many = True).data
-
-
 
         return Response(proyecto_data, status.HTTP_200_OK)

@@ -9,8 +9,8 @@ class Proyecto(models.Model):
     ubicacion = models.CharField(max_length=100, null=True, blank=True)
     descripcion = models.TextField(null=True, blank=True)
     estado = models.ForeignKey(EstadoRegistro, on_delete=models.SET_NULL, default='A', null=True)
-    usuarioCreador =   models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='usuarioCreadorProyecto')
-    usuarioActualizador =   models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='usuarioActualizadorProyecto')
+    usuarioCreador =   models.ForeignKey(User, on_delete=models.SET_NULL,  null=True, blank=True, related_name='usuarioCreadorProyecto')
+    usuarioActualizador =   models.ForeignKey(User, on_delete=models.SET_NULL,  null=True, blank=True, related_name='usuarioActualizadorProyecto')
     fecha_creacion = models.DateTimeField(default = timezone.now)
     fecha_actualizacion = models.DateTimeField(auto_now=True)
 

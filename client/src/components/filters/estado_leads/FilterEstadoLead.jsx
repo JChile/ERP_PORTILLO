@@ -68,7 +68,7 @@ export const FilterEstadoLead = ({
       disableClearable
       getOptionLabel={(option) => option.label}
       onChange={handleChange}
-      isOptionEqualToValue={(option, value) => option.id == value.id}
+      isOptionEqualToValue={(option, value) => option.id === value.id}
       renderInput={(params) => (
         <TextField {...params} size={size} label={label} />
       )}

@@ -68,7 +68,7 @@ export const FilterTipoEvento = ({
       disableClearable
       getOptionLabel={(option) => option.label}
       onChange={handleChange}
-      isOptionEqualToValue={(option, value) => option.id == value.id}
+      isOptionEqualToValue={(option, value) => option.id === value.id}
       renderInput={(params) => (
         <TextField label={label} {...params} size={size} />
       )}

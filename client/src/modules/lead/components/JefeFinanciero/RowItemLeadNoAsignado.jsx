@@ -2,6 +2,7 @@ import React from "react";
 import { Checkbox, TableCell, TableRow } from "@mui/material";
 import { Link, useNavigate } from "react-router-dom";
 import { CustomMoreVerticalActions } from "../../../../components";
+import { formatDate_ISO861_to_formatdate } from "../../../../utils";
 
 export const RowItemLeadNoAsignado = ({ item, checkedElement }) => {
   const { campania, id } = item;
@@ -49,10 +50,11 @@ export const RowItemLeadNoAsignado = ({ item, checkedElement }) => {
           </div>
         </Link>
       </TableCell>
-      <TableCell>{item["nombre"]}</TableCell>
-      <TableCell>{item["apellido"]}</TableCell>
+      <TableCell>{`${item["nombre"]} ${item["apellido"]}`}</TableCell>
       <TableCell>{proyecto["nombre"]}</TableCell>
-      <TableCell>{item["estadoLead"]}</TableCell>
+      <TableCell>
+        {formatDate_ISO861_to_formatdate(item["fecha_desasignacion"])}
+      </TableCell>
     </TableRow>
   );
 };

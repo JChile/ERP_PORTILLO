@@ -26,6 +26,8 @@ export const UpdateLead = () => {
   const numericId = parseInt(idLead);
   const { authTokens, currentUser } = useContext(AuthContext);
 
+  const [flagLoading, setFlagLoading] = useState(false);
+
   const [lead, setLead] = useState({
     nombre: "",
     apellido: "",
@@ -69,16 +71,19 @@ export const UpdateLead = () => {
       try {
         setVisibleProgress(true);
         const result = await getLead(idLead, authTokens["access"]);
-        setLead({
+        const formatResult = {
           ...result,
           asesor: result.asesor ? result.asesor["id"] : null,
           campania: result.campania ? result.campania["id"] : null,
           campaniaName: result.campania ? result.campania["nombre"] : "",
           objecion: result.objecion ? result.objecion["id"] : null,
           estadoLead: result.estadoLead ? result.estadoLead : null,
-        });
+        };
+        console.log(formatResult);
+        setLead(formatResult);
         // comprobar si se realizo con exito la creación del usuario
         setVisibleProgress(false);
+        setFlagLoading(true);
       } catch (error) {
         setVisibleProgress(false);
         const pilaError = combinarErrores(error);
@@ -207,7 +212,6 @@ export const UpdateLead = () => {
           fecha_actualizacion: obtenerHoraActualFormatPostgress(),
         };
 
-        console.log(formatLead);
         const result = await updateLead(
           idLead,
           formatLead,
@@ -247,134 +251,132 @@ export const UpdateLead = () => {
       <div className="relative border-2 rounded-md border-inherit p-5">
         <h1 className="text-lg font-bold">Actualizar Lead</h1>
         <hr className="my-4"></hr>
-        <form method="post" className="min-w-[242px] flex gap-x-8">
-          <div className="flex-1 flex flex-col gap-y-6">
-            <label className="block flex flex-col gap-y-1">
-              <span className="block text-sm font-medium">Nombre</span>
-              <input
-                type="text"
-                name="nombre"
-                className="mt-1 px-3 py-2 bg-white border shadow-sm border-slate-300 placeholder-slate-400 focus:outline-none focus:border-sky-500 focus:ring-sky-500 block w-full rounded-md sm:text-sm focus:ring-1"
-                placeholder="Nombre"
-                value={nombre}
-                onChange={handledForm}
-              />
-            </label>
+        {flagLoading && (
+          <form method="post" className="min-w-[242px] flex gap-x-8">
+            <div className="flex-1 flex flex-col gap-y-6">
+              <label className="block flex flex-col gap-y-1">
+                <span className="block text-sm font-medium">Nombre</span>
+                <input
+                  type="text"
+                  name="nombre"
+                  className="mt-1 px-3 py-2 bg-white border shadow-sm border-slate-300 placeholder-slate-400 focus:outline-none focus:border-sky-500 focus:ring-sky-500 block w-full rounded-md sm:text-sm focus:ring-1"
+                  placeholder="Nombre"
+                  value={nombre}
+                  onChange={handledForm}
+                />
+              </label>
 
-            <label className="block flex flex-col gap-y-1">
-              <span className="block text-sm font-medium">Apellido</span>
-              <input
-                type="text"
-                name="apellido"
-                className="mt-1 px-3 py-2 bg-white border shadow-sm border-slate-300 placeholder-slate-400 focus:outline-none focus:border-sky-500 focus:ring-sky-500 block w-full rounded-md sm:text-sm focus:ring-1"
-                placeholder="Apellido"
-                value={apellido}
-                onChange={handledForm}
-              />
-            </label>
+              <label className="block flex flex-col gap-y-1">
+                <span className="block text-sm font-medium">Apellido</span>
+                <input
+                  type="text"
+                  name="apellido"
+                  className="mt-1 px-3 py-2 bg-white border shadow-sm border-slate-300 placeholder-slate-400 focus:outline-none focus:border-sky-500 focus:ring-sky-500 block w-full rounded-md sm:text-sm focus:ring-1"
+                  placeholder="Apellido"
+                  value={apellido}
+                  onChange={handledForm}
+                />
+              </label>
 
-            <label className="block flex flex-col gap-y-1">
-              <span className="block text-sm font-medium">Celular</span>
-              <MuiTelInput
-                defaultCountry="PE"
-                disableDropdown
-                forceCallingCode
-                value={celular}
-                onChange={(value) => {
-                  handledForm({
-                    target: {
-                      name: "celular",
-                      value: value,
-                    },
-                  });
-                }}
-              />
-            </label>
+              <label className="block flex flex-col gap-y-1">
+                <span className="block text-sm font-medium">Celular</span>
+                <MuiTelInput
+                  defaultCountry="PE"
+                  disableDropdown
+                  forceCallingCode
+                  value={celular}
+                  onChange={(value) => {
+                    handledForm({
+                      target: {
+                        name: "celular",
+                        value: value,
+                      },
+                    });
+                  }}
+                />
+              </label>
 
-            <label className="block flex flex-col gap-y-1">
-              <span className="block text-sm font-medium">Celular 2</span>
-              <MuiTelInput
-                defaultCountry="PE"
-                disableDropdown
-                forceCallingCode
-                value={celular2}
-                onChange={(value) => {
-                  handledForm({
-                    target: {
-                      name: "celular2",
-                      value: value,
-                    },
-                  });
-                }}
-              />
-            </label>
+              <label className="block flex flex-col gap-y-1">
+                <span className="block text-sm font-medium">Celular 2</span>
+                <MuiTelInput
+                  defaultCountry="PE"
+                  disableDropdown
+                  forceCallingCode
+                  value={celular2}
+                  onChange={(value) => {
+                    handledForm({
+                      target: {
+                        name: "celular2",
+                        value: value,
+                      },
+                    });
+                  }}
+                />
+              </label>
 
-            <label className="block flex flex-row gap-y-1">
-              <span className="block text-sm font-medium flex items-center me-2">
-                Llamar?
-              </span>
-              <Checkbox
-                name="llamar"
-                checked={llamar}
-                onChange={onAddCheckInputLlamar}
-                inputProps={{ "aria-label": "controlled" }}
-              />
-            </label>
-          </div>
+              <label className="block flex flex-row gap-y-1">
+                <span className="block text-sm font-medium flex items-center me-2">
+                  Llamar?
+                </span>
+                <Checkbox
+                  name="llamar"
+                  checked={llamar}
+                  onChange={onAddCheckInputLlamar}
+                  inputProps={{ "aria-label": "controlled" }}
+                />
+              </label>
+            </div>
 
-          <div className="flex-1 flex flex-col gap-y-6">
-            <label className="block flex flex-col gap-y-1">
-              <span className="block text-sm font-medium">Estado Lead</span>
-              {estadoLead && (
+            <div className="flex-1 flex flex-col gap-y-6">
+              <label className="block flex flex-col gap-y-1">
+                <span className="block text-sm font-medium">Estado Lead</span>
                 <FilterEstadoLead
                   defaultValue={estadoLead}
                   onNewInput={onAddEstadoLead}
                 />
-              )}
-            </label>
+              </label>
 
-            <label className="block flex flex-col gap-y-1">
-              <span className="block text-sm font-medium">Objeciones</span>
-              {objecion && (
+              <label className="block flex flex-col gap-y-1">
+                <span className="block text-sm font-medium">Objeciones</span>
                 <FilterObjecion
                   defaultValue={objecion}
                   onNewInput={onAddObjecion}
                 />
-              )}
-            </label>
+              </label>
 
-            <label className="block flex flex-col gap-y-1">
-              <span className="block text-sm font-medium">Asesor Asignado</span>
-              {asesor && (
+              <label className="block flex flex-col gap-y-1">
+                <span className="block text-sm font-medium">
+                  Asesor Asignado
+                </span>
                 <FilterAsesor defaultValue={asesor} onNewInput={onAddAsesor} />
-              )}
-            </label>
+              </label>
 
-            <label className="flex content-center gap-x-2">
-              <span className="block text-sm font-medium flex items-center">
-                <span className="mr-2">Campaña: </span>
-                {campaniaName.length !== 0 && (
-                  <span className="inline-block px-2 py-1 text-sm font-semibold leading-none bg-blue-500 text-white rounded-full">
-                    {campaniaName}
-                  </span>
-                )}
-              </span>
-              <FilterProyectoCampania onAddCampania={onAddCampania} />
-            </label>
+              <label className="flex content-center gap-x-2">
+                <span className="block text-sm font-medium flex items-center">
+                  <span className="mr-2">Campaña: </span>
+                  {campaniaName.length !== 0 && (
+                    <span className="inline-block px-2 py-1 text-sm font-semibold leading-none bg-blue-500 text-white rounded-full">
+                      {campaniaName}
+                    </span>
+                  )}
+                </span>
+                <FilterProyectoCampania onAddCampania={onAddCampania} />
+              </label>
 
-            <label className="block flex flex-col gap-y-1">
-              <span className="block text-sm font-medium">Comentario</span>
-              <textarea
-                name="comentario"
-                rows="3"
-                className="mt-1 px-3 py-2 bg-white border shadow-sm border-slate-300 placeholder-slate-400 focus:outline-none focus:border-sky-500 focus:ring-sky-500 block w-full rounded-md sm:text-sm focus:ring-1"
-                placeholder="Comentario"
-                value={comentario}
-                onChange={handledForm}
-              ></textarea>
-            </label>
-          </div>
-        </form>
+              <label className="block flex flex-col gap-y-1">
+                <span className="block text-sm font-medium">Comentario</span>
+                <textarea
+                  name="comentario"
+                  rows="3"
+                  className="mt-1 px-3 py-2 bg-white border shadow-sm border-slate-300 placeholder-slate-400 focus:outline-none focus:border-sky-500 focus:ring-sky-500 block w-full rounded-md sm:text-sm focus:ring-1"
+                  placeholder="Comentario"
+                  value={comentario}
+                  onChange={handledForm}
+                ></textarea>
+              </label>
+            </div>
+          </form>
+        )}
       </div>
       <div className="flex justify-center mt-4 mb-4">
         <button

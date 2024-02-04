@@ -1,6 +1,11 @@
 import React, { useContext, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { createImagenProducto, createVideoProducto, getProducto, updateProducto } from "../helpers";
+import {
+  createImagenProducto,
+  createVideoProducto,
+  getProducto,
+  updateProducto,
+} from "../helpers";
 import { useAlertMUI } from "../../../hooks";
 import { MenuItem, Select } from "@mui/material";
 import { CustomAlert, CustomCircularProgress } from "../../../components";
@@ -18,6 +23,9 @@ import CarouselComponentVideoAdd from "../components/CarouselVideoAdd";
 export const UpdateProducto = () => {
   const { idProducto } = useParams();
   const { authTokens, currentUser } = useContext(AuthContext);
+
+  const [flagLoading, setFlagLoading] = useState(false);
+
   const [product, setProduct] = useState({
     nombre: "",
     numero: 0.0,
@@ -45,6 +53,7 @@ export const UpdateProducto = () => {
   const [visibleProgress, setVisibleProgress] = useState(false);
 
   const obtenerProducto = async () => {
+    setVisibleProgress(true);
     try {
       const result = await getProducto(idProducto, authTokens["access"]);
       setProduct({
@@ -54,6 +63,8 @@ export const UpdateProducto = () => {
         imagenes: result.imagenes,
         videos: result.videos,
       });
+      setVisibleProgress(false);
+      setFlagLoading(true);
     } catch (error) {
       setVisibleProgress(false);
       const pilaError = combinarErrores(error);
@@ -91,7 +102,7 @@ export const UpdateProducto = () => {
     if (!nombre) {
       errors.push("- El nombre del proyecto es obligatorio.");
     }
-    if (numero<0) {
+    if (numero < 0) {
       errors.push("- El número debe ser mayor que 0.");
     }
     if (numero % 1 !== 0) {
@@ -100,7 +111,7 @@ export const UpdateProducto = () => {
     if (!numero) {
       errors.push("- El número es obligatorio.");
     }
-    if (area<0) {
+    if (area < 0) {
       errors.push("- El área no puede ser negativo.");
     }
     if (!area) {
@@ -263,99 +274,101 @@ export const UpdateProducto = () => {
       <div className="relative p-5">
         <h1 className="text-lg font-bold">Modificar Producto</h1>
         <hr className="my-4"></hr>
-        <form
-          method="post"
-          className="min-w-[242px] flex flex-col gap-y-6 gap-x-8"
-        >
-          <div className="flex flex-row gap-y-6 gap-x-8">
-            <div className="w-6/12 flex flex-col gap-y-5">
-              <label className="flex flex-col gap-y-1 ">
-                <span className="after:content-['*'] after:ml-0.5 after:text-yellow-500 block text-sm font-medium">
-                  Nombre del producto
-                </span>
-                <input
-                  type="text"
-                  name="nombre"
-                  className="mt-1 px-3 py-2 bg-white border shadow-sm border-slate-300 placeholder-slate-400 focus:outline-none focus:border-sky-500 focus:ring-sky-500 block w-full rounded-md sm:text-sm focus:ring-1"
-                  placeholder="Nombre del proyecto"
-                  autoComplete="off"
-                  value={nombre}
-                  onChange={handledForm}
-                />
-              </label>
+        {flagLoading && (
+          <form
+            method="post"
+            className="min-w-[242px] flex flex-col gap-y-6 gap-x-8"
+          >
+            <div className="flex flex-row gap-y-6 gap-x-8">
+              <div className="w-6/12 flex flex-col gap-y-5">
+                <label className="flex flex-col gap-y-1 ">
+                  <span className="after:content-['*'] after:ml-0.5 after:text-yellow-500 block text-sm font-medium">
+                    Nombre del producto
+                  </span>
+                  <input
+                    type="text"
+                    name="nombre"
+                    className="mt-1 px-3 py-2 bg-white border shadow-sm border-slate-300 placeholder-slate-400 focus:outline-none focus:border-sky-500 focus:ring-sky-500 block w-full rounded-md sm:text-sm focus:ring-1"
+                    placeholder="Nombre del proyecto"
+                    autoComplete="off"
+                    value={nombre}
+                    onChange={handledForm}
+                  />
+                </label>
 
-              <label htmlFor="numero" className="flex flex-col gap-y-1">
-                <span className="after:content-['*'] after:ml-0.5 after:text-yellow-500 block text-sm font-medium">
-                  Numero
-                </span>
-                <input
-                  type="number"
-                  name="numero"
-                  id="numero"
-                  placeholder="numero"
-                  value={numero}
-                  onChange={handledForm}
-                  className="mt-1 px-3 py-2 bg-white border shadow-sm border-slate-300 placeholder-slate-400 focus:outline-none focus:border-sky-500 focus:ring-sky-500 block w-full rounded-md sm:text-sm focus:ring-1"
-                />
-              </label>
+                <label htmlFor="numero" className="flex flex-col gap-y-1">
+                  <span className="after:content-['*'] after:ml-0.5 after:text-yellow-500 block text-sm font-medium">
+                    Numero
+                  </span>
+                  <input
+                    type="number"
+                    name="numero"
+                    id="numero"
+                    placeholder="numero"
+                    value={numero}
+                    onChange={handledForm}
+                    className="mt-1 px-3 py-2 bg-white border shadow-sm border-slate-300 placeholder-slate-400 focus:outline-none focus:border-sky-500 focus:ring-sky-500 block w-full rounded-md sm:text-sm focus:ring-1"
+                  />
+                </label>
 
-              <label htmlFor="area" className="flex flex-col gap-y-1">
-                <span className="after:content-['*'] after:ml-0.5 after:text-yellow-500 block text-sm font-medium">
-                  Area
-                </span>
-                <input
-                  type="area"
-                  name="area"
-                  id="area"
-                  placeholder="area"
-                  value={area}
-                  onChange={handledForm}
-                  className="mt-1 px-3 py-2 bg-white border shadow-sm border-slate-300 placeholder-slate-400 focus:outline-none focus:border-sky-500 focus:ring-sky-500 block w-full rounded-md sm:text-sm focus:ring-1"
-                />
-              </label>
+                <label htmlFor="area" className="flex flex-col gap-y-1">
+                  <span className="after:content-['*'] after:ml-0.5 after:text-yellow-500 block text-sm font-medium">
+                    Area
+                  </span>
+                  <input
+                    type="area"
+                    name="area"
+                    id="area"
+                    placeholder="area"
+                    value={area}
+                    onChange={handledForm}
+                    className="mt-1 px-3 py-2 bg-white border shadow-sm border-slate-300 placeholder-slate-400 focus:outline-none focus:border-sky-500 focus:ring-sky-500 block w-full rounded-md sm:text-sm focus:ring-1"
+                  />
+                </label>
+              </div>
+
+              <div className="w-6/12 flex flex-col gap-y-5">
+                <label className="flex flex-col gap-y-1">
+                  <span className="block text-sm font-medium">
+                    Tipo de Producto
+                  </span>
+                  <FilterTipoProducto
+                    onNewInput={onAddTipoProducto}
+                    defaultValue={tipo}
+                  />
+                </label>
+
+                <label className="flex flex-col gap-y-1">
+                  <span className="block text-sm font-medium">Proyecto</span>
+                  <FilterProyectos
+                    onNewInput={onAddProyecto}
+                    defaultValue={proyecto}
+                  />
+                </label>
+
+                <label className="block flex flex-col gap-y-1">
+                  <span className="after:content-['*'] after:ml-0.5 after:text-yellow-500 block text-sm font-medium">
+                    Estado inicial
+                  </span>
+                  <Select
+                    name="estado"
+                    value={estado}
+                    onChange={handledForm}
+                    style={{
+                      height: "2.64rem", // Ajusta el valor según tus necesidades
+                      paddingTop: "1rem", // Ajusta el valor según tus necesidades
+                      paddingBottom: "1rem",
+                    }}
+                    className="bg-white border shadow-sm border-slate-300 placeholder-slate-400 focus:outline-none focus:border-sky-500 focus:ring-sky-500 block w-full rounded-md sm:text-sm focus:ring-1"
+                  >
+                    <MenuItem value="A">Activo</MenuItem>
+                    <MenuItem value="I">Inactivo</MenuItem>
+                  </Select>
+                </label>
+              </div>
             </div>
-
-            <div className="w-6/12 flex flex-col gap-y-5">
-              <label className="flex flex-col gap-y-1">
-                <span className="block text-sm font-medium">
-                  Tipo de Producto
-                </span>
-                <FilterTipoProducto
-                  onNewInput={onAddTipoProducto}
-                  defaultValue={tipo}
-                />
-              </label>
-
-              <label className="flex flex-col gap-y-1">
-                <span className="block text-sm font-medium">Proyecto</span>
-                <FilterProyectos
-                  onNewInput={onAddProyecto}
-                  defaultValue={proyecto}
-                />
-              </label>
-
-              <label className="block flex flex-col gap-y-1">
-                <span className="after:content-['*'] after:ml-0.5 after:text-yellow-500 block text-sm font-medium">
-                  Estado inicial
-                </span>
-                <Select
-                  name="estado"
-                  value={estado}
-                  onChange={handledForm}
-                  style={{
-                    height: "2.64rem", // Ajusta el valor según tus necesidades
-                    paddingTop: "1rem", // Ajusta el valor según tus necesidades
-                    paddingBottom: "1rem",
-                  }}
-                  className="bg-white border shadow-sm border-slate-300 placeholder-slate-400 focus:outline-none focus:border-sky-500 focus:ring-sky-500 block w-full rounded-md sm:text-sm focus:ring-1"
-                >
-                  <MenuItem value="A">Activo</MenuItem>
-                  <MenuItem value="I">Inactivo</MenuItem>
-                </Select>
-              </label>
-            </div>
-          </div>
-        </form>
+          </form>
+        )}
       </div>
       <div className="flex flex-row gap-y-6 gap-x-8">
         <div className="w-6/12 flex flex-col gap-y-5 border border-gray-300 p-4 rounded-md">

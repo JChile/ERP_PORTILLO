@@ -51,7 +51,6 @@ export const FilterProyectos = ({
     const defaultValueOption = options.find(
       (option) => option.id === defaultValue
     );
-    console.log(defaultValueOption);
     if (defaultValueOption) {
       setValue(defaultValueOption);
     }
@@ -68,7 +67,7 @@ export const FilterProyectos = ({
       disableClearable
       getOptionLabel={(option) => option.label}
       onChange={handleChange}
-      isOptionEqualToValue={(option, value) => option.id == value.id}
+      isOptionEqualToValue={(option, value) => option.id === value.id}
       renderInput={(params) => (
         <TextField {...params} size={size} label={label} />
       )}

@@ -4,7 +4,7 @@ import { Autocomplete, TextField } from "@mui/material";
 import { AuthContext } from "../../../auth";
 
 const defaultOption = {
-  value: 0,
+  value: null,
   label: "Selecciona una objecion",
   id: null,
 };

@@ -126,8 +126,8 @@ class WhatsApp(models.Model):
         super().save(*args, **kwargs)
 
 class HistoricoLeadAsesor(models.Model):
-    lead = models.ForeignKey(Lead, on_delete=models.SET_NULL, null=True)
-    usuario = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
+    lead = models.ForeignKey(Lead, on_delete=models.CASCADE, null=True)
+    usuario = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
     fecha_creacion = models.DateTimeField(default = timezone.now)
 
 
@@ -310,6 +310,6 @@ class ProyectoTipoProducto(models.Model):
 
 
 class DesasignacionLeadAsesor(models.Model):
-    lead = models.ForeignKey(Lead, on_delete=models.SET_NULL, null=True)
-    usuario = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
+    lead = models.ForeignKey(Lead, on_delete=models.CASCADE, null=True)
+    usuario = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
     fecha = models.DateTimeField(default = timezone.now)

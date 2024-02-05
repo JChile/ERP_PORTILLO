@@ -37,7 +37,7 @@ class LeadCreationConfirmation(APIView):
         thirty_days = timezone.now() - timedelta(days=60)
 
         phone_numbers = set(
-            Lead.objects.filter(horaRecepcion__gte=thirty_days,
+            Lead.objects.filter(fecha_creacion__gte=thirty_days,
                                 estado="A", campania__proyecto__id=proyecto_id)
             .values_list('celular', flat=True)
             .distinct()

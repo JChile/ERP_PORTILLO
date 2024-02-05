@@ -1,7 +1,7 @@
 import React from "react";
 import { BarChart, CartesianGrid, XAxis, YAxis, Tooltip, Bar } from "recharts";
 
-export const CampaniasBarChart = ({ data }) => {
+export const CampaniasCostoBarChart = ({ data }) => {
   if (!data || data.length === 0) {
     return null;
   }
@@ -13,7 +13,7 @@ export const CampaniasBarChart = ({ data }) => {
         angle={-45}
         textAnchor="end"
         height={100}
-        tick={{ fontSize: 10 }}
+        tick={{ fontSize: 12 }}
       />
       <YAxis />
       <Tooltip />

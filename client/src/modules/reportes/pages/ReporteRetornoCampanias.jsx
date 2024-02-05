@@ -12,7 +12,9 @@ import { getProyectoCampania } from "../helpers";
 import { DiagramRetornoLeadCampania } from "../components";
 import { useAlertMUI } from "../../../hooks";
 import { CustomAlert, CustomCircularProgress } from "../../../components";
-import { CampaniasBarChart } from "../components/CAmpaniasBarChart";
+import { CampaniasRadarChart } from "../components/CampaniasRadarChart";
+import { CampaniasCostoBarChart } from "../components/CampaniasCostoBarChart";
+import { DiagramRetornoRadar } from "../components/DiagramaRetornoRadar";
 
 export const ReporteRetornoCampania = () => {
   const [activeButton, setActiveButton] = useState(true);
@@ -162,8 +164,12 @@ export const ReporteRetornoCampania = () => {
           </TableBody>
         </Table>
         <div className="flex flex-row items-center justify-center mt-4">
-          <CampaniasBarChart data={auxDataCosto} />
+          <CampaniasCostoBarChart data={auxDataCosto} />
           <DiagramRetornoLeadCampania data={auxDataRetorno}/>
+        </div>
+        <div className="flex flex-row items-center justify-center mt-4">
+          <CampaniasRadarChart data={auxDataCosto} />
+          <DiagramRetornoRadar data={auxDataRetorno}/>
         </div>
       </div>
       <CustomAlert

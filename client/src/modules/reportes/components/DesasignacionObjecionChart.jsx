@@ -20,14 +20,19 @@ const data = [
   { objecion: "Ninguna", leads: 7 },
 ];
 
-export const DesasignacionObjecionChart = () => {
+export const DesasignacionObjecionChart = ({ data }) => {
+  const formatData = data.map((element) => ({
+    objecion: element.nombre,
+    leads: element.desasignaciones,
+  }));
+
   return (
     <div className="flex flex-col items-center">
       <Typography fontWeight="bold" sx={{ marginY: 4 }}>
         Proporcion de leads desasignados por objeción
       </Typography>
       <BarChart
-        data={data}
+        data={formatData}
         margin={{ top: 10, right: 30, left: 30, bottom: 5 }}
         barSize={20}
         width={620}

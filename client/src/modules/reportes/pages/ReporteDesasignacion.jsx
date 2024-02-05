@@ -1,57 +1,56 @@
 import { Button, Typography } from "@mui/material";
 import React, { useEffect, useState } from "react";
-import { FilterProyectos } from "../../../components";
+import { CustomCircularProgress, FilterProyectos } from "../../../components";
 import { DesasignacionAsesorChart } from "../components/DesasignacionAsesorChart";
 import { DesasignacionObjecionChart } from "../components/DesasignacionObjecionChart";
 import { DesasignacionEstadoChart } from "../components/DesasignacionEstadoChart";
-
+import {
+  getDesasignadosAsesor,
+  getDesasignadosEstadoLead,
+  getDesasignadosObjecion,
+} from "../helpers/getDesasignacionCases";
 
 export const ReporteDesasignacion = () => {
   const [activeButton, setActiveButton] = useState(true);
-  const [proyecto, setProyecto] = useState();
-  const [data, setData] = useState();
+  const [proyecto, setProyecto] = useState(null);
+
+  const [desasignacionAsesor, setDesasignacionAsesor] = useState([]);
+  const [desasignacionEstado, setDesasignacionEstado] = useState([]);
+  const [desasignacionObjecion, setDesasignacionObjecion] = useState([]);
+
   const [loadingFlag, setLoadingFlag] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
 
   const handleButtonState = (buttonState) => {
     setActiveButton(buttonState);
   };
   const onAddProyecto = (item) => {
-    setProyecto(item);
+    setProyecto(item.id);
   };
 
-  const getDataProyecto = async (id) => {
+  const fetchData = async () => {
     try {
-      console.log(id);
-      const result = await getProyectoCampania(id + "?estadoCampania=A");
-      setDataCampania(result);
-      console.log(result);
-    } catch (error) {}
-  };
-
-  const obtenerData = async () => {
-    /* setVisibleProgress(true); */
-    try {
-      const result = await getProyectosCampania(
-        "estadoProyecto=A&estadoCampania=A"
-      );
-      setData(result);
-      setAuxData(result);
-      /* setVisibleProgress(false); */
+      const responseAsesor = await getDesasignadosAsesor(1);
+      const responseEstado = await getDesasignadosEstadoLead(1);
+      const responseObjecion = await getDesasignadosObjecion(1);
+      setDesasignacionAsesor(responseAsesor);
+      setDesasignacionEstado(responseEstado);
+      setDesasignacionObjecion(responseObjecion);
+      setIsLoading(false);
     } catch (error) {
-      /* setVisibleProgress(false); */
-      /* const pilaError = combinarErrores(error); */
-      // mostramos feedback de error
-      /* setFeedbackMessages({
-        style_message: "error",
-        feedback_description_error: pilaError,
-      });
-      handleClickFeedback(); */
+      console.log(error);
     }
   };
 
   useEffect(() => {
-    obtenerData();
-  }, [activeButton]);
+    if (proyecto) {
+      setIsLoading(true)
+      fetchData();
+    } 
+    else {
+      setIsLoading(false);
+    }
+  }, [loadingFlag]);
 
   return (
     <React.Fragment>
@@ -90,20 +89,28 @@ export const ReporteDesasignacion = () => {
       <div className="w-6/12 flex flex-col gap-y-5 my-4 mx-auto">
         <label className="flex flex-col gap-y-1">
           <span className="block text-sm font-medium">Proyecto</span>
-          <FilterProyectos onNewInput={onAddProyecto} value={proyecto} />
+          <FilterProyectos onNewInput={onAddProyecto} defaultValue={proyecto} />
         </label>
         <Button
           variant="contained"
-          onClick={() => getDataProyecto(proyecto.id)}
+          onClick={() => setLoadingFlag((prev) => !prev)}
         >
           Generar Reporte
         </Button>
       </div>
-      <div className="grid grid-cols-2 items-center">
-        <DesasignacionAsesorChart />
-        <DesasignacionObjecionChart />
-        <DesasignacionEstadoChart />
-      </div>
+      {proyecto ? (
+        <React.Fragment>
+          <div className="grid grid-cols-2 items-center">
+            <DesasignacionAsesorChart data={desasignacionAsesor} />
+            <DesasignacionObjecionChart data={desasignacionObjecion} />
+            <DesasignacionEstadoChart data={desasignacionEstado} />
+          </div>
+        </React.Fragment>
+      ) : (
+        <p>Seleccione un proyecto</p>
+      )}
+
+      {isLoading && <CustomCircularProgress />}
     </React.Fragment>
   );
 };

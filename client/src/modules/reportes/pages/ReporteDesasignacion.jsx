@@ -6,8 +6,6 @@ import { DesasignacionObjecionChart } from "../components/DesasignacionObjecionC
 import { DesasignacionEstadoChart } from "../components/DesasignacionEstadoChart";
 
 
-
-
 export const ReporteDesasignacion = () => {
   const [activeButton, setActiveButton] = useState(true);
   const [proyecto, setProyecto] = useState();

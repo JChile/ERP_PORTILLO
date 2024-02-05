@@ -143,8 +143,6 @@ class ReporteProporcionDesasignacionesByObjecion(APIView):
             objeciones_iter["desasignaciones"] = lead_desasignados.filter(objecion = objeciones_iter["id"]).count()
 
         return Response(objeciones_data, status.HTTP_200_OK)
-<<<<<<< HEAD
-=======
     
 
 
@@ -176,4 +174,3 @@ class ReporteProporcionDesasignacionesByEstadoLead(APIView):
             estadoLead_iter["desasignaciones"] = lead_desasignados.filter(estadoLead = estadoLead_iter["nombre"]).count()
 
         return Response(estadoLead_data, status.HTTP_200_OK)
->>>>>>> b31f5817bb2fa2596588b551fd01eb869b80a96d

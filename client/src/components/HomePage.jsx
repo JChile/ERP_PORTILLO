@@ -1,5 +1,4 @@
 import React, { useContext } from "react";
-import backgroundHomePage from "../assets/background-fondo.jpg";
 import { AuthContext } from "../auth";
 import { Link } from "react-router-dom";
 

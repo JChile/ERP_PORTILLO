@@ -112,5 +112,34 @@ class ReporteProporcionAsignadosDesasignadosByAsesor(APIView):
 
  
         return Response(asesores_data, status.HTTP_200_OK)
+    
 
 
+class ReporteProporcionDesasignacionesByObjecion(APIView):
+    def get(self, request, pk=None):
+        try:
+            proyecto = Proyecto.objects.get(id = pk)
+        except:
+            return Response({"detail":"No existe proyecto"}, status.HTTP_404_NOT_FOUND)
+        
+        desde = request.query_params.get('desde')
+        hasta = request.query_params.get('hasta')
+
+        campaniasProyecto = proyecto.campania_set.all()
+        if desde and hasta:
+            leadsCampanias = Lead.objects.filter(campania__in = campaniasProyecto, fecha_desasignacion__range =[desde, hasta])
+
+        else :
+            leadsCampanias = Lead.objects.filter(campania__in = campaniasProyecto)
+
+
+        desasignados_leads_ids = DesasignacionLeadAsesor.objects.filter(lead__in = leadsCampanias).values_list('lead', flat=True)
+        lead_desasignados = Lead.objects.filter(id__in = desasignados_leads_ids)
+        print("Desasignados : ", lead_desasignados)
+
+        objeciones_data = ObjecionSerializer(Objecion.objects.all(), many = True).data
+
+        for objeciones_iter in objeciones_data:
+            objeciones_iter["desasignaciones"] = lead_desasignados.filter(objecion = objeciones_iter["id"]).count()
+
+        return Response(objeciones_data, status.HTTP_200_OK)

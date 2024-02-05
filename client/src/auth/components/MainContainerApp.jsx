@@ -62,7 +62,7 @@ export const MainContainerApp = ({ children }) => {
                     color: "white",
                     fontWeight: "100",
                   }}
-                  startIcon={<MdBarChart />}
+                  startIcon={<MdBarChart  />}
                 >
                   Reportes
                 </Button>

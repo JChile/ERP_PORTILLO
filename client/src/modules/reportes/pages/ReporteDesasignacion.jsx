@@ -5,12 +5,14 @@ import { DesasignacionAsesorChart } from "../components/DesasignacionAsesorChart
 import { DesasignacionObjecionChart } from "../components/DesasignacionObjecionChart";
 import { DesasignacionEstadoChart } from "../components/DesasignacionEstadoChart";
 
+
+
+
 export const ReporteDesasignacion = () => {
   const [activeButton, setActiveButton] = useState(true);
   const [proyecto, setProyecto] = useState();
   const [data, setData] = useState();
-  const [auxData, setAuxData] = useState();
-  const [dataCampania, setDataCampania] = useState();
+  const [loadingFlag, setLoadingFlag] = useState(true);
 
   const handleButtonState = (buttonState) => {
     setActiveButton(buttonState);

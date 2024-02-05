@@ -112,3 +112,5 @@ class ReporteProporcionAsignadosDesasignadosByAsesor(APIView):
 
  
         return Response(asesores_data, status.HTTP_200_OK)
+
+

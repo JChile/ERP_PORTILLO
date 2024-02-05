@@ -10,25 +10,17 @@ import {
   Legend,
 } from "recharts";
 
-
 export const DesasignacionEstadoChart = ({ data }) => {
-
-  const formatData = data.map(element => ({
-    estado: element.descripcion,
-    leads: element.desasignaciones,
-  }))
-
-
   return (
     <div className="flex flex-col items-center">
-      <Typography fontWeight="bold" sx={{ marginY: 4 }}>
+      <Typography fontWeight="bold" sx={{ marginY: 2 }}>
         Proporcion de leads desasignados por estado
       </Typography>
       <BarChart
-        data={formatData}
+        data={data}
         margin={{ top: 10, right: 30, left: 30, bottom: 5 }}
         barSize={20}
-        width={620}
+        width={580}
         height={450}
       >
         <CartesianGrid strokeDasharray="3 3" />

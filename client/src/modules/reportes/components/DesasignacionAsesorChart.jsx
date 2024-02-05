@@ -11,28 +11,21 @@ import {
 } from "recharts";
 
 /**
- * 
- * @param {Array[]} data 
- * @returns 
+ *
+ * @param {Array[]} data
+ * @returns
  */
 export const DesasignacionAsesorChart = ({ data }) => {
-
-  const formatData = data.map(element => ({
-    asesor: `${element.first_name} ${element.last_name}`,
-    leadsAsignados: element.asignaciones,
-    leadsDesasignados: element.desasignaciones,
-  }))
-
   return (
     <div className="flex flex-col items-center">
-      <Typography fontWeight="bold" sx={{ marginY: 4 }}>
-        Proporcion de leads asignados y desasigDnados por asesor
+      <Typography fontWeight="bold" sx={{ marginY: 2 }}>
+        Proporcion de leads asignados y desasignados por asesor
       </Typography>
       <BarChart
-        data={formatData}
+        data={data}
         margin={{ top: 10, right: 30, left: 30, bottom: 5 }}
         barSize={20}
-        width={620}
+        width={580}
         height={450}
       >
         <CartesianGrid strokeDasharray="3 3" />

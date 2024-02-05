@@ -4,6 +4,7 @@ import {
   ReporteRetornoCampania,
   ReportesHome,
   ReporteDesasignacion,
+  ReporteLeadStatus
 } from "../pages";
 
 export const ReportesRoutes = () => {
@@ -12,6 +13,7 @@ export const ReportesRoutes = () => {
       <Route path="" element={<ReportesHome />} />
       <Route path="retornoCampania/" element={<ReporteRetornoCampania />} />
       <Route path="desasignacion/" element={<ReporteDesasignacion />} />
+      <Route path="leadStatus" element={<ReporteLeadStatus />} />
     </Routes>
   );
 };

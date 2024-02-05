@@ -1,57 +1,85 @@
-import { Button, Typography } from "@mui/material";
+import {
+  Button,
+  Paper,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableRow,
+  Typography,
+} from "@mui/material";
 import React, { useEffect, useState } from "react";
-import { FilterProyectos } from "../../../components";
+import {
+  CustomCircularProgress,
+  CustomDatePicker,
+  FilterProyectos,
+} from "../../../components";
 import { DesasignacionAsesorChart } from "../components/DesasignacionAsesorChart";
 import { DesasignacionObjecionChart } from "../components/DesasignacionObjecionChart";
 import { DesasignacionEstadoChart } from "../components/DesasignacionEstadoChart";
+import {
+  getDesasignadosAsesor,
+  getDesasignadosEstadoLead,
+  getDesasignadosObjecion,
+} from "../helpers/getDesasignacionCases";
 
 export const ReporteDesasignacion = () => {
-  const [activeButton, setActiveButton] = useState(true);
-  const [proyecto, setProyecto] = useState();
-  const [data, setData] = useState();
-  const [auxData, setAuxData] = useState();
-  const [dataCampania, setDataCampania] = useState();
+  const [proyecto, setProyecto] = useState(null);
 
-  const handleButtonState = (buttonState) => {
-    setActiveButton(buttonState);
+  const [desasignacionAsesor, setDesasignacionAsesor] = useState([]);
+  const [desasignacionEstado, setDesasignacionEstado] = useState([]);
+  const [desasignacionObjecion, setDesasignacionObjecion] = useState([]);
+
+  const [loadingFlag, setLoadingFlag] = useState(true);
+  const [isLoading, setIsLoading] = useState(false); // Cambiado a false inicialmente
+
+  const [desdeValue, setDesdeValue] = useState(null);
+  const [hastaValue, setHastaValue] = useState(null);
+
+  const onChangeDatePickerFechaDesde = (newDate) => {
+    setDesdeValue(newDate);
   };
+
+  const onChangeDatePickerFechaHasta = (newDate) => {
+    setHastaValue(newDate);
+  };
+
   const onAddProyecto = (item) => {
-    setProyecto(item);
+    setProyecto(item.id);
   };
 
-  const getDataProyecto = async (id) => {
+  const fetchData = async () => {
     try {
-      console.log(id);
-      const result = await getProyectoCampania(id + "?estadoCampania=A");
-      setDataCampania(result);
-      console.log(result);
-    } catch (error) {}
-  };
-
-  const obtenerData = async () => {
-    /* setVisibleProgress(true); */
-    try {
-      const result = await getProyectosCampania(
-        "estadoProyecto=A&estadoCampania=A"
-      );
-      setData(result);
-      setAuxData(result);
-      /* setVisibleProgress(false); */
+      const query = `desde=${desdeValue}T00:00:00&hasta=${hastaValue}T23:59:59`;
+      const responseAsesor = await getDesasignadosAsesor(proyecto, query);
+      const responseEstado = await getDesasignadosEstadoLead(proyecto, query);
+      const responseObjecion = await getDesasignadosObjecion(proyecto, query);
+      setDesasignacionAsesor(responseAsesor);
+      setDesasignacionEstado(responseEstado);
+      setDesasignacionObjecion(responseObjecion);
+      setIsLoading(false);
     } catch (error) {
-      /* setVisibleProgress(false); */
-      /* const pilaError = combinarErrores(error); */
-      // mostramos feedback de error
-      /* setFeedbackMessages({
-        style_message: "error",
-        feedback_description_error: pilaError,
-      });
-      handleClickFeedback(); */
+      console.log(error);
+      setIsLoading(false);
     }
   };
 
+  const leadObjecion = convertToRowDataLeadDesasignadosObjecion(
+    desasignacionObjecion
+  );
+  const leadEstado =
+    convertToRowDataLeadDesasignadosEstado(desasignacionEstado);
+  const leadAsesor =
+    convertToRowDataLeadDesasignadosAsesor(desasignacionAsesor);
+
   useEffect(() => {
-    obtenerData();
-  }, [activeButton]);
+    if (proyecto && desdeValue && hastaValue) {
+      setIsLoading(true);
+      fetchData();
+    } else {
+      setIsLoading(false);
+    }
+  }, [loadingFlag]);
 
   return (
     <React.Fragment>
@@ -64,46 +92,169 @@ export const ReporteDesasignacion = () => {
         Reporte Desasignaciones
       </Typography>
       <div className="flex justify-center gap-x-3 my-4">
-        <Button
-          variant="contained"
-          sx={{
-            textTransform: "capitalize",
-            backgroundColor: activeButton ? "#1976d2" : "#d1d5db",
-            color: activeButton ? "white" : "black",
-          }}
-          onClick={() => handleButtonState(true)}
-        >
-          Semanal
-        </Button>
-        <Button
-          variant="contained"
-          sx={{
-            textTransform: "capitalize",
-            backgroundColor: !activeButton ? "#1976d2" : "#d1d5db",
-            color: !activeButton ? "white" : "black",
-          }}
-          onClick={() => handleButtonState(false)}
-        >
-          Mensual
-        </Button>
+        <CustomDatePicker
+          label="Filtrar desde"
+          onNewFecha={onChangeDatePickerFechaDesde}
+          defaultValue={desdeValue}
+        />
+        <CustomDatePicker
+          label="Filtrar hasta"
+          onNewFecha={onChangeDatePickerFechaHasta}
+          defaultValue={hastaValue}
+        />
       </div>
       <div className="w-6/12 flex flex-col gap-y-5 my-4 mx-auto">
         <label className="flex flex-col gap-y-1">
           <span className="block text-sm font-medium">Proyecto</span>
-          <FilterProyectos onNewInput={onAddProyecto} value={proyecto} />
+          <FilterProyectos onNewInput={onAddProyecto} defaultValue={proyecto} />
         </label>
         <Button
           variant="contained"
-          onClick={() => getDataProyecto(proyecto.id)}
+          onClick={() => setLoadingFlag((prev) => !prev)}
         >
           Generar Reporte
         </Button>
       </div>
-      <div className="grid grid-cols-2 items-center">
-        <DesasignacionAsesorChart />
-        <DesasignacionObjecionChart />
-        <DesasignacionEstadoChart />
-      </div>
+      {proyecto && isLoading && <CustomCircularProgress />}
+
+      {proyecto && !isLoading && (
+        <React.Fragment>
+          <div className="flex justify-center mt-10 mb-7">
+            <Typography variant="h5" fontWeight={"bold"}>
+              Reporte Tabular de Leads Desasignados
+            </Typography>
+          </div>{" "}
+          <div className="lg:grid lg:grid-cols-2  gap-x-4 gap-y-4 flex flex-col">
+            <Paper sx={{ maxHeight: "400px", overflowY: "auto" }}>
+              <Typography variant="subtitle2">
+                Tabla N° 1: Leads desasignados por asesor
+              </Typography>
+              <Table>
+                <TableHead>
+                  <TableRow
+                    sx={{
+                      "& th": {
+                        color: "rgba(200,200,200)",
+                        backgroundColor: "#404040",
+                      },
+                    }}
+                  >
+                    <TableCell>Asesor</TableCell>
+                    <TableCell>N° leads asignados</TableCell>
+                    <TableCell>N° leads desasignados</TableCell>
+                    <TableCell>Leads atendidos</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {leadAsesor.map((element, index) => (
+                    <TableRow key={index}>
+                      <TableCell>{element.asesor}</TableCell>
+                      <TableCell>{element.leadsAsignados}</TableCell>
+                      <TableCell>{element.leadsDesasignados}</TableCell>
+                      <TableCell>
+                        {element.leadsAsignados - element.leadsDesasignados}
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </Paper>
+            <Paper sx={{ maxHeight: "400px", overflowY: "auto" }}>
+              <Typography variant="subtitle2">
+                Tabla N° 1: Leads desasignados por objeción
+              </Typography>
+              <Table>
+                <TableHead>
+                  <TableRow
+                    sx={{
+                      "& th": {
+                        color: "rgba(200,200,200)",
+                        backgroundColor: "#404040",
+                      },
+                    }}
+                  >
+                    <TableCell>Objeción</TableCell>
+                    <TableCell>N° leads desasignados</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {leadObjecion.map((element, index) => (
+                    <TableRow key={index}>
+                      <TableCell>{element.objecion}</TableCell>
+                      <TableCell>{element.leads}</TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </Paper>
+            <Paper sx={{ maxHeight: "400px", overflowY: "auto" }}>
+              <Typography variant="subtitle2">
+                Tabla N° 1: Leads desasignados por estado
+              </Typography>
+              <Table>
+                <TableHead>
+                  <TableRow
+                    sx={{
+                      "& th": {
+                        color: "rgba(200,200,200)",
+                        backgroundColor: "#404040",
+                      },
+                    }}
+                  >
+                    <TableCell>Estado</TableCell>
+                    <TableCell>Leads</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {leadEstado.map((element, index) => (
+                    <TableRow key={index}>
+                      <TableCell>{element.estado}</TableCell>
+                      <TableCell>{element.leads}</TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </Paper>
+          </div>
+          <div className="flex justify-center mt-16">
+            <Typography variant="h5" fontWeight={"bold"}>
+              Ventana Visual de Leads Desvinculados
+            </Typography>
+          </div>
+          <div className="lg:grid lg:grid-cols-2 items-center flex flex-col gap-y-5">
+            <DesasignacionAsesorChart data={leadAsesor} />
+            <DesasignacionObjecionChart data={leadObjecion} />
+            <DesasignacionEstadoChart data={leadEstado} />
+          </div>
+        </React.Fragment>
+      )}
+
+      {!proyecto && !isLoading && <p>Seleccione un proyecto</p>}
     </React.Fragment>
   );
+};
+
+const convertToRowDataLeadDesasignadosAsesor = (data) => {
+  const formatData = data.map((element) => ({
+    asesor: `${element.first_name} ${element.last_name}`,
+    leadsAsignados: element.asignaciones,
+    leadsDesasignados: element.desasignaciones,
+  }));
+  return formatData;
+};
+
+const convertToRowDataLeadDesasignadosObjecion = (data) => {
+  const formatData = data.map((element) => ({
+    objecion: element.nombre,
+    leads: element.desasignaciones,
+  }));
+  return formatData;
+};
+
+const convertToRowDataLeadDesasignadosEstado = (data) => {
+  const formatData = data.map((element) => ({
+    estado: element.descripcion,
+    leads: element.desasignaciones,
+  }));
+  return formatData;
 };

@@ -10,27 +10,17 @@ import {
   Legend,
 } from "recharts";
 
-const data = [
-  { estado: "Tibio", leads: 7 },
-  { estado: "Separaciones", leads: 5 },
-  { estado: "No responde", leads: 6 },
-  { estado: "Frio", leads: 4 },
-  { estado: "En proceso", leads: 7 },
-  { estado: "Cierre", leads: 7 },
-  { estado: "Caliente", leads: 7 },
-];
-
-export const DesasignacionEstadoChart = () => {
+export const DesasignacionEstadoChart = ({ data }) => {
   return (
     <div className="flex flex-col items-center">
-      <Typography fontWeight="bold" sx={{ marginY: 4 }}>
+      <Typography fontWeight="bold" sx={{ marginY: 2 }}>
         Proporcion de leads desasignados por estado
       </Typography>
       <BarChart
         data={data}
         margin={{ top: 10, right: 30, left: 30, bottom: 5 }}
         barSize={20}
-        width={620}
+        width={580}
         height={450}
       >
         <CartesianGrid strokeDasharray="3 3" />

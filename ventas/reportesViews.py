@@ -143,3 +143,37 @@ class ReporteProporcionDesasignacionesByObjecion(APIView):
             objeciones_iter["desasignaciones"] = lead_desasignados.filter(objecion = objeciones_iter["id"]).count()
 
         return Response(objeciones_data, status.HTTP_200_OK)
+<<<<<<< HEAD
+=======
+    
+
+
+class ReporteProporcionDesasignacionesByEstadoLead(APIView):
+    def get(self, request, pk=None):
+        try:
+            proyecto = Proyecto.objects.get(id = pk)
+        except:
+            return Response({"detail":"No existe proyecto"}, status.HTTP_404_NOT_FOUND)
+        
+        desde = request.query_params.get('desde')
+        hasta = request.query_params.get('hasta')
+
+        campaniasProyecto = proyecto.campania_set.all()
+        if desde and hasta:
+            leadsCampanias = Lead.objects.filter(campania__in = campaniasProyecto, fecha_desasignacion__range =[desde, hasta])
+
+        else :
+            leadsCampanias = Lead.objects.filter(campania__in = campaniasProyecto)
+
+
+        desasignados_leads_ids = DesasignacionLeadAsesor.objects.filter(lead__in = leadsCampanias).values_list('lead', flat=True)
+        lead_desasignados = Lead.objects.filter(id__in = desasignados_leads_ids)
+        print("Desasignados : ", lead_desasignados)
+
+        estadoLead_data = EstadoLeadSerializer(EstadoLead.objects.all(), many = True).data
+
+        for estadoLead_iter in estadoLead_data:
+            estadoLead_iter["desasignaciones"] = lead_desasignados.filter(estadoLead = estadoLead_iter["nombre"]).count()
+
+        return Response(estadoLead_data, status.HTTP_200_OK)
+>>>>>>> b31f5817bb2fa2596588b551fd01eb869b80a96d

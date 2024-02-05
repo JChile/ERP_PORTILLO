@@ -42,6 +42,9 @@ class ReporteProyectoCampaniaList(APIView):
         proyecto_queryset = Proyecto.objects.all()
         estadoProyecto = request.query_params.get('estadoProyecto')
         estadoCampania = request.query_params.get('estadoCampania')
+        desde = request.query_params.get('desde')
+        hasta = request.query_params.get('hasta')
+        diasAtras = timezone.now() - timedelta(days=30)
 
         if estadoProyecto:
             proyecto_queryset = proyecto_queryset.filter(estado=estadoProyecto)
@@ -55,7 +58,10 @@ class ReporteProyectoCampaniaList(APIView):
             else:    
                 proyectoIter["campanias"] = CampaniaSerializer(Campania.objects.filter(proyecto = proyectoIter["id"]), many = True).data
             for campaniaIter in proyectoIter["campanias"]:
-                campaniaIter["leads"] = LeadListSerializer(Lead.objects.filter(campania = campaniaIter["id"]), many =True).data
+                if desde and hasta:
+                    campaniaIter["leads"] = LeadListSerializer(Lead.objects.filter(campania = campaniaIter["id"], fecha_creacion__range = [desde,hasta]), many =True).data
+                else:
+                    campaniaIter["leads"] = LeadListSerializer(Lead.objects.filter(campania = campaniaIter["id"], fecha_creacion__gte=diasAtras), many =True).data
 
         return Response(proyectoSerializer.data, status.HTTP_200_OK)
 
@@ -70,6 +76,10 @@ class ReporteProyectoCampaniaDetail(APIView):
             return Response({"detail":"No existe proyecto"}, status.HTTP_404_NOT_FOUND)
         proyectoSerializer = ProyectoSerializer(proyecto)
 
+        desde = request.query_params.get('desde')
+        hasta = request.query_params.get('hasta')
+        diasAtras = timezone.now() - timedelta(days=30)
+
         estadoCampania = request.query_params.get('estadoCampania')
 
         proyecto_data = proyectoSerializer.data
@@ -80,7 +90,10 @@ class ReporteProyectoCampaniaDetail(APIView):
             proyecto_data["campanias"] = CampaniaSerializer(proyecto.campania_set.all(), many = True).data
         
         for campaniaIter in proyecto_data["campanias"]:
-                campaniaIter["leads"] = LeadListSerializer(Lead.objects.filter(campania = campaniaIter["id"]), many =True).data
+            if desde and hasta:
+                campaniaIter["leads"] = LeadListSerializer(Lead.objects.filter(campania = campaniaIter["id"],fecha_creacion__range = [desde,hasta]), many =True).data
+            else:
+                campaniaIter["leads"] = LeadListSerializer(Lead.objects.filter(campania = campaniaIter["id"], fecha_creacion__gte=diasAtras), many =True).data
 
         return Response(proyecto_data, status.HTTP_200_OK)
 
@@ -112,3 +125,65 @@ class ReporteProporcionAsignadosDesasignadosByAsesor(APIView):
 
  
         return Response(asesores_data, status.HTTP_200_OK)
+    
+
+
+class ReporteProporcionDesasignacionesByObjecion(APIView):
+    def get(self, request, pk=None):
+        try:
+            proyecto = Proyecto.objects.get(id = pk)
+        except:
+            return Response({"detail":"No existe proyecto"}, status.HTTP_404_NOT_FOUND)
+        
+        desde = request.query_params.get('desde')
+        hasta = request.query_params.get('hasta')
+
+        campaniasProyecto = proyecto.campania_set.all()
+        if desde and hasta:
+            leadsCampanias = Lead.objects.filter(campania__in = campaniasProyecto, fecha_desasignacion__range =[desde, hasta])
+
+        else :
+            leadsCampanias = Lead.objects.filter(campania__in = campaniasProyecto)
+
+
+        desasignados_leads_ids = DesasignacionLeadAsesor.objects.filter(lead__in = leadsCampanias).values_list('lead', flat=True)
+        lead_desasignados = Lead.objects.filter(id__in = desasignados_leads_ids)
+        print("Desasignados : ", lead_desasignados)
+
+        objeciones_data = ObjecionSerializer(Objecion.objects.all(), many = True).data
+
+        for objeciones_iter in objeciones_data:
+            objeciones_iter["desasignaciones"] = lead_desasignados.filter(objecion = objeciones_iter["id"]).count()
+
+        return Response(objeciones_data, status.HTTP_200_OK)
+    
+
+
+class ReporteProporcionDesasignacionesByEstadoLead(APIView):
+    def get(self, request, pk=None):
+        try:
+            proyecto = Proyecto.objects.get(id = pk)
+        except:
+            return Response({"detail":"No existe proyecto"}, status.HTTP_404_NOT_FOUND)
+        
+        desde = request.query_params.get('desde')
+        hasta = request.query_params.get('hasta')
+
+        campaniasProyecto = proyecto.campania_set.all()
+        if desde and hasta:
+            leadsCampanias = Lead.objects.filter(campania__in = campaniasProyecto, fecha_desasignacion__range =[desde, hasta])
+
+        else :
+            leadsCampanias = Lead.objects.filter(campania__in = campaniasProyecto)
+
+
+        desasignados_leads_ids = DesasignacionLeadAsesor.objects.filter(lead__in = leadsCampanias).values_list('lead', flat=True)
+        lead_desasignados = Lead.objects.filter(id__in = desasignados_leads_ids)
+        print("Desasignados : ", lead_desasignados)
+
+        estadoLead_data = EstadoLeadSerializer(EstadoLead.objects.all(), many = True).data
+
+        for estadoLead_iter in estadoLead_data:
+            estadoLead_iter["desasignaciones"] = lead_desasignados.filter(estadoLead = estadoLead_iter["nombre"]).count()
+
+        return Response(estadoLead_data, status.HTTP_200_OK)

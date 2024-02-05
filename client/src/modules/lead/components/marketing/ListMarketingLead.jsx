@@ -49,7 +49,6 @@ export const ListMarketingLead = () => {
   const [value, setValue] = useState(0);
   const handleChange = (event, newValue) => setValue(newValue);
 
-
   return (
     <>
       <div className="flex flex-col gap-y-5">

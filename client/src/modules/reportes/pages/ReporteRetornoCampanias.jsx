@@ -10,6 +10,7 @@ import React, { useEffect, useState } from "react";
 import { FilterProyectos } from "../../../components";
 import { getProyectoCampania, getProyectosCampania } from "../helpers";
 import { DiagramRetornoLeadCampania } from "../components";
+import { CampaniasBarChart } from "../components/CAmpaniasBarChart";
 
 export const ReporteRetornoCampania = () => {
   const [activeButton, setActiveButton] = useState(true);
@@ -41,29 +42,7 @@ export const ReporteRetornoCampania = () => {
     } catch (error) {}
   };
 
-  const obtenerData = async () => {
-    /* setVisibleProgress(true); */
-    try {
-      const result = await getProyectosCampania(
-        "estadoProyecto=A&estadoCampania=A"
-      );
-      setData(result);
-      /* setVisibleProgress(false); */
-    } catch (error) {
-      /* setVisibleProgress(false); */
-      /* const pilaError = combinarErrores(error); */
-      // mostramos feedback de error
-      /* setFeedbackMessages({
-        style_message: "error",
-        feedback_description_error: pilaError,
-      });
-      handleClickFeedback(); */
-    }
-  };
-
-  useEffect(() => {
-    obtenerData();
-  }, [activeButton]);
+ 
 
   return (
     <div className="flex flex-col items-center justify-start h-screen">
@@ -97,7 +76,7 @@ export const ReporteRetornoCampania = () => {
       <div className="w-6/12 flex flex-col gap-y-5 mb-4">
         <label className="flex flex-col gap-y-1">
           <span className="block text-sm font-medium">Proyecto</span>
-          <FilterProyectos onNewInput={onAddProyecto} value={proyecto} />
+          <FilterProyectos onNewInput={onAddProyecto} defaultValue={proyecto.name}/>
         </label>
         <Button
           variant="contained"
@@ -139,8 +118,8 @@ export const ReporteRetornoCampania = () => {
               ))}
           </TableBody>
         </Table>
-        <div className="flex flex-col items-center justify-start h-screen mt-4">
-            <DiagramRetornoLeadCampania data={auxData}/>
+        <div className="flex flex-col items-center justify-start mt-4">
+            <CampaniasBarChart data={auxData}/>
         </div>
       </div>
     </div>

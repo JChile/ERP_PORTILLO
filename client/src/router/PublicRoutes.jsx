@@ -1,8 +1,8 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext } from "react";
 import { AuthContext } from "../auth";
-import { Navigate, useLocation } from "react-router-dom";
+import { Navigate } from "react-router-dom";
 
-export const PublicRoutes = ({ children }) => {
-  const { user } = useContext(AuthContext);
-  return !user ? children : <Navigate to={"/no-access-public-page"} replace />;
+export const PublicRoutes = ({ component: Component }) => {
+  const { currentUser } = useContext(AuthContext);
+  return !currentUser ? <Component /> : <Navigate to={"/home"} replace />;
 };

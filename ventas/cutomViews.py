@@ -37,7 +37,7 @@ class LeadCreationConfirmation(APIView):
         thirty_days = timezone.now() - timedelta(days=60)
 
         phone_numbers = set(
-            Lead.objects.filter(horaRecepcion__gte=thirty_days,
+            Lead.objects.filter(fecha_creacion__gte=thirty_days,
                                 estado="A", campania__proyecto__id=proyecto_id)
             .values_list('celular', flat=True)
             .distinct()
@@ -321,17 +321,34 @@ class LeadMultipleCreationManual(APIView):
     def post(self, request):
         response = {}
         data = request.data
-
+        proyectoId = request.query_params.get('proyecto')
         guardados = []
         no_guardados = []
 
         thirty_days = timezone.now() - timedelta(days=60)
         phone_numbers = set(
-            Lead.objects.filter(horaRecepcion__gte=thirty_days,
+            Lead.objects.filter(fecha_creacion__gte=thirty_days,
                                 estado="A")
             .values_list('celular', 'campania__proyecto')
             .distinct()
         )
+
+
+        try:
+            proyectoObject = Proyecto.objects.get(id = proyectoId)
+        except:
+            return Response({"error","No existe proyecto"}, status.HTTP_404_NOT_FOUND)
+
+        for leadIter in data:
+            print("Lead : ", leadIter)
+            if not Campania.objects.filter(nombre = leadIter.get("campania")):
+                leadIter["campania"] = str(proyectoObject.nombre+"_organico")
+            if  leadIter.get("asesor")!=None and User.objects.filter(codigoAsesor = leadIter.get("asesor")):
+                leadIter["fecha_asignacion"] = timezone.now()
+            else :
+                leadIter["asesor"] = None
+                leadIter.pop("asesor")
+
 
         for i in data:
             lead_class = leadCreation(i, phone_numbers)

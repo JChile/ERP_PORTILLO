@@ -42,6 +42,9 @@ class ReporteProyectoCampaniaList(APIView):
         proyecto_queryset = Proyecto.objects.all()
         estadoProyecto = request.query_params.get('estadoProyecto')
         estadoCampania = request.query_params.get('estadoCampania')
+        desde = request.query_params.get('desde')
+        hasta = request.query_params.get('hasta')
+        diasAtras = timezone.now() - timedelta(days=30)
 
         if estadoProyecto:
             proyecto_queryset = proyecto_queryset.filter(estado=estadoProyecto)
@@ -55,7 +58,10 @@ class ReporteProyectoCampaniaList(APIView):
             else:    
                 proyectoIter["campanias"] = CampaniaSerializer(Campania.objects.filter(proyecto = proyectoIter["id"]), many = True).data
             for campaniaIter in proyectoIter["campanias"]:
-                campaniaIter["leads"] = LeadListSerializer(Lead.objects.filter(campania = campaniaIter["id"]), many =True).data
+                if desde and hasta:
+                    campaniaIter["leads"] = LeadListSerializer(Lead.objects.filter(campania = campaniaIter["id"], fecha_creacion__range = [desde,hasta]), many =True).data
+                else:
+                    campaniaIter["leads"] = LeadListSerializer(Lead.objects.filter(campania = campaniaIter["id"], fecha_creacion__gte=diasAtras), many =True).data
 
         return Response(proyectoSerializer.data, status.HTTP_200_OK)
 
@@ -70,6 +76,10 @@ class ReporteProyectoCampaniaDetail(APIView):
             return Response({"detail":"No existe proyecto"}, status.HTTP_404_NOT_FOUND)
         proyectoSerializer = ProyectoSerializer(proyecto)
 
+        desde = request.query_params.get('desde')
+        hasta = request.query_params.get('hasta')
+        diasAtras = timezone.now() - timedelta(days=30)
+
         estadoCampania = request.query_params.get('estadoCampania')
 
         proyecto_data = proyectoSerializer.data
@@ -80,7 +90,10 @@ class ReporteProyectoCampaniaDetail(APIView):
             proyecto_data["campanias"] = CampaniaSerializer(proyecto.campania_set.all(), many = True).data
         
         for campaniaIter in proyecto_data["campanias"]:
-                campaniaIter["leads"] = LeadListSerializer(Lead.objects.filter(campania = campaniaIter["id"]), many =True).data
+            if desde and hasta:
+                campaniaIter["leads"] = LeadListSerializer(Lead.objects.filter(campania = campaniaIter["id"],fecha_creacion__range = [desde,hasta]), many =True).data
+            else:
+                campaniaIter["leads"] = LeadListSerializer(Lead.objects.filter(campania = campaniaIter["id"], fecha_creacion__gte=diasAtras), many =True).data
 
         return Response(proyecto_data, status.HTTP_200_OK)
 

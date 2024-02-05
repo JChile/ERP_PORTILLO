@@ -3,7 +3,7 @@ import { getEstadoEvento } from "./getEstadoEvento";
 import { Autocomplete, TextField } from "@mui/material";
 
 const defaultOption = {
-  value: 0,
+  value: null,
   label: "Selecione un estado",
   id: null,
 };
@@ -68,7 +68,7 @@ const FilterEstadoEvento = ({
       disableClearable
       getOptionLabel={(option) => option.label}
       onChange={handleChange}
-      isOptionEqualToValue={(option, value) => option.id == value.id}
+      isOptionEqualToValue={(option, value) => option.id === value.id}
       renderInput={(params) => (
         <TextField label={label} {...params} size={size} />
       )}

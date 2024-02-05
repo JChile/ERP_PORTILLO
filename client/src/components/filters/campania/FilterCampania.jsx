@@ -3,7 +3,7 @@ import { getCampania } from "./getCampania";
 import { Autocomplete, TextField } from "@mui/material";
 
 const defaultOption = {
-  value: 0,
+  value: null,
   label: "Seleccione una campaña",
   id: null,
 };
@@ -64,7 +64,7 @@ export const FilterCampania = ({
       disableClearable
       getOptionLabel={(option) => option.label}
       onChange={handleChange}
-      isOptionEqualToValue={(option, value) => option.id == value.id}
+      isOptionEqualToValue={(option, value) => option.id === value.id}
       renderInput={(params) => <TextField label={label} {...params} />}
     />
   );

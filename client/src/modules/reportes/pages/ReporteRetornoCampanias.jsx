@@ -9,7 +9,6 @@ import {
 import React, { useEffect, useState } from "react";
 import { FilterProyectos } from "../../../components";
 import { getProyectoCampania, getProyectosCampania } from "../helpers";
-import { CampaniasBarChart } from "../components/CAmpaniasBarChart";
 
 export const ReporteRetornoCampania = () => {
   const [activeButton, setActiveButton] = useState(true);
@@ -30,7 +29,14 @@ export const ReporteRetornoCampania = () => {
       console.log(id);
       const result = await getProyectoCampania(id + "?estadoCampania=A");
       setDataCampania(result);
-      console.log(result);
+      const campaniasDataList = result?.campanias.map((campania) => ({
+        name: campania.nombre,
+        costo_estimado: campania.coste_estimado,
+        costo_real: campania.coste_real,
+      })) || [];
+      
+      console.log(campaniasDataList);
+      setAuxData(campaniasDataList);
     } catch (error) {}
   };
 
@@ -41,7 +47,6 @@ export const ReporteRetornoCampania = () => {
         "estadoProyecto=A&estadoCampania=A"
       );
       setData(result);
-      setAuxData(result);
       /* setVisibleProgress(false); */
     } catch (error) {
       /* setVisibleProgress(false); */
@@ -134,7 +139,7 @@ export const ReporteRetornoCampania = () => {
           </TableBody>
         </Table>
         <div className="flex flex-col items-center justify-start h-screen mt-4">
-            <CampaniasBarChart />
+            <CampaniasBarChart data={auxData}/>
         </div>
       </div>
     </div>

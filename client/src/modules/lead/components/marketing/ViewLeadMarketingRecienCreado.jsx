@@ -25,7 +25,7 @@ import { SelectBoolean, SelectProyecto } from "../../../../components/select";
 import { RowItemLeadMarketing } from "./RowItemLeadMarketing";
 import { MassActionsViewLeadsMarketing } from "./acciones-masivas/MassActionsViewLeadsMarketing";
 import { combinarErrores } from "../../../../utils";
-import { getLeads } from "../../helpers";
+import { deleteLead, getLeads } from "../../helpers";
 
 export const ViewLeadMarketingRecienCreado = ({
   startDate,

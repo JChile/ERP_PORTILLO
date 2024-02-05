@@ -54,6 +54,8 @@ class ReporteProyectoCampaniaList(APIView):
                 proyectoIter["campanias"] = CampaniaSerializer(Campania.objects.filter(proyecto = proyectoIter["id"], estado = estadoCampania), many = True).data
             else:    
                 proyectoIter["campanias"] = CampaniaSerializer(Campania.objects.filter(proyecto = proyectoIter["id"]), many = True).data
+            for campaniaIter in proyectoIter["campanias"]:
+                campaniaIter["leads"] = LeadListSerializer(Lead.objects.filter(campania = campaniaIter["id"]), many =True).data
 
         return Response(proyectoSerializer.data, status.HTTP_200_OK)
 
@@ -76,5 +78,37 @@ class ReporteProyectoCampaniaDetail(APIView):
             proyecto_data["campanias"] = CampaniaSerializer(Campania.objects.filter(proyecto = proyecto.pk, estado = estadoCampania), many = True).data
         else:    
             proyecto_data["campanias"] = CampaniaSerializer(proyecto.campania_set.all(), many = True).data
+        
+        for campaniaIter in proyecto_data["campanias"]:
+                campaniaIter["leads"] = LeadListSerializer(Lead.objects.filter(campania = campaniaIter["id"]), many =True).data
 
         return Response(proyecto_data, status.HTTP_200_OK)
+
+
+class ReporteProporcionAsignadosDesasignadosByAsesor(APIView):
+    def get(self, request, pk=None):
+        try:
+            proyecto = Proyecto.objects.get(id = pk)
+        except:
+            return Response({"detail":"No existe proyecto"}, status.HTTP_404_NOT_FOUND)
+        
+        desde = request.query_params.get('desde')
+        hasta = request.query_params.get('hasta')
+
+        campaniasProyecto = proyecto.campania_set.all()
+        leadsCampanias = Lead.objects.filter(campania__in = campaniasProyecto)
+        asesores = leadsCampanias.values_list('asesor', flat=True)
+        asesores_data = UserSerializer(User.objects.filter(id__in = asesores), fields=( 'id', 'first_name', 'last_name', 'username'), many = True).data
+        if desde and hasta:
+            historicoLeadAsesor = HistoricoLeadAsesor.objects.filter(usuario_id__in = asesores, fecha_creacion__range =[desde, hasta])
+            desasignacionLeadAsesor = DesasignacionLeadAsesor.objects.filter(usuario_id__in = asesores, fecha__range =[desde, hasta])
+        else :
+            historicoLeadAsesor = HistoricoLeadAsesor.objects.filter(usuario_id__in = asesores)
+            desasignacionLeadAsesor = DesasignacionLeadAsesor.objects.filter(usuario_id__in = asesores)
+        
+        for asesor_iter in asesores_data:
+            asesor_iter["asignaciones"] = historicoLeadAsesor.filter(usuario_id = asesor_iter["id"]).count()
+            asesor_iter["desasignaciones"] = desasignacionLeadAsesor.filter(usuario_id = asesor_iter["id"]).count()
+
+ 
+        return Response(asesores_data, status.HTTP_200_OK)

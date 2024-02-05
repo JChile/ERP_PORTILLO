@@ -10,6 +10,7 @@ import { ViewLeadMarketingInactivo } from "./ViewLeadMarketingInactivo";
 import { useNavigate } from "react-router-dom";
 
 export const ListMarketingLead = () => {
+  const navigate = useNavigate();
   // flag reload
   const [flagReload, setFlagReload] = useState(false);
 

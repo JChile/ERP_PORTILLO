@@ -1,18 +1,27 @@
 import React from 'react';
-import { LineChart, Line, CartesianGrid, XAxis, YAxis, Tooltip, BarChart, Bar } from 'recharts';
+import { BarChart, CartesianGrid, XAxis, YAxis, Tooltip, Bar } from 'recharts';
 
-const data = [
-  { name: 'Año Nuevo Portillo', coste_estimado: 700, coste_real: 800 },
-  { name: 'ProyectoX_organico', coste_estimado: 0, coste_real: 0 },
-];
-
-export const CampaniasBarChart = () => (
+export const CampaniasBarChart = ({ data }) => (
   <BarChart width={500} height={300} data={data}>
     <CartesianGrid strokeDasharray="3 3" />
-    <XAxis dataKey="name" />
+    <XAxis dataKey="name" angle={-45} textAnchor="end" height={100} tick={{ fontSize: 10 }} />
     <YAxis />
     <Tooltip />
-    <Bar type="monotone" dataKey="coste_estimado" stroke="#8884d8" activeDot={{ r: 8 }} />
-    <Bar type="monotone" dataKey="coste_real" stroke="#82ca9d" />
+
+    {Object.keys(data[0]).map((key) => {
+      // Excluir la clave 'name' del mapeo ya que se utiliza para el eje X
+      if (key !== 'name') {
+        return (
+          <Bar
+            key={key}
+            type="monotone"
+            dataKey={key}
+            stroke={`#${Math.floor(Math.random()*16777215).toString(16)}`} // Color aleatorio
+            activeDot={{ r: 8 }}
+          />
+        );
+      }
+      return null;
+    })}
   </BarChart>
 );

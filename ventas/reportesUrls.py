@@ -10,5 +10,7 @@ urlpatterns = [
     re_path(r'^reporteProyectoCampania/(?P<pk>[\w-]+)$',reportesViews.ReporteProyectoCampaniaDetail.as_view()),
     re_path(r'^reporteProporcionAsignadosDesasignadosByAsesor/(?P<pk>[\w-]+)$',reportesViews.ReporteProporcionAsignadosDesasignadosByAsesor.as_view()),
     re_path(r'^reporteProporcionDesasignadosByObjecion/(?P<pk>[\w-]+)$',reportesViews.ReporteProporcionDesasignacionesByObjecion.as_view()),
+    re_path(r'^reporteProporcionDesasignadosByEstadoLead/(?P<pk>[\w-]+)$',reportesViews.ReporteProporcionDesasignacionesByEstadoLead.as_view()),
+
 
 ]

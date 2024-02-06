@@ -44,7 +44,6 @@ const ViewLeadAsignados = ({ startDate, endDate, flagReload }) => {
     fecha_asignacion: "",
   });
 
-
   const { celular, nombre, proyecto, asesor, fecha_asignacion } = filterData;
 
   // flag reset
@@ -127,7 +126,6 @@ const ViewLeadAsignados = ({ startDate, endDate, flagReload }) => {
       proyecto: "",
       asesor: "",
       fecha_asignacion: "",
-
     });
     setFlagReset(false);
   };
@@ -290,7 +288,7 @@ const ViewLeadAsignados = ({ startDate, endDate, flagReload }) => {
                 <TableCell>Número</TableCell>
                 <TableCell>Nombre</TableCell>
                 <TableCell>Proyecto</TableCell>
-                <TableCell>Asesor</TableCell>
+                <TableCell>Actual asesor</TableCell>
                 <TableCell>Fecha asignacion</TableCell>
               </TableRow>
             </TableHead>

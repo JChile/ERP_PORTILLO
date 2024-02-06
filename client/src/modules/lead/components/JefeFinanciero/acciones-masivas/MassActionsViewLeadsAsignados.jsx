@@ -25,8 +25,6 @@ const MassActionsViewLeadsAsignados = ({
   setVisibleProgress,
   onLoadData,
 }) => {
-
-
   const { authTokens } = useContext(AuthContext);
   const [anchorEl, setAnchorEl] = useState(null);
   const [openDialog, setOpenDialog] = useState(false);
@@ -54,7 +52,7 @@ const MassActionsViewLeadsAsignados = ({
         feedback_description_error: "Se desasigno correctamente",
       });
       handleClickFeedback();
-      //setVisibleProgress(false);
+      setVisibleProgress(false);
     } catch (error) {
       const pilaError = combinarErrores(error);
       setFeedbackMessages({

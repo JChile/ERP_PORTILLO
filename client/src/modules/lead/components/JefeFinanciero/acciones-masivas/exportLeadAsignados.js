@@ -5,7 +5,7 @@ export const exportLeadsAsignados = (data) => {
   //   formateamos la data que queremos exportar
 
   console.log(data);
-  
+
   const formatData = data.map((element, index) => {
     return {
       "#": index + 1,
@@ -17,12 +17,13 @@ export const exportLeadsAsignados = (data) => {
       celular2: element["celular2"],
       estadoLead: element["estadoLead"],
       objecion: element["objecion"]["nombre"],
-      fechaAsignacion: formatDate_ISO861_to_formatdate(element["fecha_asignacion"])  ,
-      fechaActualizacion: formatDate_ISO861_to_formatdate(element["fecha_actualizacion"]),
+      asesor: `${element["asesor"]["first_name"]} ${element["asesor"]["last_name"]}`,
+      fechaAsignacion: formatDate_ISO861_to_formatdate(
+        element["fecha_asignacion"]
+      ),
+      fechaCreacion: formatDate_ISO861_to_formatdate(element["fecha_creacion"]),
     };
   });
-
-  console.log(formatData);
 
   // Crear un libro de trabajo y agregar una hoja
   const workbook = XLSX.utils.book_new();
@@ -39,6 +40,9 @@ export const exportLeadsAsignados = (data) => {
     "Celular 2",
     "Estado Lead",
     "Objeción",
+    "Asesor actual",
+    "Fecha asignación",
+    "Fecha creación",
   ];
 
   headerNames.forEach((header, colIndex) => {
@@ -50,11 +54,25 @@ export const exportLeadsAsignados = (data) => {
   });
 
   // Establecer el ancho de las columnas del header
-  worksheet["!cols"] = headerNames.map(() => ({ wch: 15 })); // Puedes ajustar el ancho según sea necesario
+  worksheet["!cols"] = headerNames.map((element) => {
+    if (element === "#") return { wch: 4 };
+    if (element === "Nombre") return { wch: 26 };
+    if (element === "Apellido") return { wch: 26 };
+    if (element === "Proyecto") return { wch: 17 };
+    if (element === "Campaña") return { wch: 30 };
+    if (element === "Celular") return { wch: 12 };
+    if (element === "Celular 2") return { wch: 12 };
+    if (element === "Estado Lead") return { wch: 13 };
+    if (element === "Objeción") return { wch: 30 };
+    if (element === "Asesor actual") return { wch: 32 };
+    if (element === "Fecha asignación") return { wch: 19 };
+    if (element === "Fecha creación") return { wch: 19 };
+  });
 
   // Agregar la hoja al libro de trabajo
   XLSX.utils.book_append_sheet(workbook, worksheet, "Leads no asignados");
 
   // Exportar el libro de trabajo a un archivo
-  XLSX.writeFile(workbook, "output.xlsx");
+  const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
+  XLSX.writeFile(workbook, `exportacion_leads_asignados${timestamp}.xlsx`);
 };

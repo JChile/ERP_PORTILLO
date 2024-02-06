@@ -13,7 +13,7 @@ export const exportLeadsAsesor = (data) => {
       celular: element["celular"],
       celular2: element["celular2"],
       estadoLead: element["estadoLead"],
-      asignado: element["asignado"] ? "Si" : "No",
+      objecion: element["objecion"]["nombre"],
       asesor: element["asignado"]
         ? `${element["asesor"]["first_name"]} ${element["asesor"]["last_name"]}`
         : "",
@@ -23,8 +23,6 @@ export const exportLeadsAsesor = (data) => {
       ),
     };
   });
-
-  console.log(formatData);
 
   // Crear un libro de trabajo y agregar una hoja
   const workbook = XLSX.utils.book_new();
@@ -40,7 +38,7 @@ export const exportLeadsAsesor = (data) => {
     "Celular",
     "Celular 2",
     "Estado Lead",
-    "Asignado",
+    "Objeción",
     "Asesor",
     "Fecha recepción",
     "Fecha creación",
@@ -64,16 +62,16 @@ export const exportLeadsAsesor = (data) => {
     if (element === "Celular") return { wch: 12 };
     if (element === "Celular 2") return { wch: 12 };
     if (element === "Estado Lead") return { wch: 13 };
-    if (element === "Asignado") return { wch: 8 };
+    if (element === "Objeción") return { wch: 30 };
     if (element === "Asesor") return { wch: 35 };
     if (element === "Fecha recepción") return { wch: 19 };
     if (element === "Fecha creación") return { wch: 19 };
-  }); // Puedes ajustar el ancho según sea necesario
+  });
 
   // Agregar la hoja al libro de trabajo
   XLSX.utils.book_append_sheet(workbook, worksheet, "Leads no asignados");
 
-  const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
   // Exportar el libro de trabajo a un archivo
-  XLSX.writeFile(workbook, `exportacion_${timestamp}.xlsx`);
+  const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
+  XLSX.writeFile(workbook, `exportacion_leads_asesor${timestamp}.xlsx`);
 };

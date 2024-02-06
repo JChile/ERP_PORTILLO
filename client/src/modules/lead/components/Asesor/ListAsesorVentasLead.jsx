@@ -387,7 +387,7 @@ export const ListAsesorVentasLead = () => {
                       <TextField
                         size="small"
                         variant="outlined"
-                        placeholder="Número"
+                        placeholder="Nombre"
                         type="text"
                         name="nombre"
                         value={nombre}

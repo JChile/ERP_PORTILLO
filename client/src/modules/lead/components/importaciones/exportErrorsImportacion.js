@@ -20,8 +20,6 @@ export const exportErrorsImportacion = (data) => {
     };
   });
 
-  console.log(formatData);
-
   // Crear un libro de trabajo y agregar una hoja
   const workbook = XLSX.utils.book_new();
   const worksheet = XLSX.utils.json_to_sheet(formatData);
@@ -48,11 +46,21 @@ export const exportErrorsImportacion = (data) => {
   });
 
   // Establecer el ancho de las columnas del header
-  worksheet["!cols"] = headerNames.map(() => ({ wch: 15 })); // Puedes ajustar el ancho según sea necesario
-
+  worksheet["!cols"] = headerNames.map((element) => {
+    if (element === "horaRecepcion") return { wch: 26 };
+    if (element === "nombre") return { wch: 26 };
+    if (element === "apellido") return { wch: 26 };
+    if (element === "celular") return { wch: 12 };
+    if (element === "celular2") return { wch: 12 };
+    if (element === "campania") return { wch: 30 };
+    if (element === "comentario") return { wch: 40 };
+    if (element === "asesor") return { wch: 10 };
+    if (element === "detalle") return { wch: 83 };
+  });
   // Agregar la hoja al libro de trabajo
   XLSX.utils.book_append_sheet(workbook, worksheet, "errores-importacion");
 
   // Exportar el libro de trabajo a un archivo
-  XLSX.writeFile(workbook, "importacion-leads-errores.xlsx");
+  const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
+  XLSX.writeFile(workbook, `importacion-leads-errores${timestamp}..xlsx`);
 };

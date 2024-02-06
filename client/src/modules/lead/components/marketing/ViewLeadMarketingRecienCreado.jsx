@@ -24,7 +24,7 @@ import { MdClose, MdSearch } from "react-icons/md";
 import { SelectBoolean, SelectProyecto } from "../../../../components/select";
 import { RowItemLeadMarketing } from "./RowItemLeadMarketing";
 import { MassActionsViewLeadsMarketing } from "./acciones-masivas/MassActionsViewLeadsMarketing";
-import { combinarErrores } from "../../../../utils";
+import { combinarErrores, formatDate_ISO861_to_date } from "../../../../utils";
 import { deleteLead, getLeads } from "../../helpers";
 
 export const ViewLeadMarketingRecienCreado = ({
@@ -84,7 +84,7 @@ export const ViewLeadMarketingRecienCreado = ({
       const proyectoElement = element["campania"]["proyecto"]["nombre"]
         .toString()
         .toLowerCase();
-      const asignadoElement = element["asignado"];
+      const asignadoElement = element["asignado"] ? "si" : "no";
       const horaRecepcionElement = formatDate_ISO861_to_date(
         element["horaRecepcion"]
       );
@@ -98,7 +98,7 @@ export const ViewLeadMarketingRecienCreado = ({
         (filterData["proyecto"] !== "" &&
           !proyectoElement.includes(filterData["proyecto"].toLowerCase())) ||
         (filterData["asignado"] !== "" &&
-          !filterData["asignado"] === asignadoElement) ||
+          !asignadoElement.includes(filterData["asignado"].toLowerCase())) ||
         (filterData["horaRecepcion"] !== "" &&
           !horaRecepcionElement.includes(filterData["horaRecepcion"])) ||
         (filterData["fecha_creacion"] !== "" &&
@@ -238,7 +238,6 @@ export const ViewLeadMarketingRecienCreado = ({
         query += `&desde=${startDate}T00:00:00&hasta=${endDate}T23:59:59`;
       }
       const rowData = await getLeads(authTokens["access"], query);
-      console.log(rowData);
       const formatData = rowData.map((element) => {
         return {
           ...element,
@@ -249,7 +248,6 @@ export const ViewLeadMarketingRecienCreado = ({
       setAuxLeads(formatData);
       setVisibleProgress(false);
     } catch (error) {
-      console.log(error);
       const pilaError = combinarErrores(error);
       setFeedbackMessages({
         style_message: "error",

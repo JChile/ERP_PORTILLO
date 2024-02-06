@@ -28,6 +28,7 @@ import {
 } from "../../../../components/select";
 import { MassActionsViewLeadsNoAsignados } from "./acciones-masivas/MassActionsViewLeadsNoAsignados";
 import { combinarErrores, formatDate_ISO861_to_date } from "../../../../utils";
+import SelectAsesor from "../../../../components/select/asesor-filter/SelectAsesor";
 
 export const ViewLeadsNoAsignados = ({ startDate, endDate, flagReload }) => {
   // auth token
@@ -43,9 +44,10 @@ export const ViewLeadsNoAsignados = ({ startDate, endDate, flagReload }) => {
     celular: "",
     nombre: "",
     proyecto: "",
+    asesor: "",
     fecha_desasignacion: "",
   });
-  const { celular, nombre, proyecto, fecha_desasignacion } = filterData;
+  const { celular, nombre, proyecto, asesor, fecha_desasignacion } = filterData;
 
   // flag reset
   const [flagReset, setFlagReset] = useState(false);
@@ -81,6 +83,15 @@ export const ViewLeadsNoAsignados = ({ startDate, endDate, flagReload }) => {
       const proyectoElement = element["campania"]["proyecto"]["nombre"]
         .toString()
         .toLowerCase();
+      // Componente nombre completo
+      const asesorNombre = element["penultimo_asesor"]["first_name"]
+        .toString()
+        .toLowerCase();
+      const asesorApellido = element["penultimo_asesor"]["last_name"]
+        .toString()
+        .toLowerCase();
+
+      const asesorElement = `${asesorNombre} ${asesorApellido}`;
       const fechaDesasignacionElement = formatDate_ISO861_to_date(
         element["fecha_desasignacion"]
       );
@@ -93,6 +104,8 @@ export const ViewLeadsNoAsignados = ({ startDate, endDate, flagReload }) => {
           !nombreElement.includes(filterData["nombre"].toLowerCase())) ||
         (filterData["proyecto"] !== "" &&
           !proyectoElement.includes(filterData["proyecto"].toLowerCase())) ||
+        (filterData["asesor"] !== "" &&
+          !asesorElement.includes(filterData["asesor"].toLowerCase())) ||
         (filterData["fecha_desasignacion"] !== "" &&
           !fechaDesasignacionElement.includes(
             filterData["fecha_desasignacion"].toLowerCase()
@@ -123,6 +136,7 @@ export const ViewLeadsNoAsignados = ({ startDate, endDate, flagReload }) => {
       celular: "",
       nombre: "",
       proyecto: "",
+      asesor: "",
       fecha_desasignacion: "",
     });
     // cambiamos el flag de reset
@@ -211,6 +225,7 @@ export const ViewLeadsNoAsignados = ({ startDate, endDate, flagReload }) => {
       }
       // se debe traer en un rango de 30 dias
       const result = await getLeads(authTokens["access"], query);
+      console.log(result);
       const formatData = result.map((element) => {
         return {
           ...element,
@@ -293,6 +308,7 @@ export const ViewLeadsNoAsignados = ({ startDate, endDate, flagReload }) => {
                 <TableCell>Celular</TableCell>
                 <TableCell>Nombre</TableCell>
                 <TableCell>Proyecto</TableCell>
+                <TableCell>Último asesor</TableCell>
                 <TableCell>Fecha desasignacion</TableCell>
               </TableRow>
             </TableHead>
@@ -354,6 +370,13 @@ export const ViewLeadsNoAsignados = ({ startDate, endDate, flagReload }) => {
                     onNewInput={handledFilterSelectValues}
                     size="small"
                     defaultValue={proyecto}
+                  />
+                </TableCell>
+                <TableCell>
+                  <SelectAsesor
+                    size="small"
+                    onNewInput={handledFilterSelectValues}
+                    defaultValue={asesor}
                   />
                 </TableCell>
                 <TableCell>

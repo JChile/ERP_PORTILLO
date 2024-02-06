@@ -22,6 +22,7 @@ import {
   getDesasignadosEstadoLead,
   getDesasignadosObjecion,
 } from "../helpers/getDesasignacionCases";
+import LoadingObjecionIcon from "../../../assets/loading_objecion.svg";
 
 export const ReporteDesasignacion = () => {
   const [proyecto, setProyecto] = useState(null);
@@ -229,7 +230,15 @@ export const ReporteDesasignacion = () => {
         </React.Fragment>
       )}
 
-      {!proyecto && !isLoading && <p>Seleccione un proyecto</p>}
+      {!proyecto && !isLoading && (
+        <div
+          className="grid place-content-center gap-y-12"
+          role="alert"
+        >
+          <span className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative">Seleccione un proyecto</span>
+          <img src={LoadingObjecionIcon} alt="loading" className="w-72" />
+        </div>
+      )}
     </React.Fragment>
   );
 };

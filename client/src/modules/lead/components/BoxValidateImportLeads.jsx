@@ -2,44 +2,29 @@ import React, { useState } from "react";
 
 export const BoxValidateImportLeads = ({ onClose, onImportLeads, errors }) => {
   console.log(errors);
-  const [esAutomatico, setEstAutomatico] = useState(false);
-  const [esConErrores, setEsConErrores] = useState(true);
+  const [esConErrores, setEsConErrores] = useState(false);
 
+  // check box errores change
   const handleCheckboxErroresChange = (event) => {
     setEsConErrores(event.target.checked);
   };
 
-  const handleCheckboxAutomaticoChange = (event) => {
-    setEstAutomatico(event.target.checked);
-  };
-
   const importData = () => {
-    onImportLeads(esAutomatico, esConErrores);
+    onImportLeads(esConErrores);
   };
 
   return (
     <div className="fixed inset-0 flex justify-center items-center bg-black bg-opacity-50">
       <div className="w-4/5 h-5/6 bg-white border border-gray-300 shadow-md rounded">
-        <h2 className="text-center mb-3 mt-2 font-bold">Verificacion</h2>
+        <h2 className="text-center mb-3 mt-2 font-bold">Verificación</h2>
         <div className="bg-yellow-200 p-2 mt-2 rounded">
-          Si no eliges la asignación automática, el sistema tomará en cuenta la
-          información del asesor proporcionada.
+          Por defecto, solo se importaran los leads sin errores de validación.
+          Todos los errores encontrados seran exportados en un excel.
         </div>
         <div className="mt-2 mb-4 px-4 flex items-center justify-center	space-x-4">
           <div className="flex items-center">
             <label htmlFor="automatico" className="block font-semibold mb-1">
-              ¿Asignación automática?
-            </label>
-            <input
-              type="checkbox"
-              checked={esAutomatico}
-              onChange={handleCheckboxAutomaticoChange}
-              className="ml-2"
-            />
-          </div>
-          <div className="flex items-center">
-            <label htmlFor="automatico" className="block font-semibold mb-1">
-              ¿Importación con errores?
+              ¿Importar con errores?
             </label>
             <input
               type="checkbox"

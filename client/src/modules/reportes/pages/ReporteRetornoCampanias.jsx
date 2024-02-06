@@ -142,8 +142,9 @@ export const ReporteRetornoCampania = () => {
                   },
                 }}
               >
-                <TableCell>Campaña</TableCell>
-                <TableCell>Costo</TableCell>
+                <TableCell className="text-center">Campaña</TableCell>
+                <TableCell>Costo Estimado</TableCell>
+                <TableCell>Costo Real</TableCell>
                 <TableCell>Número de Leads</TableCell>
                 <TableCell>Precio por lead</TableCell>
               </TableRow>
@@ -153,8 +154,9 @@ export const ReporteRetornoCampania = () => {
                 dataCampania.campanias.map((campania) => (
                   <TableRow key={campania.id}>
                     <TableCell>{campania.nombre}</TableCell>
+                    <TableCell>{campania.coste_estimado}</TableCell>
                     <TableCell>{campania.coste_real}</TableCell>
-                    <TableCell>{campania.leads.length}</TableCell>
+                    <TableCell className="text-center">{campania.leads.length}</TableCell>
                     <TableCell>
                       {campania.leads.length > 0
                         ? campania.coste_real / campania.leads.length

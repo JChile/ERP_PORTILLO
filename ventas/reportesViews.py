@@ -144,10 +144,10 @@ class ReporteProporcionDesasignacionesByObjecion(APIView):
 
         campaniasProyecto = proyecto.campania_set.all()
         if desde and hasta:
-            leadsCampanias = Lead.objects.filter(campania__in = campaniasProyecto, fecha_desasignacion__range =[desde, hasta])
+            leadsCampanias = Lead.objects.filter(campania__in = campaniasProyecto, fecha_creacion__range =[desde, hasta])
 
         else :
-            leadsCampanias = Lead.objects.filter(campania__in = campaniasProyecto ,fecha_desasignacion__gte=diasAtras)
+            leadsCampanias = Lead.objects.filter(campania__in = campaniasProyecto ,fecha_creacion__gte=diasAtras)
 
 
         desasignados_leads_ids = DesasignacionLeadAsesor.objects.filter(lead__in = leadsCampanias).values_list('lead', flat=True)
@@ -176,10 +176,10 @@ class ReporteProporcionDesasignacionesByEstadoLead(APIView):
 
         campaniasProyecto = proyecto.campania_set.all()
         if desde and hasta:
-            leadsCampanias = Lead.objects.filter(campania__in = campaniasProyecto, fecha_desasignacion__range =[desde, hasta])
+            leadsCampanias = Lead.objects.filter(campania__in = campaniasProyecto, fecha_creacion__range =[desde, hasta])
 
         else :
-            leadsCampanias = Lead.objects.filter(campania__in = campaniasProyecto, fecha_desasignacion__gte=diasAtras)
+            leadsCampanias = Lead.objects.filter(campania__in = campaniasProyecto, fecha_creacion__gte=diasAtras)
 
 
         desasignados_leads_ids = DesasignacionLeadAsesor.objects.filter(lead__in = leadsCampanias).values_list('lead', flat=True)

@@ -316,10 +316,14 @@ class LeadMultipleAssign(generics.UpdateAPIView):
 
         return Response({'message': 'Las asignaciones se han realizado correctamente'}, status=status.HTTP_200_OK)
 
+import json
 
 class LeadMultipleCreationManual(APIView):
     def post(self, request):
         response = {}
+        
+        data_legacy = json.loads(json.dumps(request.data))
+
         data = request.data
         proyectoId = request.query_params.get('proyecto')
         guardados = []
@@ -334,27 +338,48 @@ class LeadMultipleCreationManual(APIView):
         )
 
 
+
         try:
             proyectoObject = Proyecto.objects.get(id = proyectoId)
         except:
             return Response({"error","No existe proyecto"}, status.HTTP_404_NOT_FOUND)
 
-        for leadIter in data:
-            print("Lead : ", leadIter)
-            if not Campania.objects.filter(nombre = leadIter.get("campania")):
+        campanias_proyecto = proyectoObject.campania_set.all()
+        campanias_exclude = Campania.objects.exclude(id__in = campanias_proyecto.values_list('id' , flat = True))
+        print(campanias_proyecto)
+        print(campanias_exclude)
+
+        for leadIter , lead_notserializer  in zip(data, data_legacy):
+            if campanias_exclude.filter(codigo = leadIter.get("campania")):
+                leadIter["campania"] = -1
+            elif not campanias_proyecto.filter(codigo = leadIter.get("campania")):
                 leadIter["campania"] = str(proyectoObject.nombre+"_organico")
-            if  leadIter.get("asesor")!=None and User.objects.filter(codigoAsesor = leadIter.get("asesor")):
+                lead_notserializer["flag_campania"] = True
+
+            else :
+                lead_notserializer["flag_campania"] = False
+
+
+            if  leadIter.get("asesor")!=None and User.objects.filter(estado = 'A', codigoAsesor = leadIter.get("asesor")):
                 leadIter["fecha_asignacion"] = timezone.now()
             else :
                 leadIter["asesor"] = None
                 leadIter.pop("asesor")
 
+        print(data_legacy)
 
-        for i in data:
+
+        for i,lead_notserializer in zip(data, data_legacy):
             lead_class = leadCreation(i, phone_numbers)
             lead_class.check_asesor()
             lead = lead_class.serialize_lead()
+            lead["data"] = lead_notserializer
+            if lead.get("errores") != None and i["campania"] == -1:
+                lead["errores"].append("La campaña pertenece a otro proyecto")
+            elif lead.get("errores") != None and lead_notserializer.pop("flag_campania") ==True:
+                lead["errores"].append("La campaña no se proporciono o no existe")
 
+            
             if lead_class.errores:
                 no_guardados.append(lead)
 

@@ -42,9 +42,7 @@ class Lead(models.Model):
     celular =  models.CharField(max_length=9, null=False, validators=[
         RegexValidator(regex=r'^9\d{8}$', message="El número de celular debe tener 9 dígitos y comenzar con 9.")
     ])
-    celular2 =  models.CharField(max_length=9, null = True,blank=True,validators=[
-        RegexValidator(regex=r'^9\d{8}$', message="El número de celular debe tener 9 dígitos y comenzar con 9.")
-    ])
+    celular2 =  models.CharField(null = True,blank=True)
     comentario = models.TextField(max_length=200, null=False, blank=True)
     horaRecepcion = models.DateTimeField(
         default=timezone.now, null=True, blank=True)

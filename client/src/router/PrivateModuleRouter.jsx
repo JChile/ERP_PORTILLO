@@ -7,11 +7,9 @@ export const PrivateModuleRouter = ({
   requiredPermissions,
 }) => {
   const permissions = userPermissions ? userPermissions["permissions"] : {};
-  console.log(permissions, requiredPermissions);
   const hasPermission = requiredPermissions.every(
     (permission) => permissions[permission]
   );
-  console.log(hasPermission);
   return hasPermission ? (
     <Component />
   ) : (

@@ -50,7 +50,7 @@ const RowItemLeadAsignado = ({ item, checkedElement }) => {
       <TableCell>{`${item.nombre} ${item.apellido}`}</TableCell>
       <TableCell>{item.campania.proyecto.nombre}</TableCell>
       <TableCell>
-        {item.asesor.first_name} {item.asesor.last_name}
+        {item["asesor"]["first_name"]} {item["asesor"]["last_name"]}
       </TableCell>
       <TableCell>
         {formatDate_ISO861_to_formatdate(item["fecha_asignacion"])}

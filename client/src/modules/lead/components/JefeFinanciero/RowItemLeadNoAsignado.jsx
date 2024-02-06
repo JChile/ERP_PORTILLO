@@ -53,6 +53,10 @@ export const RowItemLeadNoAsignado = ({ item, checkedElement }) => {
       <TableCell>{`${item["nombre"]} ${item["apellido"]}`}</TableCell>
       <TableCell>{proyecto["nombre"]}</TableCell>
       <TableCell>
+        {item["penultimo_asesor"]["first_name"]}{" "}
+        {item["penultimo_asesor"]["last_name"]}
+      </TableCell>
+      <TableCell>
         {formatDate_ISO861_to_formatdate(item["fecha_desasignacion"])}
       </TableCell>
     </TableRow>

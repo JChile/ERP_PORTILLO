@@ -24,8 +24,6 @@ export const exportLeadsMarketing = (data) => {
     };
   });
 
-  console.log(formatData);
-
   // Crear un libro de trabajo y agregar una hoja
   const workbook = XLSX.utils.book_new();
   const worksheet = XLSX.utils.json_to_sheet(formatData);
@@ -75,5 +73,5 @@ export const exportLeadsMarketing = (data) => {
 
   const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
   // Exportar el libro de trabajo a un archivo
-  XLSX.writeFile(workbook, `exportacion_${timestamp}.xlsx`);
+  XLSX.writeFile(workbook, `exportacion_leads_marketing${timestamp}.xlsx`);
 };

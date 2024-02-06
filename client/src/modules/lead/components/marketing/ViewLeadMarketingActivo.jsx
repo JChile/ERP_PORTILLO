@@ -24,8 +24,8 @@ import { MdClose, MdSearch } from "react-icons/md";
 import { SelectBoolean, SelectProyecto } from "../../../../components/select";
 import { RowItemLeadMarketing } from "./RowItemLeadMarketing";
 import { MassActionsViewLeadsMarketing } from "./acciones-masivas/MassActionsViewLeadsMarketing";
-import { combinarErrores } from "../../../../utils";
-import { getLeads } from "../../helpers";
+import { combinarErrores, formatDate_ISO861_to_date } from "../../../../utils";
+import { deleteLead, getLeads } from "../../helpers";
 
 export const ViewLeadMarketingActivo = ({ startDate, endDate, flagReload }) => {
   const { authTokens } = useContext(AuthContext);
@@ -80,7 +80,7 @@ export const ViewLeadMarketingActivo = ({ startDate, endDate, flagReload }) => {
       const proyectoElement = element["campania"]["proyecto"]["nombre"]
         .toString()
         .toLowerCase();
-      const asignadoElement = element["asignado"];
+      const asignadoElement = element["asignado"] ? "si" : "no";
       const horaRecepcionElement = formatDate_ISO861_to_date(
         element["horaRecepcion"]
       );
@@ -94,7 +94,7 @@ export const ViewLeadMarketingActivo = ({ startDate, endDate, flagReload }) => {
         (filterData["proyecto"] !== "" &&
           !proyectoElement.includes(filterData["proyecto"].toLowerCase())) ||
         (filterData["asignado"] !== "" &&
-          !filterData["asignado"] === asignadoElement) ||
+          !asignadoElement.includes(filterData["asignado"].toLowerCase())) ||
         (filterData["horaRecepcion"] !== "" &&
           !horaRecepcionElement.includes(filterData["horaRecepcion"])) ||
         (filterData["fecha_creacion"] !== "" &&
@@ -234,7 +234,6 @@ export const ViewLeadMarketingActivo = ({ startDate, endDate, flagReload }) => {
         query += `&desde=${startDate}T00:00:00&hasta=${endDate}T23:59:59`;
       }
       const rowData = await getLeads(authTokens["access"], query);
-      console.log(rowData);
       const formatData = rowData.map((element) => {
         return {
           ...element,
@@ -245,7 +244,6 @@ export const ViewLeadMarketingActivo = ({ startDate, endDate, flagReload }) => {
       setAuxLeads(formatData);
       setVisibleProgress(false);
     } catch (error) {
-      console.log(error);
       const pilaError = combinarErrores(error);
       setFeedbackMessages({
         style_message: "error",
@@ -270,6 +268,7 @@ export const ViewLeadMarketingActivo = ({ startDate, endDate, flagReload }) => {
           setFeedbackMessages={setFeedbackMessages}
           setVisibleProgress={setVisibleProgress}
           onLoadData={traerLeads}
+          activeMassActions={false}
         />
         <div className="flex items-center bg-green-100 rounded p-2">
           <p className="text-green-500 font-bold mr-2">

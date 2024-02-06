@@ -51,6 +51,8 @@ class LeadList(generics.ListCreateAPIView):
 
         print(request.user.isAdmin)
 
+        flag_desasignado_asesor = False
+
         if asignado == "False":
             print(asignado)
             lead_queryset = Lead.objects.filter(asignado=False)
@@ -64,6 +66,7 @@ class LeadList(generics.ListCreateAPIView):
 
             elif request.user.groups.first().name == "asesor":
                 if request.user.isAdmin == True:
+                    flag_desasignado_asesor = True
                     if desde and hasta:
                         lead_queryset = lead_queryset.filter(fecha_desasignacion__range=[
                                                             desde, hasta]).order_by('-fecha_desasignacion')
@@ -156,6 +159,9 @@ class LeadList(generics.ListCreateAPIView):
         if recienCreado:
             lead_queryset = lead_queryset.filter(recienCreado=recienCreado)
 
+        if flag_desasignado_asesor:
+            historico_desasignaciones = DesasignacionLeadAsesor.objects.filter(lead__in = lead_queryset)
+
         leadSerializer = LeadSerializer(lead_queryset, many=True)
 
         leadData = leadSerializer.data
@@ -178,6 +184,11 @@ class LeadList(generics.ListCreateAPIView):
             i["campania"]["proyecto"] = ProyectoSerializer(
                 Proyecto.objects.filter(pk=i["campania"]["proyecto"]).first()).data
             i["objecion"] = objecionSerializer.data if objecionSerializer else None
+            if flag_desasignado_asesor:
+                lead_lastAsesor = historico_desasignaciones.filter(lead = i["id"]).order_by('-fecha').first()
+                asesor_desasignado = User.objects.filter(pk = lead_lastAsesor.usuario.pk).first() if lead_lastAsesor != None else None
+                i["penultimo_asesor"] = UserSerializer(asesor_desasignado, fields=(
+                'id', 'first_name', 'last_name', 'username')).data if asesor_desasignado!=None else None
 
         return Response(leadData)
 

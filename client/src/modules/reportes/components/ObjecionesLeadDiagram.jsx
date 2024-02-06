@@ -58,11 +58,14 @@ export const ObjecionLeadDiagram = ({ data }) => {
 
   return (
     <div>
-      <h2>Gráfico de Barras</h2>
-      <BarChartExample />
-
-      <h2>Gráfico de Radar</h2>
-      <RadarChartExample />
+      <div className="p-4 w-full mt-4">
+        <h2>Gráfico de barras de objeciones de lead</h2>
+        <BarChartExample />
+      </div>
+      <div className="p-4 w-full mt-4">
+        <h2>Gráfico de radar de objeciones de lead</h2>
+        <RadarChartExample />
+      </div>
     </div>
   );
 };

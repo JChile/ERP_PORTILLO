@@ -22,15 +22,15 @@ export const CampaniasRadarChart = ({ data }) => {
       <Radar
         name="Costo Estimado"
         dataKey="costo_estimado"
-        stroke="#ffad01"
-        fill="#ffad01"
+        stroke="#FF5733"
+        fill="#FF5733"
         fillOpacity={0.6}
       />
       <Radar
         name="Costo Real"
         dataKey="costo_real"
-        stroke="#4169FF"
-        fill="#4169FF"
+        stroke="#8884d8"
+        fill="#8884d8"
         fillOpacity={0.6}
       />
       <Tooltip />

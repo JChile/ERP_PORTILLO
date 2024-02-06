@@ -25,7 +25,7 @@ export const CampaniasCostoBarChart = ({ data }) => {
       <Tooltip />
 
       {Object.keys(data[0]).map((key) => {
-        const color = key === "costo_estimado" ? "#ffad01" : "#4169FF";
+        const color = key === "costo_estimado" ? "#8884d8" : "#FF5733";
         if (key !== "name") {
           return <Bar key={key} type="monotone" dataKey={key} fill={color} />;
         }

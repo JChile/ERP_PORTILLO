@@ -15,6 +15,7 @@ import { CampaniasRadarChart } from "../components/CampaniasRadarChart";
 import { CampaniasCostoBarChart } from "../components/CampaniasCostoBarChart";
 import { DiagramRetornoRadar } from "../components/DiagramaRetornoRadar";
 import { DiagramRetornoLeadCampania } from "../components/DiagramRetornoLeadCampania";
+import LoadingObjecionIcon from "../../../assets/loading_objecion.svg";
 
 export const ReporteRetornoCampania = () => {
   const [proyecto, setProyecto] = useState();
@@ -70,7 +71,9 @@ export const ReporteRetornoCampania = () => {
         if (desdeValue && hastaValue) {
           query = `&desde=${desdeValue}T00:00:00&hasta=${hastaValue}T23:59:59`;
         }
-        const result = await getProyectoCampania(id + "?estadoCampania=A"+query);
+        const result = await getProyectoCampania(
+          id + "?estadoCampania=A" + query
+        );
         setDataCampania(result);
         const campaniasDataCosto =
           result?.campanias.map((campania) => ({
@@ -156,7 +159,9 @@ export const ReporteRetornoCampania = () => {
                     <TableCell>{campania.nombre}</TableCell>
                     <TableCell>{campania.coste_estimado}</TableCell>
                     <TableCell>{campania.coste_real}</TableCell>
-                    <TableCell className="text-center">{campania.leads.length}</TableCell>
+                    <TableCell className="text-center">
+                      {campania.leads.length}
+                    </TableCell>
                     <TableCell>
                       {campania.leads.length > 0
                         ? campania.coste_real / campania.leads.length
@@ -167,13 +172,36 @@ export const ReporteRetornoCampania = () => {
             </TableBody>
           </Table>
           <div className="flex flex-row items-center justify-center mt-4">
-            <CampaniasCostoBarChart data={auxDataCosto} />
-            <DiagramRetornoLeadCampania data={auxDataRetorno} />
+            <div className="p-4 w-full mt-4">
+              <h2>Gráfico de barras de los costos estimados frente a los costos reales</h2>
+              <CampaniasCostoBarChart data={auxDataCosto} />
+            </div>
+
+            <div className="p-4 w-full mt-4">
+              <h2>Gráfico de barras de los costos por lead obtenido</h2>
+              <DiagramRetornoLeadCampania data={auxDataRetorno} />
+            </div>
           </div>
           <div className="flex flex-row items-center justify-center mt-4">
-            <CampaniasRadarChart data={auxDataCosto} />
-            <DiagramRetornoRadar data={auxDataRetorno} />
+            <div className="p-4 w-full mt-4">
+              <h2>Gráfico de radar de los costos estimados frente a los costos reales</h2>
+              <CampaniasRadarChart data={auxDataCosto} />
+            </div>
+
+            <div className="p-4 w-full mt-4">
+              <h2>Gráfico de radar de los costos por lead obtenido</h2>
+              <DiagramRetornoRadar data={auxDataRetorno} />
+            </div>
           </div>
+        </div>
+      )}
+
+      {!reportGenerated && (
+        <div className="grid place-content-center gap-y-12" role="alert">
+          <span className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative">
+            Seleccione un proyecto
+          </span>
+          <img src={LoadingObjecionIcon} alt="loading" className="w-72" />
         </div>
       )}
 

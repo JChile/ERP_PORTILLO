@@ -16,6 +16,7 @@ import { getObjecion } from "../../../components/filters/objecion/getObjecion";
 import { AuthContext } from "../../../auth";
 import { EstadoLeadDiagram } from "../components/EstadoLeadDiagrams";
 import { ObjecionLeadDiagram } from "../components/ObjecionesLeadDiagram";
+import LoadingObjecionIcon from "../../../assets/loading_objecion.svg";
 
 export const ReporteLeadStatus = () => {
   const [proyecto, setProyecto] = useState();
@@ -232,6 +233,15 @@ export const ReporteLeadStatus = () => {
           </div>
         </div>
       )}
+      {!reportGenerated && (
+        <div className="grid place-content-center gap-y-12" role="alert">
+          <span className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative">
+            Seleccione un proyecto
+          </span>
+          <img src={LoadingObjecionIcon} alt="loading" className="w-72" />
+        </div>
+      )}
+
       <CustomAlert
         feedbackCreate={feedbackCreate}
         feedbackMessages={feedbackMessages}

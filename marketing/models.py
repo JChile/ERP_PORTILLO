@@ -38,7 +38,7 @@ class Categoria(models.Model):
 
 class Campania(models.Model):
     nombre = models.CharField(max_length=100, null=True , unique =True)
-    codigo = models.CharField(unique=True, null=True, default=None)
+    codigo = models.CharField(unique=True, blank = False)
     fecha_creacion = models.DateTimeField(auto_now=True)
     fecha_estimada = models.DateField(null=True, blank=True)
     fecha_cierre = models.DateField(null=True, blank=True)

@@ -33,7 +33,7 @@ export const EstadoLeadDiagram = ({ data }) => {
         />
         <YAxis />
         <Tooltip />
-        <Bar dataKey="conteo" name="costo_por_lead" fill="#8884d8" />
+        <Bar dataKey="conteo" name="costo_por_lead" fill="#FF5733" />
       </BarChart>
     );
   };
@@ -47,8 +47,8 @@ export const EstadoLeadDiagram = ({ data }) => {
         <Radar
           name="Estado"
           dataKey="conteo"
-          stroke="#8884d8"
-          fill="#8884d8"
+          stroke="#FF5733"
+          fill="#FF5733"
           fillOpacity={0.6}
         />
         <Tooltip />
@@ -58,11 +58,15 @@ export const EstadoLeadDiagram = ({ data }) => {
 
   return (
     <div>
-      <h2>Gráfico de barras de los estados del lead</h2>
-      <BarChartExample />
+      <div className="p-4 w-full mt-4">
+        <h2>Gráfico de barras de los estados del lead</h2>
+        <BarChartExample />
+      </div>
 
-      <h2>Gráfico de radar de los estados del lead</h2>
-      <RadarChartExample />
+      <div className="p-4 w-full mt-4">
+        <h2>Gráfico de radar de los estados del lead</h2>
+        <RadarChartExample />
+      </div>
     </div>
   );
 };

@@ -13,6 +13,8 @@ import {
 import { FiChevronsRight, FiMoreVertical } from "react-icons/fi";
 import { quitarLeads } from "../../../helpers/desasignarLeads";
 import { combinarErrores } from "../../../../../utils";
+import { FaFileExcel } from "react-icons/fa6";
+import { exportLeadsAsignados } from "./exportLeadAsignados";
 
 const ITEM_HEIGHT = 48;
 
@@ -23,6 +25,8 @@ const MassActionsViewLeadsAsignados = ({
   setVisibleProgress,
   onLoadData,
 }) => {
+
+
   const { authTokens } = useContext(AuthContext);
   const [anchorEl, setAnchorEl] = useState(null);
   const [openDialog, setOpenDialog] = useState(false);
@@ -65,6 +69,14 @@ const MassActionsViewLeadsAsignados = ({
   const handleClickOpenDialog = () => setOpenDialog(true);
   const handleCloseDialog = () => setOpenDialog(false);
 
+  const exportarLeadsSeleccionados = () => {
+    setVisibleProgress(true);
+    console.log(data);
+    exportLeadsAsignados(data);
+    handleClose();
+    setVisibleProgress(false);
+  };
+
   return (
     <React.Fragment>
       <IconButton
@@ -92,7 +104,11 @@ const MassActionsViewLeadsAsignados = ({
           },
         }}
       >
-        <MenuItem key="eliminar" onClick={handleClickOpenDialog}>
+        <MenuItem
+          key="eliminar"
+          onClick={handleClickOpenDialog}
+          disabled={data.length === 0}
+        >
           <FiChevronsRight />
           <span className="ps-2">Desasignar</span>
         </MenuItem>
@@ -101,6 +117,14 @@ const MassActionsViewLeadsAsignados = ({
           onClose={handleCloseDialog} // pasar una función que cierre el menú
           handleConfirm={desasignarLeads}
         />
+        <MenuItem
+          key={"exportar"}
+          onClick={exportarLeadsSeleccionados}
+          disabled={data.length === 0}
+        >
+          <FaFileExcel />
+          <span className="ps-2">Exportar</span>
+        </MenuItem>
       </Menu>
     </React.Fragment>
   );

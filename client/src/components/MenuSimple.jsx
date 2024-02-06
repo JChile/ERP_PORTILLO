@@ -49,13 +49,6 @@ export default function MenuSimple({ logoutUser }) {
         transformOrigin={{ horizontal: "right", vertical: "top" }}
         anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
       >
-        <MenuItem onClick={handleClose}>
-          <ListItemIcon>
-            <FiUser />
-          </ListItemIcon>
-          Mi cuenta
-        </MenuItem>
-        <Divider />
         <MenuItem onClick={logoutUser}>
           <ListItemIcon>
             <FiLogOut />

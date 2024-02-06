@@ -43,7 +43,8 @@ export const DiagramRetornoRadar = ({ data }) => {
   return (
     <RadarChart width={500} height={300} data={newData}>
       <PolarGrid />
-      <PolarAngleAxis dataKey="name" />
+      <PolarAngleAxis dataKey="name" 
+        tick={{ fontSize: 13 }}/>
       <PolarRadiusAxis />
       <Radar
         name="Campañas"

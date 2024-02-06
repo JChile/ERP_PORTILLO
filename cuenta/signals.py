@@ -13,13 +13,13 @@ def crear_datos(sender, **kwargs):
     
     # Verifica si las migraciones pertenecen a tu aplicación
     if sender.name == 'cuenta':
+        if True:
+            EstadoRegistro.objects.get_or_create(estado='A', nombre='Activo')
+            EstadoRegistro.objects.get_or_create(estado='I', nombre='Inactivo')
 
-        # EstadoRegistro.objects.get_or_create(estado='A', nombre='Activo')
-        # EstadoRegistro.objects.get_or_create(estado='I', nombre='Inactivo')
-
-        # Group.objects.get_or_create(name="administrador")
-        # Group.objects.get_or_create(name="asesor")
-        # Group.objects.get_or_create(name="marketing")
+            Group.objects.get_or_create(name="administrador")
+            Group.objects.get_or_create(name="asesor")
+            Group.objects.get_or_create(name="marketing")
 
 #portilloAdmin
 #portilloAdmin

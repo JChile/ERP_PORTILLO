@@ -15,7 +15,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import permission_classes
 from .consts import *
 from django.utils import timezone
-
+from django.utils.timezone import make_aware
 
 
 def get_or_none(model, **kwargs):
@@ -37,7 +37,7 @@ class LeadCreationConfirmation(APIView):
         thirty_days = timezone.now() - timedelta(days=60)
 
         phone_numbers = set(
-            Lead.objects.filter(horaRecepcion__gte=thirty_days,
+            Lead.objects.filter(fecha_creacion__gte=thirty_days,
                                 estado="A", campania__proyecto__id=proyecto_id)
             .values_list('celular', flat=True)
             .distinct()
@@ -79,36 +79,42 @@ class leadConfirmation:
         celular = self.data.get("celular")
         if not celular:
             self.errores.append("No se proporcionó el numero de celular.")
-        
+
         else:
             if len(celular) != 9 or not celular.startswith('9') or not celular.isdigit():
-                self.errores.append("El numero de celular no cumple con los requisitos.")
+                self.errores.append(
+                    "El numero de celular no cumple con los requisitos.")
 
             elif celular in phone_numbers:
-                self.errores.append("Este numero de celular ya esta registrado en el proyecto en un plazo de 60 dias.")
+                self.errores.append(
+                    "Este numero de celular ya esta registrado en el proyecto en un plazo de 60 dias.")
 
     def check_asesor(self):
         if "asesor" in self.data:
-            asesor = get_or_none(User, codigoAsesor=self.data["asesor"], estado="A")
+            asesor = get_or_none(
+                User, codigoAsesor=self.data["asesor"], estado="A")
             if asesor is not None:
                 self.data["asesor"] = asesor.id
             else:
-                self.errores.append("No se encontro al asesor con la información proporcionada.")
+                self.errores.append(
+                    "No se encontro al asesor con la información proporcionada.")
 
-        
     def check_campania(self, proyecto_id):
         if "campania" not in self.data:
             self.errores.append("No se proporcionó la campania.")
-        
+
         else:
-            campania = get_or_none(Campania, codigo=self.data["campania"], estado="A")
+            campania = get_or_none(
+                Campania, codigo=self.data["campania"], estado="A")
             if campania is not None:
                 if campania.proyecto.id != proyecto_id:
-                    self.errores.append("La campania no corresponde al proyecto especificado.")
+                    self.errores.append(
+                        "La campania no corresponde al proyecto especificado.")
                 else:
                     self.data["campania"] = campania.id
             else:
-                self.errores.append("No se encontró la campania con la informacion proporcionada.")
+                self.errores.append(
+                    "No se encontró la campania con la informacion proporcionada.")
 
 
 class leadCreation:
@@ -121,7 +127,6 @@ class leadCreation:
         self.check_campania()
         self.check_numero(phone_numbers)
 
-        
     def serialize_lead(self):
         lead = {}
         lead["data"] = self.data
@@ -129,52 +134,60 @@ class leadCreation:
             lead["errores"] = self.errores
 
         return lead
-    
+
     def check_numero(self, phone_numbers):
-        
+
         celular = self.data.get("celular")
 
         if not celular:
             self.errores.append("No se proporcionó el numero de celular.")
-        
+
         else:
             if len(celular) != 9 or not celular.startswith('9') or not celular.isdigit():
-                self.errores.append("El numero de celular no cumple con los requisitos.")
-            
+                self.errores.append(
+                    "El numero de celular no cumple con los requisitos.")
+
             elif self.flag_campania == True:
-                proyecto_id = get_or_none(Campania, id=self.data["campania"]).proyecto.id        
-                filtered_numbers = {phone for phone, proyecto in phone_numbers if proyecto == proyecto_id}
+                proyecto_id = get_or_none(
+                    Campania, id=self.data["campania"]).proyecto.id
+                filtered_numbers = {
+                    phone for phone, proyecto in phone_numbers if proyecto == proyecto_id}
 
                 if self.data['celular'] in filtered_numbers:
-                    self.errores.append("Este numero de celular ya esta registrado en el proyecto en un plazo de 60 dias.")
+                    self.errores.append(
+                        "Este numero de celular ya esta registrado en el proyecto en un plazo de 60 dias.")
 
     def check_asesor(self):
         if "asesor" in self.data:
-            asesor = get_or_none(User, codigoAsesor=self.data["asesor"], estado="A")
+            asesor = get_or_none(
+                User, codigoAsesor=self.data["asesor"], estado="A")
             if asesor is not None:
                 self.flag_asignado = True
                 self.data["asesor"] = asesor.id
             else:
-                self.errores.append("No se encontro al asesor con la información proporcionada.")
-        
+                self.errores.append(
+                    "No se encontro al asesor con la información proporcionada.")
 
     def check_campania(self):
         if "campania" not in self.data:
             self.errores.append("No se proporcionó la campania.")
         else:
-            campania = get_or_none(Campania, codigo=self.data["campania"], estado="A")
+            campania = get_or_none(
+                Campania, codigo=self.data["campania"], estado="A")
             if campania is not None:
                 self.data["campania"] = campania.id
                 self.flag_campania = True
             else:
-                self.errores.append("No se encontró la campania con la informacion proporcionada.")
-                    
+                self.errores.append(
+                    "No se encontró la campania con la informacion proporcionada.")
+
     def check_date(self):
         try:
-            self.data["horaRecepcion"] = datetime.strptime(self.data["horaRecepcion"], "%d/%m/%Y")
+            self.data["horaRecepcion"] = make_aware(
+                datetime.strptime(self.data["horaRecepcion"], "%d/%m/%Y"))
         except (ValueError, KeyError):
-            self.data["horaRecepcion"] = datetime.now()
-    
+            self.data["horaRecepcion"] = timezone.now()
+
     def put_asesor(self, asesor):
         if asesor is not None:
             self.flag_asignado = True
@@ -186,25 +199,46 @@ class leadMultipleCreationAutomatic(APIView):
         response = {}
         data = request.data
 
-        asesores = User.objects.filter(estado='A').exclude(codigoAsesor__isnull=True)
+        proyectoId = request.query_params.get('proyecto')
+        autoAsignar = request.query_params.get('autoasignar')
+
+        print("SE EJECUTA AUTOMATICO (Proyecto)", proyectoId)
+
+
+        try:
+            proyectoObject = Proyecto.objects.get(id = proyectoId)
+        except:
+            return Response({"error","No existe proyecto"}, status.HTTP_404_NOT_FOUND)
+
+        for leadIter in data:
+            print("Lead : ", leadIter)
+            if not Campania.objects.filter(nombre = leadIter["campania"]):
+                leadIter["campania"] = str(proyectoObject.nombre+"_organico")
+            if autoAsignar == "True":
+                leadIter["fecha_asignacion"] = timezone.now()
+
+        
+        print(data)
+
+        if autoAsignar == "True":
+            asesores = User.objects.filter(is_active=True, estado='A').filter(groups__name__in=["asesor"])
+        else:
+            asesores = []
+
         nextAsesor = LeadAssigner(asesores)
 
         guardados = []
         no_guardados = []
 
+
         thirty_days = timezone.now() - timedelta(days=60)
-        phone_numbers = set(
-            Lead.objects.filter(horaRecepcion__gte=thirty_days,
-                                estado="A")
-            .values_list('celular', 'campania__proyecto')
-            .distinct()
-        )
+        phone_numbers = set(Lead.objects.filter(fecha_asignacion__gte=thirty_days,estado="A").values_list('celular', 'campania__proyecto').distinct())
 
 
         for i in data:
             lead_class = leadCreation(i, phone_numbers)
             lead = lead_class.serialize_lead()
-            
+
             if lead_class.errores:
                 no_guardados.append(lead)
 
@@ -217,13 +251,15 @@ class leadMultipleCreationAutomatic(APIView):
                 saving = LeadSerializer(data=lead_class.data)
                 if saving.is_valid():
                     lead_instance = saving.save()
-                    HistoricoLeadAsesor.objects.create(lead=lead_instance, usuario=asesor)
-                
+                    HistoricoLeadAsesor.objects.create(
+                        lead=lead_instance, usuario=asesor)
+
         response["guardados"] = guardados
         response["no guardados"] = no_guardados
 
+
         return Response(response)
-        
+
 
 class LeadAssigner:
     def __init__(self, asesores):
@@ -238,7 +274,7 @@ class LeadAssigner:
         for _ in range(num_asesores):
             next_asesor = self.asesores[self.last_asesor]
             self.last_asesor = (self.last_asesor + 1) % num_asesores
-            
+
             return next_asesor
 
         return None
@@ -285,24 +321,40 @@ class LeadMultipleCreationManual(APIView):
     def post(self, request):
         response = {}
         data = request.data
-
+        proyectoId = request.query_params.get('proyecto')
         guardados = []
         no_guardados = []
 
         thirty_days = timezone.now() - timedelta(days=60)
         phone_numbers = set(
-            Lead.objects.filter(horaRecepcion__gte=thirty_days,
+            Lead.objects.filter(fecha_creacion__gte=thirty_days,
                                 estado="A")
             .values_list('celular', 'campania__proyecto')
             .distinct()
         )
 
 
+        try:
+            proyectoObject = Proyecto.objects.get(id = proyectoId)
+        except:
+            return Response({"error","No existe proyecto"}, status.HTTP_404_NOT_FOUND)
+
+        for leadIter in data:
+            print("Lead : ", leadIter)
+            if not Campania.objects.filter(nombre = leadIter.get("campania")):
+                leadIter["campania"] = str(proyectoObject.nombre+"_organico")
+            if  leadIter.get("asesor")!=None and User.objects.filter(codigoAsesor = leadIter.get("asesor")):
+                leadIter["fecha_asignacion"] = timezone.now()
+            else :
+                leadIter["asesor"] = None
+                leadIter.pop("asesor")
+
+
         for i in data:
             lead_class = leadCreation(i, phone_numbers)
             lead_class.check_asesor()
             lead = lead_class.serialize_lead()
-            
+
             if lead_class.errores:
                 no_guardados.append(lead)
 
@@ -311,15 +363,16 @@ class LeadMultipleCreationManual(APIView):
                 saving = LeadSerializer(data=lead_class.data)
                 if saving.is_valid():
                     lead_instance = saving.save()
-                    
-                    if(lead_class.flag_asignado):
-                        HistoricoLeadAsesor.objects.create(lead=lead_instance, usuario=lead_instance.asesor)                
-                
+
+                    if (lead_class.flag_asignado):
+                        HistoricoLeadAsesor.objects.create(
+                            lead=lead_instance, usuario=lead_instance.asesor)
+
         response["guardados"] = guardados
         response["no guardados"] = no_guardados
 
         return Response(response)
-           
+
 
 class AsesorAsignacion(APIView):
     def post(self, request):
@@ -345,13 +398,15 @@ class AsesorAsignacion(APIView):
             return Response({'detalle': error_message})
         return Response({'message': f"No se reasignaron los leads : {leadsNoAsigandos} porque no existen", 'detalle': error_message})
 
+# Retorna los leads asociados a un asesor auntentificado
+
 
 class AsesorLead(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
         if not (bool(request.user.groups.first().permissions.filter(codename=PermissionLead.CAN_VIEW) or request.user.is_superuser)):
-            return Response({"message": "Usuario no tiene permisos para ver leads"}, status=403)
+            return Response({"message": "Usuario no tiene permisos para ver leads"}, status.HTTP_403_FORBIDDEN)
 
         pk = request.user.pk
         if request.user.isAdmin == True:
@@ -364,6 +419,19 @@ class AsesorLead(APIView):
             dataJson = asesorSerializer.data
             dataJson["leads"] = LeadSerializer(
                 Lead.objects.all(), many=True).data
+
+            for leadIter in dataJson["leads"]:
+                leadIter["campania"] = CampaniaSerializer(Campania.objects.filter(
+                    pk=leadIter["campania"]).first()).data
+                leadIter["campania"]["proyecto"] = ProyectoSerializer(
+                    Proyecto.objects.filter(pk=leadIter["campania"]["proyecto"]).first()).data
+                leadIter["objecion"] = ObjecionSerializer(Objecion.objects.filter(
+                    pk=leadIter["objecion"]).first()).data
+                leadIter["numeroWhatsapps"] = WhatsApp.objects.filter(
+                    lead=leadIter["id"], asesor=leadIter["asesor"]).count()
+                leadIter["numeroLlamadas"] = Llamada.objects.filter(
+                    lead=leadIter["id"], asesor=leadIter["asesor"]).count()
+
             return Response(dataJson)
         else:
             try:
@@ -375,7 +443,19 @@ class AsesorLead(APIView):
                 'id', 'first_name', 'last_name', 'username'))
             dataJson = asesorSerializer.data
             dataJson["leads"] = LeadSerializer(Lead.objects.filter(
-                asesor=asesor_queryset.pk), many=True).data
+                asesor=asesor_queryset.pk, estado="A"), many=True).data
+            for leadIter in dataJson["leads"]:
+                leadIter["campania"] = CampaniaSerializer(Campania.objects.filter(
+                    pk=leadIter["campania"]).first()).data
+                leadIter["campania"]["proyecto"] = ProyectoSerializer(
+                    Proyecto.objects.filter(pk=leadIter["campania"]["proyecto"]).first()).data
+                leadIter["objecion"] = ObjecionSerializer(Objecion.objects.filter(
+                    pk=leadIter["objecion"]).first()).data
+                leadIter["numeroWhatsapps"] = WhatsApp.objects.filter(
+                    lead=leadIter["id"], asesor=leadIter["asesor"]).count()
+                leadIter["numeroLlamadas"] = Llamada.objects.filter(
+                    lead=leadIter["id"], asesor=leadIter["asesor"]).count()
+
             return Response(dataJson)
 
 
@@ -492,6 +572,7 @@ class AsignacionMasivaAsesorLeadById(APIView):
                 user = user_queryset.get(id=arrAsesor[iter])
                 lead.asesor = user
                 lead.fecha_actualizacion = timezone.now()
+                lead.fecha_asignacion = timezone.now()
 
                 lead.save()
                 HistoricoLeadAsesor.objects.create(lead=lead, usuario=user)
@@ -504,6 +585,7 @@ class AsignacionMasivaAsesorLeadById(APIView):
 
         print(arrAsesor)
         return Response({"Leads no asignados": error})
+
 
 class DesAsignacionMasivaLeadsById(APIView):
     def post(self, request):
@@ -518,9 +600,11 @@ class DesAsignacionMasivaLeadsById(APIView):
             try:
                 lead = lead_queryset.get(id=i)
                 user = user_queryset.get(id=lead.asesor.pk)
+                # print(lead, user)
                 lead.asesor = None
                 lead.asignado = False
-                lead.fecha_actualizacion = datetime.datetime.now()
+                lead.fecha_actualizacion = timezone.now()
+                lead.fecha_desasignacion = timezone.now()
                 lead.save()
                 DesasignacionLeadAsesor.objects.create(lead=lead, usuario=user)
             except:

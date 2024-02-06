@@ -5,8 +5,8 @@
 
 export PGPASSWORD=123
 
-dropdb -h db -p 5432 -U postgres portillo_erp_pro
-createdb -h db -p 5432 -U postgres portillo_erp_pro
+dropdb -h db -p 5432 -U postgres portillo_erp
+createdb -h db -p 5432 -U postgres portillo_erp
 psql -h db -p 5432 -U postgres --list
 
 
@@ -22,7 +22,7 @@ python manage.py makemigrations multimedia
 python manage.py migrate
 
 
-psql -h db -p 5432 -U postgres portillo_erp_pro -c "\dt"
+psql -h db -p 5432 -U postgres portillo_erp -c "\dt"
 
-psql -h db -p 5432 -U postgres -d portillo_erp_pro -a -f portillo_erp.sql
+psql -h db -p 5432 -U postgres -d portillo_erp -a -f portillo_erp.sql
 

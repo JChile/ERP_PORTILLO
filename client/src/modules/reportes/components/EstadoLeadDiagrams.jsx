@@ -52,10 +52,10 @@ export const EstadoLeadDiagram = ({ data }) => {
 
   return (
     <div>
-      <h2>Gráfico de Barras</h2>
+      <h2>Gráfico de barras de los estados del lead</h2>
       <BarChartExample />
 
-      <h2>Gráfico de Radar</h2>
+      <h2>Gráfico de radar de los estados del lead</h2>
       <RadarChartExample />
     </div>
   );

@@ -9,12 +9,8 @@ import {
 import React, { useContext, useEffect, useState } from "react";
 import { FilterProyectos } from "../../../components";
 import { getProyectoCampania } from "../helpers";
-import { DiagramRetornoLeadCampania } from "../components";
 import { useAlertMUI } from "../../../hooks";
 import { CustomAlert, CustomCircularProgress } from "../../../components";
-import { CampaniasRadarChart } from "../components/CampaniasRadarChart";
-import { CampaniasCostoBarChart } from "../components/CampaniasCostoBarChart";
-import { DiagramRetornoRadar } from "../components/DiagramaRetornoRadar";
 import { getEstadoLead } from "../../../components/filters/estado_leads/getEstadoLead";
 import { getObjecion } from "../../../components/filters/objecion/getObjecion";
 import { AuthContext } from "../../../auth";
@@ -31,6 +27,7 @@ export const ReporteLeadStatus = () => {
   const [dataObjecionesLead, setDataObjecionesLead] = useState();
   const [visibleProgress, setVisibleProgress] = useState(false);
   const { authTokens } = useContext(AuthContext);
+  const [reportGenerated, setReportGenerated] = useState(false);
 
   const handleButtonState = (buttonState) => {
     setActiveButton(buttonState);
@@ -100,8 +97,7 @@ export const ReporteLeadStatus = () => {
         }));
         setAuxDataObjeciones(objecionesConConteo);
         setAuxDataEstados(estadosConConteo);
-        console.log(objecionesConConteo);
-        console.log("Estados con Conteo:", estadosConConteo);
+        setReportGenerated(true);
       } catch (error) {
         setVisibleProgress(false);
         const pilaError = combinarErrores(error);
@@ -114,6 +110,7 @@ export const ReporteLeadStatus = () => {
     }
     setVisibleProgress(false);
   };
+
   const obtenerEtiquetasTabla = async () => {
     try {
       const estados = await getEstadoLead(authTokens["access"]);
@@ -168,70 +165,75 @@ export const ReporteLeadStatus = () => {
         <Button variant="contained" onClick={() => getDataProyecto(proyecto)}>
           Generar Reporte
         </Button>
+        <Button variant="outlined" onClick={() => print()}>
+          Imprimir Reporte
+        </Button>
       </div>
-      <div className="border p-4 w-full">
-        <div className="flex flex-row items-center justify-center mt-4">
-          <div className="border p-4 w-full">
-            <Table>
-              <TableHead>
-                <TableRow
-                  sx={{
-                    "& th": {
-                      color: "rgba(200,200,200)",
-                      backgroundColor: "#404040",
-                    },
-                  }}
-                >
-                  <TableCell>Objeciones</TableCell>
-                  <TableCell>Número de Leads</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {auxDataObjeciones &&
-                  auxDataObjeciones.map((value) => (
-                    <TableRow key={value.id}>
-                      <TableCell>{value.nombre}</TableCell>
-                      <TableCell>{value.conteo}</TableCell>
-                    </TableRow>
-                  ))}
-              </TableBody>
-            </Table>
-            <div className="flex flex-row items-center justify-center mt-4">
-              <ObjecionLeadDiagram data={auxDataObjeciones} />
+      {reportGenerated && (
+        <div className="border p-4 w-full">
+          <div className="flex flex-row items-center justify-center mt-4">
+            <div className="border p-4 w-full">
+              <Table>
+                <TableHead>
+                  <TableRow
+                    sx={{
+                      "& th": {
+                        color: "rgba(200,200,200)",
+                        backgroundColor: "#404040",
+                      },
+                    }}
+                  >
+                    <TableCell>Objeciones</TableCell>
+                    <TableCell>Número de Leads</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {auxDataObjeciones &&
+                    auxDataObjeciones.map((value) => (
+                      <TableRow key={value.id}>
+                        <TableCell>{value.nombre}</TableCell>
+                        <TableCell>{value.conteo}</TableCell>
+                      </TableRow>
+                    ))}
+                </TableBody>
+              </Table>
+              <div className="flex flex-row items-center justify-center mt-4">
+                <ObjecionLeadDiagram data={auxDataObjeciones} />
+              </div>
             </div>
-          </div>
 
-          <div className="border p-4 w-full">
-            <Table>
-              <TableHead>
-                <TableRow
-                  sx={{
-                    "& th": {
-                      color: "rgba(200,200,200)",
-                      backgroundColor: "#404040",
-                    },
-                  }}
-                >
-                  <TableCell>Estados</TableCell>
-                  <TableCell>Número de Leads</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {auxDataEstados &&
-                  auxDataEstados.map((value) => (
-                    <TableRow key={value.nombre}>
-                      <TableCell>{value.descripcion}</TableCell>
-                      <TableCell>{value.conteo}</TableCell>
-                    </TableRow>
-                  ))}
-              </TableBody>
-            </Table>
-            <div className="flex flex-row items-center justify-center mt-4">
-              <EstadoLeadDiagram data={auxDataEstados} />
+            <div className="border p-4 w-full">
+              <Table>
+                <TableHead>
+                  <TableRow
+                    sx={{
+                      "& th": {
+                        color: "rgba(200,200,200)",
+                        backgroundColor: "#404040",
+                      },
+                    }}
+                  >
+                    <TableCell>Estados</TableCell>
+                    <TableCell>Número de Leads</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {auxDataEstados &&
+                    auxDataEstados.map((value) => (
+                      <TableRow key={value.nombre}>
+                        <TableCell>{value.descripcion}</TableCell>
+                        <TableCell>{value.conteo}</TableCell>
+                      </TableRow>
+                    ))}
+                </TableBody>
+              </Table>
+              <div className="flex flex-row items-center justify-center mt-4">
+                <EstadoLeadDiagram data={auxDataEstados} />
+              </div>
             </div>
           </div>
         </div>
-      </div>
+      )}
       <CustomAlert
         feedbackCreate={feedbackCreate}
         feedbackMessages={feedbackMessages}

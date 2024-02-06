@@ -9,12 +9,12 @@ import {
 import React, { useEffect, useState } from "react";
 import { FilterProyectos } from "../../../components";
 import { getProyectoCampania } from "../helpers";
-import { DiagramRetornoLeadCampania } from "../components";
 import { useAlertMUI } from "../../../hooks";
 import { CustomAlert, CustomCircularProgress } from "../../../components";
 import { CampaniasRadarChart } from "../components/CampaniasRadarChart";
 import { CampaniasCostoBarChart } from "../components/CampaniasCostoBarChart";
 import { DiagramRetornoRadar } from "../components/DiagramaRetornoRadar";
+import { DiagramRetornoLeadCampania } from "../components/DiagramRetornoLeadCampania";
 
 export const ReporteRetornoCampania = () => {
   const [activeButton, setActiveButton] = useState(true);
@@ -24,6 +24,7 @@ export const ReporteRetornoCampania = () => {
   const [auxDataRetorno, setAuxDataRetorno] = useState();
   const [dataCampania, setDataCampania] = useState();
   const [visibleProgress, setVisibleProgress] = useState(false);
+  const [reportGenerated, setReportGenerated] = useState(false);
 
   const handleButtonState = (buttonState) => {
     setActiveButton(buttonState);
@@ -69,15 +70,15 @@ export const ReporteRetornoCampania = () => {
             costo_real: campania.coste_real,
           })) || [];
         setAuxDataCosto(campaniasDataCosto);
-  
+
         const campaniasRetornoList =
           result?.campanias.map((campania) => ({
             name: campania.nombre,
             costo_real: campania.coste_real,
             leads: campania.leads.length,
           })) || [];
-        console.log(campaniasRetornoList);
         setAuxDataRetorno(campaniasRetornoList);
+        setReportGenerated(true);
       } catch (error) {
         setVisibleProgress(false);
         const pilaError = combinarErrores(error);
@@ -125,53 +126,55 @@ export const ReporteRetornoCampania = () => {
           <span className="block text-sm font-medium">Proyecto</span>
           <FilterProyectos onNewInput={onAddProyecto} defaultValue={proyecto} />
         </label>
-        <Button
-          variant="contained"
-          onClick={() => getDataProyecto(proyecto)}
-        >
+        <Button variant="contained" onClick={() => getDataProyecto(proyecto)}>
           Generar Reporte
         </Button>
       </div>
-      <div className="border p-4 w-full">
-        <Table>
-          <TableHead>
-            <TableRow
-              sx={{
-                "& th": {
-                  color: "rgba(200,200,200)",
-                  backgroundColor: "#404040",
-                },
-              }}
-            >
-              <TableCell>Campaña</TableCell>
-              <TableCell>Costo</TableCell>
-              <TableCell>Número de Leads</TableCell>
-              <TableCell>Precio por lead</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {dataCampania &&
-              dataCampania.campanias.map((campania) => (
-                <TableRow key={campania.id}>
-                  <TableCell>{campania.nombre}</TableCell>
-                  <TableCell>{campania.coste_real}</TableCell>
-                  <TableCell>{campania.leads.length}</TableCell>
-                  <TableCell>
-                  {campania.coste_real && campania.leads.length > 0 ? campania.coste_real / campania.leads.length : 0}
-                  </TableCell>
-                </TableRow>
-              ))}
-          </TableBody>
-        </Table>
-        <div className="flex flex-row items-center justify-center mt-4">
-          <CampaniasCostoBarChart data={auxDataCosto} />
-          <DiagramRetornoLeadCampania data={auxDataRetorno}/>
+      {reportGenerated && (
+        <div className="border p-4 w-full">
+          <Table>
+            <TableHead>
+              <TableRow
+                sx={{
+                  "& th": {
+                    color: "rgba(200,200,200)",
+                    backgroundColor: "#404040",
+                  },
+                }}
+              >
+                <TableCell>Campaña</TableCell>
+                <TableCell>Costo</TableCell>
+                <TableCell>Número de Leads</TableCell>
+                <TableCell>Precio por lead</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {dataCampania &&
+                dataCampania.campanias.map((campania) => (
+                  <TableRow key={campania.id}>
+                    <TableCell>{campania.nombre}</TableCell>
+                    <TableCell>{campania.coste_real}</TableCell>
+                    <TableCell>{campania.leads.length}</TableCell>
+                    <TableCell>
+                      {campania.coste_real && campania.leads.length > 0
+                        ? campania.coste_real / campania.leads.length
+                        : 0}
+                    </TableCell>
+                  </TableRow>
+                ))}
+            </TableBody>
+          </Table>
+          <div className="flex flex-row items-center justify-center mt-4">
+            <CampaniasCostoBarChart data={auxDataCosto} />
+            <DiagramRetornoLeadCampania data={auxDataRetorno} />
+          </div>
+          <div className="flex flex-row items-center justify-center mt-4">
+            <CampaniasRadarChart data={auxDataCosto} />
+            <DiagramRetornoRadar data={auxDataRetorno} />
+          </div>
         </div>
-        <div className="flex flex-row items-center justify-center mt-4">
-          <CampaniasRadarChart data={auxDataCosto} />
-          <DiagramRetornoRadar data={auxDataRetorno}/>
-        </div>
-      </div>
+      )}
+
       <CustomAlert
         feedbackCreate={feedbackCreate}
         feedbackMessages={feedbackMessages}

@@ -7,7 +7,7 @@ import {
   TableRow,
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
-import { FilterProyectos } from "../../../components";
+import { CustomDatePicker, FilterProyectos } from "../../../components";
 import { getProyectoCampania } from "../helpers";
 import { useAlertMUI } from "../../../hooks";
 import { CustomAlert, CustomCircularProgress } from "../../../components";
@@ -17,17 +17,22 @@ import { DiagramRetornoRadar } from "../components/DiagramaRetornoRadar";
 import { DiagramRetornoLeadCampania } from "../components/DiagramRetornoLeadCampania";
 
 export const ReporteRetornoCampania = () => {
-  const [activeButton, setActiveButton] = useState(true);
   const [proyecto, setProyecto] = useState();
-  const [data, setData] = useState();
   const [auxDataCosto, setAuxDataCosto] = useState();
   const [auxDataRetorno, setAuxDataRetorno] = useState();
   const [dataCampania, setDataCampania] = useState();
   const [visibleProgress, setVisibleProgress] = useState(false);
   const [reportGenerated, setReportGenerated] = useState(false);
 
-  const handleButtonState = (buttonState) => {
-    setActiveButton(buttonState);
+  const [desdeValue, setDesdeValue] = useState(null);
+  const [hastaValue, setHastaValue] = useState(null);
+
+  const onChangeDatePickerFechaDesde = (newDate) => {
+    setDesdeValue(newDate);
+  };
+
+  const onChangeDatePickerFechaHasta = (newDate) => {
+    setHastaValue(newDate);
   };
 
   const {
@@ -61,7 +66,11 @@ export const ReporteRetornoCampania = () => {
     } else {
       setVisibleProgress(true);
       try {
-        const result = await getProyectoCampania(id + "?estadoCampania=A");
+        let query = "";
+        if (desdeValue && hastaValue) {
+          query = `&desde=${desdeValue}T00:00:00&hasta=${hastaValue}T23:59:59`;
+        }
+        const result = await getProyectoCampania(id + "?estadoCampania=A"+query);
         setDataCampania(result);
         const campaniasDataCosto =
           result?.campanias.map((campania) => ({
@@ -95,31 +104,17 @@ export const ReporteRetornoCampania = () => {
   return (
     <div className="flex flex-col items-center justify-start h-screen">
       <div className="text-2xl font-bold mb-4">Reporte Retorno Campaña</div>
-      <div className="flex justify-center gap-x-3 mb-4">
-        <Button
-          variant="contained"
-          sx={{
-            borderRadius: "0px",
-            textTransform: "capitalize",
-            backgroundColor: activeButton ? "#1976d2" : "#d1d5db",
-            color: activeButton ? "white" : "black",
-          }}
-          onClick={() => handleButtonState(true)}
-        >
-          Semanal
-        </Button>
-        <Button
-          variant="contained"
-          sx={{
-            borderRadius: "0px",
-            textTransform: "capitalize",
-            backgroundColor: !activeButton ? "#1976d2" : "#d1d5db",
-            color: !activeButton ? "white" : "black",
-          }}
-          onClick={() => handleButtonState(false)}
-        >
-          Mensual
-        </Button>
+      <div className="flex justify-center gap-x-3 my-4">
+        <CustomDatePicker
+          label="Filtrar desde"
+          onNewFecha={onChangeDatePickerFechaDesde}
+          defaultValue={desdeValue}
+        />
+        <CustomDatePicker
+          label="Filtrar hasta"
+          onNewFecha={onChangeDatePickerFechaHasta}
+          defaultValue={hastaValue}
+        />
       </div>
       <div className="w-6/12 flex flex-col gap-y-5 mb-4">
         <label className="flex flex-col gap-y-1">
@@ -129,6 +124,11 @@ export const ReporteRetornoCampania = () => {
         <Button variant="contained" onClick={() => getDataProyecto(proyecto)}>
           Generar Reporte
         </Button>
+        {reportGenerated && (
+          <Button variant="outlined" onClick={() => print()}>
+            Imprimir Reporte
+          </Button>
+        )}
       </div>
       {reportGenerated && (
         <div className="border p-4 w-full">
@@ -158,7 +158,7 @@ export const ReporteRetornoCampania = () => {
                     <TableCell>
                       {campania.leads.length > 0
                         ? campania.coste_real / campania.leads.length
-                        : "Aun no hay leads"}
+                        : "No hay leads en el rango de fecha"}
                     </TableCell>
                   </TableRow>
                 ))}

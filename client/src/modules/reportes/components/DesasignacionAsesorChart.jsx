@@ -10,25 +10,22 @@ import {
   Legend,
 } from "recharts";
 
-const data = [
-  { asesor: "Julian", leadsAsignados: 7, leadsDesasignados: 4 },
-  { asesor: "Andrew", leadsAsignados: 5, leadsDesasignados: 3 },
-  { asesor: "Jesus", leadsAsignados: 6, leadsDesasignados: 1 },
-  { asesor: "Carlos", leadsAsignados: 4, leadsDesasignados: 2 },
-  { asesor: "Katy", leadsAsignados: 7, leadsDesasignados: 1 },
-];
-
-export const DesasignacionAsesorChart = () => {
+/**
+ *
+ * @param {Array[]} data
+ * @returns
+ */
+export const DesasignacionAsesorChart = ({ data }) => {
   return (
     <div className="flex flex-col items-center">
-      <Typography fontWeight="bold" sx={{ marginY: 4 }}>
+      <Typography fontWeight="bold" sx={{ marginY: 2 }}>
         Proporcion de leads asignados y desasignados por asesor
       </Typography>
       <BarChart
         data={data}
         margin={{ top: 10, right: 30, left: 30, bottom: 5 }}
         barSize={20}
-        width={620}
+        width={580}
         height={450}
       >
         <CartesianGrid strokeDasharray="3 3" />

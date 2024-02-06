@@ -25,7 +25,7 @@ export const MainContainerApp = ({ children }) => {
   const { currentUser, logoutUser, permissions } = useContext(AuthContext);
   const [open, setOpen] = useState(false);
   const { user } = currentUser;
-  const { first_name, last_name, groups } = user;
+  const { first_name, last_name, groups, isAdmin } = user;
   const [selectedItem, setSelectedItem] = useState(null);
 
   const handleItemClick = (index) => {
@@ -53,7 +53,7 @@ export const MainContainerApp = ({ children }) => {
           </Link>
           <div style={{ flex: 1 }} />
           <div className="flex flex-row gap-x-3 items-center">
-            <div>
+            {isAdmin && (
               <Link to="/reportes">
                 <Button
                   variant="outlined"
@@ -62,12 +62,12 @@ export const MainContainerApp = ({ children }) => {
                     color: "white",
                     fontWeight: "100",
                   }}
-                  startIcon={<MdBarChart  />}
+                  startIcon={<MdBarChart />}
                 >
                   Reportes
                 </Button>
               </Link>
-            </div>
+            )}
             <div>
               <p className="font-semi-bold text-white text-sm">
                 {`${first_name ?? "Nombre"} ${last_name ?? "Apellido"}`}

@@ -270,6 +270,7 @@ export const ViewLeadMarketingActivo = ({ startDate, endDate, flagReload }) => {
           setFeedbackMessages={setFeedbackMessages}
           setVisibleProgress={setVisibleProgress}
           onLoadData={traerLeads}
+          activeMassActions={false}
         />
         <div className="flex items-center bg-green-100 rounded p-2">
           <p className="text-green-500 font-bold mr-2">

@@ -36,7 +36,7 @@ export const DiagramRetornoLeadCampania = ({ data }) => {
   };
 
   return (
-    <BarChart width={400} height={300} data={newData}>
+    <BarChart width={500} height={300} data={newData}>
       <CartesianGrid strokeDasharray="3 3" />
       <XAxis
         dataKey="name"

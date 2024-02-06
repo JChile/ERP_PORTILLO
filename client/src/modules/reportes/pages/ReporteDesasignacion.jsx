@@ -22,6 +22,7 @@ import {
   getDesasignadosEstadoLead,
   getDesasignadosObjecion,
 } from "../helpers/getDesasignacionCases";
+import LoadingObjecionIcon from "../../../assets/loading_objecion.svg";
 
 export const ReporteDesasignacion = () => {
   const [proyecto, setProyecto] = useState(null);
@@ -50,7 +51,10 @@ export const ReporteDesasignacion = () => {
 
   const fetchData = async () => {
     try {
-      const query = `desde=${desdeValue}T00:00:00&hasta=${hastaValue}T23:59:59`;
+      let query = "";
+      if (desdeValue && hastaValue) {
+        query = `?desde=${desdeValue}T00:00:00&hasta=${hastaValue}T23:59:59`;
+      }
       const responseAsesor = await getDesasignadosAsesor(proyecto, query);
       const responseEstado = await getDesasignadosEstadoLead(proyecto, query);
       const responseObjecion = await getDesasignadosObjecion(proyecto, query);
@@ -73,7 +77,7 @@ export const ReporteDesasignacion = () => {
     convertToRowDataLeadDesasignadosAsesor(desasignacionAsesor);
 
   useEffect(() => {
-    if (proyecto && desdeValue && hastaValue) {
+    if (proyecto) {
       setIsLoading(true);
       fetchData();
     } else {
@@ -229,7 +233,14 @@ export const ReporteDesasignacion = () => {
         </React.Fragment>
       )}
 
-      {!proyecto && !isLoading && <p>Seleccione un proyecto</p>}
+      {!proyecto && !isLoading && (
+        <div className="grid place-content-center gap-y-12" role="alert">
+          <span className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative">
+            Seleccione un proyecto
+          </span>
+          <img src={LoadingObjecionIcon} alt="loading" className="w-72" />
+        </div>
+      )}
     </React.Fragment>
   );
 };

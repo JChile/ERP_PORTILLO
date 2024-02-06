@@ -62,19 +62,19 @@ export const ReporteRetornoCampania = () => {
       try {
         const result = await getProyectoCampania(id + "?estadoCampania=A");
         setDataCampania(result);
-        const campaniasDataList =
+        const campaniasDataCosto =
           result?.campanias.map((campania) => ({
             name: campania.nombre,
             costo_estimado: campania.coste_estimado,
             costo_real: campania.coste_real,
           })) || [];
-        setAuxDataCosto(campaniasDataList);
+        setAuxDataCosto(campaniasDataCosto);
   
         const campaniasRetornoList =
           result?.campanias.map((campania) => ({
             name: campania.nombre,
             costo_real: campania.coste_real,
-            leads: campania.leads.length+20,
+            leads: campania.leads.length,
           })) || [];
         console.log(campaniasRetornoList);
         setAuxDataRetorno(campaniasRetornoList);
@@ -155,9 +155,9 @@ export const ReporteRetornoCampania = () => {
                 <TableRow key={campania.id}>
                   <TableCell>{campania.nombre}</TableCell>
                   <TableCell>{campania.coste_real}</TableCell>
-                  <TableCell>{10}</TableCell>
+                  <TableCell>{campania.leads.length}</TableCell>
                   <TableCell>
-                    {campania.coste_real && campania.coste_real / 10}
+                  {campania.coste_real && campania.leads.length > 0 ? campania.coste_real / campania.leads.length : 0}
                   </TableCell>
                 </TableRow>
               ))}
@@ -177,6 +177,7 @@ export const ReporteRetornoCampania = () => {
         feedbackMessages={feedbackMessages}
         handleCloseFeedback={handleCloseFeedback}
       />
+      {visibleProgress && <CustomCircularProgress />}
     </div>
   );
 };

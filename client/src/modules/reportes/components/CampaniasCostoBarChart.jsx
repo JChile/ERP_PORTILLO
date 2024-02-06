@@ -6,7 +6,7 @@ export const CampaniasCostoBarChart = ({ data }) => {
     return null;
   }
   return (
-    <BarChart width={400} height={300} data={data}>
+    <BarChart width={500} height={300} data={data}>
       <CartesianGrid strokeDasharray="3 3" />
       <XAxis
         dataKey="name"

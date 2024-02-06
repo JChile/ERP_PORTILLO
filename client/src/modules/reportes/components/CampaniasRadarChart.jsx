@@ -14,9 +14,10 @@ export const CampaniasRadarChart = ({ data }) => {
   }
 
   return (
-    <RadarChart outerRadius={150} width={500} height={300} data={data}>
+    <RadarChart width={500} height={300} data={data}>
       <PolarGrid />
-      <PolarAngleAxis dataKey="name" />
+      <PolarAngleAxis dataKey="name" 
+        tick={{ fontSize: 13 }}/>
       <PolarRadiusAxis />
       <Radar
         name="Costo Estimado"

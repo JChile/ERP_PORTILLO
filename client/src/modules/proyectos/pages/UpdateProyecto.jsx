@@ -259,6 +259,7 @@ export const UpdateProyecto = () => {
                     placeholder="Nombre del proyecto"
                     autoComplete="off"
                     value={nombre}
+                    disabled={true}
                     onChange={handledForm}
                   />
                 </label>

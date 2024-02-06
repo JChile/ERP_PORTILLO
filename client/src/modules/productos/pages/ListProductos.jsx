@@ -1,14 +1,9 @@
 import React, { useEffect, useState, useContext } from "react";
 import { deleteProducto, getProductos } from "../helpers";
 import { Link } from "react-router-dom";
-import { DialogDeleteProducto, RowItemProducto } from "../components";
-import {
-  CustomAlert,
-  CustomCircularProgress,
-  FilterTipoProducto,
-} from "../../../components";
+import { RowItemProducto } from "../components";
+import { CustomAlert, CustomCircularProgress } from "../../../components";
 import { AuthContext } from "../../../auth";
-import { CustomInputBase } from "../../../components/CustomInputBase";
 import {
   Button,
   Paper,
@@ -22,7 +17,6 @@ import {
   TextField,
 } from "@mui/material";
 import { MdAdd, MdClose, MdSearch } from "react-icons/md";
-import { CustomTableProducto } from "../../../components/CustomTableProducto";
 import { combinarErrores } from "../../../utils";
 import { useAlertMUI, useCustomTablePagination } from "../../../hooks";
 import { SelectTipoProducto } from "../../../components/select/producto-filter/SelectTipoProducto";
@@ -198,13 +192,11 @@ export const ListProductos = () => {
     obtenerProductos();
   }, [activeButton]);
 
-  const filters = ["Nombre", "Proyecto"];
-
   return (
     <>
-      <div className="flex items-center justify-between gap-x-4 mb-9">
-        <div className="flex flex-col gap-y-1 align-middle">
-          <div className="flex justify-center gap-x-3">
+      <div className="flex flex-col gap-y-5">
+        <div className="flex flex-row justify-between">
+          <div className="flex gap-x-3">
             <Button
               variant="contained"
               sx={{
@@ -229,6 +221,8 @@ export const ListProductos = () => {
             >
               Inactivas
             </Button>
+          </div>
+          <div className="flex">
             <Link to={"/producto/create/"}>
               <Button
                 endIcon={<MdAdd />}
@@ -236,19 +230,18 @@ export const ListProductos = () => {
                 variant="contained"
                 sx={{ borderRadius: "0px", textTransform: "capitalize" }}
               >
-                Crear
+                Crear producto
               </Button>
             </Link>
           </div>
         </div>
-      </div>
 
-      <Paper sx={{ borderRadius: "0px" }}>
-        <TableContainer
-          sx={{ minWidth: 700 }}
-          arial-aria-labelledby="customized table"
-        >
-          <TablePagination
+        <Paper sx={{ borderRadius: "0px" }}>
+          <TableContainer
+            sx={{ minWidth: 700 }}
+            arial-aria-labelledby="customized table"
+          >
+            <TablePagination
               rowsPerPageOptions={[5, 10, 25, 50, 100]}
               component="div"
               count={productosTemporal.length}
@@ -257,127 +250,128 @@ export const ListProductos = () => {
               onPageChange={handleChangePage}
               onRowsPerPageChange={handleChangeRowsPerPage}
             />
-          <Table>
-            <TableHead>
-              <TableRow
-                sx={{
-                  "& th": {
-                    color: "rgba(200,200,200)",
-                    backgroundColor: "#404040",
-                  },
-                }}
-              >
-                <TableCell>Acciones</TableCell>
-                <TableCell>Nombre</TableCell>
-                <TableCell>Código</TableCell>
-                <TableCell>Número</TableCell>
-                <TableCell>Area</TableCell>
-                <TableCell>Tipo</TableCell>
-                <TableCell>Proyecto</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              <TableRow>
-                <TableCell>
-                  {flagReset ? (
-                    <Button
-                      startIcon={<MdClose />}
-                      sx={{
-                        textTransform: "capitalize",
-                        borderRadius: "0px",
-                      }}
-                      color="error"
-                      variant="contained"
-                      onClick={handledResetDataFilter}
-                    >
-                      Limpiar
-                    </Button>
-                  ) : (
-                    <Button
-                      startIcon={<MdSearch />}
-                      sx={{
-                        textTransform: "capitalize",
-                        borderRadius: "0px",
-                      }}
-                      color="success"
-                      variant="contained"
-                      onClick={handledFilterData}
-                    >
-                      Buscar
-                    </Button>
-                  )}
-                </TableCell>
-                <TableCell>
-                  <TextField
-                    size="small"
-                    variant="outlined"
-                    placeholder="Nombre"
-                    type="text"
-                    name="nombre"
-                    value={nombre}
-                    onChange={handledFilterInputValues}
+            <Table>
+              <TableHead>
+                <TableRow
+                  sx={{
+                    "& th": {
+                      color: "rgba(200,200,200)",
+                      backgroundColor: "#404040",
+                    },
+                  }}
+                >
+                  <TableCell>Acciones</TableCell>
+                  <TableCell>Nombre</TableCell>
+                  <TableCell>Código</TableCell>
+                  <TableCell>Número</TableCell>
+                  <TableCell>Area</TableCell>
+                  <TableCell>Tipo</TableCell>
+                  <TableCell>Proyecto</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                <TableRow>
+                  <TableCell>
+                    {flagReset ? (
+                      <Button
+                        startIcon={<MdClose />}
+                        sx={{
+                          textTransform: "capitalize",
+                          borderRadius: "0px",
+                        }}
+                        color="error"
+                        variant="contained"
+                        onClick={handledResetDataFilter}
+                      >
+                        Limpiar
+                      </Button>
+                    ) : (
+                      <Button
+                        startIcon={<MdSearch />}
+                        sx={{
+                          textTransform: "capitalize",
+                          borderRadius: "0px",
+                        }}
+                        color="success"
+                        variant="contained"
+                        onClick={handledFilterData}
+                      >
+                        Buscar
+                      </Button>
+                    )}
+                  </TableCell>
+                  <TableCell>
+                    <TextField
+                      size="small"
+                      variant="outlined"
+                      placeholder="Nombre"
+                      type="text"
+                      name="nombre"
+                      value={nombre}
+                      onChange={handledFilterInputValues}
+                    />
+                  </TableCell>
+                  <TableCell>
+                    <TextField
+                      size="small"
+                      variant="outlined"
+                      placeholder="codigo"
+                      type="text"
+                      name="codigo"
+                      value={codigo}
+                      onChange={handledFilterInputValues}
+                    />
+                  </TableCell>
+                  <TableCell>
+                    <TextField
+                      size="small"
+                      variant="outlined"
+                      placeholder="numero"
+                      type="text"
+                      name="numero"
+                      value={numero}
+                      onChange={handledFilterInputValues}
+                    />
+                  </TableCell>
+                  <TableCell>
+                    <TextField
+                      size="small"
+                      variant="outlined"
+                      placeholder="area"
+                      type="text"
+                      name="area"
+                      value={area}
+                      onChange={handledFilterInputValues}
+                    />
+                  </TableCell>
+                  <TableCell>
+                    <SelectTipoProducto
+                      size="small"
+                      onNewInput={handledFilterSelectValues}
+                      defaultValue={tipo}
+                      name="tipo"
+                    />
+                  </TableCell>
+                  <TableCell>
+                    <SelectProyecto
+                      size="small"
+                      onNewInput={handledFilterSelectValues}
+                      defaultValue={proyecto}
+                    />
+                  </TableCell>
+                </TableRow>
+                {paginatedItems.map((item) => (
+                  <RowItemProducto
+                    key={item.id}
+                    item={item}
+                    onDeleteItemSelected={onDeleteItemSelected}
                   />
-                </TableCell>
-                <TableCell>
-                  <TextField
-                    size="small"
-                    variant="outlined"
-                    placeholder="codigo"
-                    type="text"
-                    name="codigo"
-                    value={codigo}
-                    onChange={handledFilterInputValues}
-                  />
-                </TableCell>
-                <TableCell>
-                  <TextField
-                    size="small"
-                    variant="outlined"
-                    placeholder="numero"
-                    type="text"
-                    name="numero"
-                    value={numero}
-                    onChange={handledFilterInputValues}
-                  />
-                </TableCell>
-                <TableCell>
-                  <TextField
-                    size="small"
-                    variant="outlined"
-                    placeholder="area"
-                    type="text"
-                    name="area"
-                    value={area}
-                    onChange={handledFilterInputValues}
-                  />
-                </TableCell>
-                <TableCell>
-                  <SelectTipoProducto
-                    size="small"
-                    onNewInput={handledFilterSelectValues}
-                    defaultValue={tipo}
-                    name="tipo"
-                  />
-                </TableCell>
-                <TableCell>
-                  <SelectProyecto
-                    size="small"
-                    onNewInput={handledFilterSelectValues}
-                    defaultValue={proyecto}
-                  />
-                </TableCell>
-              </TableRow>
-              {paginatedItems.map((item) => (
-                <RowItemProducto
-                  key={item.id}
-                  item={item}
-                  onDeleteItemSelected={onDeleteItemSelected}
-                />
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
-      </Paper>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        </Paper>
+      </div>
 
       <CustomAlert
         feedbackCreate={feedbackCreate}

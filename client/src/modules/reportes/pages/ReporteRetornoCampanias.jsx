@@ -156,9 +156,9 @@ export const ReporteRetornoCampania = () => {
                     <TableCell>{campania.coste_real}</TableCell>
                     <TableCell>{campania.leads.length}</TableCell>
                     <TableCell>
-                      {campania.coste_real && campania.leads.length > 0
+                      {campania.leads.length > 0
                         ? campania.coste_real / campania.leads.length
-                        : 0}
+                        : "Aun no hay leads"}
                     </TableCell>
                   </TableRow>
                 ))}

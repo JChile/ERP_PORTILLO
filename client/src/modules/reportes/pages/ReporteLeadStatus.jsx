@@ -7,14 +7,10 @@ import {
   TableRow,
 } from "@mui/material";
 import React, { useContext, useEffect, useState } from "react";
-import { FilterProyectos } from "../../../components";
+import { CustomDatePicker, FilterProyectos } from "../../../components";
 import { getProyectoCampania } from "../helpers";
-import { DiagramRetornoLeadCampania } from "../components";
 import { useAlertMUI } from "../../../hooks";
 import { CustomAlert, CustomCircularProgress } from "../../../components";
-import { CampaniasRadarChart } from "../components/CampaniasRadarChart";
-import { CampaniasCostoBarChart } from "../components/CampaniasCostoBarChart";
-import { DiagramRetornoRadar } from "../components/DiagramaRetornoRadar";
 import { getEstadoLead } from "../../../components/filters/estado_leads/getEstadoLead";
 import { getObjecion } from "../../../components/filters/objecion/getObjecion";
 import { AuthContext } from "../../../auth";
@@ -22,7 +18,6 @@ import { EstadoLeadDiagram } from "../components/EstadoLeadDiagrams";
 import { ObjecionLeadDiagram } from "../components/ObjecionesLeadDiagram";
 
 export const ReporteLeadStatus = () => {
-  const [activeButton, setActiveButton] = useState(true);
   const [proyecto, setProyecto] = useState();
   const [data, setData] = useState();
   const [auxDataObjeciones, setAuxDataObjeciones] = useState();
@@ -31,9 +26,17 @@ export const ReporteLeadStatus = () => {
   const [dataObjecionesLead, setDataObjecionesLead] = useState();
   const [visibleProgress, setVisibleProgress] = useState(false);
   const { authTokens } = useContext(AuthContext);
+  const [reportGenerated, setReportGenerated] = useState(false);
 
-  const handleButtonState = (buttonState) => {
-    setActiveButton(buttonState);
+  const [desdeValue, setDesdeValue] = useState(null);
+  const [hastaValue, setHastaValue] = useState(null);
+
+  const onChangeDatePickerFechaDesde = (newDate) => {
+    setDesdeValue(newDate);
+  };
+
+  const onChangeDatePickerFechaHasta = (newDate) => {
+    setHastaValue(newDate);
   };
 
   const {
@@ -67,7 +70,13 @@ export const ReporteLeadStatus = () => {
     } else {
       setVisibleProgress(true);
       try {
-        const result = await getProyectoCampania(id + "?estadoCampania=A");
+        let query = "";
+        if (desdeValue && hastaValue) {
+          query = `&desde=${desdeValue}T00:00:00&hasta=${hastaValue}T23:59:59`;
+        }
+        const result = await getProyectoCampania(
+          id + "?estadoCampania=A" + query
+        );
         setData(result);
         const conteoObjeciones = {};
         const conteoEstados = {};
@@ -100,8 +109,7 @@ export const ReporteLeadStatus = () => {
         }));
         setAuxDataObjeciones(objecionesConConteo);
         setAuxDataEstados(estadosConConteo);
-        console.log(objecionesConConteo);
-        console.log("Estados con Conteo:", estadosConConteo);
+        setReportGenerated(true);
       } catch (error) {
         setVisibleProgress(false);
         const pilaError = combinarErrores(error);
@@ -114,14 +122,13 @@ export const ReporteLeadStatus = () => {
     }
     setVisibleProgress(false);
   };
+
   const obtenerEtiquetasTabla = async () => {
     try {
       const estados = await getEstadoLead(authTokens["access"]);
       setDataEstadosLead(estados);
-      console.log(estados);
       const objeciones = await getObjecion(authTokens["access"]);
       setDataObjecionesLead(objeciones);
-      console.log(objeciones);
     } catch (error) {
       console.log(error);
     }
@@ -134,31 +141,17 @@ export const ReporteLeadStatus = () => {
   return (
     <div className="flex flex-col items-center justify-start h-screen">
       <div className="text-2xl font-bold mb-4">Reporte Status de Lead</div>
-      <div className="flex justify-center gap-x-3 mb-4">
-        <Button
-          variant="contained"
-          sx={{
-            borderRadius: "0px",
-            textTransform: "capitalize",
-            backgroundColor: activeButton ? "#1976d2" : "#d1d5db",
-            color: activeButton ? "white" : "black",
-          }}
-          onClick={() => handleButtonState(true)}
-        >
-          Semanal
-        </Button>
-        <Button
-          variant="contained"
-          sx={{
-            borderRadius: "0px",
-            textTransform: "capitalize",
-            backgroundColor: !activeButton ? "#1976d2" : "#d1d5db",
-            color: !activeButton ? "white" : "black",
-          }}
-          onClick={() => handleButtonState(false)}
-        >
-          Mensual
-        </Button>
+      <div className="flex justify-center gap-x-3 my-4">
+        <CustomDatePicker
+          label="Filtrar desde"
+          onNewFecha={onChangeDatePickerFechaDesde}
+          defaultValue={desdeValue}
+        />
+        <CustomDatePicker
+          label="Filtrar hasta"
+          onNewFecha={onChangeDatePickerFechaHasta}
+          defaultValue={hastaValue}
+        />
       </div>
       <div className="w-6/12 flex flex-col gap-y-5 mb-4">
         <label className="flex flex-col gap-y-1">
@@ -168,70 +161,77 @@ export const ReporteLeadStatus = () => {
         <Button variant="contained" onClick={() => getDataProyecto(proyecto)}>
           Generar Reporte
         </Button>
+        {reportGenerated && (
+          <Button variant="outlined" onClick={() => print()}>
+            Imprimir Reporte
+          </Button>
+        )}
       </div>
-      <div className="border p-4 w-full">
-        <div className="flex flex-row items-center justify-center mt-4">
-          <div className="border p-4 w-full">
-            <Table>
-              <TableHead>
-                <TableRow
-                  sx={{
-                    "& th": {
-                      color: "rgba(200,200,200)",
-                      backgroundColor: "#404040",
-                    },
-                  }}
-                >
-                  <TableCell>Objeciones</TableCell>
-                  <TableCell>Número de Leads</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {auxDataObjeciones &&
-                  auxDataObjeciones.map((value) => (
-                    <TableRow key={value.id}>
-                      <TableCell>{value.nombre}</TableCell>
-                      <TableCell>{value.conteo}</TableCell>
-                    </TableRow>
-                  ))}
-              </TableBody>
-            </Table>
-            <div className="flex flex-row items-center justify-center mt-4">
-              <ObjecionLeadDiagram data={auxDataObjeciones} />
+      {reportGenerated && (
+        <div className="border p-4 w-full">
+          <div className="flex flex-row items-center justify-center mt-4">
+            <div className="border p-4 w-full">
+              <Table>
+                <TableHead>
+                  <TableRow
+                    sx={{
+                      "& th": {
+                        color: "rgba(200,200,200)",
+                        backgroundColor: "#404040",
+                      },
+                    }}
+                  >
+                    <TableCell>Objeciones</TableCell>
+                    <TableCell>Número de Leads</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {auxDataObjeciones &&
+                    auxDataObjeciones.map((value) => (
+                      <TableRow key={value.id}>
+                        <TableCell>{value.nombre}</TableCell>
+                        <TableCell>{value.conteo}</TableCell>
+                      </TableRow>
+                    ))}
+                </TableBody>
+              </Table>
+              <div className="flex flex-row items-center justify-center mt-4">
+                <ObjecionLeadDiagram data={auxDataObjeciones} />
+              </div>
             </div>
-          </div>
 
-          <div className="border p-4 w-full">
-            <Table>
-              <TableHead>
-                <TableRow
-                  sx={{
-                    "& th": {
-                      color: "rgba(200,200,200)",
-                      backgroundColor: "#404040",
-                    },
-                  }}
-                >
-                  <TableCell>Estados</TableCell>
-                  <TableCell>Número de Leads</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {auxDataEstados &&
-                  auxDataEstados.map((value) => (
-                    <TableRow key={value.nombre}>
-                      <TableCell>{value.descripcion}</TableCell>
-                      <TableCell>{value.conteo}</TableCell>
-                    </TableRow>
-                  ))}
-              </TableBody>
-            </Table>
-            <div className="flex flex-row items-center justify-center mt-4">
-              <EstadoLeadDiagram data={auxDataEstados} />
+            <div className="border p-4 w-full">
+              <Table>
+                <TableHead>
+                  <TableRow
+                    sx={{
+                      "& th": {
+                        color: "rgba(200,200,200)",
+                        backgroundColor: "#404040",
+                      },
+                    }}
+                  >
+                    <TableCell>Estados</TableCell>
+                    <TableCell>Número de Leads</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {auxDataEstados &&
+                    auxDataEstados.map((value) => (
+                      <TableRow key={value.nombre}>
+                        <TableCell>{value.descripcion}</TableCell>
+                        <TableCell>{value.conteo}</TableCell>
+                      </TableRow>
+                    ))}
+                </TableBody>
+              </Table>
+              <div className="flex flex-row items-center justify-center mt-4">
+                <EstadoLeadDiagram data={auxDataEstados} />
+              </div>
             </div>
           </div>
         </div>
-      </div>
+      )}
       <CustomAlert
         feedbackCreate={feedbackCreate}
         feedbackMessages={feedbackMessages}

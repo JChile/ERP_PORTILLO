@@ -118,6 +118,11 @@ export const ReporteDesasignacion = () => {
         >
           Generar Reporte
         </Button>
+        {proyecto && !isLoading && (
+          <Button variant="outlined" onClick={() => print()}>
+            Imprimir Reporte
+          </Button>
+        )}
       </div>
       {proyecto && isLoading && <CustomCircularProgress />}
 

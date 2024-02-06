@@ -257,6 +257,9 @@ export const CreateUsuarios = () => {
                 name={"password"}
                 handledPassword={handledForm}
               />
+              <span className="text-xs text-yellow-500">
+                {"La contraseña debe tener al menos 8 caracteres, una minúscula, una mayúscula, un dígito y un carácter especial. [@$!%*?&]"}
+              </span>
             </label>
 
             <label className="block flex flex-row gap-y-1">

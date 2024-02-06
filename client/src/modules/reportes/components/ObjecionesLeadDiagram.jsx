@@ -22,8 +22,14 @@ export const ObjecionLeadDiagram = ({ data }) => {
           dataKey="nombre"
           angle={-45}
           textAnchor="end"
-          height={100}
+          height={50}
           tick={{ fontSize: 12 }}
+          tickFormatter={(value) => {
+            if (value.length > 8) {
+              return value.substring(0, 7) + "...";
+            }
+            return value;
+          }}
         />
         <YAxis />
         <Tooltip />

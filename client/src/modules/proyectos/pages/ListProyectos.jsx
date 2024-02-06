@@ -14,7 +14,7 @@ import { CustomCircularProgress, CustomAlert } from "../../../components";
 import CarouselComponentImageView from "../components/CarrouselImageView";
 
 const ListProyectos = () => {
-  const { authTokens, currentUser } = useContext(AuthContext);
+  const { authTokens } = useContext(AuthContext);
   const [activeButton, setActiveButton] = useState(true);
   const [showDialog, setShowDialog] = useState(false);
   const [projects, setProjects] = useState([]);
@@ -76,7 +76,14 @@ const ListProyectos = () => {
       obtenerProyectos();
       onCloseDeleteDialog();
     } catch (error) {
-      // handled error.
+      setVisibleProgress(false);
+      const pilaError = combinarErrores(error);
+      // mostramos feedback de error
+      setFeedbackMessages({
+        style_message: "error",
+        feedback_description_error: pilaError,
+      });
+      handleClickFeedback();
     }
   };
 
@@ -90,12 +97,9 @@ const ListProyectos = () => {
 
   return (
     <>
-      <div className="flex justify-between">
-        <h1>Proyectos</h1>
-      </div>
-      <div className="flex items-center justify-between gap-x-4 mb-9">
-        <div className="flex flex-col gap-y-1 align-middle">
-          <div className="flex justify-center gap-x-3">
+      <div className="flex flex-col gap-y-5">
+        <div className="flex flex-row justify-between">
+          <div className="flex gap-x-3">
             <Button
               variant="contained"
               sx={{
@@ -120,6 +124,8 @@ const ListProyectos = () => {
             >
               Inactivas
             </Button>
+          </div>
+          <div className="flex">
             <Link to={"/proyecto/create/"}>
               <Button
                 endIcon={<MdAdd />}
@@ -127,62 +133,63 @@ const ListProyectos = () => {
                 variant="contained"
                 sx={{ borderRadius: "0px", textTransform: "capitalize" }}
               >
-                Crear
+                Crear proyecto
               </Button>
             </Link>
           </div>
         </div>
-      </div>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        {projectsTemporal.map((project) => (
-          <Card key={project.id}>
-            <CardContent className="flex flex-col items-center justify-center">
-              <div className="items-center justify-center mb-2">
-                {project.imagenes && project.imagenes.length > 0 ? (
-                  <CarouselComponentImageView images={project.imagenes} />
-                ) : (
-                  <div className="flex items-center justify-center bg-green-500 hover:bg-green-600 rounded-full w-64 h-64">
-                    <BsBuildingsFill className="w-32 h-32 text-white" />
-                  </div>
-                )}
-              </div>
 
-              <div className="flex flex-row items-center justify-center">
-                <Typography variant="h5" component="div">
-                  {project.nombre}
-                </Typography>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          {projectsTemporal.map((project) => (
+            <Card key={project.id}>
+              <CardContent className="flex flex-col items-center justify-center">
+                <div className="items-center justify-center mb-2">
+                  {project.imagenes && project.imagenes.length > 0 ? (
+                    <CarouselComponentImageView images={project.imagenes} />
+                  ) : (
+                    <div className="flex items-center justify-center bg-green-500 hover:bg-green-600 rounded-full w-64 h-64">
+                      <BsBuildingsFill className="w-32 h-32 text-white" />
+                    </div>
+                  )}
+                </div>
+
+                <div className="flex flex-row items-center justify-center">
+                  <Typography variant="h5" component="div">
+                    {project.nombre}
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary">
+                    ({project.ubicacion})
+                  </Typography>
+                </div>
                 <Typography variant="body2" color="text.secondary">
-                  ({project.ubicacion})
+                  {project.descripcion}
                 </Typography>
-              </div>
-              <Typography variant="body2" color="text.secondary">
-                {project.descripcion}
-              </Typography>
-              {/* <Button variant="outlined">Ver cotizaciones</Button> */}
-              <div className="flex space-x-4">
-                <IconButton
-                  size="m"
-                  color="primary"
-                  onClick={() => onEditItemSelected(project.id)}
-                >
-                  <FaRegEdit />
-                </IconButton>
-                {project.estado === "A" ? (
+                {/* <Button variant="outlined">Ver cotizaciones</Button> */}
+                <div className="flex space-x-4">
                   <IconButton
                     size="m"
-                    color="error"
-                    onClick={() => verDialog(project)}
-                    /* onClick={() => onDeleteItemSelected(project)} */
+                    color="primary"
+                    onClick={() => onEditItemSelected(project.id)}
                   >
-                    <MdDeleteForever />
+                    <FaRegEdit />
                   </IconButton>
-                ) : (
-                  <></>
-                )}
-              </div>
-            </CardContent>
-          </Card>
-        ))}
+                  {project.estado === "A" ? (
+                    <IconButton
+                      size="m"
+                      color="error"
+                      onClick={() => verDialog(project)}
+                      /* onClick={() => onDeleteItemSelected(project)} */
+                    >
+                      <MdDeleteForever />
+                    </IconButton>
+                  ) : (
+                    <></>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
       </div>
       {showDialog && (
         <DialogDeleteProyecto

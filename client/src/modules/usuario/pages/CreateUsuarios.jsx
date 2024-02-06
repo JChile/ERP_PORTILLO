@@ -82,8 +82,10 @@ export const CreateUsuarios = () => {
 
   // INPUT CHECK ACTIVATE
   const onAddCheckInput = ({ target }) => {
-    if (target.type === "checkbox") {
-      const { name, checked } = target;
+    const { name, checked } = target;
+    if (name === "is_active") {
+      setUsuario({ ...usuario, [name]: checked, codigoAsesor: null });
+    } else {
       setUsuario({ ...usuario, [name]: checked });
     }
   };
@@ -145,8 +147,12 @@ export const CreateUsuarios = () => {
 
     if (codigoAsesor === null) {
       if (groups["name"] === "asesor") {
-        messages_error +=
-          "Si el rol es asesor, debes ingresar un código de asesor\n";
+        if (is_active) {
+          messages_error +=
+            "Si el rol es asesor, debes ingresar un código de asesor\n";
+        } else {
+          messages_error += "Un rol asesor debe ser activo\n";
+        }
       }
     } else {
       if (!codigoAsesorPattern.test(codigoAsesor)) {
@@ -251,6 +257,9 @@ export const CreateUsuarios = () => {
                 name={"password"}
                 handledPassword={handledForm}
               />
+              <span className="text-xs text-yellow-500">
+                {"La contraseña debe tener al menos 8 caracteres, una minúscula, una mayúscula, un dígito y un carácter especial. [@$!%*?&]"}
+              </span>
             </label>
 
             <label className="block flex flex-row gap-y-1">
@@ -333,6 +342,7 @@ export const CreateUsuarios = () => {
                   name="codigoAsesor"
                   className="mt-1 px-3 py-2 bg-white border shadow-sm border-slate-300 placeholder-slate-400 focus:outline-none focus:border-sky-500 focus:ring-sky-500 block w-full rounded-md sm:text-sm focus:ring-1"
                   value={codigoAsesor === null ? "" : codigoAsesor}
+                  disabled={!is_active}
                   onChange={handledForm}
                 />
               </label>

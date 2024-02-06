@@ -13,6 +13,7 @@ export const BoxOptionsImportLeads = ({
 
   const { proyecto, rangoDesde, rangoHasta } = valuesOptions;
 
+  // funcion para añadir proyecto
   const onAddProyecto = ({ id }) => {
     setValuesOptions({
       ...valuesOptions,
@@ -20,6 +21,7 @@ export const BoxOptionsImportLeads = ({
     });
   };
 
+  // rango de celdas
   const handleInputs = ({ target }) => {
     const { name, value } = target;
     setValuesOptions({
@@ -28,6 +30,7 @@ export const BoxOptionsImportLeads = ({
     });
   };
 
+  // validacion de datos de importacion
   const validarDatosImportacion = () => {
     const rangoDesdeParser = parseInt(rangoDesde);
     const rangoHastaParser = parseInt(rangoHasta);
@@ -40,10 +43,10 @@ export const BoxOptionsImportLeads = ({
       if (proyecto !== null) {
         onValidateImportFileLeads(valuesOptions);
       } else {
-        console.log("Proporcione un proyecto");
+        alert("Proporcione un proyecto");
       }
     } else {
-      console.log("Rango incorrecto");
+      alert("Rango incorrecto");
     }
   };
 
@@ -60,7 +63,10 @@ export const BoxOptionsImportLeads = ({
             <label htmlFor="proyecto" className="block font-semibold mb-1">
               Proyecto
             </label>
-            <FilterProyectos id="proyecto" onNewInput={onAddProyecto} />
+            <FilterProyectos
+              defaultValue={proyecto}
+              onNewInput={onAddProyecto}
+            />
           </div>
           <div className="mb-5">
             <div>

@@ -19,11 +19,17 @@ export const EstadoLeadDiagram = ({ data }) => {
       <BarChart width={500} height={300} data={data}>
         <CartesianGrid strokeDasharray="3 3" />
         <XAxis
-          dataKey="nombre"
+          dataKey="descripcion"
           angle={-45}
           textAnchor="end"
-          height={100}
+          height={50}
           tick={{ fontSize: 12 }}
+          tickFormatter={(value) => {
+            if (value.length > 8) {
+              return value.substring(0, 7) + "...";
+            }
+            return value;
+          }}
         />
         <YAxis />
         <Tooltip />
@@ -36,7 +42,7 @@ export const EstadoLeadDiagram = ({ data }) => {
     return (
       <RadarChart width={500} height={300} data={data}>
         <PolarGrid />
-        <PolarAngleAxis dataKey="nombre" tick={{ fontSize: 13 }} />
+        <PolarAngleAxis dataKey="descripcion" tick={{ fontSize: 13 }} />
         <PolarRadiusAxis />
         <Radar
           name="Estado"
@@ -52,10 +58,10 @@ export const EstadoLeadDiagram = ({ data }) => {
 
   return (
     <div>
-      <h2>Gráfico de Barras</h2>
+      <h2>Gráfico de barras de los estados del lead</h2>
       <BarChartExample />
 
-      <h2>Gráfico de Radar</h2>
+      <h2>Gráfico de radar de los estados del lead</h2>
       <RadarChartExample />
     </div>
   );

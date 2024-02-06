@@ -247,6 +247,7 @@ export const AddLeadSheet = () => {
         authTokens["access"],
         query
       );
+      console.log(result);
       const { no_guardados, guardados } = result;
       if (no_guardados.length === 0) {
         // mostramos mensaje de exito
@@ -263,13 +264,14 @@ export const AddLeadSheet = () => {
         });
         handleClickFeedback();
         // añadimos al arreglo de errores
-        auxErrorsImport = [...auxErrorsImport, ...no_guardados];
+        auxErrorsImport = [...no_guardados];
       }
-      // ahora exportacion la información de errores
+      // ahora exportamos la información de errores
       if (auxErrorsImport.length !== 0) {
         exportErrorsImportacion(auxErrorsImport);
       }
     } catch (error) {
+      console.log(error);
       const pilaError = combinarErrores(error);
       // mostramos feedback de error
       setFeedbackMessages({

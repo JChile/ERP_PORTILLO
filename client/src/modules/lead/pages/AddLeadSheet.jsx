@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useContext, useRef, useState } from "react";
 import { HotTable } from "@handsontable/react";
 import { registerAllModules } from "handsontable/registry";
 import "handsontable/dist/handsontable.full.min.css";
@@ -8,13 +8,13 @@ import { CustomAlert, CustomCircularProgress } from "../../../components";
 import { useAlertMUI } from "../../../hooks";
 import { combinarErrores } from "../../../utils";
 import { MdDeleteForever } from "react-icons/md";
-import {
-  importLeadsModeAutomatic,
-  importLeadsModeManual,
-  validateImportLeads,
-} from "../helpers";
+import { importLeadsModeAutomatic, validateImportLeads } from "../helpers";
+import { AuthContext } from "../../../auth";
+import { exportErrorsImportacion } from "../components/importaciones/exportErrorsImportacion";
 
 export const AddLeadSheet = () => {
+  // auth context
+  const { authTokens } = useContext(AuthContext);
   // referencia al archivo
   const fileInputRef = useRef(null);
   // estado que controla si se subio o no un archivo
@@ -26,6 +26,9 @@ export const AddLeadSheet = () => {
 
   const [showOptions, setShowOptions] = useState(false);
   const [showDialogErrors, setShowDialogErrors] = useState(false);
+
+  // referencia al proyecto
+  const [refProyecto, setRefProyecto] = useState(0);
 
   // hook alert
   const {
@@ -82,6 +85,7 @@ export const AddLeadSheet = () => {
   const limpiarDataImportacion = () => {
     setErrorsImport([]);
     setDataImport([]);
+    setRefProyecto(0);
   };
 
   // mostrar opciones de importacion
@@ -128,6 +132,8 @@ export const AddLeadSheet = () => {
     const workbook = XLSX.read(selectedFile, { type: "binary" });
     const sheetName = workbook.SheetNames[0];
     const worksheet = workbook.Sheets[sheetName];
+    // setiamos la configuracion
+    setRefProyecto(proyecto);
 
     // Obtén los datos como arreglo de objetos, comenzando desde la fila 6 (skipHeaderRows: 5)
     const jsonData = XLSX.utils.sheet_to_json(worksheet, {
@@ -161,9 +167,12 @@ export const AddLeadSheet = () => {
     };
     // enviamos la data al backend para que sea validada
     try {
-      const result = await validateImportLeads(dataImportValidate);
+      const result = await validateImportLeads(
+        dataImportValidate,
+        authTokens["access"]
+      );
       // guardamos los errores
-      setErrorsImport(result.inadecuado);
+      setErrorsImport(result["inadecuado"]);
     } catch (error) {
       const pilaError = combinarErrores(error);
       setFeedbackMessages({
@@ -207,13 +216,17 @@ export const AddLeadSheet = () => {
   }
 
   // importar archivo
-  const onImportFileLeads = async (esAutomatico, esConErrores) => {
+  const onImportFileLeads = async (esConErrores) => {
     // cerramos cuadro de dialogo de errores
     onCloseDialogErrors();
+
     // mostramos loading
     setVisibleProgress(true);
+
     // mandamos la información al backend
-    let dataImportAux = dataImport;
+    let dataImportAux = [...dataImport];
+
+    // si no se quiere importar con errores
     if (!esConErrores) {
       dataImportAux = dataImport.filter((item) => {
         return !errorsImport.some((errorItem) =>
@@ -222,33 +235,48 @@ export const AddLeadSheet = () => {
       });
     }
 
-    if (esAutomatico) {
-      try {
-        const result = await importLeadsModeAutomatic(dataImportAux);
-        console.log(result);
-      } catch (error) {
-        const pilaError = combinarErrores(error);
+    let auxErrorsImport = [...errorsImport];
+    console.log("DATA A IMPORTAR: ", dataImportAux);
+    console.log("DATA CON ERROR: ", errorsImport);
+
+    // realizamos la comunicacion con el backend
+    try {
+      const query = `proyecto=${refProyecto}`;
+      const result = await importLeadsModeAutomatic(
+        dataImportAux,
+        authTokens["access"],
+        query
+      );
+      const { no_guardados, guardados } = result;
+      if (no_guardados.length === 0) {
+        // mostramos mensaje de exito
         setFeedbackMessages({
-          style_message: "error",
-          feedback_description_error:
-            "Error en la importacion con asignacion automatica: \n" + pilaError,
+          style_message: "success",
+          feedback_description_error: `Se importaron correctamente todos los leads. Total guardados: ${guardados.length}`,
         });
         handleClickFeedback();
-      }
-    } else {
-      try {
-        console.log(dataImportAux);
-        const result = await importLeadsModeManual(dataImportAux);
-        console.log(result);
-      } catch (error) {
-        const pilaError = combinarErrores(error);
+      } else {
+        // mostramos mensaje de fracaso
         setFeedbackMessages({
           style_message: "error",
-          feedback_description_error:
-            "Error en la importacion con asignacion manual: \n" + pilaError,
+          feedback_description_error: `Algunos leads no se pudieron crear. Total no creados: ${no_guardados.length}`,
         });
         handleClickFeedback();
+        // añadimos al arreglo de errores
+        auxErrorsImport = [...auxErrorsImport, ...no_guardados];
       }
+      // ahora exportacion la información de errores
+      if (auxErrorsImport.length !== 0) {
+        exportErrorsImportacion(auxErrorsImport);
+      }
+    } catch (error) {
+      const pilaError = combinarErrores(error);
+      // mostramos feedback de error
+      setFeedbackMessages({
+        style_message: "error",
+        feedback_description_error: pilaError,
+      });
+      handleClickFeedback();
     }
     // limpiamos las variables de importacion
     limpiarDataImportacion();

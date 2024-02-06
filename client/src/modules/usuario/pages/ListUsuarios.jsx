@@ -136,8 +136,10 @@ export const ListUsuarios = () => {
     // formamos el body de la peticion
     const body = {
       is_active: false,
+      codigoAsesor: null,
     };
     try {
+      // console.log(idItem, body);
       const result = await deactiveUsuario(
         idUsuarioItem,
         body,

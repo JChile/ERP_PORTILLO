@@ -95,8 +95,11 @@ export const UpdateUsuarios = () => {
   // INPUT CHECK ACTIVATE
   const onAddCheckInput = ({ target }) => {
     const { name, checked } = target;
-
-    setUsuario({ ...usuario, [name]: checked });
+    if (name === "is_active") {
+      setUsuario({ ...usuario, [name]: checked, codigoAsesor: null });
+    } else {
+      setUsuario({ ...usuario, [name]: checked });
+    }
   };
 
   const validarDatosUsuario = (
@@ -129,8 +132,12 @@ export const UpdateUsuarios = () => {
 
     if (codigoAsesor === null) {
       if (groups["name"] === "asesor") {
-        messages_error +=
-          "Si el rol es asesor, debes ingresar un código de asesor\n";
+        if (is_active) {
+          messages_error +=
+            "Si el rol es asesor, debes ingresar un código de asesor\n";
+        } else {
+          messages_error += "Un rol asesor debe ser activo\n";
+        }
       }
     } else {
       if (!codigoAsesorPattern.test(codigoAsesor)) {
@@ -356,6 +363,7 @@ export const UpdateUsuarios = () => {
                       name={"codigoAsesor"}
                       value={codigoAsesor === null ? "" : codigoAsesor}
                       handledForm={handledForm}
+                      disabled={!is_active}
                     />
                   </label>
                 )}

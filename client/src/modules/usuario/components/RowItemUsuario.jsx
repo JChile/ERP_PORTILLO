@@ -27,6 +27,7 @@ export const RowItemUsuario = ({ item, onDeleteUsuario }) => {
       <TableCell>
         <CustomMoreVerticalActions
           activeOnDelete={item.is_active}
+          activeOnActive={false}
           onEdit={onEditItemSelected}
           onDelete={onDeleteItemSelected}
           titleDialog="Dialogo de confirmación"

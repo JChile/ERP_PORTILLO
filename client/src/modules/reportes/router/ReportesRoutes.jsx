@@ -13,7 +13,7 @@ export const ReportesRoutes = () => {
       <Route path="" element={<ReportesHome />} />
       <Route path="retornoCampania/" element={<ReporteRetornoCampania />} />
       <Route path="desasignacion/" element={<ReporteDesasignacion />} />
-      <Route path="leadStatus" element={<ReporteLeadStatus />} />
+      <Route path="leadStatus/" element={<ReporteLeadStatus />} />
     </Routes>
   );
 };

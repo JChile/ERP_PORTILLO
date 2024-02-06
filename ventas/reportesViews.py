@@ -108,6 +108,8 @@ class ReporteProporcionAsignadosDesasignadosByAsesor(APIView):
         desde = request.query_params.get('desde')
         hasta = request.query_params.get('hasta')
 
+        diasAtras = timezone.now() - timedelta(days=30)
+
         campaniasProyecto = proyecto.campania_set.all()
         leadsCampanias = Lead.objects.filter(campania__in = campaniasProyecto)
         asesores = leadsCampanias.values_list('asesor', flat=True)
@@ -116,8 +118,8 @@ class ReporteProporcionAsignadosDesasignadosByAsesor(APIView):
             historicoLeadAsesor = HistoricoLeadAsesor.objects.filter(usuario_id__in = asesores, fecha_creacion__range =[desde, hasta])
             desasignacionLeadAsesor = DesasignacionLeadAsesor.objects.filter(usuario_id__in = asesores, fecha__range =[desde, hasta])
         else :
-            historicoLeadAsesor = HistoricoLeadAsesor.objects.filter(usuario_id__in = asesores)
-            desasignacionLeadAsesor = DesasignacionLeadAsesor.objects.filter(usuario_id__in = asesores)
+            historicoLeadAsesor = HistoricoLeadAsesor.objects.filter(usuario_id__in = asesores, fecha_creacion__gte=diasAtras)
+            desasignacionLeadAsesor = DesasignacionLeadAsesor.objects.filter(usuario_id__in = asesores,fecha__gte=diasAtras)
         
         for asesor_iter in asesores_data:
             asesor_iter["asignaciones"] = historicoLeadAsesor.filter(usuario_id = asesor_iter["id"]).count()
@@ -137,13 +139,15 @@ class ReporteProporcionDesasignacionesByObjecion(APIView):
         
         desde = request.query_params.get('desde')
         hasta = request.query_params.get('hasta')
+        diasAtras = timezone.now() - timedelta(days=30)
+
 
         campaniasProyecto = proyecto.campania_set.all()
         if desde and hasta:
             leadsCampanias = Lead.objects.filter(campania__in = campaniasProyecto, fecha_desasignacion__range =[desde, hasta])
 
         else :
-            leadsCampanias = Lead.objects.filter(campania__in = campaniasProyecto)
+            leadsCampanias = Lead.objects.filter(campania__in = campaniasProyecto ,fecha_desasignacion__gte=diasAtras)
 
 
         desasignados_leads_ids = DesasignacionLeadAsesor.objects.filter(lead__in = leadsCampanias).values_list('lead', flat=True)
@@ -168,13 +172,14 @@ class ReporteProporcionDesasignacionesByEstadoLead(APIView):
         
         desde = request.query_params.get('desde')
         hasta = request.query_params.get('hasta')
+        diasAtras = timezone.now() - timedelta(days=30)
 
         campaniasProyecto = proyecto.campania_set.all()
         if desde and hasta:
             leadsCampanias = Lead.objects.filter(campania__in = campaniasProyecto, fecha_desasignacion__range =[desde, hasta])
 
         else :
-            leadsCampanias = Lead.objects.filter(campania__in = campaniasProyecto)
+            leadsCampanias = Lead.objects.filter(campania__in = campaniasProyecto, fecha_desasignacion__gte=diasAtras)
 
 
         desasignados_leads_ids = DesasignacionLeadAsesor.objects.filter(lead__in = leadsCampanias).values_list('lead', flat=True)

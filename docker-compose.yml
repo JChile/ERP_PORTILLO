@@ -44,6 +44,7 @@ services:
       - react_build:/var/www/react
       - ./certbot/www:/var/www/certbot/:ro
       - ./certbot/conf/:/etc/nginx/ssl/:ro
+      
     ports:
       - 80:8080
       - 443:443

@@ -1,10 +1,14 @@
-FROM node:14 as builder
+FROM mhart/alpine-node:16
 
 WORKDIR /client
 
-COPY package*.json ./
+COPY package.json .
 
-RUN npm install
+COPY package-lock.json .
+
+RUN npm config set registry https://registry.npmjs.org/
+
+RUN npm install --no-audit
 
 COPY . .
 

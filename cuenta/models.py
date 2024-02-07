@@ -19,7 +19,7 @@ class EstadoRegistro(models.Model):
         return self.estado
 
 class User(AbstractUser):
-    codigoAsesor = models.CharField(max_length=100, null=True, default=None, blank = False, unique = True)
+    codigoAsesor = models.CharField(max_length=100, null=True, default=None, unique = True)
     estado = models.ForeignKey(
         EstadoRegistro, on_delete=models.SET_NULL, default='A', null=True)
     isAdmin = models.BooleanField(default=False)

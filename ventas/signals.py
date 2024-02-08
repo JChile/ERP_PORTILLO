@@ -9,9 +9,12 @@ from django.contrib.auth.hashers import make_password
 
 @receiver(post_migrate)
 def crear_datos(sender, **kwargs):
-    from .models import EstadoEvento, EstadoLead, Objecion, TipoEvento, TipoCuota, TipoProducto
+    from .models import EstadoEvento, EstadoLead, Objecion, TipoEvento, TipoCuota, TipoProducto, Evento, Lead, Producto
+    from marketing.models import Campania, Proyecto
     from cuenta.models import EstadoRegistro, User, Modulo
-    
+    from django.contrib.auth.models import Group, Permission
+    from django.contrib.contenttypes.models import ContentType
+
     # Verifica si las migraciones pertenecen a tu aplicación
     if sender.name == 'ventas':
         if True:
@@ -52,13 +55,6 @@ def crear_datos(sender, **kwargs):
             TipoProducto.objects.get_or_create(nombre='Condominio', estado=estado_Activo)
 
 
-            try : 
-                User.objects.get_or_create(username='portilloAdmin', password=make_password('portilloAdmin'), is_active = True, is_staff=True, is_superuser = True )
-            except :
-                pass
-
-
-
             Modulo.objects.get_or_create(nombre='Gestion de campañas', url='campania', contentType=ContentType.objects.get(model='campania'), estado=EstadoRegistro.objects.get(estado='A'))
             Modulo.objects.get_or_create(nombre='Gestión de proyectos', url='proyecto', contentType=ContentType.objects.get(model='proyecto'), estado=EstadoRegistro.objects.get(estado='A'))
             Modulo.objects.get_or_create(nombre='Gestion de roles', url='rol', contentType=ContentType.objects.get(model='group'),estado=EstadoRegistro.objects.get(estado='A'))
@@ -67,6 +63,36 @@ def crear_datos(sender, **kwargs):
             Modulo.objects.get_or_create(nombre='Gestion de eventos', url='evento', contentType=ContentType.objects.get(model='evento'),estado=EstadoRegistro.objects.get(estado='A'))
             Modulo.objects.get_or_create(nombre='Gestion de usuarios', url='usuario', contentType=ContentType.objects.get(model='user'),estado=EstadoRegistro.objects.get(estado='A'))
 
+            content_type_user = ContentType.objects.get_for_model(User)
+            content_type_group = ContentType.objects.get_for_model(Group)
+            content_type_lead = ContentType.objects.get_for_model(Lead)
+            content_type_campania = ContentType.objects.get_for_model(Campania)
+            content_type_evento = ContentType.objects.get_for_model(Evento)
+            content_type_proyecto = ContentType.objects.get_for_model(Proyecto)
+            content_type_producto = ContentType.objects.get_for_model(Producto)
 
-        pass
+            try : 
+               userAdmin = User.objects.create(first_name = 'Administrador Portillo', username='portilloAdmin', password=make_password('portilloAdmin'), is_active = True, is_staff=True, is_superuser = True)
+               grupo_administrador = Group.objects.get(name='administrador')
+               userAdmin.groups.add(grupo_administrador)
+               permisos = Permission.objects.filter(content_type__in=[content_type_user, content_type_group, content_type_lead, content_type_campania, content_type_evento,
+                                                                      content_type_proyecto, content_type_producto])
+               grupo_administrador.permissions.add(*permisos)
+
+            except :
+                print("Hubo problemas al crear usuario, desactiva los signals si no es tu primer migrate")
+
+            try : 
+                grupo_asesor = Group.objects.get(name='asesor')
+                grupo_marketing = Group.objects.get(name='marketing')
+                grupo_asesor.clean()
+                grupo_marketing.clean()
+                permisos_asesor = Permission.objects.filter(content_type__in=[content_type_lead, content_type_evento])
+                permisos_marketing = Permission.objects.filter(content_type__in=[content_type_lead, content_type_campania])
+                grupo_asesor.permissions.add(*permisos_asesor)
+                grupo_marketing.permissions.add(*permisos_marketing)
+
+            except:
+                print("Hubo problemas al  añadir los permisos a los grupos de asesor y marketing")
+
 

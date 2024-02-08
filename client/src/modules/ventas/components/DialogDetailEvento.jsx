@@ -21,7 +21,8 @@ import dayjs from "dayjs";
 import "dayjs/locale/es";
 import { FilterTipoEvento } from "../../../components/filters/tipoEvento/FilterTipoEvento";
 import FilterEstadoEvento from "../../../components/filters/estado_evento/FilterEstadoEvento";
-import { FilterObjecion } from "../../../components";
+import { CustomAlert, FilterObjecion } from "../../../components";
+import { useAlertMUI } from "../../../hooks";
 
 export const DialogDetailEvento = ({
   onClose,
@@ -48,6 +49,37 @@ export const DialogDetailEvento = ({
 
   const [editData, setEditData] = useState(false);
 
+  const validateForm = () => {
+    const errors = [];
+    if (!title) {
+      errors.push("El título es obligatorio");
+    }
+    if (!start) {
+      errors.push("La fecha es obligatoria");
+    }
+    if (duracion <= 0) {
+      errors.push("La duración debe ser mayor a 0");
+    }
+    if (!tipo) {
+      errors.push("El tipo es obligatorio");
+    }
+    if (!objecion) {
+      errors.push("Seleccione una objección")
+    }
+    if (!estadoEvento) {
+      errors.push("Seleccione un estado")
+    }
+
+    return errors.join("\n");
+  };
+
+  const {
+    feedbackCreate,
+    feedbackMessages,
+    setFeedbackMessages,
+    handleCloseFeedback,
+    handleClickFeedback,
+  } = useAlertMUI();
 
   const handleChangeValue = ({ target }) => {
     const { value, name } = target;
@@ -63,15 +95,24 @@ export const DialogDetailEvento = ({
 
   // guardar los datos
   const onSaveChanges = () => {
-    const formatData = dayjs(dataAuxEvento.start);
-    onUpdateEvent(id, {
-      ...dataAuxEvento,
-      lead: lead.id,
-      titulo: title,
-      fecha_visita: formatData.toDate().toISOString(),
-    });
-    setOriginalData(dataAuxEvento);
-    setEditData(false);
+    const validationMessage = validateForm();
+    if (validationMessage) {
+      setFeedbackMessages({
+        style_message: "warning",
+        feedback_description_error: validationMessage,
+      });
+      handleClickFeedback();
+    } else {
+      const formatData = dayjs(dataAuxEvento.start);
+      onUpdateEvent(id, {
+        ...dataAuxEvento,
+        lead: lead.id,
+        titulo: title,
+        fecha_visita: formatData.toDate().toISOString(),
+      });
+      setOriginalData(dataAuxEvento);
+      setEditData(false);
+    }
   };
 
   // cancelar los datos
@@ -277,6 +318,11 @@ export const DialogDetailEvento = ({
           Aceptar
         </Button>
       </DialogActions>
+      <CustomAlert
+        feedbackCreate={feedbackCreate}
+        feedbackMessages={feedbackMessages}
+        handleCloseFeedback={handleCloseFeedback}
+      />
     </Dialog>
   );
 };

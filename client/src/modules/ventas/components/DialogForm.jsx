@@ -109,7 +109,7 @@ export const DialogForm = ({ isOpen, onClose, onCreateRegistroEvento }) => {
                 <LocalizationProvider dateAdapter={AdapterDayjs}>
                   <div className="grid grid-cols-2 gap-y-4 gap-x-4">
                     <FilterTipoEvento
-                      defaultValue={null}
+                      defaultValue={tipo}
                       onNewInput={onAddTipoEvento}
                     />
                     <DateTimePicker

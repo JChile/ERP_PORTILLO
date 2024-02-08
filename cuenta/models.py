@@ -9,6 +9,7 @@ from django.utils.translation import gettext_lazy as _
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.hashers import is_password_usable
+from django.core.validators import MinLengthValidator
 
 
 class EstadoRegistro(models.Model):
@@ -19,7 +20,7 @@ class EstadoRegistro(models.Model):
         return self.estado
 
 class User(AbstractUser):
-    codigoAsesor = models.CharField(max_length=100, null=True, default=None, blank = False, unique = True)
+    codigoAsesor = models.CharField(max_length=100, null=True, blank=True, unique=True)
     estado = models.ForeignKey(
         EstadoRegistro, on_delete=models.SET_NULL, default='A', null=True)
     isAdmin = models.BooleanField(default=False)

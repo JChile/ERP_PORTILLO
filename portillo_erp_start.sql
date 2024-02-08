@@ -21,9 +21,9 @@ SET row_security = off;
 --
 
 COPY public.auth_group (id, name) FROM stdin;
+1	administrador
 2	asesor
 3	marketing
-1	administrador
 \.
 
 
@@ -251,6 +251,22 @@ COPY public.auth_group_permissions (id, group_id, permission_id) FROM stdin;
 26	1	106
 27	1	107
 28	1	108
+29	2	105
+30	2	106
+31	2	107
+32	2	108
+33	2	57
+34	2	58
+35	2	59
+36	2	60
+37	3	41
+38	3	42
+39	3	43
+40	3	44
+41	3	57
+42	3	58
+43	3	59
+44	3	60
 \.
 
 
@@ -284,7 +300,7 @@ COPY public.cuenta_modulo (id, nombre, url, "contentType_id", estado_id) FROM st
 --
 
 COPY public.cuenta_user (id, password, last_login, is_superuser, username, first_name, last_name, email, is_staff, is_active, date_joined, "codigoAsesor", "isAdmin", estado_id) FROM stdin;
-1	pbkdf2_sha256$600000$7Xo8abHlpecbF9m4EhX4PN$8rXaJtPJncAZ49fYtx7b7ehJmwZJ5YPltZ2gMuGor3A=	2024-02-02 19:34:10-05	t	portilloAdmin				t	t	2024-02-02 19:33:56-05	\N	t	A
+1	pbkdf2_sha256$600000$ZCrFWsm5jxPGIFF90veMkn$MBZkWyZI8B5Cx7RJYrSN5pTG+L4yk1I92NAZHnq5bIM=	\N	t	portilloAdmin	Administrador Portillo			t	t	2024-02-07 20:17:06.141745-05	\N	f	A
 \.
 
 
@@ -310,8 +326,6 @@ COPY public.cuenta_user_user_permissions (id, user_id, permission_id) FROM stdin
 --
 
 COPY public.django_admin_log (id, action_time, object_id, object_repr, action_flag, change_message, content_type_id, user_id) FROM stdin;
-1	2024-02-02 19:35:22.974306-05	1	portilloAdmin	2	[{"changed": {"fields": ["Groups", "IsAdmin"]}}]	8	1
-2	2024-02-02 19:36:04.360283-05	1	administrador	2	[{"changed": {"fields": ["Permissions"]}}]	3	1
 \.
 
 
@@ -320,42 +334,70 @@ COPY public.django_admin_log (id, action_time, object_id, object_repr, action_fl
 --
 
 COPY public.django_migrations (id, app, name, applied) FROM stdin;
-1	contenttypes	0001_initial	2024-02-02 19:33:53.902202-05
-2	contenttypes	0002_remove_content_type_name	2024-02-02 19:33:53.910199-05
-3	auth	0001_initial	2024-02-02 19:33:53.951971-05
-4	auth	0002_alter_permission_name_max_length	2024-02-02 19:33:53.958633-05
-5	auth	0003_alter_user_email_max_length	2024-02-02 19:33:53.964355-05
-6	auth	0004_alter_user_username_opts	2024-02-02 19:33:53.97168-05
-7	auth	0005_alter_user_last_login_null	2024-02-02 19:33:53.978471-05
-8	auth	0006_require_contenttypes_0002	2024-02-02 19:33:53.980822-05
-9	auth	0007_alter_validators_add_error_messages	2024-02-02 19:33:53.986539-05
-10	auth	0008_alter_user_username_max_length	2024-02-02 19:33:53.992504-05
-11	auth	0009_alter_user_last_name_max_length	2024-02-02 19:33:54.000231-05
-12	auth	0010_alter_group_name_max_length	2024-02-02 19:33:54.009542-05
-13	auth	0011_update_proxy_permissions	2024-02-02 19:33:54.016109-05
-14	auth	0012_alter_user_first_name_max_length	2024-02-02 19:33:54.022591-05
-15	auth	0013_group_code	2024-02-02 19:33:54.033094-05
-16	auth	0014_remove_group_code	2024-02-02 19:33:54.040898-05
-17	cuenta	0001_initial	2024-02-02 19:33:54.114898-05
-18	admin	0001_initial	2024-02-02 19:33:54.141987-05
-19	admin	0002_logentry_remove_auto_add	2024-02-02 19:33:54.154714-05
-20	admin	0003_logentry_add_action_flag_choices	2024-02-02 19:33:54.168818-05
-21	marketing	0001_initial	2024-02-02 19:33:54.259058-05
-22	ventas	0001_initial	2024-02-02 19:33:54.963438-05
-23	multimedia	0001_initial	2024-02-02 19:33:55.09186-05
-24	sessions	0001_initial	2024-02-02 19:33:55.106499-05
-25	token_blacklist	0001_initial	2024-02-02 19:33:55.19102-05
-26	token_blacklist	0002_outstandingtoken_jti_hex	2024-02-02 19:33:55.297583-05
-27	token_blacklist	0003_auto_20171017_2007	2024-02-02 19:33:55.337258-05
-28	token_blacklist	0004_auto_20171017_2013	2024-02-02 19:33:55.365517-05
-29	token_blacklist	0005_remove_outstandingtoken_jti	2024-02-02 19:33:55.389333-05
-30	token_blacklist	0006_auto_20171017_2113	2024-02-02 19:33:55.414853-05
-31	token_blacklist	0007_auto_20171017_2214	2024-02-02 19:33:55.47074-05
-32	token_blacklist	0008_migrate_to_bigautofield	2024-02-02 19:33:55.537523-05
-33	token_blacklist	0010_fix_migrate_to_bigautofield	2024-02-02 19:33:55.578237-05
-34	token_blacklist	0011_linearizes_history	2024-02-02 19:33:55.581727-05
-35	token_blacklist	0012_alter_outstandingtoken_user	2024-02-02 19:33:55.616385-05
-36	ventas	0002_producto_reservado	2024-02-02 19:33:55.649075-05
+1	contenttypes	0001_initial	2024-02-07 20:17:00.383445-05
+2	contenttypes	0002_remove_content_type_name	2024-02-07 20:17:00.393666-05
+3	auth	0001_initial	2024-02-07 20:17:00.436098-05
+4	auth	0002_alter_permission_name_max_length	2024-02-07 20:17:00.447188-05
+5	auth	0003_alter_user_email_max_length	2024-02-07 20:17:00.45625-05
+6	auth	0004_alter_user_username_opts	2024-02-07 20:17:00.463438-05
+7	auth	0005_alter_user_last_login_null	2024-02-07 20:17:00.472024-05
+8	auth	0006_require_contenttypes_0002	2024-02-07 20:17:00.47459-05
+9	auth	0007_alter_validators_add_error_messages	2024-02-07 20:17:00.483326-05
+10	auth	0008_alter_user_username_max_length	2024-02-07 20:17:00.49153-05
+11	auth	0009_alter_user_last_name_max_length	2024-02-07 20:17:00.501616-05
+12	auth	0010_alter_group_name_max_length	2024-02-07 20:17:00.512253-05
+13	auth	0011_update_proxy_permissions	2024-02-07 20:17:00.521738-05
+14	auth	0012_alter_user_first_name_max_length	2024-02-07 20:17:00.529363-05
+15	auth	0013_group_code	2024-02-07 20:17:00.544655-05
+16	auth	0014_remove_group_code	2024-02-07 20:17:00.554649-05
+17	cuenta	0001_initial	2024-02-07 20:17:00.64063-05
+18	admin	0001_initial	2024-02-07 20:17:00.66862-05
+19	admin	0002_logentry_remove_auto_add	2024-02-07 20:17:00.679374-05
+20	admin	0003_logentry_add_action_flag_choices	2024-02-07 20:17:00.701509-05
+21	cuenta	0002_alter_user_codigoasesor	2024-02-07 20:17:00.715305-05
+22	cuenta	0003_alter_user_codigoasesor	2024-02-07 20:17:00.73018-05
+23	cuenta	0004_alter_user_codigoasesor	2024-02-07 20:17:00.753571-05
+24	cuenta	0005_alter_user_codigoasesor	2024-02-07 20:17:00.769086-05
+25	marketing	0001_initial	2024-02-07 20:17:00.879226-05
+26	marketing	0002_alter_campania_fecha_actualizacion_and_more	2024-02-07 20:17:00.991544-05
+27	marketing	0003_alter_campania_nombre_alter_proyecto_nombre	2024-02-07 20:17:01.09677-05
+28	marketing	0004_alter_proyecto_usuarioactualizador_and_more	2024-02-07 20:17:01.139559-05
+29	marketing	0005_alter_campania_codigo	2024-02-07 20:17:01.163428-05
+30	marketing	0006_alter_campania_codigo	2024-02-07 20:17:01.191867-05
+31	marketing	0007_alter_campania_codigo	2024-02-07 20:17:01.211602-05
+32	marketing	0008_alter_campania_codigo	2024-02-07 20:17:01.249226-05
+33	ventas	0001_initial	2024-02-07 20:17:02.188854-05
+34	multimedia	0001_initial	2024-02-07 20:17:02.632108-05
+35	multimedia	0002_alter_imagenproducto_imagen_and_more	2024-02-07 20:17:02.7134-05
+36	sessions	0001_initial	2024-02-07 20:17:02.737314-05
+37	token_blacklist	0001_initial	2024-02-07 20:17:02.888839-05
+38	token_blacklist	0002_outstandingtoken_jti_hex	2024-02-07 20:17:02.937458-05
+39	token_blacklist	0003_auto_20171017_2007	2024-02-07 20:17:03.010781-05
+40	token_blacklist	0004_auto_20171017_2013	2024-02-07 20:17:03.07026-05
+41	token_blacklist	0005_remove_outstandingtoken_jti	2024-02-07 20:17:03.124722-05
+42	token_blacklist	0006_auto_20171017_2113	2024-02-07 20:17:03.18128-05
+43	token_blacklist	0007_auto_20171017_2214	2024-02-07 20:17:03.269385-05
+44	token_blacklist	0008_migrate_to_bigautofield	2024-02-07 20:17:03.358841-05
+45	token_blacklist	0010_fix_migrate_to_bigautofield	2024-02-07 20:17:03.408141-05
+46	token_blacklist	0011_linearizes_history	2024-02-07 20:17:03.412213-05
+47	token_blacklist	0012_alter_outstandingtoken_user	2024-02-07 20:17:03.458566-05
+48	ventas	0002_evento_objecion	2024-02-07 20:17:03.522765-05
+49	ventas	0003_alter_evento_objecion	2024-02-07 20:17:03.703627-05
+50	ventas	0004_alter_evento_objecion	2024-02-07 20:17:03.798108-05
+51	ventas	0005_alter_evento_objecion	2024-02-07 20:17:03.945545-05
+52	ventas	0006_alter_evento_objecion	2024-02-07 20:17:04.058101-05
+53	ventas	0007_alter_evento_objecion	2024-02-07 20:17:04.14584-05
+54	ventas	0008_alter_evento_estadoevento_alter_evento_tipo	2024-02-07 20:17:04.285761-05
+55	ventas	0009_alter_lead_apellido_alter_lead_nombre	2024-02-07 20:17:04.383035-05
+56	ventas	0010_alter_lead_apellido_alter_lead_nombre	2024-02-07 20:17:04.46718-05
+57	ventas	0011_alter_evento_asesor	2024-02-07 20:17:04.52758-05
+58	ventas	0012_alter_producto_proyecto_alter_producto_tipo	2024-02-07 20:17:04.641431-05
+59	ventas	0013_alter_producto_nombre	2024-02-07 20:17:04.705948-05
+60	ventas	0014_alter_evento_fecha_visita	2024-02-07 20:17:04.755898-05
+61	ventas	0015_alter_llamada_objecion_alter_whatsapp_objecion	2024-02-07 20:17:04.837585-05
+62	ventas	0016_alter_evento_duracion	2024-02-07 20:17:04.987784-05
+63	ventas	0017_alter_desasignacionleadasesor_lead_and_more	2024-02-07 20:17:05.139724-05
+64	ventas	0018_alter_lead_celular2	2024-02-07 20:17:05.186892-05
 \.
 
 
@@ -364,7 +406,6 @@ COPY public.django_migrations (id, app, name, applied) FROM stdin;
 --
 
 COPY public.django_session (session_key, session_data, expire_date) FROM stdin;
-rx4dv8ajm2fsshqz2u2wfxiu4lnyanix	.eJxVjEEOwiAQRe_C2hCQDgWX7nsGMgODVA0kpV0Z765NutDtf-_9lwi4rSVsnZcwJ3ERWpx-N8L44LqDdMd6azK2ui4zyV2RB-1yaomf18P9OyjYy7dGox0gKEzGAgH46NkTDtENmSw7R4q0ZmM0oclGo7KjOzNnRQnVCOL9AebJOB0:1rW3z0:X9QeDV0JkgDi95LTIGKd0OQbLo81To86CmNeopHbdms	2024-02-16 19:34:10.778715-05
 \.
 
 
@@ -374,7 +415,7 @@ rx4dv8ajm2fsshqz2u2wfxiu4lnyanix	.eJxVjEEOwiAQRe_C2hCQDgWX7nsGMgODVA0kpV0Z765Nut
 
 COPY public.marketing_categoria (id, nombre, estado_id) FROM stdin;
 1	Fisico	A
-2	Bolante	A
+2	Volante	A
 3	Facebook	A
 4	Instagram	A
 5	TikTok	A
@@ -415,7 +456,7 @@ COPY public.ventas_tipoproducto (id, nombre, estado_id) FROM stdin;
 -- Data for Name: ventas_producto; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public.ventas_producto (id, nombre, codigo, numero, area, fecha_creacion, fecha_actualizacion, estado_id, proyecto_id, tipo_id, "usuarioActualizador_id", "usuarioCreador_id", reservado) FROM stdin;
+COPY public.ventas_producto (id, nombre, codigo, reservado, numero, area, fecha_creacion, fecha_actualizacion, estado_id, proyecto_id, tipo_id, "usuarioActualizador_id", "usuarioCreador_id") FROM stdin;
 \.
 
 
@@ -456,10 +497,6 @@ COPY public.multimedia_videoproyecto (id, video, proyecto_id) FROM stdin;
 --
 
 COPY public.token_blacklist_outstandingtoken (id, token, created_at, expires_at, user_id, jti) FROM stdin;
-1	eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTcwNjkzNDg4OCwiaWF0IjoxNzA2OTIwNDg4LCJqdGkiOiJiNTJhMDdmMDAzYzY0OTJkYmNjNWM2YzNkM2U3OThmZCIsInVzZXJfaWQiOjF9.WmexJv3HUheBbEebgKi0chB5ZhynByF85BC-i9D1WXI	2024-02-02 19:34:48.090958-05	2024-02-02 23:34:48-05	1	b52a07f003c6492dbcc5c6c3d3e798fd
-2	eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTcwNjkzNDkzMywiaWF0IjoxNzA2OTIwNTMzLCJqdGkiOiJjNGVjYjQ1N2EzYjQ0YzBlYTlmYjBjNTcxZDk2M2FiYiIsInVzZXJfaWQiOjF9.WR-Vr66ZG4drMiXjiwfD3rUEJpZBx4mc32BIlrE0Jxc	2024-02-02 19:35:33.097346-05	2024-02-02 23:35:33-05	1	c4ecb457a3b44c0ea9fb0c571d963abb
-3	eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTcwNjkzNDk3NCwiaWF0IjoxNzA2OTIwNTc0LCJqdGkiOiJhYmYxNjI4ZDgzNzY0ZWRkYTdiYjU4Y2MwZTE0YzkwZSIsInVzZXJfaWQiOjF9.NJpT1uzlPobtVVHEyEyB1vmh8GbcpkG15lJd1hokJfI	2024-02-02 19:36:14.779544-05	2024-02-02 23:36:14-05	1	abf1628d83764edda7bb58cc0e14c90e
-4	eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTcwNjkzNDk5NywiaWF0IjoxNzA2OTIwNTk3LCJqdGkiOiJkNmFiMmFiOTgzNDU0OTNkODdhYmI4NWExNTY4ZTNjMSIsInVzZXJfaWQiOjF9.VM_yaUJsN2sLjnWI6QBPp5YRlgJeV6AvEcyfsgd_8rk	2024-02-02 19:36:37.735375-05	2024-02-02 23:36:37-05	1	d6ab2ab98345493d87abb85a1568e3c1
 \.
 
 
@@ -575,7 +612,7 @@ COPY public.ventas_tipoevento (id, nombre, estado_id) FROM stdin;
 -- Data for Name: ventas_evento; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public.ventas_evento (id, titulo, duracion, fecha_visita, observacion, fecha_creacion, fecha_actualizacion, separado, asesor_id, estado_id, "estadoEvento_id", lead_id, tipo_id, "usuarioActualizador_id", "usuarioCreador_id") FROM stdin;
+COPY public.ventas_evento (id, titulo, duracion, fecha_visita, observacion, fecha_creacion, fecha_actualizacion, separado, asesor_id, estado_id, "estadoEvento_id", lead_id, tipo_id, "usuarioActualizador_id", "usuarioCreador_id", objecion_id) FROM stdin;
 \.
 
 
@@ -630,7 +667,7 @@ SELECT pg_catalog.setval('public.auth_group_id_seq', 3, true);
 -- Name: auth_group_permissions_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.auth_group_permissions_id_seq', 28, true);
+SELECT pg_catalog.setval('public.auth_group_permissions_id_seq', 44, true);
 
 
 --
@@ -672,7 +709,7 @@ SELECT pg_catalog.setval('public.cuenta_user_user_permissions_id_seq', 1, false)
 -- Name: django_admin_log_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.django_admin_log_id_seq', 2, true);
+SELECT pg_catalog.setval('public.django_admin_log_id_seq', 1, false);
 
 
 --
@@ -686,7 +723,7 @@ SELECT pg_catalog.setval('public.django_content_type_id_seq', 35, true);
 -- Name: django_migrations_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.django_migrations_id_seq', 36, true);
+SELECT pg_catalog.setval('public.django_migrations_id_seq', 64, true);
 
 
 --
@@ -749,7 +786,7 @@ SELECT pg_catalog.setval('public.token_blacklist_blacklistedtoken_id_seq', 1, fa
 -- Name: token_blacklist_outstandingtoken_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.token_blacklist_outstandingtoken_id_seq', 4, true);
+SELECT pg_catalog.setval('public.token_blacklist_outstandingtoken_id_seq', 1, false);
 
 
 --

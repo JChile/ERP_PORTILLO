@@ -32,7 +32,7 @@ export const RowItemUsuario = ({ item, onDeleteUsuario }) => {
           onDelete={onDeleteItemSelected}
           titleDialog="Dialogo de confirmación"
           descriptionDialog={`${
-            idGroup === 1
+            nameGroup === "asesor"
               ? "Se ha detectado que este usuario es asesor. Recuerda que esta operación desasociará sus lead en un rango de 1 mes."
               : ""
           }¿Estas seguro de eliminar este usuario?`}

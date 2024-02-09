@@ -228,14 +228,12 @@ export const UpdateLead = () => {
       } catch (error) {
         console.log(error);
         setVisibleProgress(false);
-        /*
         const pilaError = combinarErrores(error);
         setFeedbackMessages({
           style_message: "error",
           feedback_description_error: pilaError,
         });
         handleClickFeedback();
-        */
       }
     }
   };

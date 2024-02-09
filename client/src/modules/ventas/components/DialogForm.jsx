@@ -105,7 +105,7 @@ export const DialogForm = ({ isOpen, onClose, onCreateRegistroEvento }) => {
                   value={titulo}
                   onChange={handleChangeForm}
                   name="titulo"
-                />
+                  />
                 <LocalizationProvider dateAdapter={AdapterDayjs}>
                   <div className="grid grid-cols-2 gap-y-4 gap-x-4">
                     <FilterTipoEvento

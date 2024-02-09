@@ -60,6 +60,7 @@ const ComponentEventos = ({
       lead: parseInt(lead.id),
       usuarioCreador: currentUser["user_id"],
     };
+    console.log(formatData)
     onCreateDataEvento(formatData);
   };
 

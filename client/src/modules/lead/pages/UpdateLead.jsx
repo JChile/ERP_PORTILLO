@@ -145,7 +145,7 @@ export const UpdateLead = () => {
     }
 
     // validacion de celular 2
-    if (celular2.length !== 0 && celular2 !== "+51") {
+    if (celular2 && celular2.length !== 0 && celular2 !== "+51") {
       const formatCelular2 = celular2.match(/^\+(\d{1,2})\s*(\d[\s\d]+)$/);
       if (formatCelular2) {
         const replaceCelular2 = formatCelular2[2].replace(/\s/g, "");
@@ -185,8 +185,8 @@ export const UpdateLead = () => {
   const actualizarLead = async () => {
     // activamos el progress
     setVisibleProgress(true);
-
     const validationMessage = validateLead();
+
     if (validationMessage) {
       setVisibleProgress(false);
       // Si hay campos faltantes, mostrar una alerta con los mensajes de error concatenados
@@ -197,17 +197,23 @@ export const UpdateLead = () => {
       handleClickFeedback();
     } else {
       try {
+        let auxCelular2 = "";
+        if (celular2) {
+          auxCelular2 =
+            celular2.length !== 0 && celular2 !== "+51"
+              ? /^9\d{8}$/.test(lead["celular2"])
+                ? lead["celular2"]
+                : formatCelular(lead["celular2"])
+              : "";
+        }
+
+        console.log(auxCelular2)
         const formatLead = {
           ...lead,
           celular: /^9\d{8}$/.test(lead["celular"])
             ? lead["celular"]
             : formatCelular(lead["celular"]),
-          celular2:
-            celular2.length !== 0 && celular2 !== "+51"
-              ? /^9\d{8}$/.test(lead["celular2"])
-                ? lead["celular2"]
-                : formatCelular(lead["celular2"])
-              : "",
+          celular2: auxCelular2,
           usuarioActualizador: currentUser["user_id"],
           fecha_actualizacion: obtenerHoraActualFormatPostgress(),
         };
@@ -221,15 +227,15 @@ export const UpdateLead = () => {
         onNavigateBack();
       } catch (error) {
         console.log(error);
-        // ocultar el progress
         setVisibleProgress(false);
+        /*
         const pilaError = combinarErrores(error);
-        // mostramos feedback de error
         setFeedbackMessages({
           style_message: "error",
           feedback_description_error: pilaError,
         });
         handleClickFeedback();
+        */
       }
     }
   };

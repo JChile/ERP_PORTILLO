@@ -5,15 +5,9 @@ from django.contrib.auth.hashers import make_password
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from django.contrib.contenttypes.models import ContentType
 
-import requests
 """
     Clases serializadoras, toman el modelo y retornan la data en fomato Json
 """
-
-
-
-BACKEND = "http://3.144.105.189:8000"
-
 class PermissionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Permission
@@ -91,6 +85,7 @@ class GroupModuloSerializer(serializers.ModelSerializer):
 class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
     @classmethod
     def get_token(cls, user):
+        from .views import UserDetail
         token = super().get_token(user)
         token['username'] = user.username
         if user.groups.all():
@@ -98,7 +93,6 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
             token['groupsId'] = str(user.groups.all()[0].id)
             id = user.id
 
-            token['user'] = (requests.get(
-                "http://127.0.0.1:8000/api/user/{}".format(id))).json()
+            token['user'] = UserDetail().retrieve(request = None, pk=id).data
 
         return token

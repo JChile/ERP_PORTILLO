@@ -5,3 +5,7 @@ psycopg2-binary==2.9.6
 pyscopg2==66.0.2
 django-cors-headers==4.1.0
 
+
+
+
+

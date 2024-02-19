@@ -8,7 +8,6 @@ from django.db.models.signals import post_save
 from django.utils.translation import gettext_lazy as _
 from django.contrib.contenttypes.models import ContentType
 
-
 class EstadoRegistro(models.Model):
     estado = models.CharField(max_length=1, primary_key=True)
     nombre = models.CharField(max_length=50, null=True, default=None)

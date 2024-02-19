@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-3ybsh679_01#ist3&lv-8@fe)xve0uqymkp@9b%)xs8mvj2@na
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -64,6 +64,7 @@ REST_FRAMEWORK = {
 
 
 MIDDLEWARE = [
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     "corsheaders.middleware.CorsMiddleware",
@@ -192,23 +193,24 @@ USE_I18N = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
-STATIC_URL = 'static/'
+
 
 
 MEDIA_ROOT = BASE_DIR  / 'media/'
-
-
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-
 CORS_ALLOWED_ORIGINS = [
     'http://localhost:5173'
 ]
-
-
 CRONJOBS = [
     ('*/1 * * * *', 'ventas.cron.my_scheduled_job',
      '>> /home/briang/portillo2/ERP_PORTILLO/log/django/file.log')
 ]
+
+
+STATIC_URL = 'static/'
+STATIC_ROOT = BASE_DIR  / 'static/'
+
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'

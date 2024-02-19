@@ -3,8 +3,7 @@
 from django.db.models.signals import post_migrate
 from django.dispatch import receiver
 from django.contrib.auth.hashers import make_password
-from django.contrib.contenttypes.models import ContentType
-from django.contrib.auth.hashers import make_password
+
 
 
 @receiver(post_migrate)

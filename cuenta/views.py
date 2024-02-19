@@ -272,7 +272,7 @@ class GroupModuloDetail(generics.RetrieveUpdateDestroyAPIView):
         dataJson = groupSerializer.data
         modulo_queryset = Modulo.objects.all()
         moduloSerializer = ModuloSerializer(modulo_queryset, many=True)
-        permission_queryset = Permission.objects.all()
+        permission_queryset = Permission.objects.filter(content_type__in = modulo_queryset.values_list('contentType',flat=True))
         permissionSerializer = PermissionSerializer(
             permission_queryset, many=True)
         contentType_queryset = ContentType.objects.all()
@@ -294,12 +294,10 @@ class ModuloPermissions(generics.ListAPIView):
     def list(self, request):
         modulo_queryset = Modulo.objects.all()
         moduloSerializer = ModuloSerializer(modulo_queryset, many=True)
-        permission_queryset = Permission.objects.all()
-        permissionSerializer = PermissionSerializer(
-            permission_queryset, many=True)
-        contentType_queryset = ContentType.objects.all()
-        mergePermissionsIdWithContentType(
-            permissionSerializer, moduloSerializer, contentType_queryset)
+        permission_queryset = Permission.objects.filter(content_type__in = modulo_queryset.values_list('contentType',flat=True))
+        permissionSerializer = PermissionSerializer(permission_queryset, many=True)
+        contentType_queryset = ContentType.objects.filter(id__in = modulo_queryset.values_list('contentType',flat=True))
+        mergePermissionsIdWithContentType(permissionSerializer, moduloSerializer, contentType_queryset)
         return Response(moduloSerializer.data)
 
 

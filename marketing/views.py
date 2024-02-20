@@ -139,9 +139,9 @@ class CampaniaList(generics.ListCreateAPIView):
         estado = request.query_params.get('estado')
         print(estado)
         if estado:
-            campania_queryset = Campania.objects.filter(estado=estado)
+            campania_queryset = Campania.objects.filter(estado=estado).order_by('-fecha_creacion')
         else:
-            campania_queryset = Campania.objects.all()
+            campania_queryset = Campania.objects.all().order_by('-fecha_creacion')
 
         groupserializer = CampaniaSerializer(campania_queryset, many=True)
         proyecto_queryset = Proyecto.objects.all()
@@ -206,8 +206,8 @@ class ProyectoCampaniaList(APIView):
 
     def get(self, request):
 
-        campanias = Campania.objects.filter(estado="A")
-        proyectos = Proyecto.objects.filter(estado="A")
+        campanias = Campania.objects.filter(estado="A").order_by('-fecha_creacion')
+        proyectos = Proyecto.objects.filter(estado="A").order_by('-fecha_creacion')
         # Realiza una operación personalizada aquí, por ejemplo, obtener un objeto por su clave primaria (pk)
         # Serializa el objeto
 

@@ -55,7 +55,7 @@ class LeadList(generics.ListCreateAPIView):
 
         if asignado == "False":
             print(asignado)
-            lead_queryset = Lead.objects.filter(asignado=False)
+            lead_queryset = Lead.objects.filter(asignado=False).order_by('-fecha_creacion')
             if request.user.groups.first().name == "marketing":
                 if desde and hasta:
                     lead_queryset = lead_queryset.filter(
@@ -89,7 +89,7 @@ class LeadList(generics.ListCreateAPIView):
                         fecha_desasignacion__gte=fecha_limite).order_by('-fecha_desasignacion')
 
         elif asignado == "True":
-            lead_queryset = Lead.objects.filter(asignado=True)
+            lead_queryset = Lead.objects.filter(asignado=True).order_by('-fecha_creacion')
             if request.user.groups.first().name == "marketing":
                 if desde and hasta:
                     lead_queryset = lead_queryset.filter(
@@ -125,33 +125,33 @@ class LeadList(generics.ListCreateAPIView):
             if request.user.groups.first().name == "marketing":
                 if desde and hasta:
                     lead_queryset = Lead.objects.filter(
-                        fecha_creacion__range=[desde, hasta]).order_by('-fecha_creacion')
+                        fecha_creacion__range=[desde, hasta]).order_by('-fecha_creacion').order_by('-fecha_creacion')
                 else:
                     lead_queryset = Lead.objects.filter(
-                        fecha_creacion__gte=fecha_limite).order_by('-fecha_creacion')
+                        fecha_creacion__gte=fecha_limite).order_by('-fecha_creacion').order_by('-fecha_creacion')
 
             elif request.user.groups.first().name == "asesor":
                 if request.user.isAdmin == True:
                     if desde and hasta:
                         lead_queryset = Lead.objects.filter(
-                            fecha_asignacion__range=[desde, hasta]).order_by('-fecha_asignacion')
+                            fecha_asignacion__range=[desde, hasta]).order_by('-fecha_asignacion').order_by('-fecha_creacion')
                     else:
                         lead_queryset = Lead.objects.filter(
-                            fecha_asignacion__gte=fecha_limite).order_by('-fecha_asignacion')
+                            fecha_asignacion__gte=fecha_limite).order_by('-fecha_asignacion').order_by('-fecha_creacion')
                 else :
                     if desde and hasta:
                         lead_queryset =Lead.objects.filter(
-                            fecha_asignacion__range=[desde, hasta],asesor = request.user.pk).order_by('-fecha_asignacion')
+                            fecha_asignacion__range=[desde, hasta],asesor = request.user.pk).order_by('-fecha_asignacion').order_by('-fecha_creacion')
                     else:
                         lead_queryset = Lead.objects.filter(
-                            fecha_asignacion__gte=fecha_limite,asesor = request.user.pk).order_by('-fecha_asignacion')
+                            fecha_asignacion__gte=fecha_limite,asesor = request.user.pk).order_by('-fecha_asignacion').order_by('-fecha_creacion')
             else:
                 if desde and hasta:
                     lead_queryset = Lead.objects.filter(
-                        fecha_asignacion__range=[desde, hasta]).order_by('-fecha_asignacion')
+                        fecha_asignacion__range=[desde, hasta]).order_by('-fecha_asignacion').order_by('-fecha_creacion')
                 else:
                     lead_queryset = Lead.objects.filter(
-                        fecha_asignacion__gte=fecha_limite).order_by('-fecha_asignacion')
+                        fecha_asignacion__gte=fecha_limite).order_by('-fecha_asignacion').order_by('-fecha_creacion')
             
         if estado:
             lead_queryset = lead_queryset.filter(estado=estado)
@@ -677,9 +677,9 @@ class ProductoList(generics.ListCreateAPIView):
         estado = request.query_params.get('estado')
         print(estado)
         if estado:
-            producto_queryset = Producto.objects.all().filter(estado=estado)
+            producto_queryset = Producto.objects.all().filter(estado=estado).order_by('-fecha_creacion')
         else:
-            producto_queryset = Producto.objects.all()
+            producto_queryset = Producto.objects.all().order_by('-fecha_creacion')
 
         try:
             producto_datajson = ProductoSerializer(

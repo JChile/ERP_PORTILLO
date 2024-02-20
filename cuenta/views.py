@@ -67,7 +67,7 @@ class UserList(generics.ListCreateAPIView):
         estado = request.query_params.get('estado')
         is_active = request.query_params.get('is_active')
 
-        user_queryset = User.objects.all()
+        user_queryset = User.objects.all().order_by('-date_joined')
         if estado:
             user_queryset = user_queryset.filter(estado=estado)
         if is_active:

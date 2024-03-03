@@ -21,7 +21,16 @@ class ProyectoSerializer(serializers.ModelSerializer):
             for field_name in existing - allowed:
                 self.fields.pop(field_name)
 
+class PresupuestoProyectoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PresupuestoProyecto
+        fields = '__all__'  
 
+class GastoCampaniaSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = GastoCampania
+        fields = '__all__'  
+        
 
 class CategoriaSerializer(serializers.ModelSerializer):
     class Meta:

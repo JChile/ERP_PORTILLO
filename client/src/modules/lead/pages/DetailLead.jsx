@@ -45,6 +45,7 @@ export const DetailLead = () => {
     comentario: "",
     llamar: true,
     asesor: null,
+    importante: false,
     estado: "A",
     estadoLead: "EP",
     objecion: {
@@ -71,6 +72,7 @@ export const DetailLead = () => {
     comentario,
     llamar,
     asesor,
+    importante,
     estado,
     estadoLead,
     objecion,
@@ -325,6 +327,18 @@ export const DetailLead = () => {
                 <Checkbox
                   name="llamar"
                   checked={llamar}
+                  disabled={true}
+                  inputProps={{ "aria-label": "controlled" }}
+                />
+              </label>
+
+              <label className="flex gap-y-1 items-center">
+                <span className="block text-sm font-medium min-w-[10rem] text-zinc-500">
+                  Prioritario:
+                </span>
+                <Checkbox
+                  name="importante"
+                  checked={importante}
                   disabled={true}
                   inputProps={{ "aria-label": "controlled" }}
                 />

@@ -16,14 +16,14 @@ export const CreateProyecto = () => {
   const { authTokens, currentUser } = useContext(AuthContext);
   const [project, setProject] = useState({
     nombre: "",
+    codigo: "",
     ubicacion: "",
-    descripcion: "",
-    estado: "A",
+    descripcion: ""
   });
   const [imageList, setImageList] = useState([]);
   const [videoList, setVideoList] = useState([]);
 
-  const { nombre, ubicacion, descripcion, estado } = project;
+  const { nombre, codigo, ubicacion, descripcion } = project;
 
   const {
     feedbackCreate,
@@ -48,23 +48,20 @@ export const CreateProyecto = () => {
     navigate(-1);
   };
 
-  const validateProject = (nombre, ubicacion, descripcion) => {
+  const validateProject = (nombre, codigo) => {
     const errors = [];
 
-    if (!nombre) {
+    if (nombre.length === 0) {
       errors.push("- El nombre del proyecto es obligatorio.");
     }
-    if (!ubicacion) {
-      errors.push("- La ubicacion es obligatoria.");
-    }
-    if (!descripcion) {
-      errors.push("- La descripcion es obligatoria.");
+    if(codigo.length === 0){
+      errors.push("- El código del proyecto es obligatorio.")
     }
     return errors.join("\n");
   };
 
   const crearProyecto = async () => {
-    const validationMessage = validateProject(nombre, ubicacion, descripcion);
+    const validationMessage = validateProject(nombre, codigo);
 
     if (validationMessage) {
       // Si hay campos faltantes, mostrar una alerta con los mensajes de error concatenados
@@ -217,23 +214,39 @@ export const CreateProyecto = () => {
               </label>
             </div>
             <div className="w-6/12 flex flex-col gap-y-5">
-              <label htmlFor="ubicacion" className="flex flex-col gap-y-1">
+              <label className="flex flex-col gap-y-1 ">
                 <span className="after:content-['*'] after:ml-0.5 after:text-yellow-500 block text-sm font-medium">
-                  Ubicacion
+                  Código del proyecto
                 </span>
                 <input
                   type="text"
-                  name="ubicacion"
-                  id="ubicacion"
-                  placeholder="Ubicacion"
-                  value={ubicacion}
-                  onChange={handledForm}
+                  name="codigo"
                   className="mt-1 px-3 py-2 bg-white border shadow-sm border-slate-300 placeholder-slate-400 focus:outline-none focus:border-sky-500 focus:ring-sky-500 block w-full rounded-md sm:text-sm focus:ring-1"
+                  placeholder="Código del proyecto"
+                  autoComplete="off"
+                  value={codigo}
+                  onChange={handledForm}
                 />
               </label>
             </div>
           </div>
           <div>
+            {/* UBICACION */}
+            <label htmlFor="ubicacion" className="flex flex-col mb-3">
+              <span className="after:content-['*'] after:ml-0.5 after:text-yellow-500 block text-sm font-medium">
+                Ubicacion
+              </span>
+              <input
+                type="text"
+                name="ubicacion"
+                id="ubicacion"
+                placeholder="Ubicacion"
+                value={ubicacion}
+                onChange={handledForm}
+                className="mt-1 px-3 py-2 bg-white border shadow-sm border-slate-300 placeholder-slate-400 focus:outline-none focus:border-sky-500 focus:ring-sky-500 block w-full rounded-md sm:text-sm focus:ring-1"
+              />
+            </label>
+            {/* DESCRIPCION */}
             <label htmlFor="descripcion" className=" flex flex-col gap-y-1">
               <span className="after:content-['*'] after:ml-0.5 after:text-yellow-500 block text-sm font-medium">
                 Descripción

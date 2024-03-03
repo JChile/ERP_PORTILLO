@@ -338,6 +338,7 @@ export const ListAsesorVentasLead = () => {
                     <TableCell>Celular</TableCell>
                     <TableCell>Nombre</TableCell>
                     <TableCell>Proyecto</TableCell>
+                    <TableCell>Campaña</TableCell>
                     <TableCell>Fecha asignacion</TableCell>
                   </TableRow>
                 </TableHead>
@@ -400,6 +401,9 @@ export const ListAsesorVentasLead = () => {
                         onNewInput={handledFilterSelectValues}
                         defaultValue={proyecto}
                       />
+                    </TableCell>
+                    <TableCell>
+                      Sin filtros
                     </TableCell>
                     <TableCell>
                       <CustomDatePickerFilter

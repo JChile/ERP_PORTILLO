@@ -28,6 +28,7 @@ class Objecion(models.Model):
 class EstadoLead(models.Model):
     nombre = models.CharField(max_length=2, primary_key=True)
     descripcion = models.CharField(max_length=50, null=True, default=None)
+    color =  models.CharField(max_length=10)
     estado = models.ForeignKey(
         EstadoRegistro, on_delete=models.SET_NULL, default='A', null=True)
 
@@ -39,14 +40,13 @@ class Lead(models.Model):
     nombre = models.CharField(max_length=100, null=False, blank=True)
     apellido = models.CharField(max_length=100, null=False, blank=True)
     asignado = models.BooleanField(default=False)
-    celular =  models.CharField(max_length=9, null=False, validators=[
-        RegexValidator(regex=r'^9\d{8}$', message="El número de celular debe tener 9 dígitos y comenzar con 9.")
-    ])
+    celular =  models.CharField(max_length=100)
     celular2 =  models.CharField(null = True,blank=True)
     comentario = models.TextField(max_length=200, null=False, blank=True)
     horaRecepcion = models.DateTimeField(
         default=timezone.now, null=True, blank=True)
     llamar = models.BooleanField(default=True)
+    importante = models.BooleanField(default=False)
     asesor = models.ForeignKey(
         User, on_delete=models.CASCADE, null=True, blank=True)
     campania = models.ForeignKey(
@@ -311,3 +311,12 @@ class DesasignacionLeadAsesor(models.Model):
     lead = models.ForeignKey(Lead, on_delete=models.CASCADE, null=True)
     usuario = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
     fecha = models.DateTimeField(default = timezone.now)
+
+class DesasignacionConfiguracion(models.Model):
+    rango = models.IntegerField()
+    def save(self, *args, **kwargs):
+        if not self.pk and DesasignacionConfiguracion.objects.exists():
+        # if you'll not check for self.pk 
+        # then error will also be raised in the update of exists model
+            raise ValidationError('Sólo puede haber una instancia de DesasignacionConfiguracion')
+        return super(DesasignacionConfiguracion, self).save(*args, **kwargs)

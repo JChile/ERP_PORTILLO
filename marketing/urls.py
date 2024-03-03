@@ -12,4 +12,9 @@ urlpatterns = [
     re_path(r'^campania/$', views.CampaniaList.as_view()),
     re_path(r'^campania/(?P<pk>[0-9]+)$', views.CampaniaDetail.as_view()),
     re_path(r'^proyecto_campania/$', views.ProyectoCampaniaList.as_view()),
+    re_path(r'^presupuestoProyecto/$', views.PresupuestoProyectoList.as_view()),
+    re_path(r'^presupuestoProyecto/(?P<pk>[0-9]+)$', views.PresupuestoProyectoDetail.as_view()),
+    re_path(r'^gastoCampania/$', views.GastoCampaniaList.as_view()),
+    re_path(r'^gastoCampania/(?P<pk>[0-9]+)$', views.GastoCampaniaDetail.as_view()),
 ]
+

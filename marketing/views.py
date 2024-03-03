@@ -121,6 +121,27 @@ class ProyectoDetail(generics.RetrieveUpdateDestroyAPIView):
         return Response(proyecto_data)
 
 
+
+class PresupuestoProyectoList(generics.ListCreateAPIView):
+    serializer_class = PresupuestoProyectoSerializer
+    queryset = PresupuestoProyecto.objects.all()
+
+
+class PresupuestoProyectoDetail(generics.RetrieveUpdateDestroyAPIView):
+    serializer_class = PresupuestoProyectoSerializer
+    queryset = PresupuestoProyecto.objects.all()
+
+
+class GastoCampaniaList(generics.ListCreateAPIView):
+    serializer_class = GastoCampaniaSerializer
+    queryset = GastoCampania.objects.all()
+
+
+class GastoCampaniaDetail(generics.RetrieveUpdateDestroyAPIView):
+    serializer_class = GastoCampaniaSerializer
+    queryset = GastoCampania.objects.all()
+
+
 class CategoriaList(generics.ListCreateAPIView):
     serializer_class = CategoriaSerializer
     queryset = Categoria.objects.all()

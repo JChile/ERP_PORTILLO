@@ -1064,3 +1064,24 @@ class EstadoEventoList(generics.ListCreateAPIView):
 class EstadoEventoDetail(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = EstadoEventoSerializer
     queryset = EstadoEvento.objects.all()
+
+class DesasignacionConfiguracionList(generics.ListCreateAPIView):
+    serializer_class = DesasignacionConfiguracionSerializer
+    queryset = DesasignacionConfiguracion.objects.all()
+
+class DesasignacionConfiguracionDetail(generics.RetrieveUpdateDestroyAPIView):
+    serializer_class = DesasignacionConfiguracionSerializer
+    queryset = DesasignacionConfiguracion.objects.all()
+
+    def put(self, request, pk):
+        try:
+            instancia = DesasignacionConfiguracion.objects.get(pk=pk)
+        except DesasignacionConfiguracion.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+        
+
+        serializer = DesasignacionConfiguracionSerializer(instancia, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

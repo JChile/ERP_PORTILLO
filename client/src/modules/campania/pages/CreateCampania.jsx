@@ -1,6 +1,6 @@
 import React, { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { TextField } from "@mui/material";
+import { Checkbox, TextField } from "@mui/material";
 import { createCampania } from "../helpers";
 import { useAlertMUI } from "../../../hooks";
 import {
@@ -19,22 +19,20 @@ export const CreateCampania = () => {
     nombre: "",
     fecha_estimada: "",
     fecha_cierre: "",
-    coste_estimado: 0,
-    coste_real: 0,
     descripcion: "",
     proyecto: 0,
     categoria: 0,
+    organico: false
   });
 
   const {
     nombre,
     fecha_estimada,
     fecha_cierre,
-    coste_estimado,
-    coste_real,
     descripcion,
     proyecto,
     categoria,
+    organico
   } = campaign;
 
   const {
@@ -93,12 +91,19 @@ export const CreateCampania = () => {
     });
   };
 
+  // cambiar checkbox organico
+  const onAddCheckInputOrganico = ({target}) => {
+    const {checked} =  target
+    setCampaign({
+      ...campaign,
+      organico: checked
+    })
+  }
+
   const validateCampaign = (
     nombre,
     fecha_estimada,
     fecha_cierre,
-    coste_estimado,
-    coste_real,
     proyecto,
     categoria
   ) => {
@@ -123,24 +128,6 @@ export const CreateCampania = () => {
       errors.push("- La fecha de cierre es obligatoria.");
     }
 
-    // Validación para el campo coste_estimado
-    if (coste_estimado) {
-      if (isNaN(coste_estimado) || parseFloat(coste_estimado) <= 0) {
-        errors.push("- El costo estimado debe ser un número mayor a 0");
-      }
-    } else {
-      errors.push("- El costo estimado es obligatorio");
-    }
-
-    // Validación para el campo coste_real
-    if (coste_real) {
-      if (isNaN(coste_real) || parseFloat(coste_real) <= 0) {
-        errors.push("- El costo estimado debe ser un número mayor a 0");
-      }
-    } else {
-      errors.push("- El costo real es obligatorio");
-    }
-
     // validacion de proyecto
     if (proyecto === 0) {
       errors.push("- El proyecto es obligatorio.");
@@ -159,8 +146,6 @@ export const CreateCampania = () => {
       nombre,
       fecha_estimada,
       fecha_cierre,
-      coste_estimado,
-      coste_real,
       proyecto,
       categoria
     );
@@ -224,22 +209,6 @@ export const CreateCampania = () => {
                 />
               </label>
 
-              <label className="flex flex-col gap-y-1">
-                <span className="after:content-['*'] after:ml-0.5 after:text-yellow-500 block text-sm font-medium">
-                  Costo estimado
-                </span>
-                <input
-                  min={1}
-                  type="number"
-                  name="coste_estimado"
-                  className="mt-1 px-3 py-2  bg-white border shadow-sm border-slate-300 placeholder-slate-400 focus:outline-none focus:border-sky-500 focus:ring-sky-500 block w-full rounded-md sm:text-sm focus:ring-1"
-                  placeholder="Costo estimado"
-                  value={coste_estimado}
-                  onChange={handledForm}
-                  onWheel={(e) => e.target.blur()}
-                />
-              </label>
-
               <label htmlFor="fecha_estimada" className="flex flex-col gap-y-1">
                 <span className="after:content-['*'] after:ml-0.5 after:text-yellow-500 block text-sm font-medium">
                   Fecha estimado inicio
@@ -272,22 +241,6 @@ export const CreateCampania = () => {
               </label>
               <label className="flex flex-col gap-y-1">
                 <span className="after:content-['*'] after:ml-0.5 after:text-yellow-500 block text-sm font-medium">
-                  Costo real
-                </span>
-                <input
-                  type="number"
-                  min={1}
-                  name="coste_real"
-                  className="mt-1 px-3 py-2 bg-white border shadow-sm border-slate-300 placeholder-slate-400 focus:outline-none focus:border-sky-500 focus:ring-sky-500 block w-full rounded-md sm:text-sm focus:ring-1"
-                  placeholder="Costo real"
-                  value={coste_real}
-                  onChange={handledForm}
-                  onWheel={(e) => e.target.blur()}
-                />
-              </label>
-
-              <label className="flex flex-col gap-y-1">
-                <span className="after:content-['*'] after:ml-0.5 after:text-yellow-500 block text-sm font-medium">
                   Fecha estimado cierre
                 </span>
                 <CustomDatePicker
@@ -296,6 +249,20 @@ export const CreateCampania = () => {
                   disabledPast={true}
                 />
               </label>
+
+              <label className="flex flex-row gap-y-1">
+              <span className="text-sm font-medium flex items-center me-2">
+                Orgánico
+              </span>
+              <Checkbox
+                name="organico"
+                checked={organico}
+                onChange={onAddCheckInputOrganico}
+                inputProps={{ "aria-label": "controlled" }}
+              />
+            </label>
+
+
             </div>
           </div>
           <div>

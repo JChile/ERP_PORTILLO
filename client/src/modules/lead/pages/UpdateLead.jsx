@@ -33,6 +33,7 @@ export const UpdateLead = () => {
     apellido: "",
     celular: "",
     celular2: "",
+    importante: false,
     comentario: "",
     llamar: true,
     asesor: null,
@@ -47,6 +48,7 @@ export const UpdateLead = () => {
     apellido,
     celular,
     celular2,
+    importante,
     comentario,
     llamar,
     asesor,
@@ -101,6 +103,11 @@ export const UpdateLead = () => {
   // change check llamada
   const onAddCheckInputLlamar = (event) => {
     setLead({ ...lead, llamar: !llamar });
+  };
+
+  // change check llamada
+  const onAddCheckInputImportante = (event) => {
+    setLead({ ...lead, importante: !importante });
   };
 
   // change campaña
@@ -258,7 +265,7 @@ export const UpdateLead = () => {
         {flagLoading && (
           <form method="post" className="min-w-[242px] flex gap-x-8">
             <div className="flex-1 flex flex-col gap-y-6">
-              <label className="block flex flex-col gap-y-1">
+              <label className="flex flex-col gap-y-1">
                 <span className="block text-sm font-medium">Nombre</span>
                 <input
                   type="text"
@@ -270,7 +277,7 @@ export const UpdateLead = () => {
                 />
               </label>
 
-              <label className="block flex flex-col gap-y-1">
+              <label className="flex flex-col gap-y-1">
                 <span className="block text-sm font-medium">Apellido</span>
                 <input
                   type="text"
@@ -282,7 +289,7 @@ export const UpdateLead = () => {
                 />
               </label>
 
-              <label className="block flex flex-col gap-y-1">
+              <label className="flex flex-col gap-y-1">
                 <span className="block text-sm font-medium">Celular</span>
                 <MuiTelInput
                   defaultCountry="PE"
@@ -300,7 +307,7 @@ export const UpdateLead = () => {
                 />
               </label>
 
-              <label className="block flex flex-col gap-y-1">
+              <label className="flex flex-col gap-y-1">
                 <span className="block text-sm font-medium">Celular 2</span>
                 <MuiTelInput
                   defaultCountry="PE"
@@ -317,22 +324,35 @@ export const UpdateLead = () => {
                   }}
                 />
               </label>
-
-              <label className="block flex flex-row gap-y-1">
-                <span className="block text-sm font-medium flex items-center me-2">
-                  Llamar?
-                </span>
-                <Checkbox
-                  name="llamar"
-                  checked={llamar}
-                  onChange={onAddCheckInputLlamar}
-                  inputProps={{ "aria-label": "controlled" }}
-                />
-              </label>
+              
+              <div className="flex flex-row gap-x-4">
+                <label className="flex flex-row gap-y-1">
+                  <span className="text-sm font-medium flex items-center me-2">
+                    Prioritario?
+                  </span>
+                  <Checkbox
+                    name="importante"
+                    checked={importante}
+                    onChange={onAddCheckInputImportante}
+                    inputProps={{ "aria-label": "controlled" }}
+                  />
+                </label>
+                <label className="flex flex-row gap-y-1">
+                  <span className="text-sm font-medium flex items-center me-2">
+                    Llamar?
+                  </span>
+                  <Checkbox
+                    name="llamar"
+                    checked={llamar}
+                    onChange={onAddCheckInputLlamar}
+                    inputProps={{ "aria-label": "controlled" }}
+                  />
+                </label>
+              </div>
             </div>
 
             <div className="flex-1 flex flex-col gap-y-6">
-              <label className="block flex flex-col gap-y-1">
+              <label className="flex flex-col gap-y-1">
                 <span className="block text-sm font-medium">Estado Lead</span>
                 <FilterEstadoLead
                   defaultValue={estadoLead}
@@ -340,7 +360,7 @@ export const UpdateLead = () => {
                 />
               </label>
 
-              <label className="block flex flex-col gap-y-1">
+              <label className="flex flex-col gap-y-1">
                 <span className="block text-sm font-medium">Objeciones</span>
                 <FilterObjecion
                   defaultValue={objecion}
@@ -348,7 +368,7 @@ export const UpdateLead = () => {
                 />
               </label>
 
-              <label className="block flex flex-col gap-y-1">
+              <label className="flex flex-col gap-y-1">
                 <span className="block text-sm font-medium">
                   Asesor Asignado
                 </span>
@@ -356,7 +376,7 @@ export const UpdateLead = () => {
               </label>
 
               <label className="flex content-center gap-x-2">
-                <span className="block text-sm font-medium flex items-center">
+                <span className="text-sm font-medium flex items-center">
                   <span className="mr-2">Campaña: </span>
                   {campaniaName.length !== 0 && (
                     <span className="inline-block px-2 py-1 text-sm font-semibold leading-none bg-blue-500 text-white rounded-full">
@@ -367,7 +387,7 @@ export const UpdateLead = () => {
                 <FilterProyectoCampania onAddCampania={onAddCampania} />
               </label>
 
-              <label className="block flex flex-col gap-y-1">
+              <label className="flex flex-col gap-y-1">
                 <span className="block text-sm font-medium">Comentario</span>
                 <textarea
                   name="comentario"

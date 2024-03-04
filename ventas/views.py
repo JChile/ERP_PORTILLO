@@ -49,13 +49,13 @@ class LeadList(generics.ListCreateAPIView):
         asignado = request.query_params.get('asignado')
         recienCreado = request.query_params.get('recienCreado')
 
-        print(request.user.isAdmin)
 
         flag_desasignado_asesor = False
 
         if asignado == "False":
-            print(asignado)
             lead_queryset = Lead.objects.filter(asignado=False).order_by('-fecha_creacion')
+            print("aaaaaaaaaaaaaaaa",lead_queryset)
+
             if request.user.groups.first().name == "marketing":
                 if desde and hasta:
                     lead_queryset = lead_queryset.filter(
@@ -65,28 +65,29 @@ class LeadList(generics.ListCreateAPIView):
                         fecha_creacion__gte=fecha_limite).order_by('-fecha_creacion')
 
             elif request.user.groups.first().name == "asesor":
+
                 if request.user.isAdmin == True:
                     flag_desasignado_asesor = True
                     if desde and hasta:
-                        lead_queryset = lead_queryset.filter(fecha_desasignacion__range=[
-                                                            desde, hasta]).order_by('-fecha_desasignacion')
+                        lead_queryset = lead_queryset.filter(fecha_creacion__range=[
+                                                            desde, hasta]).order_by('-fecha_creacion')
                     else:
                         lead_queryset = lead_queryset.filter(
-                            fecha_desasignacion__gte=fecha_limite).order_by('-fecha_desasignacion')
+                            fecha_creacion__gte=fecha_limite).order_by('-fecha_creacion')
                 else :
                     if desde and hasta:
-                        lead_queryset = lead_queryset.filter(fecha_desasignacion__range=[
-                                                            desde, hasta], asesor = request.user.pk).order_by('-fecha_desasignacion')
+                        lead_queryset = lead_queryset.filter(fecha_creacion__range=[
+                                                            desde, hasta], asesor = request.user.pk).order_by('-fecha_creacion')
                     else:
                         lead_queryset = lead_queryset.filter(
-                            fecha_desasignacion__gte=fecha_limite,  asesor = request.user.pk).order_by('-fecha_desasignacion')
+                            fecha_creacion__gte=fecha_limite,  asesor = request.user.pk).order_by('-fecha_creacion')
             else:
                 if desde and hasta:
-                    lead_queryset = lead_queryset.filter(fecha_desasignacion__range=[
-                                                         desde, hasta]).order_by('-fecha_desasignacion')
+                    lead_queryset = lead_queryset.filter(fecha_creacion__range=[
+                                                         desde, hasta]).order_by('-fecha_creacion')
                 else:
                     lead_queryset = lead_queryset.filter(
-                        fecha_desasignacion__gte=fecha_limite).order_by('-fecha_desasignacion')
+                        fecha_creacion__gte=fecha_limite).order_by('-fecha_creacion')
 
         elif asignado == "True":
             lead_queryset = Lead.objects.filter(asignado=True).order_by('-fecha_creacion')
@@ -125,33 +126,33 @@ class LeadList(generics.ListCreateAPIView):
             if request.user.groups.first().name == "marketing":
                 if desde and hasta:
                     lead_queryset = Lead.objects.filter(
-                        fecha_creacion__range=[desde, hasta]).order_by('-fecha_creacion').order_by('-fecha_creacion')
+                        fecha_creacion__range=[desde, hasta]).order_by('-fecha_creacion')
                 else:
                     lead_queryset = Lead.objects.filter(
-                        fecha_creacion__gte=fecha_limite).order_by('-fecha_creacion').order_by('-fecha_creacion')
+                        fecha_creacion__gte=fecha_limite).order_by('-fecha_creacion')
 
             elif request.user.groups.first().name == "asesor":
                 if request.user.isAdmin == True:
                     if desde and hasta:
                         lead_queryset = Lead.objects.filter(
-                            fecha_asignacion__range=[desde, hasta]).order_by('-fecha_asignacion').order_by('-fecha_creacion')
+                            fecha_creacion__range=[desde, hasta]).order_by('-fecha_creacion')
                     else:
                         lead_queryset = Lead.objects.filter(
-                            fecha_asignacion__gte=fecha_limite).order_by('-fecha_asignacion').order_by('-fecha_creacion')
+                            fecha_creacion__gte=fecha_limite).order_by('-fecha_creacion')
                 else :
                     if desde and hasta:
                         lead_queryset =Lead.objects.filter(
-                            fecha_asignacion__range=[desde, hasta],asesor = request.user.pk).order_by('-fecha_asignacion').order_by('-fecha_creacion')
+                            fecha_creacion__range=[desde, hasta],asesor = request.user.pk).order_by('-fecha_creacion')
                     else:
                         lead_queryset = Lead.objects.filter(
-                            fecha_asignacion__gte=fecha_limite,asesor = request.user.pk).order_by('-fecha_asignacion').order_by('-fecha_creacion')
+                            fecha_creacion__gte=fecha_limite,asesor = request.user.pk).order_by('-fecha_creacion')
             else:
                 if desde and hasta:
                     lead_queryset = Lead.objects.filter(
-                        fecha_asignacion__range=[desde, hasta]).order_by('-fecha_asignacion').order_by('-fecha_creacion')
+                        fecha_creacion__range=[desde, hasta]).order_by('-fecha_creacion')
                 else:
                     lead_queryset = Lead.objects.filter(
-                        fecha_asignacion__gte=fecha_limite).order_by('-fecha_asignacion').order_by('-fecha_creacion')
+                        fecha_creacion__gte=fecha_limite).order_by('-fecha_creacion')
             
         if estado:
             lead_queryset = lead_queryset.filter(estado=estado)
@@ -163,6 +164,7 @@ class LeadList(generics.ListCreateAPIView):
             historico_desasignaciones = DesasignacionLeadAsesor.objects.filter(lead__in = lead_queryset)
 
         leadSerializer = LeadSerializer(lead_queryset, many=True)
+        estadoLead_queryset = EstadoLead.objects.all()
 
         leadData = leadSerializer.data
         for i in leadData:
@@ -170,7 +172,8 @@ class LeadList(generics.ListCreateAPIView):
 
             campania_data = get_or_none(Campania, id=i["campania"])
             objecion_data = get_or_none(Objecion, id=i["objecion"])
-
+            estadoLead_data = get_or_none(EstadoLead, nombre=i["estadoLead"])
+            print(estadoLead_data)
             userSerializer = UserSerializer(user_data, fields=(
                 'id', 'first_name', 'last_name', 'username')) if user_data else None
 
@@ -178,9 +181,13 @@ class LeadList(generics.ListCreateAPIView):
                 campania_data) if campania_data else None
             objecionSerializer = ObjecionSerializer(
                 objecion_data) if objecion_data else None
+            
+            estadoSerializer = EstadoLeadSerializer(
+                estadoLead_data) if estadoLead_data else None
 
             i["asesor"] = userSerializer.data if userSerializer else None
             i["campania"] = campaniaSerializer.data if campaniaSerializer else None
+            i["estadoLead"] = estadoSerializer.data if estadoSerializer else None
             i["campania"]["proyecto"] = ProyectoSerializer(
                 Proyecto.objects.filter(pk=i["campania"]["proyecto"]).first()).data
             i["objecion"] = objecionSerializer.data if objecionSerializer else None

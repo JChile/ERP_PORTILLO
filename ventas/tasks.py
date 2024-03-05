@@ -5,8 +5,8 @@ def task_one():
     from .models import Lead, WhatsApp, Llamada, DesasignacionLeadAsesor
 
     lead_queryset = Lead.objects.filter(asignado=True,estado = 'A')
-    whatsApp_queryset = WhatsApp.objects.filter(lead__in = lead_queryset.values_list('id', flat=True))
-    llamada_queryset = Llamada.objects.filter(lead__in = lead_queryset.values_list('id', flat=True))
+    whatsApp_queryset = WhatsApp.objects.filter(lead__in = lead_queryset.values_list('id', flat=True), asesor__in = lead_queryset.values_list('asesor', flat=True))
+    llamada_queryset = Llamada.objects.filter(lead__in = lead_queryset.values_list('id', flat=True),  asesor__in = lead_queryset.values_list('asesor', flat=True))
     
     id_leadsTratados = []
     for i in lead_queryset:

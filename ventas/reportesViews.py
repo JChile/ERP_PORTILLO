@@ -192,3 +192,5 @@ class ReporteProporcionDesasignacionesByEstadoLead(APIView):
             estadoLead_iter["desasignaciones"] = lead_desasignados.filter(estadoLead = estadoLead_iter["nombre"]).count()
 
         return Response(estadoLead_data, status.HTTP_200_OK)
+
+

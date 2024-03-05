@@ -2,16 +2,21 @@ from portillo_erp.celery import app
 
 @app.task
 def task_one():
-    from .models import Lead, WhatsApp, Llamada
-    from cuenta.models import User
-    from itertools import chain
+    from .models import Lead, WhatsApp, Llamada, DesasignacionLeadAsesor
 
     lead_queryset = Lead.objects.filter(asignado=True,estado = 'A')
-    asesor_queryset= User.objects.filter(id__in = lead_queryset.values_list('asesor', flat=True))
-    whatsApp_queryset = WhatsApp.objects.filter(asesor__in = asesor_queryset.values_list('id', flat=True), lead__in = lead_queryset.values_list('id', flat=True))
-    llamada_queryset = Llamada.objects.filter(asesor__in = asesor_queryset.values_list('id', flat=True), lead__in = lead_queryset.values_list('id', flat=True))
-    queryset_combinado = list(chain(whatsApp_queryset.values_list('lead',flat=True) ,  llamada_queryset.values_list('lead',flat=True)))
-    leads_no_tratados = lead_queryset.exclude(id__in = queryset_combinado)
+    whatsApp_queryset = WhatsApp.objects.filter(lead__in = lead_queryset.values_list('id', flat=True))
+    llamada_queryset = Llamada.objects.filter(lead__in = lead_queryset.values_list('id', flat=True))
+    
+    id_leadsTratados = []
+    for i in lead_queryset:
+       numWhatsappsYLlamadas = whatsApp_queryset.filter(lead = i, asesor = i.asesor).count() + llamada_queryset.filter(lead = i, asesor = i.asesor).count()
+       if numWhatsappsYLlamadas > 0:
+          id_leadsTratados.append(i.pk)
+              
+    leads_no_tratados = lead_queryset.exclude(id__in = id_leadsTratados)
+    for i in leads_no_tratados:
+      DesasignacionLeadAsesor.objects.create(lead=i, usuario = i.asesor)
     leads_no_tratados.update(asignado = False, asesor = None)
 
 

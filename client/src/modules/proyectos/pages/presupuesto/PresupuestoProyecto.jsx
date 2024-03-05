@@ -1,10 +1,10 @@
-import React, { useState } from "react";
-import { useParams } from "react-router-dom";
-import { useFilterGastos } from "../../hooks";
+import { useContext, useEffect, useState } from "react";
+import { AuthContext } from "../../../../auth";
+import { useNavigate, useParams } from "react-router-dom";
+import { useFilterGastos } from "../../../campania/hooks/useFilterGastos";
 import {
   Button,
   FormControl,
-  IconButton,
   MenuItem,
   Paper,
   Select,
@@ -15,78 +15,28 @@ import {
   TableHead,
   TableRow,
 } from "@mui/material";
-import { CustomDatePickerMonth } from "../../../../components";
-import { RowGastoCampania } from "../../components";
+import {
+  CustomAlert,
+  CustomCircularProgress,
+  CustomDatePickerMonth,
+} from "../../../../components";
 import { FiPlusCircle } from "react-icons/fi";
+import { useAlertMUI } from "../../../../hooks";
+import { getProyecto } from "../../helpers";
+import { combinarErrores } from "../../../../utils";
 
-const dataJSON = [
-  {
-    id: 1,
-    year: "2024",
-    month: "02",
-    day: "07",
-    date: "2024-02-07",
-    spent: 10,
-  },
-  {
-    id: 2,
-    year: "2024",
-    month: "02",
-    day: "12",
-    date: "2024-02-12",
-    spent: 750,
-  },
-  {
-    id: 3,
-    year: "2024",
-    month: "03",
-    day: "07",
-    date: "2024-03-07",
-    spent: 500,
-  },
-  {
-    id: 4,
-    year: "2024",
-    month: "03",
-    day: "12",
-    date: "2024-03-12",
-    spent: 120,
-  },
-  {
-    id: 5,
-    year: "2024",
-    month: "03",
-    day: "15",
-    date: "2024-03-15",
-    spent: 30,
-  },
-  {
-    id: 6,
-    year: "2024",
-    month: "03",
-    day: "24",
-    date: "2024-03-24",
-    spent: 90,
-  },
-];
-
-// funcion total gasto por semana
-const calculateSpentByWeek = (dataWeek, data) => {
-  const inicioSemana = dataWeek[0];
-  const finSemana = dataWeek[1];
-  let sumaTotal = 0;
-  data.forEach((element) => {
-    const parserDay = parseInt(element["day"]);
-    if (inicioSemana <= parserDay && finSemana >= parserDay) {
-      sumaTotal += element["spent"];
-    }
+export const PresupuestoProyecto = () => {
+  const { authTokens } = useContext(AuthContext);
+  const { idProyecto } = useParams();
+  const [project, setProject] = useState({
+    nombre: "",
+    codigo: "",
+    ubicacion: "",
+    descripcion: "",
   });
-  return sumaTotal;
-};
 
-export const ListCampaniaGastos = () => {
-  // id de la campaña de query params
-  const { idCampania } = useParams();
+  const { nombre, codigo, ubicacion, descripcion } = project;
+
   // hook
   const { getSemanasPorMes, filtrarGastosPorSemana, showDataParser } =
     useFilterGastos();
@@ -95,7 +45,7 @@ export const ListCampaniaGastos = () => {
   // informacion de semana seleccionada
   const [selectedSemana, setSelectedSemana] = useState(-1);
   // informacion de data
-  const [data, setData] = useState(dataJSON);
+  const [data, setData] = useState();
 
   // handle change semana
   const handleChangeSemana = ({ target }) => {
@@ -113,27 +63,50 @@ export const ListCampaniaGastos = () => {
   // formato de fechas
   const fechaFormat = showDataParser(selectedSemana, semanasFecha, date);
   // data
-  const filteredData = filtrarGastosPorSemana(
-    data,
-    semanasFecha,
-    selectedSemana,
-    date
-  );
+
+  const [visibleProgress, setVisibleProgress] = useState(false);
+
+  const obtenerCampaniasProyecto = async () => {
+    if (idProyecto) {
+      setVisibleProgress(true);
+      try {
+        const result = await getProyecto(idProyecto, authTokens["access"]);
+        setProject(result);
+        setVisibleProgress(false);
+        setFlagLoading(true);
+      } catch (error) {
+        setVisibleProgress(false);
+      }
+    } else {
+      onNavigateBack();
+    }
+  };
+
+  const navigate = useNavigate();
+  const onNavigateBack = () => {
+    navigate(-1);
+  };
+
+  useEffect(() => {
+    obtenerCampaniasProyecto();
+  }, []);
 
   return (
-    <main>
-      <h2 className="text-center font-bold text-2xl">Registro de gastos</h2>
+    <>
+      <h2 className="text-center font-bold text-2xl">
+        Registro de presupuesto
+      </h2>
       <section className="pb-4 p-2 mt-2 border-2">
-        <p className="pb-2 font-semibold">Datos de campaña</p>
+        <p className="pb-2 font-semibold">Datos del proyecto</p>
         <div className="grid grid-cols-2 gap-4 mb-4">
           <div className="flex">
             <span className="font-medium mr-3">Nombre: </span>
-            <span>Campaña de cierto valor</span>
+            <span>{nombre}</span>
           </div>
 
           <div className="flex">
             <span className="font-medium mr-3">Código: </span>
-            <span>#MG-CW-0303</span>
+            <span>{codigo}</span>
           </div>
         </div>
       </section>
@@ -203,59 +176,15 @@ export const ListCampaniaGastos = () => {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  <TableRow>
-                    {semanasFecha.map((element, index) => (
-                      <TableCell
-                        align="center"
-                        key={index}
-                        style={{
-                          backgroundColor:
-                            index === selectedSemana ? "#7de37f" : "white",
-                        }}
-                      >
-                        {calculateSpentByWeek(element, filteredData)}
-                      </TableCell>
-                    ))}
-                  </TableRow>
-                </TableBody>
-              </Table>
-            </TableContainer>
-          </Paper>
-        </div>
-        <div className="pb-4">
-          {/* PAPER TABLE */}
-          <Paper sx={{ borderRadius: "0px" }}>
-            <TableContainer
-              sx={{ minWidth: 700 }}
-              arial-aria-labelledby="customized table"
-            >
-              <Table>
-                <TableHead>
-                  <TableRow
-                    sx={{
-                      "& th": {
-                        color: "rgba(200,200,200)",
-                        backgroundColor: "#404040",
-                      },
-                    }}
-                  >
-                    <TableCell>Fecha</TableCell>
-                    <TableCell>Mes</TableCell>
-                    <TableCell>Dia</TableCell>
-                    <TableCell>Gasto</TableCell>
-                    <TableCell>Acciones</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {filteredData.map((element) => (
-                    <RowGastoCampania key={element["id"]} element={element} />
-                  ))}
+                  <TableRow></TableRow>
                 </TableBody>
               </Table>
             </TableContainer>
           </Paper>
         </div>
       </section>
-    </main>
+      {/* CIRCULAR PROGRESS */}
+      {visibleProgress && <CustomCircularProgress />}
+    </>
   );
 };

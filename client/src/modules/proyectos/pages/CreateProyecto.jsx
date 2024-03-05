@@ -16,6 +16,7 @@ export const CreateProyecto = () => {
   const { authTokens, currentUser } = useContext(AuthContext);
   const [project, setProject] = useState({
     nombre: "",
+    codigo: "",
     ubicacion: "",
     descripcion: "",
     estado: "A",
@@ -23,7 +24,7 @@ export const CreateProyecto = () => {
   const [imageList, setImageList] = useState([]);
   const [videoList, setVideoList] = useState([]);
 
-  const { nombre, ubicacion, descripcion, estado } = project;
+  const { nombre, codigo, ubicacion, descripcion, estado } = project;
 
   const {
     feedbackCreate,
@@ -48,7 +49,7 @@ export const CreateProyecto = () => {
     navigate(-1);
   };
 
-  const validateProject = (nombre, ubicacion, descripcion) => {
+  const validateProject = (nombre, ubicacion, codigo) => {
     const errors = [];
 
     if (!nombre) {
@@ -57,14 +58,14 @@ export const CreateProyecto = () => {
     if (!ubicacion) {
       errors.push("- La ubicacion es obligatoria.");
     }
-    if (!descripcion) {
-      errors.push("- La descripcion es obligatoria.");
+    if (!codigo) {
+      errors.push("- El código es obligatorio.");
     }
     return errors.join("\n");
   };
 
   const crearProyecto = async () => {
-    const validationMessage = validateProject(nombre, ubicacion, descripcion);
+    const validationMessage = validateProject(nombre, ubicacion, codigo);
 
     if (validationMessage) {
       // Si hay campos faltantes, mostrar una alerta con los mensajes de error concatenados
@@ -215,6 +216,21 @@ export const CreateProyecto = () => {
                   onChange={handledForm}
                 />
               </label>
+
+              <label className="flex flex-col gap-y-1 ">
+                <span className="after:content-['*'] after:ml-0.5 after:text-yellow-500 block text-sm font-medium">
+                  Código del proyecto
+                </span>
+                <input
+                  type="text"
+                  name="codigo"
+                  className="mt-1 px-3 py-2 bg-white border shadow-sm border-slate-300 placeholder-slate-400 focus:outline-none focus:border-sky-500 focus:ring-sky-500 block w-full rounded-md sm:text-sm focus:ring-1"
+                  placeholder="Código del proyecto"
+                  autoComplete="off"
+                  value={codigo}
+                  onChange={handledForm}
+                />
+              </label>
             </div>
             <div className="w-6/12 flex flex-col gap-y-5">
               <label htmlFor="ubicacion" className="flex flex-col gap-y-1">
@@ -235,9 +251,7 @@ export const CreateProyecto = () => {
           </div>
           <div>
             <label htmlFor="descripcion" className=" flex flex-col gap-y-1">
-              <span className="after:content-['*'] after:ml-0.5 after:text-yellow-500 block text-sm font-medium">
-                Descripción
-              </span>
+              <span className="block text-sm font-medium">Descripción</span>
               <TextField
                 name="descripcion"
                 onChange={handledForm}
@@ -258,9 +272,7 @@ export const CreateProyecto = () => {
             <div className="w-6/12 flex flex-col gap-y-5 border border-gray-300 p-4 rounded-md">
               <div className="w-6/12 flex flex-col gap-y-6">
                 <label htmlFor="file" className="flex flex-col gap-y-1">
-                  <span className="after:content-['*'] after:ml-0.5 after:text-yellow-500 block text-sm font-medium">
-                    Imágenes
-                  </span>
+                  <span className=" block text-sm font-medium">Imágenes</span>
                   <div className="bg-green-500 hover:bg-green-600 rounded">
                     <input
                       type="file"
@@ -290,9 +302,7 @@ export const CreateProyecto = () => {
             <div className="w-6/12 flex flex-col gap-y-5 border border-gray-300 p-4 rounded-md">
               <div className="w-6/12 flex flex-col gap-y-6">
                 <label htmlFor="file" className="flex flex-col gap-y-1">
-                  <span className="after:content-['*'] after:ml-0.5 after:text-yellow-500 block text-sm font-medium">
-                    Video
-                  </span>
+                  <span className=" block text-sm font-medium">Video</span>
                   <div className="bg-green-500 hover:bg-green-600 rounded">
                     <input
                       type="file"

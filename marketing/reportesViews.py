@@ -51,9 +51,7 @@ class ReporteMarketing(APIView):
             return Response({"detail" : "Proyecto no encontrado"})
         
 
-        mes = 3  # Marzo
-        año = 2024
-        semanas = obtener_semanas_mes_año(mes, año)
+        semanas = obtener_semanas_mes_año(int(mes), int(anio))
         campania_queryset = proyecto.campania_set.all()
         campania_data = CampaniaSerializer(campania_queryset, many = True, fields = ['id', 'nombre', 'codigo', 'organico'])
         gastoCampania_queryset = GastoCampania.objects.filter(campania__in = campania_queryset)

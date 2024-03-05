@@ -31,8 +31,12 @@ export const UpdateProyecto = () => {
     videos: [],
   });
 
+<<<<<<< HEAD
   const { nombre, codigo, ubicacion, descripcion, estado, imagenes, videos } =
     project;
+=======
+  const { nombre, codigo, ubicacion, descripcion, estado, imagenes, videos } = project;
+>>>>>>> 5b6e8bf6562633802ec544221a89558cbadcafaf
   const [imageList, setImageList] = useState([]);
   const [videoList, setVideoList] = useState([]);
 
@@ -86,23 +90,34 @@ export const UpdateProyecto = () => {
     navigate(-1);
   };
 
+<<<<<<< HEAD
   const validateProject = (nombre, ubicacion, codigo) => {
+=======
+  const validateProject = (nombre) => {
+>>>>>>> 5b6e8bf6562633802ec544221a89558cbadcafaf
     const errors = [];
 
-    if (!nombre) {
+    if (nombre.length === 0) {
       errors.push("- El nombre del proyecto es obligatorio.");
     }
+<<<<<<< HEAD
     if (!ubicacion) {
       errors.push("- La ubicacion es obligatoria.");
     }
     if (!codigo) {
       errors.push("- El código es obligatorio.");
     }
+=======
+>>>>>>> 5b6e8bf6562633802ec544221a89558cbadcafaf
     return errors.join("\n");
   };
 
   const actualizarProyecto = async () => {
+<<<<<<< HEAD
     const validationMessage = validateProject(nombre, ubicacion, codigo);
+=======
+    const validationMessage = validateProject(nombre);
+>>>>>>> 5b6e8bf6562633802ec544221a89558cbadcafaf
 
     if (validationMessage) {
       // Si hay campos faltantes, mostrar una alerta con los mensajes de error concatenados
@@ -249,7 +264,8 @@ export const UpdateProyecto = () => {
             className="min-w-[242px] flex flex-col gap-y-6 gap-x-8"
           >
             <div className="flex flex-row gap-y-6 gap-x-8">
-              <div className="w-6/12 flex flex-col gap-y-5">
+              {/* NOMBRE DE PROYECTO */}
+              <div className="w-5/12 flex flex-col gap-y-5">
                 <label className="flex flex-col gap-y-1 ">
                   <span className="after:content-['*'] after:ml-0.5 after:text-yellow-500 block text-sm font-medium">
                     Nombre del proyecto
@@ -261,7 +277,6 @@ export const UpdateProyecto = () => {
                     placeholder="Nombre del proyecto"
                     autoComplete="off"
                     value={nombre}
-                    disabled={true}
                     onChange={handledForm}
                   />
                 </label>
@@ -282,26 +297,32 @@ export const UpdateProyecto = () => {
                   />
                 </label>
               </div>
-
-              <div className="w-6/12 flex flex-col gap-y-5">
-                <label htmlFor="ubicacion" className="flex flex-col gap-y-1">
+              {/* CODIGO DE PROYECTO */}
+              <div className="w-5/12 flex flex-col gap-y-5">
+                <label className="flex flex-col gap-y-1 ">
                   <span className="after:content-['*'] after:ml-0.5 after:text-yellow-500 block text-sm font-medium">
-                    Ubicacion
+                    Código del proyecto
                   </span>
                   <input
                     type="text"
-                    name="ubicacion"
-                    id="ubicacion"
-                    placeholder="Ubicacion"
-                    value={ubicacion}
-                    onChange={handledForm}
+                    name="codigo"
                     className="mt-1 px-3 py-2 bg-white border shadow-sm border-slate-300 placeholder-slate-400 focus:outline-none focus:border-sky-500 focus:ring-sky-500 block w-full rounded-md sm:text-sm focus:ring-1"
+                    placeholder="Código del proyecto"
+                    autoComplete="off"
+                    value={codigo}
+                    disabled
                   />
                 </label>
+<<<<<<< HEAD
 
+=======
+              </div>
+              {/* ESTADO */}
+              <div className="w-2/12 flex flex-col gap-y-5">
+>>>>>>> 5b6e8bf6562633802ec544221a89558cbadcafaf
                 <label className="flex flex-col gap-y-1">
                   <span className="after:content-['*'] after:ml-0.5 after:text-yellow-500 block text-sm font-medium">
-                    Estado inicial
+                    Estado
                   </span>
                   <Select
                     name="estado"
@@ -321,6 +342,21 @@ export const UpdateProyecto = () => {
               </div>
             </div>
             <div>
+              {/* UBICACION */}
+              <label htmlFor="ubicacion" className="flex flex-col mb-3">
+                <span className="after:content-['*'] after:ml-0.5 after:text-yellow-500 block text-sm font-medium">
+                  Ubicacion
+                </span>
+                <input
+                  type="text"
+                  name="ubicacion"
+                  id="ubicacion"
+                  placeholder="Ubicacion"
+                  value={ubicacion}
+                  onChange={handledForm}
+                  className="mt-1 px-3 py-2 bg-white border shadow-sm border-slate-300 placeholder-slate-400 focus:outline-none focus:border-sky-500 focus:ring-sky-500 block w-full rounded-md sm:text-sm focus:ring-1"
+                />
+              </label>
               <label htmlFor="descripcion" className=" flex flex-col gap-y-1">
                 <span className=" block text-sm font-medium">Descripción</span>
                 <TextField

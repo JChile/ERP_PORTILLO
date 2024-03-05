@@ -159,7 +159,7 @@ const ListProyectos = () => {
                   )}
                 </div>
 
-                <div className="flex flex-row items-center justify-center">
+                <div className="flex flex-row items-center justify-center gap-x-2">
                   <Typography variant="h5" component="div">
                     {project.nombre}
                   </Typography>

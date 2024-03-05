@@ -53,6 +53,7 @@ export const RowItemLeadsAsesor = ({ item, checkedElement }) => {
       </TableCell>
       <TableCell>{`${item["nombre"]} ${item["apellido"]}`}</TableCell>
       <TableCell>{proyecto["nombre"]}</TableCell>
+      <TableCell>{campania["nombre"]}</TableCell>
       <TableCell>
         {formatDate_ISO861_to_formatdate(item["fecha_asignacion"])}
       </TableCell>

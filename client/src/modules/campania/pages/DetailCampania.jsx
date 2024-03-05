@@ -17,8 +17,8 @@ export const DetailCampania = () => {
     codigo: "",
     fecha_estimada: "",
     fecha_cierre: "",
-    coste_estimado: 0,
-    coste_real: 0,
+    coste_realDolares: 0,
+    coste_realSoles: 0,
     descripcion: "",
     estado: "",
     proyecto: {
@@ -27,6 +27,7 @@ export const DetailCampania = () => {
     categoria: {
       nombre: "",
     },
+    organico: false
   });
 
   const {
@@ -34,12 +35,13 @@ export const DetailCampania = () => {
     codigo,
     fecha_estimada,
     fecha_cierre,
-    coste_estimado,
-    coste_real,
+    coste_realDolares,
+    coste_realSoles,
     descripcion,
     estado,
     proyecto,
     categoria,
+    organico
   } = campania;
 
   // hook alert
@@ -92,14 +94,14 @@ export const DetailCampania = () => {
         <div className="p-3 border-[1px] flex flex-col gap-y-4">
           <div className="flex flex-col md:flex-row min-w-[242px] gap-x-2 gap-y-3">
             <div className="w-full flex flex-col gap-y-3">
-              <label className="block flex gap-y-1 min-w-full">
+              <label className="flex gap-y-1 min-w-full">
                 <span className="block text-sm font-medium min-w-[10rem] text-zinc-500">
                   Campaña:
                 </span>
                 <span className="block text-sm">{nombre}</span>
               </label>
 
-              <label className="block flex gap-y-1 ">
+              <label className="flex gap-y-1 ">
                 <span className="block text-sm font-medium min-w-[10rem] text-zinc-500">
                   Fecha estimada:
                 </span>
@@ -110,36 +112,52 @@ export const DetailCampania = () => {
                 </span>
               </label>
 
-              <label className="block flex gap-y-1 ">
+              <label className="flex gap-y-1 ">
                 <span className="block text-sm font-medium min-w-[10rem] text-zinc-500">
-                  Coste estimado:
+                  Coste en soles:
                 </span>
-                <span className="block text-sm">s./ {coste_estimado}</span>
+                <span className="block text-sm">S/ {coste_realDolares}</span>
               </label>
 
-              <label className="block flex gap-y-1 ">
+              <label className="flex gap-y-1 ">
                 <span className="block text-sm font-medium min-w-[10rem] text-zinc-500">
                   Categoria:
                 </span>
                 <span className="block text-sm">{categoria["nombre"]}</span>
               </label>
+
+              <label className="flex gap-y-1 ">
+                <span className="block text-sm font-medium min-w-[10rem] text-zinc-500">
+                  Orgánico:
+                </span>
+                <span className="block text-sm">
+                  {organico ? "Si" : "No"}
+                </span>
+              </label>
             </div>
 
             <div className="w-full flex flex-col gap-y-3">
-              <label className="block flex gap-y-1 ">
+              <label className="flex gap-y-1 ">
                 <span className="block text-sm font-medium min-w-[10rem] text-zinc-500">
                   Codigo:
                 </span>
                 <span className="block text-sm">{codigo}</span>
               </label>
-              <label className="block flex gap-y-1 ">
+              <label className="flex gap-y-1 ">
                 <span className="block text-sm font-medium min-w-[10rem] text-zinc-500">
                   Proyecto:
                 </span>
                 <span className="block text-sm">{proyecto["nombre"]}</span>
               </label>
 
-              <label className="block flex gap-y-1 ">
+              <label className="flex gap-y-1 ">
+                <span className="block text-sm font-medium min-w-[10rem] text-zinc-500">
+                  Coste en dolares:
+                </span>
+                <span className="block text-sm">$ {coste_realSoles}</span>
+              </label>
+
+              <label className="flex gap-y-1 ">
                 <span className="block text-sm font-medium min-w-[10rem] text-zinc-500">
                   Fecha cierre:
                 </span>
@@ -150,14 +168,7 @@ export const DetailCampania = () => {
                 </span>
               </label>
 
-              <label className="block flex gap-y-1 ">
-                <span className="block text-sm font-medium min-w-[10rem] text-zinc-500">
-                  Coste real:
-                </span>
-                <span className="block text-sm">s./ {coste_real}</span>
-              </label>
-
-              <label className="block flex gap-y-1 ">
+              <label className="flex gap-y-1 ">
                 <span className="block text-sm font-medium min-w-[10rem] text-zinc-500">
                   Estado:
                 </span>

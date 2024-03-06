@@ -9,6 +9,8 @@ from .models import Campania, GastoCampania, Proyecto, PresupuestoProyecto
 from .serializers import CampaniaSerializer, GastoCampaniaSerializer
 from cuenta.models import User
 from cuenta.serializers import UserSerializer
+from ventas.models import Lead, HistoricoLeadAsesor
+
 
 def obtener_semanas_mes_año(mes, año):
     
@@ -39,6 +41,14 @@ def obtener_semanas_mes_año(mes, año):
 import json
 import numpy as np
 
+
+def ultimo_dia_mes(fecha):
+    primer_dia_siguiente_mes = fecha.replace(day=28) + timedelta(days=4) 
+    return primer_dia_siguiente_mes - timedelta(days=primer_dia_siguiente_mes.day)
+
+
+
+
 class ReporteMarketing(APIView):
     def get(self, request, pk=None):
         mes = request.query_params.get('mes')
@@ -58,7 +68,10 @@ class ReporteMarketing(APIView):
         asesor_queryset = User.objects.filter(is_active=True, estado='A').filter(groups__name="asesor")
         asesor_data = UserSerializer(asesor_queryset, many = True, fields = ['id', 'first_name', 'last_name', 'username','codigoAsesor'])
 
-        print(asesor_queryset)
+        fecha_inicio = datetime(int(anio), int(mes), 1,0,0,0)
+        fecha_fin = ultimo_dia_mes(fecha_inicio).replace(hour=23, minute=59, second=59)
+        lead_queryset = Lead.objects.filter(asignado = True, fecha_asignacion__range = (fecha_inicio, fecha_fin))
+        
         for i in semanas:
             desde = semanas[i]["desde"] 
             hasta = semanas[i]["hasta"] 
@@ -70,6 +83,6 @@ class ReporteMarketing(APIView):
                 j["inversionDolares"] = np.sum(gastoDolares_array)
             semanas[i]["asesores"] = json.loads(json.dumps(asesor_data.data))
             for k in semanas[i]["asesores"]:
-                k["numeroLeads"] = 50
+                k["numeroLeads"] = lead_queryset.filter(asesor = k["id"], fecha_asignacion__range = (str(desde)+" 00:00:00", str(hasta)+" 23:59:59") ).count()
 
         return Response(semanas)

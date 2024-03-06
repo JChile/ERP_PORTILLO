@@ -40,6 +40,7 @@ def obtener_semanas_mes_año(mes, año):
 
 import json
 import numpy as np
+import random
 
 
 def ultimo_dia_mes(fecha):
@@ -81,8 +82,10 @@ class ReporteMarketing(APIView):
                 gastoDolares_array =  gastoCampania_queryset.filter(campania = j["id"] ,fechaGasto__range =(desde,hasta)).values_list('gastoDolares')       
                 j["inversionSoles"] = np.sum(gastoSoles_array)
                 j["inversionDolares"] = np.sum(gastoDolares_array)
+                j["numeroLeads"] = random.randint(0, 100)
             semanas[i]["asesores"] = json.loads(json.dumps(asesor_data.data))
             for k in semanas[i]["asesores"]:
                 k["numeroLeads"] = lead_queryset.filter(asesor = k["id"], fecha_asignacion__range = (str(desde)+" 00:00:00", str(hasta)+" 23:59:59") ).count()
+
 
         return Response(semanas)

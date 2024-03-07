@@ -55,6 +55,11 @@ class ReporteMarketing(APIView):
         mes = request.query_params.get('mes')
         anio = request.query_params.get('anio')
         proyecto_id = request.query_params.get('proyecto')
+        print("NAÑOOO", datetime.now().year)
+        if mes == None:
+            mes = int(datetime.now().month)
+        if anio == None:
+            anio = int(datetime.now().year)
 
         proyecto = Proyecto.objects.filter(id = proyecto_id).first()
         print(proyecto)
@@ -82,7 +87,7 @@ class ReporteMarketing(APIView):
                 gastoDolares_array =  gastoCampania_queryset.filter(campania = j["id"] ,fechaGasto__range =(desde,hasta)).values_list('gastoDolares')       
                 j["inversionSoles"] = np.sum(gastoSoles_array)
                 j["inversionDolares"] = np.sum(gastoDolares_array)
-                j["numeroLeads"] = random.randint(0, 100)
+                j["numeroLeads"] =  lead_queryset.filter(campania = j["id"], fecha_asignacion__range = (str(desde)+" 00:00:00", str(hasta)+" 23:59:59") ).count()
             semanas[i]["asesores"] = json.loads(json.dumps(asesor_data.data))
             for k in semanas[i]["asesores"]:
                 k["numeroLeads"] = lead_queryset.filter(asesor = k["id"], fecha_asignacion__range = (str(desde)+" 00:00:00", str(hasta)+" 23:59:59") ).count()

@@ -23,13 +23,13 @@ def crear_datos(sender, **kwargs):
             EstadoEvento.objects.get_or_create(nombre='Finalizado', estado=estado_Activo)
 
 
-            EstadoLead.objects.get_or_create(nombre='NR',descripcion="No responde", estado=estado_Activo)
-            EstadoLead.objects.get_or_create(nombre='EP',descripcion="En proceso", estado=estado_Activo)
-            EstadoLead.objects.get_or_create(nombre='FR',descripcion="Frio", estado=estado_Activo)
-            EstadoLead.objects.get_or_create(nombre='TB',descripcion="Tibio", estado=estado_Activo)
-            EstadoLead.objects.get_or_create(nombre='CA',descripcion="Caliente", estado=estado_Activo)
-            EstadoLead.objects.get_or_create(nombre='SE',descripcion="Separaciones", estado=estado_Activo)
-            EstadoLead.objects.get_or_create(nombre='CI',descripcion="Cierre", estado=estado_Activo)
+            EstadoLead.objects.get_or_create(nombre='NR', color ="#949494",descripcion="No responde", estado=estado_Activo)
+            EstadoLead.objects.get_or_create(nombre='EP', color ="#949494",descripcion="En proceso", estado=estado_Activo)
+            EstadoLead.objects.get_or_create(nombre='FR', color ="#0044FF",descripcion="Frio", estado=estado_Activo)
+            EstadoLead.objects.get_or_create(nombre='TB', color ="#FFEE00",descripcion="Tibio", estado=estado_Activo)
+            EstadoLead.objects.get_or_create(nombre='CA', color ="#FF0000",descripcion="Caliente", estado=estado_Activo)
+            EstadoLead.objects.get_or_create(nombre='SE', color ="#949494",descripcion="Separaciones", estado=estado_Activo)
+            EstadoLead.objects.get_or_create(nombre='CI', color ="#19FF00",descripcion="Cierre", estado=estado_Activo)
 
 
             Objecion.objects.get_or_create(nombre="Ninguna", estado=estado_Activo)

@@ -109,28 +109,28 @@ export const DetailUsuarios = () => {
 
           <div className="flex flex-col md:flex-row min-w-[242px] gap-x-2 gap-y-3">
             <div className="w-full flex flex-col gap-y-3">
-              <label className="block flex gap-y-1 min-w-full">
+              <label className="flex gap-y-1 min-w-full">
                 <span className="block text-sm font-medium min-w-[10rem] text-zinc-500">
                   Nombre usuario
                 </span>
                 <span className="block text-sm">{username}</span>
               </label>
 
-              <label className="block flex gap-y-1 ">
+              <label className="flex gap-y-1 ">
                 <span className="block text-sm font-medium min-w-[10rem] text-zinc-500">
                   Nombre
                 </span>
                 <span className="block text-sm">{first_name}</span>
               </label>
 
-              <label className="block flex gap-y-1 ">
+              <label className="flex gap-y-1 ">
                 <span className="block text-sm font-medium min-w-[10rem] text-zinc-500">
                   Esta activo
                 </span>
                 <span className="block text-sm">{is_active ? "Si" : "No"}</span>
               </label>
 
-              <label className="block flex gap-y-1 ">
+              <label className="flex gap-y-1 ">
                 <span className="block text-sm font-medium min-w-[10rem] text-zinc-500">
                   Es administrador
                 </span>
@@ -139,21 +139,21 @@ export const DetailUsuarios = () => {
             </div>
 
             <div className="w-full flex flex-col gap-y-3">
-              <label className="block flex gap-y-1 ">
+              <label className="flex gap-y-1 ">
                 <span className="block text-sm font-medium min-w-[10rem] text-zinc-500">
                   Email trabajo
                 </span>
                 <span className="block text-sm">{email}</span>
               </label>
 
-              <label className="block flex gap-y-1 ">
+              <label className="flex gap-y-1 ">
                 <span className="block text-sm font-medium min-w-[10rem] text-zinc-500">
                   Apellido
                 </span>
                 <span className="block text-sm">{last_name}</span>
               </label>
 
-              <label className="block flex gap-y-1 ">
+              <label className="flex gap-y-1 ">
                 <span className="block text-sm font-medium min-w-[10rem] text-zinc-500">
                   Rol
                 </span>
@@ -163,7 +163,7 @@ export const DetailUsuarios = () => {
               </label>
 
               {groups.length !== 0 && groups["name"] === "asesor" && (
-                <label className="block flex gap-y-1 ">
+                <label className="flex gap-y-1 ">
                   <span className="block text-sm font-medium min-w-[10rem] text-zinc-500">
                     Codigo asesor
                   </span>

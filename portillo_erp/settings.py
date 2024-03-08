@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'corsheaders',
     'rest_framework_simplejwt.token_blacklist',
     'django_crontab',
+    'django_celery_beat',
 ]
 
 
@@ -104,7 +105,6 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'portillo_erp',
         'USER': 'postgres',
-        # 'PASSWORD': '123',
         'PASSWORD': '123',
         'HOST': 'localhost',
         'PORT': '',
@@ -194,9 +194,7 @@ USE_I18N = True
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
 
-
-
-MEDIA_ROOT = BASE_DIR  / 'media/'
+MEDIA_ROOT = BASE_DIR / 'media/'
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
@@ -204,13 +202,14 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 CORS_ALLOWED_ORIGINS = [
     'http://localhost:5173'
 ]
-CRONJOBS = [
-    ('*/1 * * * *', 'ventas.cron.my_scheduled_job',
-     '>> /home/briang/portillo2/ERP_PORTILLO/log/django/file.log')
-]
+# CRONJOBS = [
+#     ('*/1 * * * *', 'ventas.cron.my_scheduled_job',
+#      '>> /home/briangv/ERP_PORTILLO/ERP_PORTILLO2/ERP_PORTILLO/log/file.log')
+# ]
 
 
 STATIC_URL = 'static/'
-STATIC_ROOT = BASE_DIR  / 'static/'
+STATIC_ROOT = BASE_DIR / 'static/'
 
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
+

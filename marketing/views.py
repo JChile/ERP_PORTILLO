@@ -121,6 +121,27 @@ class ProyectoDetail(generics.RetrieveUpdateDestroyAPIView):
         return Response(proyecto_data)
 
 
+
+class PresupuestoProyectoList(generics.ListCreateAPIView):
+    serializer_class = PresupuestoProyectoSerializer
+    queryset = PresupuestoProyecto.objects.all()
+
+
+class PresupuestoProyectoDetail(generics.RetrieveUpdateDestroyAPIView):
+    serializer_class = PresupuestoProyectoSerializer
+    queryset = PresupuestoProyecto.objects.all()
+
+
+class GastoCampaniaList(generics.ListCreateAPIView):
+    serializer_class = GastoCampaniaSerializer
+    queryset = GastoCampania.objects.all()
+
+
+class GastoCampaniaDetail(generics.RetrieveUpdateDestroyAPIView):
+    serializer_class = GastoCampaniaSerializer
+    queryset = GastoCampania.objects.all()
+
+
 class CategoriaList(generics.ListCreateAPIView):
     serializer_class = CategoriaSerializer
     queryset = Categoria.objects.all()
@@ -221,3 +242,13 @@ class ProyectoCampaniaList(APIView):
 
         # Devuelve la respuesta en formato JSON
         return Response(dataJson)
+
+
+import requests
+import json
+
+class CambioDolar(APIView):
+
+    def get(self, request):
+        dolar = requests.get("https://api.apis.net.pe/v1/tipo-cambio-sunat")
+        return Response(dolar.json())

@@ -6,7 +6,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { CustomMoreVerticalActions } from "../../../../components";
 
 export const RowItemLeadsAsesor = ({ item, checkedElement }) => {
-  const { campania, id } = item;
+  const { campania, id, estadoLead } = item;
   const { proyecto } = campania;
 
   const navigate = useNavigate();
@@ -53,6 +53,12 @@ export const RowItemLeadsAsesor = ({ item, checkedElement }) => {
       </TableCell>
       <TableCell>{`${item["nombre"]} ${item["apellido"]}`}</TableCell>
       <TableCell>{proyecto["nombre"]}</TableCell>
+      <TableCell>{campania["nombre"]}</TableCell>
+      <TableCell align="center">
+        <span style={{backgroundColor: estadoLead["color"]}} className={`inline-block px-2 py-1 text-sm font-semibold leading-none rounded-full text-white`}>
+        {estadoLead["nombre"]}
+        </span>
+      </TableCell>
       <TableCell>
         {formatDate_ISO861_to_formatdate(item["fecha_asignacion"])}
       </TableCell>

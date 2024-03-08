@@ -136,3 +136,9 @@ class EstadoEventoSerializer(serializers.ModelSerializer):
     class Meta:
         model = EstadoEvento
         fields = '__all__'
+
+
+class DesasignacionConfiguracionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = DesasignacionConfiguracion
+        fields = '__all__'

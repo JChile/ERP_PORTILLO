@@ -31,7 +31,8 @@ export const UpdateProyecto = () => {
     videos: [],
   });
 
-  const { nombre, codigo, ubicacion, descripcion, estado, imagenes, videos } = project;
+  const { nombre, codigo, ubicacion, descripcion, estado, imagenes, videos } =
+    project;
   const [imageList, setImageList] = useState([]);
   const [videoList, setVideoList] = useState([]);
 
@@ -85,17 +86,23 @@ export const UpdateProyecto = () => {
     navigate(-1);
   };
 
-  const validateProject = (nombre) => {
+  const validateProject = (nombre, ubicacion, codigo) => {
     const errors = [];
 
     if (nombre.length === 0) {
       errors.push("- El nombre del proyecto es obligatorio.");
     }
+    if (!ubicacion) {
+      errors.push("- La ubicacion es obligatoria.");
+    }
+    if (!codigo) {
+      errors.push("- El código es obligatorio.");
+    }
     return errors.join("\n");
   };
 
   const actualizarProyecto = async () => {
-    const validationMessage = validateProject(nombre);
+    const validationMessage = validateProject(nombre, ubicacion, codigo);
 
     if (validationMessage) {
       // Si hay campos faltantes, mostrar una alerta con los mensajes de error concatenados
@@ -258,6 +265,22 @@ export const UpdateProyecto = () => {
                     onChange={handledForm}
                   />
                 </label>
+
+                <label className="flex flex-col gap-y-1 ">
+                  <span className="after:content-['*'] after:ml-0.5 after:text-yellow-500 block text-sm font-medium">
+                    Código del proyecto
+                  </span>
+                  <input
+                    type="text"
+                    name="codigo"
+                    className="mt-1 px-3 py-2 bg-white border shadow-sm border-slate-300 placeholder-slate-400 focus:outline-none focus:border-sky-500 focus:ring-sky-500 block w-full rounded-md sm:text-sm focus:ring-1"
+                    placeholder="Código del proyecto"
+                    autoComplete="off"
+                    value={codigo}
+                    disabled={true}
+                    onChange={handledForm}
+                  />
+                </label>
               </div>
               {/* CODIGO DE PROYECTO */}
               <div className="w-5/12 flex flex-col gap-y-5">
@@ -275,9 +298,6 @@ export const UpdateProyecto = () => {
                     disabled
                   />
                 </label>
-              </div>
-              {/* ESTADO */}
-              <div className="w-2/12 flex flex-col gap-y-5">
                 <label className="flex flex-col gap-y-1">
                   <span className="after:content-['*'] after:ml-0.5 after:text-yellow-500 block text-sm font-medium">
                     Estado
@@ -316,9 +336,7 @@ export const UpdateProyecto = () => {
                 />
               </label>
               <label htmlFor="descripcion" className=" flex flex-col gap-y-1">
-                <span className="after:content-['*'] after:ml-0.5 after:text-yellow-500 block text-sm font-medium">
-                  Descripción
-                </span>
+                <span className=" block text-sm font-medium">Descripción</span>
                 <TextField
                   name="descripcion"
                   onChange={handledForm}

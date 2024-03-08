@@ -3,6 +3,7 @@ import { Button, Card, CardContent, Typography, Avatar } from "@mui/material";
 import { Link, useNavigate } from "react-router-dom";
 import IconButton from "@mui/material/IconButton";
 import { BsBuildingsFill } from "react-icons/bs";
+import { FaCircleDollarToSlot } from "react-icons/fa6";
 import { deleteProyecto, getProyectos } from "../helpers";
 import { FaRegEdit } from "react-icons/fa";
 import { MdAdd, MdDeleteForever } from "react-icons/md";
@@ -12,6 +13,7 @@ import { AuthContext } from "../../../auth";
 import { useAlertMUI } from "../../../hooks";
 import { CustomCircularProgress, CustomAlert } from "../../../components";
 import CarouselComponentImageView from "../components/CarrouselImageView";
+import { CiLocationOn } from "react-icons/ci";
 
 const ListProyectos = () => {
   const { authTokens } = useContext(AuthContext);
@@ -91,6 +93,10 @@ const ListProyectos = () => {
     navigate(`/proyecto/update/${id}`);
   };
 
+  const onClickViewPresupuesto = (id) => {
+    navigate(`/proyecto/presupuesto/${id}`);
+  };
+
   useEffect(() => {
     obtenerProyectos();
   }, [activeButton]);
@@ -147,7 +153,7 @@ const ListProyectos = () => {
                   {project.imagenes && project.imagenes.length > 0 ? (
                     <CarouselComponentImageView images={project.imagenes} />
                   ) : (
-                    <div className="flex items-center justify-center bg-green-500 hover:bg-green-600 rounded-full w-64 h-64">
+                    <div className="flex items-center justify-center bg-gray-500 hover:bg-gray-600 rounded-full w-64 h-64">
                       <BsBuildingsFill className="w-32 h-32 text-white" />
                     </div>
                   )}
@@ -161,9 +167,13 @@ const ListProyectos = () => {
                     ({project.codigo})
                   </Typography>
                 </div>
-                <Typography variant="body2" color="text.secondary">
-                  {project.descripcion}
-                </Typography>
+                <div className="flex flex-row">
+                  <CiLocationOn style={{ color: "#ff8702" }} />
+                  <Typography variant="body2" color="text.secondary">
+                    {project.ubicacion}
+                  </Typography>
+                </div>
+
                 {/* <Button variant="outlined">Ver cotizaciones</Button> */}
                 <div className="flex space-x-4">
                   <IconButton
@@ -178,13 +188,19 @@ const ListProyectos = () => {
                       size="m"
                       color="error"
                       onClick={() => verDialog(project)}
-                      /* onClick={() => onDeleteItemSelected(project)} */
                     >
                       <MdDeleteForever />
                     </IconButton>
                   ) : (
                     <></>
                   )}
+                  <IconButton
+                    size="m"
+                    color="success"
+                    onClick={() => onClickViewPresupuesto(project.id)}
+                  >
+                    <FaCircleDollarToSlot />
+                  </IconButton>
                 </div>
               </CardContent>
             </Card>

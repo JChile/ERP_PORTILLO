@@ -1,65 +1,15 @@
 import React, { useContext, useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { useFilterGastos } from '../../hooks'
-import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, FormControl, IconButton, MenuItem, Paper, Select, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField } from '@mui/material'
-import { CustomAlert, CustomCircularProgress, CustomDatePickerMonth } from '../../../../components'
+import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, FormControl, IconButton, InputAdornment, InputLabel, MenuItem, OutlinedInput, Paper, Select, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField } from '@mui/material'
+import { CustomAlert, CustomCircularProgress, CustomDatePicker, CustomDatePickerMonth } from '../../../../components'
 import { RowGastoCampania } from '../../components'
 import { FiPlusCircle } from "react-icons/fi";
 import { getGastosCampaniaById } from '../../helpers/gastos/getGastosCampaniaById'
 import { AuthContext } from '../../../../auth'
 import { combinarErrores } from '../../../../utils'
 import { useAlertMUI } from '../../../../hooks'
-
-const dataJSON = [
-    {
-        id: 1,
-        year: "2024",
-        month: "02",
-        day: "07",
-        date: "2024-02-07",
-        spent: 10,
-    },
-    {
-        id: 2,
-        year: "2024",
-        month: "02",
-        day: "12",
-        date: "2024-02-12",
-        spent: 750,
-    },
-    {
-        id: 3,
-        year: "2024",
-        month: "03",
-        day: "07",
-        date: "2024-03-07",
-        spent: 500,
-    },
-    {
-        id: 4,
-        year: "2024",
-        month: "03",
-        day: "12",
-        date: "2024-03-12",
-        spent: 120,
-    },
-    {
-        id: 5,
-        year: "2024",
-        month: "03",
-        day: "15",
-        date: "2024-03-15",
-        spent: 30,
-    },
-    {
-        id: 6,
-        year: "2024",
-        month: "03",
-        day: "24",
-        date: "2024-03-24",
-        spent: 90,
-    },
-];
+import { IoIosAlert } from 'react-icons/io'
 
 // funcion total gasto por semana
 const calculateSpentByWeek = (dataWeek, data) => {
@@ -314,13 +264,22 @@ export const ListCampaniaGastos = () => {
 }
 
 const DialogCreateGastoCampania = ({ handleConfirm }) => {
-    const [open, setOpen] = useState(false);
-    const [dataGasto, setDataGasto] = useState({
-        gastoSoles: 0,
-        gastoDolares: 0,
-        tipoCambioSoles: 0,
-        fechaGasto: ""
+    const [open, setOpen] = useState(false)
+    const [alertDolar, setAlertDolar] = useState(false)
+    const [alertSol, setAlertSol] = useState(false)
+    const [alertFecha, setAlertFecha] = useState(false)
+    const [tipoCambio, setTipoCambio] = useState(3.66)
+    const [presupuesto, setPresupuesto] = useState({
+        presupuestoSoles: 0,
+        presupuestoDolares: 0,
+        fechaPresupuesto: "",
     });
+
+    const {
+        presupuestoSoles,
+        presupuestoDolares,
+        fechaPresupuesto,
+    } = presupuesto;
 
     const handleClickOpen = () => {
         setOpen(true);
@@ -330,30 +289,68 @@ const DialogCreateGastoCampania = ({ handleConfirm }) => {
         setOpen(false);
     };
 
-    const handleTipoCambioChange = (event) => {
-        const nuevoTipoCambio = parseFloat(event.target.value);
-        const nuevoGastoSoles = nuevoTipoCambio * dataGasto.gastoDolares;
-        setDataGasto({
-            ...dataGasto,
-            tipoCambioSoles: nuevoTipoCambio,
-            gastoSoles: nuevoGastoSoles
+    const handleInputChange = (event) => {
+        const { name, value } = event.target;
+        let newValue = value;
+
+        if (isNaN(value) || value < 0 || value === "") {
+            setAlertSol(true);
+            setAlertDolar(true);
+        } else {
+            setAlertSol(false);
+            setAlertDolar(false);
+        }
+        if (name === "presupuestoSoles") {
+            newValue = parseFloat(value) / tipoCambio;
+        } else if (name === "presupuestoDolares") {
+            newValue = parseFloat(value) * tipoCambio;
+        }
+
+        setPresupuesto({
+            ...presupuesto,
+            [name]: value,
+            // Actualiza el otro campo en tiempo real
+            ...(name === "presupuestoSoles"
+                ? { presupuestoDolares: newValue }
+                : { presupuestoSoles: newValue }),
         });
     };
 
-    const handleGastoDolaresChange = (event) => {
-        const nuevoGastoDolares = parseFloat(event.target.value);
-        const nuevoGastoSoles = nuevoGastoDolares * dataGasto.tipoCambioSoles;
-        setDataGasto({
-            ...dataGasto,
-            gastoDolares: nuevoGastoDolares,
-            gastoSoles: nuevoGastoSoles
+    const handleFecha = (newDate) => {
+        if (newDate != "") {
+            setAlertFecha(false);
+        }
+        setPresupuesto({
+            ...presupuesto,
+            fechaPresupuesto: newDate,
         });
     };
 
-    const handleConfirmAndClose = () => {
-        handleConfirm(dataGasto);
-        handleClose();
+    const validateData = () =>
+        presupuestoSoles > 0 && presupuestoDolares > 0 && fechaPresupuesto !== "";
+
+    const handleFormSubmit = () => {
+        if (validateData()) {
+            console.log("creado correctamente");
+            console.log(presupuesto);
+            handleConfirm();
+            handleClose();
+        } else {
+            setAlertSol(presupuestoSoles <= 0);
+            setAlertDolar(presupuestoDolares <= 0);
+            setAlertFecha(fechaPresupuesto === "");
+        }
     };
+
+    // consultar el tipo de cambio
+    const consultarTipoCambio = async () => {
+        const resultPeticion = await consultarTipoCambio()
+        console.log(resultPeticion)
+    }
+
+    useEffect(() => {
+        consultarTipoCambio()
+    }, [])
 
     return (
         <div>
@@ -361,33 +358,83 @@ const DialogCreateGastoCampania = ({ handleConfirm }) => {
                 Agregar
             </Button>
             <Dialog open={open} onClose={handleClose}>
-                <DialogTitle>Registrar gasto</DialogTitle>
+                <DialogTitle
+                    className="flex justify-between items-center"
+                    style={{ background: "#9E154A", color: "#fff" }}
+                >
+                    <span>Registrar Presupuesto </span>
+                    <span style={{ fontSize: 13, opacity: 0.7 }}>
+                        (Tipo cambio hoy: {tipoCambio})
+                    </span>
+                </DialogTitle>
                 <DialogContent>
-                    <TextField
-                        label="Gasto en dólares"
-                        type="number"
-                        value={dataGasto.gastoDolares}
-                        onChange={handleGastoDolaresChange}
-                    />
-                    <TextField
-                        label="Tipo de cambio a soles"
-                        type="number"
-                        value={dataGasto.tipoCambioSoles}
-                        onChange={handleTipoCambioChange}
-                    />
-                    <TextField
-                        label="Gasto en soles"
-                        type="number"
-                        value={dataGasto.gastoSoles}
-                        disabled
-                    />
+                    <form>
+                        <FormControl fullWidth variant="outlined" margin="normal">
+                            <InputLabel htmlFor="presupuestoSoles">
+                                Presupuesto en Soles
+                            </InputLabel>
+                            <OutlinedInput
+                                id="presupuestoSoles"
+                                name="presupuestoSoles"
+                                type="number" // Cambia esto según el tipo correcto de tu dato
+                                value={presupuestoSoles}
+                                onChange={handleInputChange}
+                                endAdornment={
+                                    <InputAdornment position="end">
+                                        {alertSol && (
+                                            <IoIosAlert
+                                                style={{ color: "#d32f2f", fontSize: "2rem" }}
+                                            />
+                                        )}
+                                    </InputAdornment>
+                                }
+                                label="Presupuesto en Soles"
+                            />
+                        </FormControl>
+
+                        <FormControl fullWidth variant="outlined" margin="normal">
+                            <InputLabel htmlFor="presupuestoDolares">
+                                Presupuesto en Dólares
+                            </InputLabel>
+                            <OutlinedInput
+                                id="presupuestoDolares"
+                                name="presupuestoDolares"
+                                type="number" // Cambia esto según el tipo correcto de tu dato
+                                value={presupuestoDolares}
+                                onChange={handleInputChange}
+                                endAdornment={
+                                    <InputAdornment position="end">
+                                        {alertDolar && (
+                                            <IoIosAlert
+                                                style={{ color: "#d32f2f", fontSize: "2rem" }}
+                                            />
+                                        )}
+                                    </InputAdornment>
+                                }
+                                label="Presupuesto en Dólares"
+                            />
+                        </FormControl>
+
+                        <label className="flex flex-col gap-y-1">
+                            <span className=" block text-sm">Fecha de registro</span>
+                            <div className="flex flex-row items-center">
+                                <CustomDatePicker
+                                    onNewFecha={handleFecha}
+                                    defaultValue={fechaPresupuesto}
+                                />
+                                {alertFecha && (
+                                    <IoIosAlert style={{ color: "#d32f2f", fontSize: "2rem" }} />
+                                )}
+                            </div>
+                        </label>
+                    </form>
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={handleClose} variant="contained" color="inherit">
+                    <Button variant="contained" onClick={handleClose} color="error">
                         Cancelar
                     </Button>
-                    <Button onClick={handleConfirmAndClose} variant="contained" color="error" autoFocus>
-                        Confirmar
+                    <Button variant="contained" onClick={handleFormSubmit} color="primary">
+                        Guardar
                     </Button>
                 </DialogActions>
             </Dialog>

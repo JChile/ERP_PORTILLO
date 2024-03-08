@@ -242,3 +242,13 @@ class ProyectoCampaniaList(APIView):
 
         # Devuelve la respuesta en formato JSON
         return Response(dataJson)
+
+
+import requests
+import json
+
+class CambioDolar(APIView):
+
+    def get(self, request):
+        dolar = requests.get("https://api.apis.net.pe/v1/tipo-cambio-sunat")
+        return Response(dolar.json())

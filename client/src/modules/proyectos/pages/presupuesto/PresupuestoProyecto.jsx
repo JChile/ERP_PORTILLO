@@ -1,13 +1,10 @@
 import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../../../../auth";
 import { useNavigate, useParams } from "react-router-dom";
-import { useFilterGastos } from "../../../campania/hooks/useFilterGastos";
 import {
   Button,
-  FormControl,
-  MenuItem,
+  IconButton,
   Paper,
-  Select,
   Table,
   TableBody,
   TableCell,
@@ -15,19 +12,16 @@ import {
   TableHead,
   TableRow,
 } from "@mui/material";
-import {
-  CustomAlert,
-  CustomCircularProgress,
-  CustomDatePickerMonth,
-} from "../../../../components";
+import { CustomCircularProgress } from "../../../../components";
 import { FiPlusCircle } from "react-icons/fi";
-import { useAlertMUI } from "../../../../hooks";
 import { getProyecto } from "../../helpers";
-import { combinarErrores } from "../../../../utils";
+import { FaRegEdit } from "react-icons/fa";
+import { CreatePresupuesto } from "./CreatePresupuesto";
 
 export const PresupuestoProyecto = () => {
   const { authTokens } = useContext(AuthContext);
   const { idProyecto } = useParams();
+  const [isFormOpen, setIsFormOpen] = useState(false);
   const [project, setProject] = useState({
     nombre: "",
     codigo: "",
@@ -37,36 +31,18 @@ export const PresupuestoProyecto = () => {
 
   const { nombre, codigo, ubicacion, descripcion } = project;
 
-  // hook
-  const { getSemanasPorMes, filtrarGastosPorSemana, showDataParser } =
-    useFilterGastos();
-  // modificador de fecha
-  const [date, setDate] = useState(new Date());
-  // informacion de semana seleccionada
-  const [selectedSemana, setSelectedSemana] = useState(-1);
-  // informacion de data
-  const [data, setData] = useState();
-
-  // handle change semana
-  const handleChangeSemana = ({ target }) => {
-    const { value } = target;
-    setSelectedSemana(value);
-  };
-  // handle change mes
-  const handleChangeDate = (newDate) => {
-    setDate(newDate);
-    setSelectedSemana(-1);
-  };
-
-  // informacion de semanas por mes
-  const semanasFecha = getSemanasPorMes(date);
-  // formato de fechas
-  const fechaFormat = showDataParser(selectedSemana, semanasFecha, date);
-  // data
-
   const [visibleProgress, setVisibleProgress] = useState(false);
+  const [tipoCambio, setTipoCambio] = useState(1);
 
-  const obtenerCampaniasProyecto = async () => {
+  const obtenerTipoCambioDolarActual = async () => {
+    try {
+      setTipoCambio(3.66);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const obtenerProyecto = async () => {
     if (idProyecto) {
       setVisibleProgress(true);
       try {
@@ -88,7 +64,8 @@ export const PresupuestoProyecto = () => {
   };
 
   useEffect(() => {
-    obtenerCampaniasProyecto();
+    obtenerProyecto();
+    obtenerTipoCambioDolarActual();
   }, []);
 
   return (
@@ -111,38 +88,18 @@ export const PresupuestoProyecto = () => {
         </div>
       </section>
       <section className="mt-2 p-2 border-2">
-        <p className="mb-2 font-semibold">Acciones</p>
-        <div className="flex flex-row justify-between mb-4">
-          <div className="flex flex-row gap-x-2">
-            {/* DATE PICKER */}
-            <CustomDatePickerMonth value={date} onNewFecha={handleChangeDate} />
-            {/* SELECT SEMANA */}
-            <FormControl>
-              <Select
-                size="small"
-                value={selectedSemana}
-                onChange={handleChangeSemana}
-              >
-                <MenuItem key={-1} value={-1}>
-                  Todos
-                </MenuItem>
-                {semanasFecha.map((element, index) => (
-                  <MenuItem key={index} value={index}>{`Semana ${
-                    index + 1
-                  }`}</MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-          </div>
+        <div className="flex flex-row justify-end mb-4">
           <Button
             startIcon={<FiPlusCircle />}
             color="primary"
             variant="contained"
+            onClick={() => {
+              setIsFormOpen(true);
+            }}
           >
             Agregar
           </Button>
         </div>
-        <p className="text-center mb-3">{`${fechaFormat["inicio"]} - ${fechaFormat["fin"]}`}</p>
         <div className="mb-4">
           <p className="pb-2 font-semibold">Información de gastos</p>
           <Paper sx={{ borderRadius: "0px" }}>
@@ -155,24 +112,26 @@ export const PresupuestoProyecto = () => {
                   <TableRow
                     sx={{
                       "& th": {
-                        color: "rgba(200,200,200)",
+                        color: "#c8c8c8",
                         backgroundColor: "#404040",
                       },
                     }}
                   >
-                    {semanasFecha.map((element, index) => (
-                      <TableCell
-                        align="center"
-                        key={index}
-                        style={{
-                          backgroundColor:
-                            index === selectedSemana ? "#7de37f" : "#404040",
-                          color: index === selectedSemana ? "black" : "#C8C8C8",
-                        }}
+                    <TableCell>
+                      <IconButton
+                        size="m"
+                        color="primary"
+                        onClick={() => onEditItemSelected(project.id)}
                       >
-                        {`Semana ${index + 1}`}
-                      </TableCell>
-                    ))}
+                        <FaRegEdit />
+                      </IconButton>
+                    </TableCell>
+                    <TableCell>Mes</TableCell>
+                    <TableCell>Presupuesto Soles inicial</TableCell>
+                    <TableCell>Presupuesto Dolares</TableCell>
+                    <TableCell>
+                      A tipo cambio hoy <span>({tipoCambio})</span>
+                    </TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
@@ -185,6 +144,13 @@ export const PresupuestoProyecto = () => {
       </section>
       {/* CIRCULAR PROGRESS */}
       {visibleProgress && <CustomCircularProgress />}
+      {isFormOpen && (
+        <CreatePresupuesto
+          idProyecto={project.id}
+          handleCloseForm={() => setIsFormOpen(false)}
+          tipoCambio={tipoCambio}
+        />
+      )}
     </>
   );
 };

@@ -10,7 +10,6 @@ import { AuthContext } from '../../../../auth'
 import { combinarErrores } from '../../../../utils'
 import { useAlertMUI } from '../../../../hooks'
 
-
 const dataJSON = [
     {
         id: 1,
@@ -18,7 +17,7 @@ const dataJSON = [
         month: "02",
         day: "07",
         date: "2024-02-07",
-        spent: 10
+        spent: 10,
     },
     {
         id: 2,
@@ -26,7 +25,7 @@ const dataJSON = [
         month: "02",
         day: "12",
         date: "2024-02-12",
-        spent: 750
+        spent: 750,
     },
     {
         id: 3,
@@ -34,7 +33,7 @@ const dataJSON = [
         month: "03",
         day: "07",
         date: "2024-03-07",
-        spent: 500
+        spent: 500,
     },
     {
         id: 4,
@@ -42,7 +41,7 @@ const dataJSON = [
         month: "03",
         day: "12",
         date: "2024-03-12",
-        spent: 120
+        spent: 120,
     },
     {
         id: 5,
@@ -50,7 +49,7 @@ const dataJSON = [
         month: "03",
         day: "15",
         date: "2024-03-15",
-        spent: 30
+        spent: 30,
     },
     {
         id: 6,
@@ -58,9 +57,9 @@ const dataJSON = [
         month: "03",
         day: "24",
         date: "2024-03-24",
-        spent: 90
+        spent: 90,
     },
-]
+];
 
 // funcion total gasto por semana
 const calculateSpentByWeek = (dataWeek, data) => {

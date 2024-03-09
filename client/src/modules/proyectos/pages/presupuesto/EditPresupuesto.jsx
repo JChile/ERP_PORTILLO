@@ -1,11 +1,10 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
   Dialog,
   DialogTitle,
   DialogContent,
   DialogActions,
   Button,
-  TextField,
   FormControl,
   InputLabel,
   OutlinedInput,
@@ -13,12 +12,12 @@ import {
 } from "@mui/material";
 import { IoIosAlert } from "react-icons/io";
 import { CustomDatePicker } from "../../../../components";
-import { registrarPresupuesto } from "../../helpers/registrarPresupuesto";
+import { obtenerPresupuestoProyecto } from "../../helpers/obtenerPresupuesto";
+import { updatePresupuesto } from "../../helpers/updatePresupuesto";
 
-export const CreatePresupuesto = ({
-  idProyecto,
+export const EditarPresupuesto = ({
+  idPresupuesto,
   handleCloseForm,
-  tipoCambio,
   submit,
 }) => {
   const [alertDolar, setAlertDolar] = useState(false);
@@ -27,10 +26,8 @@ export const CreatePresupuesto = ({
   const [presupuesto, setPresupuesto] = useState({
     presupuestoSoles: 0,
     presupuestoDolares: 0,
-    tipoCambioSoles: tipoCambio,
+    tipoCambioSoles: 0,
     fechaPresupuesto: "",
-    proyecto: idProyecto,
-    estado: "A",
   });
 
   const {
@@ -38,9 +35,18 @@ export const CreatePresupuesto = ({
     presupuestoDolares,
     tipoCambioSoles,
     fechaPresupuesto,
-    proyecto,
-    estado,
   } = presupuesto;
+
+  const obtenerPresupuesto = async () => {
+    try {
+      const result = await obtenerPresupuestoProyecto(idPresupuesto);
+      setPresupuesto({
+        ...result,
+      });
+    } catch (error) {
+      handleCloseForm();
+    }
+  };
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;
@@ -54,9 +60,9 @@ export const CreatePresupuesto = ({
       setAlertDolar(false);
     }
     if (name === "presupuestoSoles") {
-      newValue = (parseFloat(value) / tipoCambio).toFixed(2);
+      newValue = (parseFloat(value) / tipoCambioSoles).toFixed(2);
     } else if (name === "presupuestoDolares") {
-      newValue = (parseFloat(value) * tipoCambio).toFixed(2);
+      newValue = (parseFloat(value) * tipoCambioSoles).toFixed(2);
     }
 
     setPresupuesto({
@@ -84,7 +90,7 @@ export const CreatePresupuesto = ({
 
   const handleFormSubmit = async () => {
     if (validateData()) {
-      const result = await registrarPresupuesto(presupuesto);
+      const result = await updatePresupuesto(idPresupuesto, presupuesto);
       submit();
     } else {
       setAlertSol(presupuestoSoles <= 0);
@@ -93,15 +99,19 @@ export const CreatePresupuesto = ({
     }
   };
 
+  useEffect(() => {
+    obtenerPresupuesto();
+  }, []);
+
   return (
     <Dialog open={true} onClose={handleCloseForm}>
       <DialogTitle
         className="flex justify-between items-center"
         style={{ background: "#9E154A", color: "#fff" }}
       >
-        <span>Registrar Presupuesto </span>
+        <span>Editar Presupuesto </span>
         <span style={{ fontSize: 13, opacity: 0.7 }}>
-          (Tipo cambio hoy: {tipoCambio})
+          (Tipo cambio registrado: {tipoCambioSoles})
         </span>
       </DialogTitle>
       <DialogContent>

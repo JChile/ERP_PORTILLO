@@ -64,61 +64,90 @@ export default function ListCampaniaReportes() {
           Buscar
         </Button>
       </form>
-      {data && <CampaignTable headers={data.header} rows={data.rows} />}
-      {data && (
-        <CampaignTable
-          headers={data.costoLeadHeader}
-          rows={data.costoLeadRows}
-        />
-      )}
-      {data && (
-        <CampaignTable
-          headers={data.leadAsignadosHeader}
-          rows={data.leadAsignadosRows}
-        />
-      )}
-      {data && (
-        <CampaignTable
-          headers={data.costoLeadAsesorHeader}
-          rows={data.costoLeadAsesorRows}
-        />
-      )}
+      <div className="flex flex-col gap-3 mt-5">
+        {data && (
+          <CampaignTable
+            title={"Inversion"}
+            headers={data.header}
+            rows={data.rows}
+          />
+        )}
+        {data && (
+          <CampaignTable
+            title={"Costo por lead"}
+            headers={data.costoLeadHeader}
+            rows={data.costoLeadRows}
+          />
+        )}
+        {data && (
+          <CampaignTable
+            title={"Leads por asesor"}
+            headers={data.leadAsignadosHeader}
+            rows={data.leadAsignadosRows}
+          />
+        )}
+        {data && (
+          <CampaignTable
+            title={"Inversión por asesor"}
+            headers={data.costoLeadAsesorHeader}
+            rows={data.costoLeadAsesorRows}
+          />
+        )}
+      </div>
     </div>
   );
 }
 
-const CampaignTable = ({ headers, rows }) => {
+const CampaignTable = ({ title, headers, rows }) => {
   return (
-    <TableContainer component={Paper} className="mt-4">
-      <Table>
-        <TableHead>
-          <TableRow
-            sx={{
-              "& th": {
-                color: "rgba(200,200,200)",
-                backgroundColor: "#404040",
-              },
-            }}
-          >
-            {headers.map((header, index) => (
-              <TableCell key={index} align="center" className="font-medium">
-                {header}
-              </TableCell>
-            ))}
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {rows.map((row, rowIndex) => (
-            <TableRow key={rowIndex}>
-              {row.map((cell, cellIndex) => (
-                <TableCell key={cellIndex} align="center">
-                  {cell}
+    <Paper elevation={2} sx={{
+      backgroundColor: "#c9c9c9"
+    }}>
+      <Typography
+        variant="body1"
+        gutterBottom
+
+        sx={{
+          paddingX: 2,
+          paddingY: 1,
+          marginBottom: 0,
+          fontWeight: "500",
+          fontSize: 14
+        }}
+      >
+        {title}
+      </Typography>
+      <TableContainer component={Paper}>
+        <Table>
+          <TableHead>
+            <TableRow
+              sx={{
+                "& th": {
+                  color: "rgba(200,200,200)",
+                  backgroundColor: "#404040",
+                },
+              }}
+            >
+              {headers.map((header, index) => (
+                <TableCell key={index} align="center" className="font-medium">
+                  {header}
                 </TableCell>
               ))}
             </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-    </TableContainer>
+          </TableHead>
+          <TableBody>
+            {rows.map((row, rowIndex) => (
+              <TableRow key={rowIndex}>
+                {row.map((cell, cellIndex) => (
+                  <TableCell key={cellIndex} align="center">
+                    {cell}
+                  </TableCell>
+                ))}
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
+    </Paper>
   );
 };

@@ -17,11 +17,16 @@ import { FiPlusCircle } from "react-icons/fi";
 import { getProyecto } from "../../helpers";
 import { FaRegEdit } from "react-icons/fa";
 import { CreatePresupuesto } from "./CreatePresupuesto";
+import { obtenerTipoCambio } from "../../helpers/obtenerTipoCambio";
+import { obtenerPresupuestosProyecto } from "../../helpers/obtenerPresupuestos";
+import { EditarPresupuesto } from "./EditPresupuesto";
 
 export const PresupuestoProyecto = () => {
   const { authTokens } = useContext(AuthContext);
   const { idProyecto } = useParams();
   const [isFormOpen, setIsFormOpen] = useState(false);
+  const [isFormEdit, setIsFormEdit] = useState(false);
+  const [presupuestoToEdit, setPresupuestoToEdit] = useState(0);
   const [project, setProject] = useState({
     nombre: "",
     codigo: "",
@@ -29,14 +34,27 @@ export const PresupuestoProyecto = () => {
     descripcion: "",
   });
 
-  const { nombre, codigo, ubicacion, descripcion } = project;
+  const { nombre, codigo } = project;
 
   const [visibleProgress, setVisibleProgress] = useState(false);
   const [tipoCambio, setTipoCambio] = useState(1);
+  const [presupuestos, setPresupuestos] = useState([]);
+
+  const obtenerPresupuestos = async () => {
+    setVisibleProgress(true);
+    try {
+      const data = await obtenerPresupuestosProyecto(idProyecto);
+      setPresupuestos(data);
+      setVisibleProgress(false);
+    } catch (error) {
+      setVisibleProgress(false);
+    }
+  };
 
   const obtenerTipoCambioDolarActual = async () => {
     try {
-      setTipoCambio(3.66);
+      const result = await obtenerTipoCambio();
+      setTipoCambio(result);
     } catch (error) {
       console.log(error);
     }
@@ -58,6 +76,21 @@ export const PresupuestoProyecto = () => {
     }
   };
 
+  const onEdit = async (id) => {
+    setPresupuestoToEdit(id);
+    setIsFormEdit(true);
+  };
+
+  const onSubmit = async () => {
+    setIsFormOpen(false);
+    obtenerPresupuestos();
+  };
+
+  const onSubmitEdit = async () => {
+    setIsFormEdit(false);
+    obtenerPresupuestos();
+  };
+
   const navigate = useNavigate();
   const onNavigateBack = () => {
     navigate(-1);
@@ -65,6 +98,7 @@ export const PresupuestoProyecto = () => {
 
   useEffect(() => {
     obtenerProyecto();
+    obtenerPresupuestos();
     obtenerTipoCambioDolarActual();
   }, []);
 
@@ -117,25 +151,48 @@ export const PresupuestoProyecto = () => {
                       },
                     }}
                   >
-                    <TableCell>
-                      <IconButton
-                        size="m"
-                        color="primary"
-                        onClick={() => onEditItemSelected(project.id)}
-                      >
-                        <FaRegEdit />
-                      </IconButton>
-                    </TableCell>
+                    <TableCell>Editar</TableCell>
                     <TableCell>Mes</TableCell>
                     <TableCell>Presupuesto Soles inicial</TableCell>
                     <TableCell>Presupuesto Dolares</TableCell>
                     <TableCell>
-                      A tipo cambio hoy <span>({tipoCambio})</span>
+                      A tipo cambio hoy <span>({tipoCambio.compra})</span>
                     </TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  <TableRow></TableRow>
+                  {presupuestos.map((presupuesto) => (
+                    <TableRow key={presupuesto.id}>
+                      <TableCell>
+                        <IconButton
+                          size="m"
+                          color="primary"
+                          onClick={() => onEdit(presupuesto.id)}
+                        >
+                          <FaRegEdit />
+                        </IconButton>
+                      </TableCell>
+                      <TableCell>
+                        <span style={{ fontWeight: "bold" }}>
+                          {new Date(presupuesto.fechaPresupuesto)
+                            .toLocaleDateString("es-ES", {
+                              month: "long",
+                            })
+                            .toUpperCase()}
+                        </span>
+                      </TableCell>
+                      <TableCell>{presupuesto.presupuestoSoles}</TableCell>
+                      <TableCell>{presupuesto.presupuestoDolares}</TableCell>
+                      <TableCell>
+                        {isNaN(presupuesto.presupuestoDolares) ||
+                        isNaN(tipoCambio.compra)
+                          ? "No se pudo obtener el tipo cambio de hoy"
+                          : (
+                              presupuesto.presupuestoDolares * tipoCambio.compra
+                            ).toFixed(2)}
+                      </TableCell>
+                    </TableRow>
+                  ))}
                 </TableBody>
               </Table>
             </TableContainer>
@@ -148,7 +205,15 @@ export const PresupuestoProyecto = () => {
         <CreatePresupuesto
           idProyecto={project.id}
           handleCloseForm={() => setIsFormOpen(false)}
-          tipoCambio={tipoCambio}
+          tipoCambio={tipoCambio.compra}
+          submit={onSubmit}
+        />
+      )}
+      {isFormEdit && (
+        <EditarPresupuesto
+          idPresupuesto={presupuestoToEdit}
+          handleCloseForm={() => setIsFormEdit(false)}
+          submit={onSubmitEdit}
         />
       )}
     </>

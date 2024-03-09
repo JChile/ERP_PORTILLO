@@ -32,32 +32,33 @@ export const useFilterGastos = () => {
     }
 
     function filtrarGastosPorSemana(data, semanasFecha, selectedSemana, date) {
-        console.log("Se ejecuto")
         const monthNow = date.getMonth() + 1
         const dataFormat = data.filter((element) => {
-            const parserMonth = parseInt(element["month"])
-            if(parserMonth === monthNow){
+            const parserDate = new Date(element["fechaGasto"])
+            const month = parserDate.getMonth() + 1
+            if(month === monthNow){
                 return true
             } else {
                 return false
             }
         })
         if(selectedSemana === -1){
-            return dataFormat;
+            return dataFormat
         } else {
             const inicioSemana = semanasFecha[selectedSemana][0]
             const finSemana = semanasFecha[selectedSemana][1]
             if(inicioSemana && finSemana){
-                return dataFormat.filter((element) => {
-                    const parserDay = parseInt(element["day"])
-                    if (inicioSemana <= parserDay && finSemana >= parserDay){
+                const returnFilter = dataFormat.filter((element) => {
+                    const parserDate = new Date(element["fechaGasto"])
+                    const day = parserDate.getDate()
+                    if (inicioSemana <= day && finSemana >= day){
                         return true
                     } else {
                         return false
                     }
-                    
                 })
-            } 
+                return returnFilter
+            }
         }
     }
 

@@ -19,7 +19,7 @@ import {
   TableRow,
   TextField,
 } from "@mui/material";
-import { MdAdd, MdClose, MdSearch } from "react-icons/md";
+import { MdAdd, MdClose, MdDashboardCustomize, MdInfoOutline, MdSearch } from "react-icons/md";
 import { useAlertMUI, useCustomTablePagination } from "../../../hooks";
 import { combinarErrores, formatDate_ISO861_to_date } from "../../../utils";
 import { AuthContext } from "../../../auth";
@@ -246,7 +246,17 @@ export const ListCampanias = () => {
               Inactivas
             </Button>
           </div>
-          <div className="flex">
+          <div className="flex gap-2">
+            <Link to={"/campania/reportes/"}>
+              <Button
+                endIcon={<MdDashboardCustomize />}
+                variant="contained"
+                color="inherit"
+                sx={{ borderRadius: "0px", textTransform: "capitalize" }}
+              >
+                Reporte
+              </Button>
+            </Link>
             <Link to={"/campania/create/"}>
               <Button
                 endIcon={<MdAdd />}

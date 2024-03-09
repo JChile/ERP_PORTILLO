@@ -125,7 +125,15 @@ from django.db.models import Q
 
 class PresupuestoProyectoList(generics.ListCreateAPIView):
     serializer_class = PresupuestoProyectoSerializer
-    queryset = PresupuestoProyecto.objects.all()
+
+    def get_queryset(self):
+        proyecto_id = self.request.query_params.get('proyecto', None)
+        
+        if proyecto_id is not None:
+            proyecto = get_object_or_404(Proyecto, id=proyecto_id)
+            return PresupuestoProyecto.objects.filter(proyecto=proyecto)
+        
+        return PresupuestoProyecto.objects.all()
 
     def get(self, request):
 

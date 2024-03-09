@@ -7,6 +7,7 @@ import {
   ListCampanias,
   UpdateCampania,
 } from "../pages";
+import ListCampaniaReportes from "../pages/reportes/ListCampaniaReporte";
 
 export const CampaniaRoutes = () => {
   return (
@@ -15,7 +16,8 @@ export const CampaniaRoutes = () => {
       <Route path="create/" element={<CreateCampania />} />
       <Route path="detail/:idCampania" element={<DetailCampania />} />
       <Route path="update/:idCampania" element={<UpdateCampania />} />
-      <Route path="gastos/:idCampania" element={<ListCampaniaGastos />}/>
+      <Route path="gastos/:idCampania" element={<ListCampaniaGastos />} />
+      <Route path="reportes" element={<ListCampaniaReportes />} />
     </Routes>
   );
 };

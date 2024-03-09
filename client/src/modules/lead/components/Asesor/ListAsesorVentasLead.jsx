@@ -24,7 +24,7 @@ import {
   TextField,
 } from "@mui/material";
 import { MdClose, MdFilterAlt, MdSearch } from "react-icons/md";
-import { SelectBoolean, SelectProyecto } from "../../../../components/select";
+import { SelectBoolean, SelectEstadoLead, SelectProyecto } from "../../../../components/select";
 import { RowItemLeadsAsesor } from "./RowItemLeadsAsesor";
 import { MassActionsViewLeadsAsesor } from "./acciones-masivas/MassActionsViewLeadsAsesor";
 
@@ -63,10 +63,11 @@ export const ListAsesorVentasLead = () => {
     nombre: "",
     celular: "",
     proyecto: "",
+    estadoLead: "",
     fecha_asignacion: "",
   });
 
-  const { nombre, celular, proyecto, fecha_asignacion } = filterData;
+  const { nombre, celular, proyecto, estadoLead, fecha_asignacion } = filterData;
 
   // flag reload
   const [flagReload, setFlagReload] = useState(false);
@@ -110,9 +111,11 @@ export const ListAsesorVentasLead = () => {
       const proyectoElement = element["campania"]["proyecto"]["nombre"]
         .toString()
         .toLowerCase();
+      const estadoLeadElement = element["estadoLead"]["nombre"].toString().toLowerCase();
       const fechaAsignacionElement = formatDate_ISO861_to_date(
         element["fecha_asignacion"]
       );
+      console.log(estadoLeadElement)
 
       if (
         (filterData["nombre"] !== "" &&
@@ -122,7 +125,9 @@ export const ListAsesorVentasLead = () => {
         (filterData["proyecto"] !== "" &&
           !proyectoElement.includes(filterData["proyecto"].toLowerCase())) ||
         (filterData["fecha_asignacion"] !== "" &&
-          !fechaAsignacionElement.includes(filterData["fecha_asignacion"]))
+          !fechaAsignacionElement.includes(filterData["fecha_asignacion"])) ||
+        (filterData["estadoLead"] !== "" && 
+          !estadoLeadElement.includes(filterData["estadoLead"].toLowerCase()))
       ) {
         return false;
       }
@@ -339,6 +344,7 @@ export const ListAsesorVentasLead = () => {
                     <TableCell>Nombre</TableCell>
                     <TableCell>Proyecto</TableCell>
                     <TableCell>Campaña</TableCell>
+                    <TableCell align="center">Estado</TableCell>
                     <TableCell>Fecha asignacion</TableCell>
                   </TableRow>
                 </TableHead>
@@ -404,6 +410,13 @@ export const ListAsesorVentasLead = () => {
                     </TableCell>
                     <TableCell>
                       Sin filtros
+                    </TableCell>
+                    <TableCell>
+                      <SelectEstadoLead 
+                        size="small"
+                        onNewInput={handledFilterSelectValues}
+                        defaultValue={estadoLead}
+                      />
                     </TableCell>
                     <TableCell>
                       <CustomDatePickerFilter

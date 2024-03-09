@@ -11,7 +11,6 @@ from django.contrib.auth.hashers import make_password
 from django.contrib.auth.hashers import is_password_usable
 from django.core.validators import MinLengthValidator
 
-
 class EstadoRegistro(models.Model):
     estado = models.CharField(max_length=1, primary_key=True)
     nombre = models.CharField(max_length=50, null=True, default=None)

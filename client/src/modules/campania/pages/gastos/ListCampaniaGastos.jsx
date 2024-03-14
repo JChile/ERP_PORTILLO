@@ -14,6 +14,7 @@ import { consultTipoCambio } from '../../helpers/gastos/consultTipoCambio'
 import { createGastosCampania } from '../../helpers/gastos/createGastosCampania'
 import { getCampania } from '../../helpers/getCampania'
 import { consultPresupuestoProyectoDate } from '../../helpers/gastos/consultPresupuestoProyectoDate'
+import { deleteGastosCampania } from '../../helpers/gastos/deleteGastosCampania'
 
 // funcion total gasto por semana
 const calculateSpentByWeek = (dataWeek, data) => {
@@ -35,6 +36,8 @@ export const ListCampaniaGastos = () => {
     const { idCampania } = useParams()
     // token
     const { authTokens } = useContext(AuthContext);
+    // datos del usuario
+    const { currentUser } = useContext(AuthContext)
     // hook
     const { getSemanasPorMes, filtrarGastosPorSemana, showDataParser } = useFilterGastos();
     // modificador de fecha
@@ -124,13 +127,27 @@ export const ListCampaniaGastos = () => {
     }
 
     // actualización  de gasto
-    const actualizarGastoCampania = () => {
+    const actualizarGastoCampania = async () => {
 
     }
 
     // eliminacion de gasto
-    const deleteGastoCampania = () => {
-
+    const eliminarGastoCampania = async (idGastoCampania) => {
+        try {
+            await deleteGastosCampania(idGastoCampania, authTokens["access"])
+            const filterData = data.filter((element) => element.id !== idGastoCampania)
+            setData(filterData)
+        } catch (e) {
+            // ocultar el progress
+            setVisibleProgress(false)
+            const pilaError = combinarErrores(error)
+            // mostramos feedback de error
+            setFeedbackMessages({
+                style_message: "error",
+                feedback_description_error: pilaError,
+            });
+            handleClickFeedback()
+        }
     }
 
     // agregar gasto de campañas
@@ -140,25 +157,43 @@ export const ListCampaniaGastos = () => {
         const mes = dateRegistro.getMonth() + 1
         const idProyecto = proyecto["id"]
 
-        console.log(idProyecto, anio, mes)
-
         try {
             const resultPeticionPresupuesto = await consultPresupuestoProyectoDate(
                 { proyecto: idProyecto, anio, mes }
             )
             console.log(resultPeticionPresupuesto)
+            const { message } = resultPeticionPresupuesto;
+            if (message) {
+                // mostramos feedback de error
+                setFeedbackMessages({
+                    style_message: "warning",
+                    feedback_description_error: message,
+                });
+                handleClickFeedback();
+            } else {
+                const { id: idProyectoPresupuesto } = resultPeticionPresupuesto
+                const formatBodyCreation = {
+                    gastoSoles: parseFloat(body["gastoSoles"]),
+                    gastoDolares: parseFloat(body["gastoDolares"]),
+                    tipoCambioSoles: parseFloat(body["tipoCambioSoles"]),
+                    campania: parseInt(idCampania),
+                    presupuestoProyecto: idProyectoPresupuesto,
+                    fechaGasto: body["fechaGasto"],
+                    usuarioCreador: currentUser["user_id"]
+                }
+                const resultPeticionGastoCampania = await createGastosCampania(formatBodyCreation, authTokens["access"])
+                const dataFormatPush = [...data, resultPeticionGastoCampania]
+                setData(dataFormatPush)
+            }
         }
         catch (e) {
-            console.log(e)
+            let jsonParser = JSON.stringify(e)
+            setFeedbackMessages({
+                style_message: "warning",
+                feedback_description_error: jsonParser,
+            });
+            handleClickFeedback();
         }
-        // const formatBody = {
-        //     ...body,
-        //     mes, 
-        //     anio
-        // }
-        // const resultPeticion = await createGastosCampania(body, authTokens)
-        // console.log(resultPeticion)
-
     }
 
     // informacion de semanas por mes
@@ -292,7 +327,7 @@ export const ListCampaniaGastos = () => {
                                     <TableBody>
                                         {
                                             filteredData.map((element) => (
-                                                <RowGastoCampania key={element["id"]} element={element} />
+                                                <RowGastoCampania key={element["id"]} element={element} onDeleteGastoCampania={eliminarGastoCampania} />
                                             ))
                                         }
                                     </TableBody>
@@ -503,13 +538,5 @@ const DialogCreateGastoCampania = ({ handleConfirm }) => {
             </Dialog>
         </div>
     );
-
-}
-
-const DialogUpdateGastoCampania = () => {
-
-}
-
-const DialogDeleteGastoCampania = () => {
 
 }

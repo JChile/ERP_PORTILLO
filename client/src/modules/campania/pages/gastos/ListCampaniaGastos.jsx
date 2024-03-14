@@ -13,6 +13,7 @@ import { IoIosAlert } from 'react-icons/io'
 import { consultTipoCambio } from '../../helpers/gastos/consultTipoCambio'
 import { createGastosCampania } from '../../helpers/gastos/createGastosCampania'
 import { getCampania } from '../../helpers/getCampania'
+import { consultPresupuestoProyectoDate } from '../../helpers/gastos/consultPresupuestoProyectoDate'
 
 // funcion total gasto por semana
 const calculateSpentByWeek = (dataWeek, data) => {
@@ -134,9 +135,29 @@ export const ListCampaniaGastos = () => {
 
     // agregar gasto de campañas
     const createGastoCampania = async (body) => {
-        console.log(body)
-        const resultPeticion = await createGastosCampania(body, authTokens)
-        console.log(resultPeticion)
+        const dateRegistro = new Date(body["fechaGasto"])
+        const anio = dateRegistro.getFullYear()
+        const mes = dateRegistro.getMonth() + 1
+        const idProyecto = proyecto["id"]
+
+        console.log(idProyecto, anio, mes)
+
+        try {
+            const resultPeticionPresupuesto = await consultPresupuestoProyectoDate(
+                { proyecto: idProyecto, anio, mes }
+            )
+            console.log(resultPeticionPresupuesto)
+        }
+        catch (e) {
+            console.log(e)
+        }
+        // const formatBody = {
+        //     ...body,
+        //     mes, 
+        //     anio
+        // }
+        // const resultPeticion = await createGastosCampania(body, authTokens)
+        // console.log(resultPeticion)
 
     }
 
@@ -413,7 +434,7 @@ const DialogCreateGastoCampania = ({ handleConfirm }) => {
                     <form>
                         <FormControl fullWidth variant="outlined" margin="normal">
                             <InputLabel htmlFor="gastoSoles">
-                                gasto en Soles
+                                Gasto en Soles
                             </InputLabel>
                             <OutlinedInput
                                 id="gastoSoles"
@@ -436,7 +457,7 @@ const DialogCreateGastoCampania = ({ handleConfirm }) => {
 
                         <FormControl fullWidth variant="outlined" margin="normal">
                             <InputLabel htmlFor="gastoDolares">
-                                gasto en Dólares
+                                Gasto en Dólares
                             </InputLabel>
                             <OutlinedInput
                                 id="gastoDolares"

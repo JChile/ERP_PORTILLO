@@ -147,7 +147,7 @@ class PresupuestoProyectoList(generics.ListCreateAPIView):
             mes = int(mes)
             presupuestoProyecto_queryset = PresupuestoProyecto.objects.filter(Q(fechaPresupuesto__month=mes) & Q(fechaPresupuesto__year=anio), proyecto=proyecto).first()
             if presupuestoProyecto_queryset == None :
-                return Response({"message": "No se encontro presupuesto proyecto con los datos indicados"},status=404)
+                return Response({"message": "No se encontro presupuesto proyecto con los datos indicados"})
             presupuestoProyecto_data = PresupuestoProyectoSerializer(presupuestoProyecto_queryset)
             return Response(presupuestoProyecto_data.data)
         presupuestoProyecto_data = PresupuestoProyectoSerializer(presupuestoProyecto_queryset, many = True)

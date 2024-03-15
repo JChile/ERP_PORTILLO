@@ -1,6 +1,7 @@
 node_modules/
 static/ 
 media/
+virtualenv/
 # Django #
 *.log
 *.pot

@@ -82,18 +82,16 @@ class leadConfirmation:
             self.errores.append("No se proporcionó el numero de celular.")
 
         else:
-            if len(celular) != 9 or not celular.startswith('9') or not celular.isdigit():
-                self.errores.append(
-                    "El numero de celular no cumple con los requisitos.")
 
-            elif celular in phone_numbers:
+
+            if celular in phone_numbers:
                 self.errores.append(
                     "Este numero de celular ya esta registrado en el proyecto en un plazo de 60 dias.")
 
     def check_asesor(self):
         if "asesor" in self.data:
             asesor = get_or_none(
-                User, codigoAsesor=self.data["asesor"], estado="A")
+                User, codigoAsesor=self.data["asesor"].strip(), estado="A")
             if asesor is not None:
                 self.data["asesor"] = asesor.id
             else:
@@ -106,7 +104,7 @@ class leadConfirmation:
 
         else:
             campania = get_or_none(
-                Campania, codigo=self.data["campania"], estado="A")
+                Campania, codigo=self.data["campania"].strip(), estado="A")
             if campania is not None:
                 if campania.proyecto.id != proyecto_id:
                     self.errores.append(
@@ -144,11 +142,7 @@ class leadCreation:
             self.errores.append("No se proporcionó el numero de celular.")
 
         else:
-            if len(celular) != 9 or not celular.startswith('9') or not celular.isdigit():
-                self.errores.append(
-                    "El numero de celular no cumple con los requisitos.")
-
-            elif self.flag_campania == True:
+            if self.flag_campania == True:
                 proyecto_id = get_or_none(
                     Campania, id=self.data["campania"]).proyecto.id
                 filtered_numbers = {

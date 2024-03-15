@@ -265,25 +265,9 @@ export const UpdateProyecto = () => {
                     onChange={handledForm}
                   />
                 </label>
-
-                <label className="flex flex-col gap-y-1 ">
-                  <span className="after:content-['*'] after:ml-0.5 after:text-yellow-500 block text-sm font-medium">
-                    Código del proyecto
-                  </span>
-                  <input
-                    type="text"
-                    name="codigo"
-                    className="mt-1 px-3 py-2 bg-white border shadow-sm border-slate-300 placeholder-slate-400 focus:outline-none focus:border-sky-500 focus:ring-sky-500 block w-full rounded-md sm:text-sm focus:ring-1"
-                    placeholder="Código del proyecto"
-                    autoComplete="off"
-                    value={codigo}
-                    disabled={true}
-                    onChange={handledForm}
-                  />
-                </label>
               </div>
               {/* CODIGO DE PROYECTO */}
-              <div className="w-5/12 flex flex-col gap-y-5">
+              <div className="w-5/12 flex flex-row gap-y-5 gap-x-4">
                 <label className="flex flex-col gap-y-1 ">
                   <span className="after:content-['*'] after:ml-0.5 after:text-yellow-500 block text-sm font-medium">
                     Código del proyecto

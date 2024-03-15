@@ -148,8 +148,8 @@ export const dataMapper = async ({ query, token }) => {
     for (let semana in data) {
       const datosSemana =
         data[semana].asesores.find((a) => a.username === asesor) || {};
-      const inversionAsesorDolares = datosSemana.numeroLeads * dolaresLeadList[semana - 1];
-      const inversionAsesorSoles = datosSemana.numeroLeads * solesLeadList[semana - 1];
+      const inversionAsesorDolares = parseFloat((datosSemana.numeroLeads * dolaresLeadList[semana - 1]).toFixed(2));
+      const inversionAsesorSoles = parseFloat((datosSemana.numeroLeads * solesLeadList[semana - 1]).toFixed(2));
       sumDolares += inversionAsesorDolares;
       sumSoles += inversionAsesorSoles;
       row.push(inversionAsesorDolares);

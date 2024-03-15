@@ -27,8 +27,6 @@ export const UpdateCampania = () => {
     nombre: "",
     fecha_estimada: "",
     fecha_cierre: "",
-    coste_estimado: 0,
-    coste_real: 0,
     descripcion: "",
     estado: "",
     proyecto: null,
@@ -39,8 +37,6 @@ export const UpdateCampania = () => {
     nombre,
     fecha_estimada,
     fecha_cierre,
-    coste_estimado,
-    coste_real,
     descripcion,
     estado,
     proyecto,
@@ -99,8 +95,6 @@ export const UpdateCampania = () => {
     nombre,
     fecha_estimada,
     fecha_cierre,
-    coste_estimado,
-    coste_real,
     estado,
     proyecto,
     categoria
@@ -115,12 +109,6 @@ export const UpdateCampania = () => {
     }
     if (!fecha_cierre) {
       errors.push("- La fecha de cierre es obligatoria.");
-    }
-    if (!coste_estimado) {
-      errors.push("- El costo estimado es obligatorio.");
-    }
-    if (!coste_real) {
-      errors.push("- El costo real es obligatorio.");
     }
     if (!estado) {
       errors.push("- El estado es obligatorio.");
@@ -145,8 +133,6 @@ export const UpdateCampania = () => {
       nombre,
       fecha_estimada,
       fecha_cierre,
-      coste_estimado,
-      coste_real,
       estado,
       proyecto,
       categoria
@@ -230,7 +216,7 @@ export const UpdateCampania = () => {
           >
             <div className="flex flex-row gap-y-6 gap-x-8">
               <div className="w-6/12 flex flex-col gap-y-5">
-                <label className="block flex flex-col gap-y-1 ">
+                <label className="flex flex-col gap-y-1 ">
                   <span className="after:content-['*'] after:ml-0.5 after:text-yellow-500 block text-sm font-medium">
                     Nombre de la campaña
                   </span>
@@ -244,23 +230,9 @@ export const UpdateCampania = () => {
                   />
                 </label>
 
-                <label className="block flex flex-col gap-y-1">
-                  <span className="after:content-['*'] after:ml-0.5 after:text-yellow-500 block text-sm font-medium">
-                    Costo estimado
-                  </span>
-                  <input
-                    type="number"
-                    name="coste_estimado"
-                    className="mt-1 px-3 py-2  bg-white border shadow-sm border-slate-300 placeholder-slate-400 focus:outline-none focus:border-sky-500 focus:ring-sky-500 block w-full rounded-md sm:text-sm focus:ring-1"
-                    placeholder="Costo estimado"
-                    value={coste_estimado}
-                    onChange={handledForm}
-                  />
-                </label>
-
                 <label
                   htmlFor="fecha_estimada"
-                  className="block flex flex-col gap-y-1"
+                  className="flex flex-col gap-y-1"
                 >
                   <span className="after:content-['*'] after:ml-0.5 after:text-yellow-500 block text-sm font-medium">
                     Fecha estimado
@@ -271,7 +243,7 @@ export const UpdateCampania = () => {
                   />
                 </label>
 
-                <label className="block flex flex-col gap-y-1">
+                <label className="flex flex-col gap-y-1">
                   <span className="after:content-['*'] after:ml-0.5 after:text-yellow-500 block text-sm font-medium">
                     Proyecto
                   </span>
@@ -283,7 +255,7 @@ export const UpdateCampania = () => {
               </div>
 
               <div className="w-6/12 flex flex-col gap-y-5">
-                <label className="block flex flex-col gap-y-1">
+                <label className="flex flex-col gap-y-1">
                   <span className="after:content-['*'] after:ml-0.5 after:text-yellow-500 block text-sm font-medium">
                     Estado inicial
                   </span>
@@ -303,21 +275,7 @@ export const UpdateCampania = () => {
                   </Select>
                 </label>
 
-                <label className="block flex flex-col gap-y-1">
-                  <span className="after:content-['*'] after:ml-0.5 after:text-yellow-500 block text-sm font-medium">
-                    Costo real
-                  </span>
-                  <input
-                    type="number"
-                    name="coste_real"
-                    className="mt-1 px-3 py-2 bg-white border shadow-sm border-slate-300 placeholder-slate-400 focus:outline-none focus:border-sky-500 focus:ring-sky-500 block w-full rounded-md sm:text-sm focus:ring-1"
-                    placeholder="Costo real"
-                    value={coste_real}
-                    onChange={handledForm}
-                  />
-                </label>
-
-                <label className="block flex flex-col gap-y-1">
+                <label className="flex flex-col gap-y-1">
                   <span className="after:content-['*'] after:ml-0.5 after:text-yellow-500 block text-sm font-medium">
                     Fecha estimado cierre
                   </span>
@@ -328,7 +286,7 @@ export const UpdateCampania = () => {
                   />
                 </label>
 
-                <label className="block flex flex-col gap-y-1">
+                <label className="flex flex-col gap-y-1">
                   <span className="after:content-['*'] after:ml-0.5 after:text-yellow-500 block text-sm font-medium">
                     Subcategoria
                   </span>
@@ -342,7 +300,7 @@ export const UpdateCampania = () => {
             <div>
               <label
                 htmlFor="descripcion"
-                className="block flex flex-col gap-y-1"
+                className="flex flex-col gap-y-1"
               >
                 <span className="after:content-['*'] after:ml-0.5 after:text-yellow-500 block text-sm font-medium">
                   Descripción

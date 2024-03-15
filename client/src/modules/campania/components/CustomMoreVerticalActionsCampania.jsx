@@ -76,12 +76,12 @@ export const CustomMoreVerticalActionsCampania = ({
             onCloseMenu={handleClose}
           />
         )}
-        {!activeOnDelete && activeOnActive && (
+        {/* {!activeOnDelete && activeOnActive && (
           <MenuItem key={"Activar"} onClick={onActive}>
             <FiCheckCircle />
             <span className="ps-2">Activar</span>
           </MenuItem>
-        )}
+        )} */}
         {activeOnGastos && (
           <MenuItem key={"gastos"} onClick={onViewGasto}>
             <FiDollarSign />

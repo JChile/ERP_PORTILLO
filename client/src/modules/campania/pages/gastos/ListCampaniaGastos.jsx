@@ -108,9 +108,7 @@ export const ListCampaniaGastos = () => {
     const traerGastoCampania = async () => {
         setVisibleProgress(true);
         try {
-            const resultPeticion = await getGastosCampaniaById({
-                campania: idCampania
-            }, authTokens["access"])
+            const resultPeticion = await getGastosCampaniaById(`campania=${idCampania}`, authTokens["access"])
             console.log(resultPeticion)
             setVisibleProgress(false);
             setData(resultPeticion)
@@ -178,14 +176,15 @@ export const ListCampaniaGastos = () => {
 
     // agregar gasto de campañas
     const createGastoCampania = async (body) => {
-        const dateRegistro = new Date(body["fechaGasto"])
-        const anio = dateRegistro.getFullYear()
-        const mes = dateRegistro.getMonth() + 1
+        const dateRegistro = new Date(body["fechaGasto"] + "T00:00:00Z")
+        const anio = dateRegistro.getUTCFullYear()
+        const mes = dateRegistro.getUTCMonth()
+        const mesFormat = mes + 1
         const idProyecto = proyecto["id"]
 
         try {
             const resultPeticionPresupuesto = await consultPresupuestoProyectoDate(
-                { proyecto: idProyecto, anio, mes }
+                { proyecto: idProyecto, anio: anio, mes: mesFormat }
             )
             const { message } = resultPeticionPresupuesto;
             if (message) {

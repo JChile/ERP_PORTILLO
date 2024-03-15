@@ -178,12 +178,13 @@ export const ListCampaniaGastos = () => {
     const createGastoCampania = async (body) => {
         const dateRegistro = new Date(body["fechaGasto"])
         const anio = dateRegistro.getFullYear()
-        const mes = dateRegistro.getMonth() + 1
+        const mes = dateRegistro.getMonth()
+        const mesFormat = mes + 1
         const idProyecto = proyecto["id"]
 
         try {
             const resultPeticionPresupuesto = await consultPresupuestoProyectoDate(
-                { proyecto: idProyecto, anio, mes }
+                { proyecto: idProyecto, anio, mesFormat }
             )
             const { message } = resultPeticionPresupuesto;
             if (message) {

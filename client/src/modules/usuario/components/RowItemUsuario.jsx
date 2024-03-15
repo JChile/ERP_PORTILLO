@@ -31,11 +31,10 @@ export const RowItemUsuario = ({ item, onDeleteUsuario }) => {
           onEdit={onEditItemSelected}
           onDelete={onDeleteItemSelected}
           titleDialog="Dialogo de confirmación"
-          descriptionDialog={`${
-            nameGroup === "asesor"
+          descriptionDialog={`${nameGroup === "asesor"
               ? "Se ha detectado que este usuario es asesor. Recuerda que esta operación desasociará sus lead en un rango de 1 mes."
               : ""
-          }¿Estas seguro de eliminar este usuario?`}
+            }¿Estas seguro de eliminar este usuario?`}
         />
       </TableCell>
       <TableCell>

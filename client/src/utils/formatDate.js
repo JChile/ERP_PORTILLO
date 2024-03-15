@@ -30,12 +30,12 @@ export const formatDate_ISO861_to_formatdate = (fecha_hora_iso) => {
 // FUNCION PARA PARSEAR LA FECHA DE FORMATO ISO DATE A UN FORMATO MAS VISUAL
 export const formatDate_ISO861_to_formatOnlyDate = (fecha_hora_iso) => {
   // Crear un objeto Date a partir de la cadena de fecha
-  let fecha = new Date(fecha_hora_iso);
+  let fecha = new Date(fecha_hora_iso + "T00:00:00Z");
 
   // Obtener los componentes de la fecha
-  let year = fecha.getFullYear();
-  let month = String(fecha.getMonth() + 1).padStart(2, "0"); // Añadir ceros a la izquierda si es necesario
-  let day = String(fecha.getDate()).padStart(2, "0");
+  let year = fecha.getUTCFullYear();
+  let month = String(fecha.getUTCMonth() + 1).padStart(2, "0"); // Añadir ceros a la izquierda si es necesario
+  let day = String(fecha.getUTCDate()).padStart(2, "0");
 
   // Formatear la fecha como "YYYY/MM/DD HH:mm:ss"
   let fechaFormateada = `${day}/${month}/${year}`;

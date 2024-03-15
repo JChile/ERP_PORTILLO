@@ -121,6 +121,7 @@ class ProyectoDetail(generics.RetrieveUpdateDestroyAPIView):
         return Response(proyecto_data)
 
 
+from django.db.models import Q
 
 class PresupuestoProyectoList(generics.ListCreateAPIView):
     serializer_class = PresupuestoProyectoSerializer
@@ -134,6 +135,23 @@ class PresupuestoProyectoList(generics.ListCreateAPIView):
         
         return PresupuestoProyecto.objects.all()
 
+    def get(self, request):
+
+        anio = request.query_params.get('anio')
+        mes = request.query_params.get('mes')
+        proyecto = request.query_params.get('proyecto')
+
+        presupuestoProyecto_queryset = PresupuestoProyecto.objects.all()
+        if anio != None and mes != None:
+            anio = int(anio)
+            mes = int(mes)
+            presupuestoProyecto_queryset = PresupuestoProyecto.objects.filter(Q(fechaPresupuesto__month=mes) & Q(fechaPresupuesto__year=anio), proyecto=proyecto).first()
+            if presupuestoProyecto_queryset == None :
+                return Response({"message": "No se encontro presupuesto proyecto con los datos indicados"})
+            presupuestoProyecto_data = PresupuestoProyectoSerializer(presupuestoProyecto_queryset)
+            return Response(presupuestoProyecto_data.data)
+        presupuestoProyecto_data = PresupuestoProyectoSerializer(presupuestoProyecto_queryset, many = True)
+        return Response(presupuestoProyecto_data.data)
 
 class PresupuestoProyectoDetail(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = PresupuestoProyectoSerializer

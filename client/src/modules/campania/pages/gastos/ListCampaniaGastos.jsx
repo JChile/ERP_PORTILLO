@@ -10,6 +10,11 @@ import { AuthContext } from '../../../../auth'
 import { combinarErrores } from '../../../../utils'
 import { useAlertMUI } from '../../../../hooks'
 import { IoIosAlert } from 'react-icons/io'
+import { consultTipoCambio } from '../../helpers/gastos/consultTipoCambio'
+import { createGastosCampania } from '../../helpers/gastos/createGastosCampania'
+import { getCampania } from '../../helpers/getCampania'
+import { consultPresupuestoProyectoDate } from '../../helpers/gastos/consultPresupuestoProyectoDate'
+import { deleteGastosCampania } from '../../helpers/gastos/deleteGastosCampania'
 
 // funcion total gasto por semana
 const calculateSpentByWeek = (dataWeek, data) => {
@@ -31,6 +36,8 @@ export const ListCampaniaGastos = () => {
     const { idCampania } = useParams()
     // token
     const { authTokens } = useContext(AuthContext);
+    // datos del usuario
+    const { currentUser } = useContext(AuthContext)
     // hook
     const { getSemanasPorMes, filtrarGastosPorSemana, showDataParser } = useFilterGastos();
     // modificador de fecha
@@ -38,8 +45,16 @@ export const ListCampaniaGastos = () => {
     // informacion de semana seleccionada
     const [selectedSemana, setSelectedSemana] = useState(-1);
     // informacion de data
-    // const [data, setData] = useState(dataJSON)
     const [data, setData] = useState([])
+    // data campania
+    const [dataCampania, setDataCampania] = useState(
+        {
+            nombre: "",
+            proyecto: {},
+            codigo: ""
+        }
+    )
+    const { nombre, proyecto, codigo } = dataCampania
     // hook alert
     const {
         feedbackCreate,
@@ -69,13 +84,32 @@ export const ListCampaniaGastos = () => {
         setSelectedSemana(-1)
     }
 
+    const traerInformacionCampania = async () => {
+        try {
+            const resultPeticion = await getCampania(idCampania, authTokens["access"])
+            console.log(resultPeticion)
+            setDataCampania(resultPeticion)
+        } catch (error) {
+            // ocultar el progress
+            setVisibleProgress(false);
+            const pilaError = combinarErrores(error);
+            // mostramos feedback de error
+            setFeedbackMessages({
+                style_message: "error",
+                feedback_description_error: pilaError,
+            });
+            handleClickFeedback();
+        }
+
+    }
+
     // traer gastos de campaña
     const traerGastoCampania = async () => {
         setVisibleProgress(true);
         try {
             const resultPeticion = await getGastosCampaniaById({
                 campania: idCampania
-            }, authTokens)
+            }, authTokens["access"])
             console.log(resultPeticion)
             setVisibleProgress(false);
             setData(resultPeticion)
@@ -93,18 +127,73 @@ export const ListCampaniaGastos = () => {
     }
 
     // actualización  de gasto
-    const actualizarGastoCampania = () => {
+    const actualizarGastoCampania = async () => {
 
     }
 
     // eliminacion de gasto
-    const deleteGastoCampania = () => {
-
+    const eliminarGastoCampania = async (idGastoCampania) => {
+        try {
+            await deleteGastosCampania(idGastoCampania, authTokens["access"])
+            const filterData = data.filter((element) => element.id !== idGastoCampania)
+            setData(filterData)
+        } catch (e) {
+            // ocultar el progress
+            setVisibleProgress(false)
+            const pilaError = combinarErrores(error)
+            // mostramos feedback de error
+            setFeedbackMessages({
+                style_message: "error",
+                feedback_description_error: pilaError,
+            });
+            handleClickFeedback()
+        }
     }
 
     // agregar gasto de campañas
-    const createGastoCampania = () => {
+    const createGastoCampania = async (body) => {
+        const dateRegistro = new Date(body["fechaGasto"])
+        const anio = dateRegistro.getFullYear()
+        const mes = dateRegistro.getMonth() + 1
+        const idProyecto = proyecto["id"]
 
+        try {
+            const resultPeticionPresupuesto = await consultPresupuestoProyectoDate(
+                { proyecto: idProyecto, anio, mes }
+            )
+            console.log(resultPeticionPresupuesto)
+            const { message } = resultPeticionPresupuesto;
+            if (message) {
+                // mostramos feedback de error
+                setFeedbackMessages({
+                    style_message: "warning",
+                    feedback_description_error: message,
+                });
+                handleClickFeedback();
+            } else {
+                const { id: idProyectoPresupuesto } = resultPeticionPresupuesto
+                const formatBodyCreation = {
+                    gastoSoles: parseFloat(body["gastoSoles"]),
+                    gastoDolares: parseFloat(body["gastoDolares"]),
+                    tipoCambioSoles: parseFloat(body["tipoCambioSoles"]),
+                    campania: parseInt(idCampania),
+                    presupuestoProyecto: idProyectoPresupuesto,
+                    fechaGasto: body["fechaGasto"],
+                    usuarioCreador: currentUser["user_id"]
+                }
+                const resultPeticionGastoCampania = await createGastosCampania(formatBodyCreation, authTokens["access"])
+                const dataFormatPush = [...data, resultPeticionGastoCampania]
+                setData(dataFormatPush)
+            }
+        }
+        catch (e) {
+            let jsonParser = JSON.stringify(e)
+            setFeedbackMessages({
+                style_message: "warning",
+                feedback_description_error: jsonParser,
+            });
+            handleClickFeedback();
+        }
     }
 
     // informacion de semanas por mes
@@ -115,6 +204,7 @@ export const ListCampaniaGastos = () => {
     const filteredData = filtrarGastosPorSemana(data, semanasFecha, selectedSemana, date)
 
     useEffect(() => {
+        traerInformacionCampania()
         traerGastoCampania()
     }, [])
 
@@ -127,12 +217,12 @@ export const ListCampaniaGastos = () => {
                     <div className='grid grid-cols-2 gap-4 mb-4'>
                         <div className="flex">
                             <span className="font-medium mr-3">Nombre: </span>
-                            <span>Campaña de cierto valor</span>
+                            <span>{nombre}</span>
                         </div>
 
                         <div className='flex'>
                             <span className="font-medium mr-3">Código: </span>
-                            <span>#MG-CW-0303</span>
+                            <span>{codigo}</span>
                         </div>
 
                     </div>
@@ -237,7 +327,7 @@ export const ListCampaniaGastos = () => {
                                     <TableBody>
                                         {
                                             filteredData.map((element) => (
-                                                <RowGastoCampania key={element["id"]} element={element} />
+                                                <RowGastoCampania key={element["id"]} element={element} onDeleteGastoCampania={eliminarGastoCampania} />
                                             ))
                                         }
                                     </TableBody>
@@ -269,17 +359,17 @@ const DialogCreateGastoCampania = ({ handleConfirm }) => {
     const [alertSol, setAlertSol] = useState(false)
     const [alertFecha, setAlertFecha] = useState(false)
     const [tipoCambio, setTipoCambio] = useState(3.66)
-    const [presupuesto, setPresupuesto] = useState({
-        presupuestoSoles: 0,
-        presupuestoDolares: 0,
-        fechaPresupuesto: "",
+    const [gasto, setgasto] = useState({
+        gastoSoles: 0,
+        gastoDolares: 0,
+        fechaGasto: "",
     });
 
     const {
-        presupuestoSoles,
-        presupuestoDolares,
-        fechaPresupuesto,
-    } = presupuesto;
+        gastoSoles,
+        gastoDolares,
+        fechaGasto,
+    } = gasto;
 
     const handleClickOpen = () => {
         setOpen(true);
@@ -300,19 +390,20 @@ const DialogCreateGastoCampania = ({ handleConfirm }) => {
             setAlertSol(false);
             setAlertDolar(false);
         }
-        if (name === "presupuestoSoles") {
-            newValue = parseFloat(value) / tipoCambio;
-        } else if (name === "presupuestoDolares") {
-            newValue = parseFloat(value) * tipoCambio;
+        if (name === "gastoSoles") {
+            newValue = parseFloat((parseFloat(value) / tipoCambio).toFixed(2));
+
+        } else if (name === "gastoDolares") {
+            newValue = parseFloat((parseFloat(value) * tipoCambio).toFixed(2));
         }
 
-        setPresupuesto({
-            ...presupuesto,
+        setgasto({
+            ...gasto,
             [name]: value,
             // Actualiza el otro campo en tiempo real
-            ...(name === "presupuestoSoles"
-                ? { presupuestoDolares: newValue }
-                : { presupuestoSoles: newValue }),
+            ...(name === "gastoSoles"
+                ? { gastoDolares: newValue }
+                : { gastoSoles: newValue }),
         });
     };
 
@@ -320,36 +411,43 @@ const DialogCreateGastoCampania = ({ handleConfirm }) => {
         if (newDate != "") {
             setAlertFecha(false);
         }
-        setPresupuesto({
-            ...presupuesto,
-            fechaPresupuesto: newDate,
+        setgasto({
+            ...gasto,
+            fechaGasto: newDate,
         });
     };
 
     const validateData = () =>
-        presupuestoSoles > 0 && presupuestoDolares > 0 && fechaPresupuesto !== "";
+        gastoSoles > 0 && gastoDolares > 0 && fechaGasto !== "";
 
     const handleFormSubmit = () => {
         if (validateData()) {
-            console.log("creado correctamente");
-            console.log(presupuesto);
-            handleConfirm();
+            const body = {
+                ...gasto,
+                tipoCambioSoles: tipoCambio
+            }
+            handleConfirm(body);
             handleClose();
         } else {
-            setAlertSol(presupuestoSoles <= 0);
-            setAlertDolar(presupuestoDolares <= 0);
-            setAlertFecha(fechaPresupuesto === "");
+            setAlertSol(gastoSoles <= 0);
+            setAlertDolar(gastoDolares <= 0);
+            setAlertFecha(fechaGasto === "");
         }
     };
 
     // consultar el tipo de cambio
-    const consultarTipoCambio = async () => {
-        const resultPeticion = await consultarTipoCambio()
-        console.log(resultPeticion)
+    const consultarTipoCambioDolares = async () => {
+        try {
+            const resultPeticion = await consultTipoCambio()
+            const { compra } = resultPeticion
+            setTipoCambio(compra)
+        } catch (e) {
+            console.log(e)
+        }
     }
 
     useEffect(() => {
-        consultarTipoCambio()
+        consultarTipoCambioDolares()
     }, [])
 
     return (
@@ -362,7 +460,7 @@ const DialogCreateGastoCampania = ({ handleConfirm }) => {
                     className="flex justify-between items-center"
                     style={{ background: "#9E154A", color: "#fff" }}
                 >
-                    <span>Registrar Presupuesto </span>
+                    <span>Registrar gasto </span>
                     <span style={{ fontSize: 13, opacity: 0.7 }}>
                         (Tipo cambio hoy: {tipoCambio})
                     </span>
@@ -370,14 +468,14 @@ const DialogCreateGastoCampania = ({ handleConfirm }) => {
                 <DialogContent>
                     <form>
                         <FormControl fullWidth variant="outlined" margin="normal">
-                            <InputLabel htmlFor="presupuestoSoles">
-                                Presupuesto en Soles
+                            <InputLabel htmlFor="gastoSoles">
+                                Gasto en Soles
                             </InputLabel>
                             <OutlinedInput
-                                id="presupuestoSoles"
-                                name="presupuestoSoles"
+                                id="gastoSoles"
+                                name="gastoSoles"
                                 type="number" // Cambia esto según el tipo correcto de tu dato
-                                value={presupuestoSoles}
+                                value={gastoSoles}
                                 onChange={handleInputChange}
                                 endAdornment={
                                     <InputAdornment position="end">
@@ -388,19 +486,19 @@ const DialogCreateGastoCampania = ({ handleConfirm }) => {
                                         )}
                                     </InputAdornment>
                                 }
-                                label="Presupuesto en Soles"
+                                label="gasto en Soles"
                             />
                         </FormControl>
 
                         <FormControl fullWidth variant="outlined" margin="normal">
-                            <InputLabel htmlFor="presupuestoDolares">
-                                Presupuesto en Dólares
+                            <InputLabel htmlFor="gastoDolares">
+                                Gasto en Dólares
                             </InputLabel>
                             <OutlinedInput
-                                id="presupuestoDolares"
-                                name="presupuestoDolares"
+                                id="gastoDolares"
+                                name="gastoDolares"
                                 type="number" // Cambia esto según el tipo correcto de tu dato
-                                value={presupuestoDolares}
+                                value={gastoDolares}
                                 onChange={handleInputChange}
                                 endAdornment={
                                     <InputAdornment position="end">
@@ -411,7 +509,7 @@ const DialogCreateGastoCampania = ({ handleConfirm }) => {
                                         )}
                                     </InputAdornment>
                                 }
-                                label="Presupuesto en Dólares"
+                                label="gasto en Dólares"
                             />
                         </FormControl>
 
@@ -420,7 +518,7 @@ const DialogCreateGastoCampania = ({ handleConfirm }) => {
                             <div className="flex flex-row items-center">
                                 <CustomDatePicker
                                     onNewFecha={handleFecha}
-                                    defaultValue={fechaPresupuesto}
+                                    defaultValue={fechaGasto}
                                 />
                                 {alertFecha && (
                                     <IoIosAlert style={{ color: "#d32f2f", fontSize: "2rem" }} />
@@ -440,13 +538,5 @@ const DialogCreateGastoCampania = ({ handleConfirm }) => {
             </Dialog>
         </div>
     );
-
-}
-
-const DialogUpdateGastoCampania = () => {
-
-}
-
-const DialogDeleteGastoCampania = () => {
 
 }

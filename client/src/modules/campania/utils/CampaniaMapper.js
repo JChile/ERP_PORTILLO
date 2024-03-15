@@ -50,8 +50,8 @@ export const dataMapper = async ({ query, token }) => {
       promedioDolares = 0;
     }
 
-    solesLeadList.push(promedioSoles);
-    dolaresLeadList.push(promedioDolares);
+    solesLeadList.push(promedioSoles.toFixed(2));
+    dolaresLeadList.push(promedioDolares.toFixed(2));
   }
 
   // Crear filas de datos para la tabla
@@ -70,8 +70,8 @@ export const dataMapper = async ({ query, token }) => {
       totalInversionCampania += inversionDolares;
     }
     // Agregar celdas de totales al final de la fila
-    fila.push(totalLeadsCampania);
-    fila.push(totalInversionCampania);
+    fila.push(totalLeadsCampania.toFixed(2));
+    fila.push(totalInversionCampania.toFixed(2));
     return fila;
   });
 
@@ -152,11 +152,11 @@ export const dataMapper = async ({ query, token }) => {
         datosSemana.numeroLeads * solesLeadList[semana - 1];
       sumDolares += inversionAsesorDolares;
       sumSoles += inversionAsesorSoles;
-      row.push(inversionAsesorDolares);
+      row.push(inversionAsesorDolares.toFixed(2));
     }
     row.unshift(asesor);
-    row.push(sumDolares);
-    row.push(sumSoles);
+    row.push(sumDolares.toFixed(2));
+    row.push(sumSoles.toFixed(2));
     return row;
   });
 
@@ -168,7 +168,7 @@ export const dataMapper = async ({ query, token }) => {
         (acc, row) => acc + (row[i] || 0),
         0
       );
-      totalesCostoLeadColumnas.push(totalCostoLead);
+      totalesCostoLeadColumnas.push(totalCostoLead.toFixed(2));
     }
   }
 

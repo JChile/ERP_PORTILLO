@@ -50,9 +50,15 @@ export const dataMapper = async ({ query, token }) => {
       promedioDolares = 0;
     }
 
-    solesLeadList.push(promedioSoles.toFixed(2));
-    dolaresLeadList.push(promedioDolares.toFixed(2));
+    solesLeadList.push(promedioSoles);
+    dolaresLeadList.push(promedioDolares);
   }
+
+  // Crear tabla de costos por lead por semana por asesor
+  const costoLeadRows = [
+    ["COSTO/LEAD $", ...dolaresLeadList],
+    ["COSTO/LEAD S/", ...solesLeadList],
+  ];
 
   // Crear filas de datos para la tabla
   const filas = campañasUnicas.map((campaña) => {
@@ -65,13 +71,13 @@ export const dataMapper = async ({ query, token }) => {
       const leads = datosSemana.numeroLeads || 0;
       const inversionDolares = datosSemana.inversionDolares || 0;
       fila.push(leads);
-      fila.push(inversionDolares);
+      fila.push(parseFloat(inversionDolares.toFixed(2)));
       totalLeadsCampania += leads;
       totalInversionCampania += inversionDolares;
     }
     // Agregar celdas de totales al final de la fila
-    fila.push(totalLeadsCampania.toFixed(2));
-    fila.push(totalInversionCampania.toFixed(2));
+    fila.push(totalLeadsCampania);
+    fila.push(parseFloat(totalInversionCampania.toFixed(2)));
     return fila;
   });
 
@@ -84,7 +90,7 @@ export const dataMapper = async ({ query, token }) => {
       0
     );
     totalesFilas.push(totalLeads);
-    totalesFilas.push(totalInversion);
+    totalesFilas.push(parseFloat(totalInversion.toFixed(2)));
   }
 
   // Crear tabla de asignación de leads por semana por asesor
@@ -124,11 +130,7 @@ export const dataMapper = async ({ query, token }) => {
     }
   }
 
-  // Crear tabla de costos por lead por semana por asesor
-  const costoLeadRows = [
-    ["COSTO/LEAD $", ...dolaresLeadList],
-    ["COSTO/LEAD S/", ...solesLeadList],
-  ];
+
 
   // Crear tabla de costos por lead por semana por asesor
   const asesoresUnicosCostoLead = Array.from(
@@ -150,11 +152,11 @@ export const dataMapper = async ({ query, token }) => {
       const inversionAsesorSoles = datosSemana.numeroLeads * solesLeadList[semana - 1];
       sumDolares += inversionAsesorDolares;
       sumSoles += inversionAsesorSoles;
-      row.push(inversionAsesorDolares.toFixed(2));
+      row.push(inversionAsesorDolares);
     }
     row.unshift(asesor);
-    row.push(sumDolares.toFixed(2));
-    row.push(sumSoles.toFixed(2));
+    row.push(parseFloat(sumDolares.toFixed(2)));
+    row.push(parseFloat(sumSoles.toFixed(2)));
     return row;
   });
 
@@ -185,4 +187,17 @@ export const dataMapper = async ({ query, token }) => {
   };
 };
 
-//headerWeeks,
+function convertirADosDecimales(numero) {
+  // Intenta convertir el string a un número de punto flotante
+  const numeroFloat = parseFloat(numero);
+
+  // Verifica si el número es un NaN o infinito
+  if (!isNaN(numeroFloat) && !isFinite(numeroFloat)) {
+    // Trunca el número a dos decimales después del punto decimal
+    const numeroTruncado = numeroFloat.toFixed(2);
+    return numeroTruncado;
+  } else {
+    // Si el valor no es un número o es NaN o infinito, devolver null
+    return null;
+  }
+}

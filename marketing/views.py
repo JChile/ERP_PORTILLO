@@ -150,6 +150,9 @@ class PresupuestoProyectoList(generics.ListCreateAPIView):
                 return Response({"message": "No se encontro presupuesto proyecto con los datos indicados"})
             presupuestoProyecto_data = PresupuestoProyectoSerializer(presupuestoProyecto_queryset)
             return Response(presupuestoProyecto_data.data)
+        else:
+            presupuestoProyecto_queryset = PresupuestoProyecto.objects.filter(proyecto=proyecto)
+
         presupuestoProyecto_data = PresupuestoProyectoSerializer(presupuestoProyecto_queryset, many = True)
         return Response(presupuestoProyecto_data.data)
 

@@ -3,6 +3,8 @@ import { getReporteCampania } from "../helpers";
 export const dataMapper = async ({ query, token }) => {
   const data = await getReporteCampania(query, token);
 
+  console.log(data);
+
   const campañasUnicas = Array.from(
     new Set(
       Object.values(data).flatMap((semana) =>
@@ -37,8 +39,19 @@ export const dataMapper = async ({ query, token }) => {
       costoTotalLeadSoles += campania.inversionSoles;
       costoTotalLeadDolares += campania.inversionDolares;
     }
-    solesLeadList.push(costoTotalLeadSoles / numeroLeads);
-    dolaresLeadList.push(costoTotalLeadDolares / numeroLeads);
+    let promedioSoles = costoTotalLeadSoles / numeroLeads;
+    let promedioDolares = costoTotalLeadDolares / numeroLeads;
+
+    if (isNaN(promedioSoles)) {
+      promedioSoles = 0;
+    }
+
+    if (isNaN(promedioDolares)) {
+      promedioDolares = 0;
+    }
+
+    solesLeadList.push(promedioSoles.toFixed(2));
+    dolaresLeadList.push(promedioDolares.toFixed(2));
   }
 
   // Crear filas de datos para la tabla
@@ -57,8 +70,8 @@ export const dataMapper = async ({ query, token }) => {
       totalInversionCampania += inversionDolares;
     }
     // Agregar celdas de totales al final de la fila
-    fila.push(totalLeadsCampania);
-    fila.push(totalInversionCampania);
+    fila.push(totalLeadsCampania.toFixed(2));
+    fila.push(totalInversionCampania.toFixed(2));
     return fila;
   });
 
@@ -98,14 +111,17 @@ export const dataMapper = async ({ query, token }) => {
     return row;
   });
 
+  //console.log(leadAsignadosRows);
   // Agregar la fila de totales por columnas para asignación de leads
   const totalesLeadsColumnas = ["Total Leads"];
-  for (let i = 1; i < leadAsignadosRows[0].length; i++) {
-    const totalLeads = leadAsignadosRows.reduce(
-      (acc, row) => acc + (row[i] || 0),
-      0
-    );
-    totalesLeadsColumnas.push(totalLeads);
+  if (leadAsignadosRows[0]) {
+    for (let i = 1; i < leadAsignadosRows[0].length; i++) {
+      const totalLeads = leadAsignadosRows.reduce(
+        (acc, row) => acc + (row[i] || 0),
+        0
+      );
+      totalesLeadsColumnas.push(totalLeads);
+    }
   }
 
   // Crear tabla de costos por lead por semana por asesor
@@ -123,46 +139,47 @@ export const dataMapper = async ({ query, token }) => {
     )
   );
 
- 
   const costoLeadAsesoresRows = asesoresUnicosCostoLead.map((asesor) => {
     const row = [];
     let sumDolares = 0;
     let sumSoles = 0;
     for (let semana in data) {
-      const datosSemana = data[semana].asesores.find((a) => a.username === asesor) || {};
-      const inversionAsesorDolares = datosSemana.numeroLeads*dolaresLeadList[semana-1];
-      const inversionAsesorSoles = datosSemana.numeroLeads*solesLeadList[semana-1];
-      sumDolares += inversionAsesorDolares
-      sumSoles += inversionAsesorSoles
-      row.push(inversionAsesorDolares);
+      const datosSemana =
+        data[semana].asesores.find((a) => a.username === asesor) || {};
+      const inversionAsesorDolares = datosSemana.numeroLeads * dolaresLeadList[semana - 1];
+      const inversionAsesorSoles = datosSemana.numeroLeads * solesLeadList[semana - 1];
+      sumDolares += inversionAsesorDolares;
+      sumSoles += inversionAsesorSoles;
+      row.push(inversionAsesorDolares.toFixed(2));
     }
     row.unshift(asesor);
-    row.push(sumDolares);
-    row.push(sumSoles);
+    row.push(sumDolares.toFixed(2));
+    row.push(sumSoles.toFixed(2));
     return row;
   });
-  
+
   // Agregar la fila de totales por columnas para costos por lead
   const totalesCostoLeadColumnas = ["Total"];
-  for (let i = 1; i < costoLeadAsesoresRows[0].length; i++) {
-    const totalCostoLead = costoLeadAsesoresRows.reduce(
-      (acc, row) => acc + (row[i] || 0),
-      0
-    );
-    totalesCostoLeadColumnas.push(totalCostoLead);
+  if (costoLeadAsesoresRows[0]) {
+    for (let i = 1; i < costoLeadAsesoresRows[0].length; i++) {
+      const totalCostoLead = costoLeadAsesoresRows.reduce(
+        (acc, row) => acc + (row[i] || 0),
+        0
+      );
+      totalesCostoLeadColumnas.push(totalCostoLead);
+    }
   }
 
-  
   return {
     header,
     rows: [...filas, totalesFilas],
-    
+
     leadAsignadosHeader: ["Asesor", ...headerWeeks, "Total"],
     leadAsignadosRows: [...leadAsignadosRows, totalesLeadsColumnas],
-    
+
     costoLeadAsesorHeader: ["Asesor", ...headerWeeks, "Total $", "Total S/"],
     costoLeadAsesorRows: [...costoLeadAsesoresRows, totalesCostoLeadColumnas],
-    
+
     costoLeadHeader: ["Cost/Lead", ...headerWeeks],
     costoLeadRows: costoLeadRows,
   };

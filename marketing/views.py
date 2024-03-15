@@ -161,7 +161,15 @@ class PresupuestoProyectoDetail(generics.RetrieveUpdateDestroyAPIView):
 class GastoCampaniaList(generics.ListCreateAPIView):
     serializer_class = GastoCampaniaSerializer
     queryset = GastoCampania.objects.all()
+    def get(self, request):
+        campania = request.query_params.get('campania')
+        gastoCampania_queryset = GastoCampania.objects.all()
+        if campania != None:
+            gastoCampania_queryset = gastoCampania_queryset.filter(campania=campania)
+        gastoCampania_data = GastoCampaniaSerializer(gastoCampania_queryset, many = True)        
 
+        return Response(gastoCampania_data.data)
+        
 
 class GastoCampaniaDetail(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = GastoCampaniaSerializer

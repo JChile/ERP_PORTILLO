@@ -42,16 +42,26 @@ export const dataMapper = async ({ query, token }) => {
     let promedioSoles = costoTotalLeadSoles / numeroLeads;
     let promedioDolares = costoTotalLeadDolares / numeroLeads;
 
-    if (isNaN(promedioSoles)) {
-      promedioSoles = 0;
+    if (isFinite(promedioDolares)) {
+      dolaresLeadList.push(parseFloat(promedioDolares.toFixed(2)));
+    }
+    else if(isNaN(promedioDolares)) {
+      dolaresLeadList.push(0);
+    }
+    else {
+      dolaresLeadList.push(promedioDolares)
     }
 
-    if (isNaN(promedioDolares)) {
-      promedioDolares = 0;
+    if (isFinite(promedioSoles)) {
+      solesLeadList.push(parseFloat(promedioSoles.toFixed(2)));
+    }
+    else if (isNaN(promedioSoles)){ 
+      solesLeadList.push(0);
+    }
+    else {
+      solesLeadList.push(promedioSoles)
     }
 
-    solesLeadList.push(promedioSoles);
-    dolaresLeadList.push(promedioDolares);
   }
 
   // Crear tabla de costos por lead por semana por asesor
@@ -130,8 +140,6 @@ export const dataMapper = async ({ query, token }) => {
     }
   }
 
-
-
   // Crear tabla de costos por lead por semana por asesor
   const asesoresUnicosCostoLead = Array.from(
     new Set(
@@ -148,8 +156,14 @@ export const dataMapper = async ({ query, token }) => {
     for (let semana in data) {
       const datosSemana =
         data[semana].asesores.find((a) => a.username === asesor) || {};
-      const inversionAsesorDolares = parseFloat((datosSemana.numeroLeads * dolaresLeadList[semana - 1]).toFixed(2));
-      const inversionAsesorSoles = parseFloat((datosSemana.numeroLeads * solesLeadList[semana - 1]).toFixed(2));
+
+      let inversionAsesorDolares = datosSemana.numeroLeads * dolaresLeadList[semana - 1]
+      let inversionAsesorSoles = datosSemana.numeroLeads * solesLeadList[semana - 1]
+
+      inversionAsesorDolares= checkTypeNumber(inversionAsesorDolares)
+
+      inversionAsesorSoles= checkTypeNumber(inversionAsesorSoles)
+
       sumDolares += inversionAsesorDolares;
       sumSoles += inversionAsesorSoles;
       row.push(inversionAsesorDolares);
@@ -168,7 +182,7 @@ export const dataMapper = async ({ query, token }) => {
         (acc, row) => acc + (row[i] || 0),
         0
       );
-      totalesCostoLeadColumnas.push(totalCostoLead);
+      totalesCostoLeadColumnas.push(checkTypeNumber(totalCostoLead));
     }
   }
 
@@ -187,17 +201,14 @@ export const dataMapper = async ({ query, token }) => {
   };
 };
 
-function convertirADosDecimales(numero) {
-  // Intenta convertir el string a un número de punto flotante
-  const numeroFloat = parseFloat(numero);
-
-  // Verifica si el número es un NaN o infinito
-  if (!isNaN(numeroFloat) && !isFinite(numeroFloat)) {
-    // Trunca el número a dos decimales después del punto decimal
-    const numeroTruncado = numeroFloat.toFixed(2);
-    return numeroTruncado;
-  } else {
-    // Si el valor no es un número o es NaN o infinito, devolver null
-    return null;
+function checkTypeNumber(numero) {
+  if (isFinite(numero)) {
+    return parseFloat(numero.toFixed(2));
+  }
+  else if(isNaN(numero)) {
+    return 0;
+  }
+  else {
+    return numero
   }
 }

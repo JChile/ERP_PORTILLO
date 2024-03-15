@@ -67,7 +67,7 @@ export default function ListCampaniaReportes() {
       <div className="flex flex-col gap-3 mt-5">
         {data && (
           <CampaignTable
-            title={"Inversion"}
+            title={"Inversion en dólares ($)"}
             headers={data.header}
             rows={data.rows}
           />
@@ -81,7 +81,7 @@ export default function ListCampaniaReportes() {
         )}
         {data && (
           <CampaignTable
-            title={"Leads por asesor"}
+            title={"Leads por asesor (# Cantidad de leads)"}
             headers={data.leadAsignadosHeader}
             rows={data.leadAsignadosRows}
           />

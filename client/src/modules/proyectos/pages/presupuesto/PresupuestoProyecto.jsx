@@ -174,22 +174,18 @@ export const PresupuestoProyecto = () => {
                       </TableCell>
                       <TableCell>
                         <span style={{ fontWeight: "bold" }}>
-                          {new Date(presupuesto.fechaPresupuesto)
-                            .toLocaleDateString("es-ES", {
-                              month: "long",
-                            })
-                            .toUpperCase()}
+                          {showMonthParser(presupuesto["fechaPresupuesto"])}
                         </span>
                       </TableCell>
                       <TableCell>{presupuesto.presupuestoSoles}</TableCell>
                       <TableCell>{presupuesto.presupuestoDolares}</TableCell>
                       <TableCell>
                         {isNaN(presupuesto.presupuestoDolares) ||
-                        isNaN(tipoCambio.compra)
+                          isNaN(tipoCambio.compra)
                           ? "No se pudo obtener el tipo cambio de hoy"
                           : (
-                              presupuesto.presupuestoDolares * tipoCambio.compra
-                            ).toFixed(2)}
+                            presupuesto.presupuestoDolares * tipoCambio.compra
+                          ).toFixed(2)}
                       </TableCell>
                     </TableRow>
                   ))}
@@ -219,3 +215,16 @@ export const PresupuestoProyecto = () => {
     </>
   );
 };
+
+const showMonthParser = (dateString) => {
+  // Dividir la cadena de fecha en partes (año, mes, día)
+  const [year, month, day] = dateString.split('-');
+
+  // Crear la instancia de Date utilizando los componentes de la fecha
+  const date = new Date(year, month - 1, day);
+
+  // Obtener el nombre del mes
+  const nameMonth = date.toLocaleString('default', { month: 'long' });
+
+  return nameMonth.toUpperCase();
+}

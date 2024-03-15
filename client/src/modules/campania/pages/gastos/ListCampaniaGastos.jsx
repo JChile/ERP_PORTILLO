@@ -176,9 +176,9 @@ export const ListCampaniaGastos = () => {
 
     // agregar gasto de campañas
     const createGastoCampania = async (body) => {
-        const dateRegistro = new Date(body["fechaGasto"])
-        const anio = dateRegistro.getFullYear()
-        const mes = dateRegistro.getMonth()
+        const dateRegistro = new Date(body["fechaGasto"] + "T00:00:00Z")
+        const anio = dateRegistro.getUTCFullYear()
+        const mes = dateRegistro.getUTCMonth()
         const mesFormat = mes + 1
         const idProyecto = proyecto["id"]
 

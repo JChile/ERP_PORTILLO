@@ -184,7 +184,7 @@ export const ListCampaniaGastos = () => {
 
         try {
             const resultPeticionPresupuesto = await consultPresupuestoProyectoDate(
-                { proyecto: idProyecto, anio, mesFormat }
+                { proyecto: idProyecto, anio: anio, mes: mesFormat }
             )
             const { message } = resultPeticionPresupuesto;
             if (message) {

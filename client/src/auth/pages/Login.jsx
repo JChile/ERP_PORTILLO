@@ -3,6 +3,7 @@ import { AuthContext } from "../context";
 import PortilloLogo from "../../assets/portillo-logo-port.png";
 import { useAlertMUI } from "../../hooks";
 import { CustomAlert, CustomCircularProgress } from "../../components";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 export const Login = () => {
   // context
@@ -10,6 +11,12 @@ export const Login = () => {
   // Estado de credenciales
   const [form, setForm] = useState({ username: "", password: "" });
   const { username, password } = form;
+  const [showPassword, setShowPassword] = useState(false);
+
+  const togglePasswordVisibility = () => {
+    setShowPassword((prev) => !prev);
+  };
+
   // hook alert
   const {
     feedbackCreate,
@@ -112,17 +119,26 @@ export const Login = () => {
               />
             </label>
 
-            <label className=" flex flex-col gap-y-1">
+            <label className="flex flex-col gap-y-1 relative">
               <span className="after:content-['*'] after:ml-0.5 after:text-yellow-500 block text-sm font-medium text-white">
                 Contraseña
               </span>
-              <input
-                onChange={onFormChange}
-                type="password"
-                name="password"
-                value={password}
-                className="mt-1 px-3 py-2 bg-white border shadow-sm border-slate-300 placeholder-slate-400 focus:outline-none focus:border-sky-500 focus:ring-sky-500 block w-full rounded-md sm:text-sm focus:ring-1"
-              />
+              <div className="relative">
+                <input
+                  onChange={onFormChange}
+                  type={showPassword ? "text" : "password"}
+                  name="password"
+                  value={password}
+                  className="mt-1 px-3 py-2 bg-white border shadow-sm border-slate-300 placeholder-slate-400 focus:outline-none focus:border-sky-500 focus:ring-sky-500 block w-full rounded-md sm:text-sm focus:ring-1 pr-10"
+                />
+                <button
+                  type="button"
+                  onClick={togglePasswordVisibility}
+                  className="absolute right-1 top-2.5 mt-1 mr-2 text-slate-400 focus:outline-none"
+                >
+                  {showPassword ? <FaEyeSlash /> : <FaEye />}
+                </button>
+              </div>
             </label>
 
             <button

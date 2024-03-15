@@ -3,11 +3,11 @@ import { useNavigate, useParams } from 'react-router-dom'
 import { useFilterGastos } from '../../hooks'
 import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, FormControl, IconButton, InputAdornment, InputLabel, MenuItem, OutlinedInput, Paper, Select, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField } from '@mui/material'
 import { CustomAlert, CustomCircularProgress, CustomDatePicker, CustomDatePickerMonth } from '../../../../components'
-import { RowGastoCampania } from '../../components'
+import { DialogCreateGastoCampania, RowGastoCampania } from '../../components'
 import { FiPlusCircle } from "react-icons/fi";
 import { getGastosCampaniaById } from '../../helpers/gastos/getGastosCampaniaById'
 import { AuthContext } from '../../../../auth'
-import { combinarErrores } from '../../../../utils'
+import { combinarErrores, obtenerHoraActualFormatPostgress } from '../../../../utils'
 import { useAlertMUI } from '../../../../hooks'
 import { IoIosAlert } from 'react-icons/io'
 import { consultTipoCambio } from '../../helpers/gastos/consultTipoCambio'
@@ -15,6 +15,7 @@ import { createGastosCampania } from '../../helpers/gastos/createGastosCampania'
 import { getCampania } from '../../helpers/getCampania'
 import { consultPresupuestoProyectoDate } from '../../helpers/gastos/consultPresupuestoProyectoDate'
 import { deleteGastosCampania } from '../../helpers/gastos/deleteGastosCampania'
+import { updateGastosCampania } from '../../helpers/gastos/updateGastosCampania'
 
 // funcion total gasto por semana
 const calculateSpentByWeek = (dataWeek, data) => {
@@ -127,8 +128,33 @@ export const ListCampaniaGastos = () => {
     }
 
     // actualización  de gasto
-    const actualizarGastoCampania = async () => {
+    const actualizarGastoCampania = async (idGastoCampania, body) => {
+        const formatData = {
+            ...body,
+            usuarioActualizador: currentUser["user_id"],
+            fecha_actualizacion: obtenerHoraActualFormatPostgress()
+        }
+        try {
+            const resultPeticion = await updateGastosCampania(idGastoCampania, formatData, authTokens["access"])
+            console.log(resultPeticion)
 
+            const findIndexGasto = data.findIndex((element) => element.id === idGastoCampania)
+
+            let auxDataGastoCampania = [...data]
+            auxDataGastoCampania[findIndexGasto] = resultPeticion
+            setData(auxDataGastoCampania)
+
+        } catch (error) {
+            // ocultar el progress
+            setVisibleProgress(false)
+            const pilaError = combinarErrores(error)
+            // mostramos feedback de error
+            setFeedbackMessages({
+                style_message: "error",
+                feedback_description_error: pilaError,
+            });
+            handleClickFeedback()
+        }
     }
 
     // eliminacion de gasto
@@ -137,7 +163,7 @@ export const ListCampaniaGastos = () => {
             await deleteGastosCampania(idGastoCampania, authTokens["access"])
             const filterData = data.filter((element) => element.id !== idGastoCampania)
             setData(filterData)
-        } catch (e) {
+        } catch (error) {
             // ocultar el progress
             setVisibleProgress(false)
             const pilaError = combinarErrores(error)
@@ -161,7 +187,6 @@ export const ListCampaniaGastos = () => {
             const resultPeticionPresupuesto = await consultPresupuestoProyectoDate(
                 { proyecto: idProyecto, anio, mes }
             )
-            console.log(resultPeticionPresupuesto)
             const { message } = resultPeticionPresupuesto;
             if (message) {
                 // mostramos feedback de error
@@ -327,7 +352,12 @@ export const ListCampaniaGastos = () => {
                                     <TableBody>
                                         {
                                             filteredData.map((element) => (
-                                                <RowGastoCampania key={element["id"]} element={element} onDeleteGastoCampania={eliminarGastoCampania} />
+                                                <RowGastoCampania
+                                                    key={element["id"]}
+                                                    element={element}
+                                                    onDeleteGastoCampania={eliminarGastoCampania}
+                                                    onUpdateGastoCampania={actualizarGastoCampania}
+                                                />
                                             ))
                                         }
                                     </TableBody>
@@ -346,197 +376,6 @@ export const ListCampaniaGastos = () => {
 
             {/* CIRCULAR PROGRESS */}
             {visibleProgress && <CustomCircularProgress />}
-
-            {/* DIALOG CREATE */}
-
         </>
     )
-}
-
-const DialogCreateGastoCampania = ({ handleConfirm }) => {
-    const [open, setOpen] = useState(false)
-    const [alertDolar, setAlertDolar] = useState(false)
-    const [alertSol, setAlertSol] = useState(false)
-    const [alertFecha, setAlertFecha] = useState(false)
-    const [tipoCambio, setTipoCambio] = useState(3.66)
-    const [gasto, setgasto] = useState({
-        gastoSoles: 0,
-        gastoDolares: 0,
-        fechaGasto: "",
-    });
-
-    const {
-        gastoSoles,
-        gastoDolares,
-        fechaGasto,
-    } = gasto;
-
-    const handleClickOpen = () => {
-        setOpen(true);
-    };
-
-    const handleClose = () => {
-        setOpen(false);
-    };
-
-    const handleInputChange = (event) => {
-        const { name, value } = event.target;
-        let newValue = value;
-
-        if (isNaN(value) || value < 0 || value === "") {
-            setAlertSol(true);
-            setAlertDolar(true);
-        } else {
-            setAlertSol(false);
-            setAlertDolar(false);
-        }
-        if (name === "gastoSoles") {
-            newValue = parseFloat((parseFloat(value) / tipoCambio).toFixed(2));
-
-        } else if (name === "gastoDolares") {
-            newValue = parseFloat((parseFloat(value) * tipoCambio).toFixed(2));
-        }
-
-        setgasto({
-            ...gasto,
-            [name]: value,
-            // Actualiza el otro campo en tiempo real
-            ...(name === "gastoSoles"
-                ? { gastoDolares: newValue }
-                : { gastoSoles: newValue }),
-        });
-    };
-
-    const handleFecha = (newDate) => {
-        if (newDate != "") {
-            setAlertFecha(false);
-        }
-        setgasto({
-            ...gasto,
-            fechaGasto: newDate,
-        });
-    };
-
-    const validateData = () =>
-        gastoSoles > 0 && gastoDolares > 0 && fechaGasto !== "";
-
-    const handleFormSubmit = () => {
-        if (validateData()) {
-            const body = {
-                ...gasto,
-                tipoCambioSoles: tipoCambio
-            }
-            handleConfirm(body);
-            handleClose();
-        } else {
-            setAlertSol(gastoSoles <= 0);
-            setAlertDolar(gastoDolares <= 0);
-            setAlertFecha(fechaGasto === "");
-        }
-    };
-
-    // consultar el tipo de cambio
-    const consultarTipoCambioDolares = async () => {
-        try {
-            const resultPeticion = await consultTipoCambio()
-            const { compra } = resultPeticion
-            setTipoCambio(compra)
-        } catch (e) {
-            console.log(e)
-        }
-    }
-
-    useEffect(() => {
-        consultarTipoCambioDolares()
-    }, [])
-
-    return (
-        <div>
-            <Button startIcon={<FiPlusCircle />} color='primary' variant='contained' onClick={handleClickOpen}>
-                Agregar
-            </Button>
-            <Dialog open={open} onClose={handleClose}>
-                <DialogTitle
-                    className="flex justify-between items-center"
-                    style={{ background: "#9E154A", color: "#fff" }}
-                >
-                    <span>Registrar gasto </span>
-                    <span style={{ fontSize: 13, opacity: 0.7 }}>
-                        (Tipo cambio hoy: {tipoCambio})
-                    </span>
-                </DialogTitle>
-                <DialogContent>
-                    <form>
-                        <FormControl fullWidth variant="outlined" margin="normal">
-                            <InputLabel htmlFor="gastoSoles">
-                                Gasto en Soles
-                            </InputLabel>
-                            <OutlinedInput
-                                id="gastoSoles"
-                                name="gastoSoles"
-                                type="number" // Cambia esto según el tipo correcto de tu dato
-                                value={gastoSoles}
-                                onChange={handleInputChange}
-                                endAdornment={
-                                    <InputAdornment position="end">
-                                        {alertSol && (
-                                            <IoIosAlert
-                                                style={{ color: "#d32f2f", fontSize: "2rem" }}
-                                            />
-                                        )}
-                                    </InputAdornment>
-                                }
-                                label="gasto en Soles"
-                            />
-                        </FormControl>
-
-                        <FormControl fullWidth variant="outlined" margin="normal">
-                            <InputLabel htmlFor="gastoDolares">
-                                Gasto en Dólares
-                            </InputLabel>
-                            <OutlinedInput
-                                id="gastoDolares"
-                                name="gastoDolares"
-                                type="number" // Cambia esto según el tipo correcto de tu dato
-                                value={gastoDolares}
-                                onChange={handleInputChange}
-                                endAdornment={
-                                    <InputAdornment position="end">
-                                        {alertDolar && (
-                                            <IoIosAlert
-                                                style={{ color: "#d32f2f", fontSize: "2rem" }}
-                                            />
-                                        )}
-                                    </InputAdornment>
-                                }
-                                label="gasto en Dólares"
-                            />
-                        </FormControl>
-
-                        <label className="flex flex-col gap-y-1">
-                            <span className=" block text-sm">Fecha de registro</span>
-                            <div className="flex flex-row items-center">
-                                <CustomDatePicker
-                                    onNewFecha={handleFecha}
-                                    defaultValue={fechaGasto}
-                                />
-                                {alertFecha && (
-                                    <IoIosAlert style={{ color: "#d32f2f", fontSize: "2rem" }} />
-                                )}
-                            </div>
-                        </label>
-                    </form>
-                </DialogContent>
-                <DialogActions>
-                    <Button variant="contained" onClick={handleClose} color="error">
-                        Cancelar
-                    </Button>
-                    <Button variant="contained" onClick={handleFormSubmit} color="primary">
-                        Guardar
-                    </Button>
-                </DialogActions>
-            </Dialog>
-        </div>
-    );
-
 }

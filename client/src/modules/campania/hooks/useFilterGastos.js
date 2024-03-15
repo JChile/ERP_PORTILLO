@@ -10,17 +10,17 @@ export const useFilterGastos = () => {
         const datePrimerDiaMes = new Date(year, month, PRIMER_DIA)
         const numeroSemanaPrimerDiaMes = datePrimerDiaMes.getDay()
 
-        let inicioFinMes = [[],[],[],[],[],[]];
+        let inicioFinMes = [[], [], [], [], [], []];
 
-        for(let i=0; i<6; i++){
-            if(i === 0){
+        for (let i = 0; i < 6; i++) {
+            if (i === 0) {
                 inicioFinMes[i][0] = 1
                 inicioFinMes[i][1] = 7 - numeroSemanaPrimerDiaMes
             } else {
                 let inicioMes = inicioFinMes[i - 1][1] + 1
                 inicioFinMes[i][0] = inicioMes
                 let finMes = inicioMes + 6
-                if(ULTIMA_DIA <= finMes){
+                if (ULTIMA_DIA <= finMes) {
                     inicioFinMes[i][1] = ULTIMA_DIA
                     break
                 } else {
@@ -32,26 +32,26 @@ export const useFilterGastos = () => {
     }
 
     function filtrarGastosPorSemana(data, semanasFecha, selectedSemana, date) {
-        const monthNow = date.getMonth() + 1
+        const monthNow = date.getUTCMonth() + 1
         const dataFormat = data.filter((element) => {
-            const parserDate = new Date(element["fechaGasto"])
-            const month = parserDate.getMonth() + 1
-            if(month === monthNow){
+            const parserDate = new Date(element["fechaGasto"] + "T00:00:00Z")
+            const month = parserDate.getUTCMonth() + 1
+            if (month === monthNow) {
                 return true
             } else {
                 return false
             }
         })
-        if(selectedSemana === -1){
+        if (selectedSemana === -1) {
             return dataFormat
         } else {
             const inicioSemana = semanasFecha[selectedSemana][0]
             const finSemana = semanasFecha[selectedSemana][1]
-            if(inicioSemana && finSemana){
+            if (inicioSemana && finSemana) {
                 const returnFilter = dataFormat.filter((element) => {
-                    const parserDate = new Date(element["fechaGasto"])
-                    const day = parserDate.getDate()
-                    if (inicioSemana <= day && finSemana >= day){
+                    const parserDate = new Date(element["fechaGasto"] + "T00:00:00Z")
+                    const day = parserDate.getUTCDate()
+                    if (inicioSemana <= day && finSemana >= day) {
                         return true
                     } else {
                         return false
@@ -62,11 +62,11 @@ export const useFilterGastos = () => {
         }
     }
 
-    function showDataParser(week, dataWeeks, date){
+    function showDataParser(week, dataWeeks, date) {
         const nameMonth = date.toLocaleString('default', { month: 'long' })
         const year = date.getFullYear()
 
-        if(week === -1){
+        if (week === -1) {
             const finMes = new Date(year, date.getMonth() + 1, 0)
             return {
                 inicio: `Del 01 de ${nameMonth} del ${year}`,

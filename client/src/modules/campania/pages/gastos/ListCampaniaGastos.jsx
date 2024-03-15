@@ -23,8 +23,8 @@ const calculateSpentByWeek = (dataWeek, data) => {
     const finSemana = dataWeek[1]
     let sumaTotal = 0
     data.forEach((element) => {
-        const parserDate = new Date(element["fechaGasto"])
-        const day = parserDate.getDate()
+        const parserDate = new Date(element["fechaGasto"] + "T00:00:00Z")
+        const day = parserDate.getUTCDate()
         if (inicioSemana <= day && finSemana >= day) {
             sumaTotal += element["gastoDolares"]
         }

@@ -54,7 +54,6 @@ class LeadList(generics.ListCreateAPIView):
 
         if asignado == "False":
             lead_queryset = Lead.objects.filter(asignado=False).order_by('-fecha_creacion')
-            print("aaaaaaaaaaaaaaaa",lead_queryset)
 
             if request.user.groups.first().name == "marketing":
                 if desde and hasta:
@@ -65,6 +64,7 @@ class LeadList(generics.ListCreateAPIView):
                         fecha_creacion__gte=fecha_limite).order_by('-fecha_creacion')
 
             elif request.user.groups.first().name == "asesor":
+                
 
                 if request.user.isAdmin == True:
                     flag_desasignado_asesor = True
@@ -153,18 +153,22 @@ class LeadList(generics.ListCreateAPIView):
                 else:
                     lead_queryset = Lead.objects.filter(
                         fecha_creacion__gte=fecha_limite).order_by('-fecha_creacion')
-            
+
         if estado:
             lead_queryset = lead_queryset.filter(estado=estado)
 
-        if recienCreado:
-            lead_queryset = lead_queryset.filter(recienCreado=recienCreado)
+        if recienCreado != None:
+            if recienCreado == "False":
+                lead_queryset = lead_queryset.filter(recienCreado=False)
+            else:
+                lead_queryset = lead_queryset.filter(recienCreado=True)
 
         if flag_desasignado_asesor:
             historico_desasignaciones = DesasignacionLeadAsesor.objects.filter(lead__in = lead_queryset)
 
         leadSerializer = LeadSerializer(lead_queryset, many=True)
         estadoLead_queryset = EstadoLead.objects.all()
+        
 
         leadData = leadSerializer.data
         for i in leadData:
@@ -196,6 +200,9 @@ class LeadList(generics.ListCreateAPIView):
                 asesor_desasignado = User.objects.filter(pk = lead_lastAsesor.usuario.pk).first() if lead_lastAsesor != None else None
                 i["penultimo_asesor"] = UserSerializer(asesor_desasignado, fields=(
                 'id', 'first_name', 'last_name', 'username')).data if asesor_desasignado!=None else None
+                
+                if i["penultimo_asesor"] == None :
+                    i["penultimo_asesor"] = {"first_name" : Nonem }
 
         return Response(leadData)
 

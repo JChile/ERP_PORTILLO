@@ -146,10 +146,8 @@ export const dataMapper = async ({ query, token }) => {
     for (let semana in data) {
       const datosSemana =
         data[semana].asesores.find((a) => a.username === asesor) || {};
-      const inversionAsesorDolares =
-        datosSemana.numeroLeads * dolaresLeadList[semana - 1];
-      const inversionAsesorSoles =
-        datosSemana.numeroLeads * solesLeadList[semana - 1];
+      const inversionAsesorDolares = datosSemana.numeroLeads * dolaresLeadList[semana - 1];
+      const inversionAsesorSoles = datosSemana.numeroLeads * solesLeadList[semana - 1];
       sumDolares += inversionAsesorDolares;
       sumSoles += inversionAsesorSoles;
       row.push(inversionAsesorDolares.toFixed(2));
@@ -168,7 +166,7 @@ export const dataMapper = async ({ query, token }) => {
         (acc, row) => acc + (row[i] || 0),
         0
       );
-      totalesCostoLeadColumnas.push(totalCostoLead.toFixed(2));
+      totalesCostoLeadColumnas.push(totalCostoLead);
     }
   }
 

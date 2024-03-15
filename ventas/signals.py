@@ -16,7 +16,7 @@ def crear_datos(sender, **kwargs):
 
     # Verifica si las migraciones pertenecen a tu aplicación
     if sender.name == 'ventas':
-        if True:
+        if False:
             estado_Activo = EstadoRegistro.objects.get(estado='A')
             EstadoEvento.objects.get_or_create(nombre='Creado', estado=estado_Activo)
             EstadoEvento.objects.get_or_create(nombre='En Proceso', estado=estado_Activo)

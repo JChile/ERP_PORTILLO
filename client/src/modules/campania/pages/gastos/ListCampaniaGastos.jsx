@@ -108,9 +108,7 @@ export const ListCampaniaGastos = () => {
     const traerGastoCampania = async () => {
         setVisibleProgress(true);
         try {
-            const resultPeticion = await getGastosCampaniaById({
-                campania: idCampania
-            }, authTokens["access"])
+            const resultPeticion = await getGastosCampaniaById(`campania=${idCampania}`, authTokens["access"])
             console.log(resultPeticion)
             setVisibleProgress(false);
             setData(resultPeticion)

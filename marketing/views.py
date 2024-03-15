@@ -188,6 +188,7 @@ class CategoriaDetail(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = CategoriaSerializer
     queryset = Categoria.objects.all()
 
+from datetime import datetime
 
 class CampaniaList(generics.ListCreateAPIView):
     serializer_class = CampaniaSerializer
@@ -228,8 +229,14 @@ class CampaniaList(generics.ListCreateAPIView):
             campania = Campania.objects.get(pk=data.data["id"])
 
             try :
-                campania.codigo = (str(campania.nombre).replace(" ", "") + "_" + str(campania.categoria.nombre).replace(
-                " ", "") + "_" + str(campania.fecha_creacion.month) + "_" + str(campania.pk)).lower()
+                mes_actual = str(datetime.now().month)
+                if len(mes_actual) ==1:
+                    mes_actual = "0"+mes_actual
+                
+                campania_queryset = str(Campania.objects.filter(proyecto = campania.proyecto, categoria = campania.categoria).count())
+                if len(campania_queryset) ==1:
+                    campania_queryset = "0"+campania_queryset
+                campania.codigo = (campania.proyecto.codigo+"_"+campania.categoria.codigo+"_"+mes_actual+"_"+campania_queryset).upper()
                 campania.save()
             except:
                 return Response({"message" : "Campaña se creo pero sin su codigo, defina uno"}, status=status.HTTP_400_BAD_REQUEST)

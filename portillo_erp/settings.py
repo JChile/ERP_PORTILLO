@@ -102,13 +102,15 @@ WSGI_APPLICATION = 'portillo_erp.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
+        'ENGINE': 'django.db.backends.mysql',
         'NAME': 'portillo_erp',
-        'USER': 'postgres',
+        'USER': 'root',
         'PASSWORD': '123',
         'HOST': 'localhost',
         'PORT': '',
     }
+
+    
 }
 
 

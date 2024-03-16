@@ -18,7 +18,7 @@ export const dataMapper = async ({ query, token }) => {
   const headerWeeks = [];
   for (let semana in data) {
     header.push(`Leads ${semana}`);
-    header.push(`Inversión ${semana}`);
+    header.push(`Inversión ${semana} $`);
 
     // costo / Lead, encabezado.
     headerWeeks.push(`SEM${semana}`);
@@ -190,16 +190,26 @@ export const dataMapper = async ({ query, token }) => {
     header,
     rows: [...filas, totalesFilas],
 
-    leadAsignadosHeader: ["Asesor", ...headerWeeks, "Total"],
+    leadAsignadosHeader: ["Asesor", ...addSymbol('#',headerWeeks), "Total"],
     leadAsignadosRows: [...leadAsignadosRows, totalesLeadsColumnas],
 
-    costoLeadAsesorHeader: ["Asesor", ...headerWeeks, "Total $", "Total S/"],
+    costoLeadAsesorHeader: ["Asesor", ...addSymbol('$',headerWeeks), "Total $", "Total S/"],
     costoLeadAsesorRows: [...costoLeadAsesoresRows, totalesCostoLeadColumnas],
 
-    costoLeadHeader: ["Cost/Lead", ...headerWeeks],
+    costoLeadHeader: ["Cost/Lead", ...addSymbol('$',headerWeeks)],
     costoLeadRows: costoLeadRows,
   };
 };
+
+
+/**
+ * 
+ * @param {String} symbol 
+ * @param {String[]} weeksArray 
+ */
+function addSymbol(symbol, weeksArray) {
+  return weeksArray.map(day => `${day} ${symbol}`)
+}
 
 function checkTypeNumber(numero) {
   if (isFinite(numero)) {

@@ -56,7 +56,7 @@ export const PresupuestoProyecto = () => {
       const result = await obtenerTipoCambio();
       setTipoCambio(result);
     } catch (error) {
-      console.log(error);
+      alert(error.message)
     }
   };
 

@@ -1,36 +1,36 @@
-import React, { useContext, useState } from "react";
-import { AuthContext } from "../context";
-import MenuSimple from "../../components/MenuSimple";
-import { styled } from "@mui/material/styles";
-import Box from "@mui/material/Box";
-import MuiDrawer from "@mui/material/Drawer";
-import MuiAppBar from "@mui/material/AppBar";
-import Toolbar from "@mui/material/Toolbar";
-import List from "@mui/material/List";
-import CssBaseline from "@mui/material/CssBaseline";
-import Typography from "@mui/material/Typography";
-import IconButton from "@mui/material/IconButton";
-import ListItem from "@mui/material/ListItem";
-import ListItemButton from "@mui/material/ListItemButton";
-import ListItemIcon from "@mui/material/ListItemIcon";
-import ListItemText from "@mui/material/ListItemText";
-import { MdBarChart, MdMenu } from "react-icons/md";
-import { Link, NavLink } from "react-router-dom";
-import { DynamicIcon } from "./DynamicIcon";
-import { Button } from "@mui/material";
+import React, { useContext, useState } from "react"
+import { AuthContext } from "../context"
+import MenuSimple from "../../components/MenuSimple"
+import { styled } from "@mui/material/styles"
+import Box from "@mui/material/Box"
+import MuiDrawer from "@mui/material/Drawer"
+import MuiAppBar from "@mui/material/AppBar"
+import Toolbar from "@mui/material/Toolbar"
+import List from "@mui/material/List"
+import CssBaseline from "@mui/material/CssBaseline"
+import Typography from "@mui/material/Typography"
+import IconButton from "@mui/material/IconButton"
+import ListItem from "@mui/material/ListItem"
+import ListItemButton from "@mui/material/ListItemButton"
+import ListItemIcon from "@mui/material/ListItemIcon"
+import ListItemText from "@mui/material/ListItemText"
+import { MdBarChart, MdMenu } from "react-icons/md"
+import { Link, NavLink } from "react-router-dom"
+import { DynamicIcon } from "./DynamicIcon"
+import { Button } from "@mui/material"
 
-const drawerWidth = 240;
+const drawerWidth = 240
 
 export const MainContainerApp = ({ children }) => {
-  const { currentUser, logoutUser, permissions } = useContext(AuthContext);
-  const [open, setOpen] = useState(false);
-  const { user } = currentUser;
-  const { first_name, last_name, groups, isAdmin } = user;
-  const [selectedItem, setSelectedItem] = useState(null);
+  const { currentUser, logoutUser, permissions } = useContext(AuthContext)
+  const [open, setOpen] = useState(false)
+  const { user } = currentUser
+  const { first_name, last_name, groups, isAdmin } = user
+  const [selectedItem, setSelectedItem] = useState(null)
 
   const handleItemClick = (index) => {
-    setSelectedItem(index);
-  };
+    setSelectedItem(index)
+  }
 
   return (
     <Box sx={{ display: "flex" }}>
@@ -102,7 +102,7 @@ export const MainContainerApp = ({ children }) => {
                 <ListItemButton
                   selected={selectedItem === index}
                   onClick={() => {
-                    handleItemClick(index);
+                    handleItemClick(index)
                   }}
                   sx={{
                     minHeight: 48,
@@ -136,13 +136,13 @@ export const MainContainerApp = ({ children }) => {
       <Box
         component="main"
         sx={{ flexGrow: 1, paddingX: 3, marginTop: 11, paddingBottom: 5 }}
-        // sx={{ flexGrow: 1, }}
+      // sx={{ flexGrow: 1, }}
       >
         {children}
       </Box>
     </Box>
-  );
-};
+  )
+}
 
 /** Style component */
 const openedMixin = (theme) => ({
@@ -152,7 +152,7 @@ const openedMixin = (theme) => ({
     duration: theme.transitions.duration.enteringScreen,
   }),
   overflowX: "hidden",
-});
+})
 
 const closedMixin = (theme) => ({
   transition: theme.transitions.create("width", {
@@ -164,7 +164,7 @@ const closedMixin = (theme) => ({
   [theme.breakpoints.up("sm")]: {
     width: `calc(${theme.spacing(8)} + 1px)`,
   },
-});
+})
 
 const AppBar = styled(MuiAppBar, {
   shouldForwardProp: (prop) => prop !== "open",
@@ -183,7 +183,7 @@ const AppBar = styled(MuiAppBar, {
       duration: theme.transitions.duration.enteringScreen,
     }),
   }),
-}));
+}))
 
 const Drawer = styled(MuiDrawer, {
   shouldForwardProp: (prop) => prop !== "open",
@@ -202,4 +202,4 @@ const Drawer = styled(MuiDrawer, {
     ...closedMixin(theme),
     "& .MuiDrawer-paper": closedMixin(theme),
   }),
-}));
+}))

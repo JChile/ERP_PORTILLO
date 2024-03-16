@@ -1,12 +1,12 @@
-import React from "react";
-import Snackbar from "@mui/material/Snackbar";
-import Typography from "@mui/material/Typography";
-import MuiAlert from "@mui/material/Alert";
+import React from "react"
+import Snackbar from "@mui/material/Snackbar"
+import Typography from "@mui/material/Typography"
+import MuiAlert from "@mui/material/Alert"
 
 // CONFIGURACION DE FEEDBACK
 const Alert = React.forwardRef(function Alert(props, ref) {
-  return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
-});
+  return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />
+})
 
 export const CustomAlert = ({
   feedbackCreate,
@@ -30,5 +30,5 @@ export const CustomAlert = ({
         </Typography>
       </Alert>
     </Snackbar>
-  );
-};
+  )
+}

@@ -1,21 +1,22 @@
-import React, { useContext, useState } from "react";
-import { AuthContext } from "../context";
-import PortilloLogo from "../../assets/portillo-logo-port.png";
-import { useAlertMUI } from "../../hooks";
-import { CustomAlert, CustomCircularProgress } from "../../components";
-import { FaEye, FaEyeSlash } from "react-icons/fa";
+import React, { useContext, useState } from "react"
+import { AuthContext } from "../context"
+import PortilloLogo from "../../assets/portillo-logo-port.png"
+import { useAlertMUI } from "../../hooks"
+import { CustomAlert, CustomCircularProgress } from "../../components"
+import { FaEye, FaEyeSlash } from "react-icons/fa"
+import BackgroundStart from "../../assets/background-option4.jpg"
 
 export const Login = () => {
   // context
-  const { loginUser } = useContext(AuthContext);
+  const { loginUser } = useContext(AuthContext)
   // Estado de credenciales
-  const [form, setForm] = useState({ username: "", password: "" });
-  const { username, password } = form;
-  const [showPassword, setShowPassword] = useState(false);
+  const [form, setForm] = useState({ username: "", password: "" })
+  const { username, password } = form
+  const [showPassword, setShowPassword] = useState(false)
 
   const togglePasswordVisibility = () => {
-    setShowPassword((prev) => !prev);
-  };
+    setShowPassword((prev) => !prev)
+  }
 
   // hook alert
   const {
@@ -24,80 +25,80 @@ export const Login = () => {
     setFeedbackMessages,
     handleCloseFeedback,
     handleClickFeedback,
-  } = useAlertMUI();
+  } = useAlertMUI()
 
   // estado de progress
-  const [visibleProgress, setVisibleProgress] = useState(false);
+  const [visibleProgress, setVisibleProgress] = useState(false)
 
   // handler credenciales
   const onFormChange = (event) => {
-    const { name, value } = event.target;
+    const { name, value } = event.target
     setForm((prev) => ({
       ...prev,
       [name]: value,
-    }));
-  };
+    }))
+  }
 
   // vaciar campos
   const vaciarForm = () => {
-    setForm({ username: "", password: "" });
-  };
+    setForm({ username: "", password: "" })
+  }
 
   // validar envio de campos
   const validarDatosAutenticacion = (username, password) => {
-    var messages_error = "";
+    var messages_error = ""
     if (username.length === 0) {
-      messages_error += "Proporcione un username\n";
+      messages_error += "Proporcione un username\n"
     }
     if (password.length === 0) {
-      messages_error += "Proporciones una contraseña";
+      messages_error += "Proporciones una contraseña"
     }
 
-    return messages_error;
-  };
+    return messages_error
+  }
 
   // funcion de logeo
   const login = async (e) => {
-    e.preventDefault();
-    setVisibleProgress(true);
-    const validate = validarDatosAutenticacion(username, password);
+    e.preventDefault()
+    setVisibleProgress(true)
+    const validate = validarDatosAutenticacion(username, password)
     // si los campos enviados son validos
     if (validate.length === 0) {
       try {
-        const result = await loginUser(username, password, setVisibleProgress);
-        const { detail } = result;
+        const result = await loginUser(username, password, setVisibleProgress)
+        const { detail } = result
         // si no hubo error al obtener el detail mostramos el error
         setFeedbackMessages({
           style_message: "error",
           feedback_description_error: detail,
-        });
-        handleClickFeedback();
+        })
+        handleClickFeedback()
         // vaceamos los campos del form
-        vaciarForm();
+        vaciarForm()
       } catch (error) {
         // set visible
-        setVisibleProgress(false);
+        setVisibleProgress(false)
         // mostramos el error
         setFeedbackMessages({
           style_message: "error",
           feedback_description_error: error.message,
-        });
-        handleClickFeedback();
+        })
+        handleClickFeedback()
       }
     } else {
-      setVisibleProgress(false);
+      setVisibleProgress(false)
       // mostramos feedback
       setFeedbackMessages({
         style_message: "warning",
         feedback_description_error: validate,
-      });
-      handleClickFeedback();
+      })
+      handleClickFeedback()
     }
-  };
+  }
 
   return (
     <>
-      <div className="grid place-content-center h-screen">
+      <div className="grid place-content-center h-screen" style={{ backgroundImage: `url('${BackgroundStart}')`, backgroundSize: 'cover', backgroundPosition: 'center' }}>
         <div className="grid place-content-center rounded-t-lg bg-gray-400 p-4">
           <img src={PortilloLogo} alt="portillo's logo" />
         </div>
@@ -148,13 +149,6 @@ export const Login = () => {
             >
               Iniciar Sesión
             </button>
-
-            <p className="text-white text-xs text-center">
-              ¿No tienes cuenta?
-              <a href="#" className="ml-2 font-medium">
-                Solicitar Acceso
-              </a>
-            </p>
           </form>
         </div>
       </div>
@@ -168,5 +162,5 @@ export const Login = () => {
         handleCloseFeedback={handleCloseFeedback}
       />
     </>
-  );
-};
+  )
+}

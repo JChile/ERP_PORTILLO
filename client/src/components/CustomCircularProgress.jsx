@@ -1,5 +1,5 @@
-import { CircularProgress, Typography } from "@mui/material";
-import React from "react";
+import { CircularProgress, Typography } from "@mui/material"
+import React from "react"
 
 export const CustomCircularProgress = () => {
   return (
@@ -24,5 +24,5 @@ export const CustomCircularProgress = () => {
         </Typography>
       </div>
     </div>
-  );
-};
+  )
+}

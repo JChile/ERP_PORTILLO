@@ -1,12 +1,12 @@
-import React, { useContext, useEffect, useState } from "react";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import React, { useContext, useEffect, useState } from "react"
+import { Link, useNavigate, useParams } from "react-router-dom"
 import {
   createLlamada,
   createWhatsapp,
   getLead,
   updateWhatsapp,
   updateLlamada,
-} from "../helpers";
+} from "../helpers"
 import {
   Box,
   Button,
@@ -15,27 +15,27 @@ import {
   Tab,
   Tabs,
   Typography,
-} from "@mui/material";
-import { ComponentLlamadas, ComponentWhatsapp } from "../components";
-import { AuthContext } from "../../../auth";
-import { CustomAlert, CustomCircularProgress } from "../../../components";
-import { useAlertMUI } from "../../../hooks";
+} from "@mui/material"
+import { ComponentLlamadas, ComponentWhatsapp } from "../components"
+import { AuthContext } from "../../../auth"
+import { CustomAlert, CustomCircularProgress } from "../../../components"
+import { useAlertMUI } from "../../../hooks"
 import {
   combinarErrores,
   formatDate_ISO861_to_formatdate,
   validIdURL,
-} from "../../../utils";
-import { MdArrowBack } from "react-icons/md";
-import ComponentEventos from "../components/ComponentEventos";
-import { createEvent, updateEvent } from "../../ventas/helpers/eventCases";
+} from "../../../utils"
+import { MdArrowBack } from "react-icons/md"
+import ComponentEventos from "../components/ComponentEventos"
+import { createEvent, updateEvent } from "../../ventas/helpers/eventCases"
 
 export const DetailLead = () => {
-  const { idLead } = useParams();
-  const numericId = parseInt(idLead);
-  const { authTokens, currentUser } = useContext(AuthContext);
+  const { idLead } = useParams()
+  const numericId = parseInt(idLead)
+  const { authTokens, currentUser } = useContext(AuthContext)
 
-  const isAsesor = currentUser["groups"] === "asesor" ? true : false;
-  const [tabIndex, setTabIndex] = useState(0);
+  const isAsesor = currentUser["groups"] === "asesor" ? true : false
+  const [tabIndex, setTabIndex] = useState(0)
   const [lead, setLead] = useState({
     nombre: "",
     apellido: "",
@@ -62,7 +62,7 @@ export const DetailLead = () => {
     fecha_creacion: null,
     fecha_desasignacion: null,
     horaRecepcion: null,
-  });
+  })
 
   const {
     nombre,
@@ -86,7 +86,7 @@ export const DetailLead = () => {
     fecha_creacion,
     fecha_desasignacion,
     horaRecepcion,
-  } = lead;
+  } = lead
 
   const {
     feedbackCreate,
@@ -94,174 +94,174 @@ export const DetailLead = () => {
     setFeedbackMessages,
     handleCloseFeedback,
     handleClickFeedback,
-  } = useAlertMUI();
+  } = useAlertMUI()
 
-  const navigate = useNavigate();
+  const navigate = useNavigate()
 
   const onNavigateBack = () => {
-    navigate(-1);
-  };
+    navigate(-1)
+  }
 
-  const [visibleProgress, setVisibleProgress] = useState(false);
+  const [visibleProgress, setVisibleProgress] = useState(false)
 
   // crear informacion de whatsapp
   const createWhatsappMessage = async (itemData) => {
     try {
-      const result = await createWhatsapp(itemData, authTokens["access"]);
-      const createDataWhatsapp = [...whatsapps, result];
+      const result = await createWhatsapp(itemData, authTokens["access"])
+      const createDataWhatsapp = [...whatsapps, result]
       setLead({
         ...lead,
         whatsapps: createDataWhatsapp,
-      });
+      })
     } catch (error) {
-      const pilaError = combinarErrores(error);
+      const pilaError = combinarErrores(error)
       setFeedbackMessages({
         style_message: "error",
         feedback_description_error: pilaError,
-      });
-      handleClickFeedback();
+      })
+      handleClickFeedback()
     }
-  };
+  }
 
   // actualizar informacion de whatsapp
   const updateWhatsappMessage = async (id, itemData) => {
     try {
-      const result = await updateWhatsapp(id, itemData, authTokens["access"]);
+      const result = await updateWhatsapp(id, itemData, authTokens["access"])
       const updateDataWhatsapp = whatsapps.map((element) => {
         if (element.id === id) {
-          return result;
+          return result
         } else {
-          return element;
+          return element
         }
-      });
+      })
       setLead({
         ...lead,
         whatsapps: updateDataWhatsapp,
-      });
+      })
     } catch (error) {
-      const pilaError = combinarErrores(error);
+      const pilaError = combinarErrores(error)
       setFeedbackMessages({
         style_message: "error",
         feedback_description_error: pilaError,
-      });
-      handleClickFeedback();
+      })
+      handleClickFeedback()
     }
-  };
+  }
 
   // crear informacion de llamada
   const createLlamadaLead = async (itemData) => {
     try {
-      const result = await createLlamada(itemData, authTokens["access"]);
-      const createDataLlamada = [...llamadas, result];
+      const result = await createLlamada(itemData, authTokens["access"])
+      const createDataLlamada = [...llamadas, result]
       setLead({
         ...lead,
         llamadas: createDataLlamada,
-      });
+      })
     } catch (error) {
-      const pilaError = combinarErrores(error);
+      const pilaError = combinarErrores(error)
       setFeedbackMessages({
         style_message: "error",
         feedback_description_error: pilaError,
-      });
-      handleClickFeedback();
+      })
+      handleClickFeedback()
     }
-  };
+  }
 
   // actualizar informacion de whatsapp
   const updateLlamadaLead = async (id, itemData) => {
     try {
-      const result = await updateLlamada(id, itemData, authTokens["access"]);
+      const result = await updateLlamada(id, itemData, authTokens["access"])
       const updateDataLlamada = llamadas.map((element) => {
         if (element.id === id) {
-          return result;
+          return result
         } else {
-          return element;
+          return element
         }
-      });
-      console.log(updateDataLlamada);
+      })
+      console.log(updateDataLlamada)
       setLead({
         ...lead,
         llamadas: updateDataLlamada,
-      });
+      })
     } catch (error) {
-      const pilaError = combinarErrores(error);
+      const pilaError = combinarErrores(error)
       setFeedbackMessages({
         style_message: "error",
         feedback_description_error: pilaError,
-      });
-      handleClickFeedback();
+      })
+      handleClickFeedback()
     }
-  };
+  }
 
   const createEventoLead = async (itemData) => {
     try {
       console.log(itemData)
-      const result = await createEvent(itemData, authTokens["access"]);
-      const createDataEvento = [...eventos, result];
+      const result = await createEvent(itemData, authTokens["access"])
+      const createDataEvento = [...eventos, result]
       setLead({
         ...lead,
         eventos: createDataEvento,
-      });
+      })
     } catch (error) {
-      const pilaError = combinarErrores(error);
+      const pilaError = combinarErrores(error)
       setFeedbackMessages({
         style_message: "error",
         feedback_description_error: pilaError,
-      });
-      handleClickFeedback();
+      })
+      handleClickFeedback()
     }
-  };
+  }
 
   const updateEventoLead = async (id, itemData) => {
     try {
       console.log(itemData)
-      const result = await updateEvent(id, itemData, authTokens["access"]);
+      const result = await updateEvent(id, itemData, authTokens["access"])
       const updateDataEvento = eventos.map((elemento) => {
-        return elemento.id === id ? result : elemento;
-      });
-      console.log(updateDataEvento);
+        return elemento.id === id ? result : elemento
+      })
+      console.log(updateDataEvento)
       setLead({
         ...lead,
         eventos: updateDataEvento,
-      });
+      })
     } catch (error) {
-      const pilaError = combinarErrores(error);
+      const pilaError = combinarErrores(error)
       setFeedbackMessages({
         style_message: "error",
         feedback_description_error: pilaError,
-      });
-      handleClickFeedback();
+      })
+      handleClickFeedback()
     }
-  };
+  }
 
   // obtener informacion del lead
   const obtenerLead = async () => {
     if (validIdURL(numericId)) {
       try {
-        setVisibleProgress(true);
-        const auxLead = await getLead(numericId, authTokens.access);
-        console.log(auxLead);
-        setLead(auxLead);
+        setVisibleProgress(true)
+        const auxLead = await getLead(numericId, authTokens.access)
+        console.log(auxLead)
+        setLead(auxLead)
         // comprobar si se realizo con exito la creación del usuario
-        setVisibleProgress(false);
+        setVisibleProgress(false)
       } catch (error) {
-        setVisibleProgress(false);
-        const pilaError = combinarErrores(error);
+        setVisibleProgress(false)
+        const pilaError = combinarErrores(error)
         // mostramos feedback de error
         setFeedbackMessages({
           style_message: "error",
           feedback_description_error: pilaError,
-        });
-        handleClickFeedback();
+        })
+        handleClickFeedback()
       }
     } else {
-      onNavigateBack();
+      onNavigateBack()
     }
-  };
+  }
 
   useEffect(() => {
-    obtenerLead();
-  }, []);
+    obtenerLead()
+  }, [])
 
 
   console.log(lead)
@@ -539,8 +539,8 @@ export const DetailLead = () => {
       />
       {visibleProgress && <CustomCircularProgress />}
     </>
-  );
-};
+  )
+}
 
 /**
  * Custom tab panel to use as tab wrapper.
@@ -548,7 +548,7 @@ export const DetailLead = () => {
  * @returns
  */
 const CustomTabPanel = (props) => {
-  const { children, value, index, ...other } = props;
+  const { children, value, index, ...other } = props
   return (
     <div
       role="tabpanel"
@@ -559,5 +559,5 @@ const CustomTabPanel = (props) => {
     >
       {value === index && <div>{children}</div>}
     </div>
-  );
-};
+  )
+}

@@ -1,4 +1,4 @@
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle, FormControl, InputAdornment, InputLabel, OutlinedInput } from '@mui/material'
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle, FormControl, InputAdornment, InputLabel, OutlinedInput, TextField } from '@mui/material'
 import React, { useEffect, useState } from 'react'
 import { FiPlusCircle } from 'react-icons/fi'
 import { IoIosAlert } from 'react-icons/io'
@@ -87,6 +87,30 @@ export const DialogCreateGastoCampania = ({ handleConfirm }) => {
         }
     };
 
+    // cambiar tipo de cambio
+    const handleChangeTipoCambio = ({ target }) => {
+        const { value } = target;
+        setTipoCambio(value)
+
+        let valueFormat = parseFloat(value)
+        if (isNaN(valueFormat) || value.trim() === "") {
+            valueFormat = 0
+        }
+
+        if (valueFormat === 0) {
+            setgasto({
+                ...gasto,
+                gastoDolares: 0
+            })
+        } else {
+            const valueGastoDolares = parseFloat(parseFloat(gastoSoles) / valueFormat).toFixed(2)
+            setgasto({
+                ...gasto,
+                gastoDolares: valueGastoDolares
+            })
+        }
+    }
+
     // consultar el tipo de cambio
     const consultarTipoCambioDolares = async () => {
         try {
@@ -94,7 +118,7 @@ export const DialogCreateGastoCampania = ({ handleConfirm }) => {
             const { compra } = resultPeticion
             setTipoCambio(compra)
         } catch (e) {
-            console.log(e)
+            alert(e.message)
         }
     }
 
@@ -107,15 +131,28 @@ export const DialogCreateGastoCampania = ({ handleConfirm }) => {
             <Button startIcon={<FiPlusCircle />} color='primary' variant='contained' onClick={handleClickOpen}>
                 Agregar
             </Button>
-            <Dialog open={open} onClose={handleClose}>
+            <Dialog open={open} onClose={handleClose} maxWidth="xs">
                 <DialogTitle
-                    className="flex justify-between items-center"
+                    className="flex justify-between items-center bg-purple-700 text-white"
                     style={{ background: "#9E154A", color: "#fff" }}
                 >
-                    <span>Registrar gasto </span>
-                    <span style={{ fontSize: 13, opacity: 0.7 }}>
-                        (Tipo cambio hoy: {tipoCambio})
-                    </span>
+                    <div className="flex">
+                        <span>Registrar gasto </span>
+                    </div>
+                    <div className="flex items-center">
+                        <span style={{ fontSize: 13, opacity: 0.7 }} className='mr-2'>
+                            Tipo cambio hoy:
+                        </span>
+                        <TextField
+                            type='number'
+                            value={tipoCambio}
+                            size='small'
+                            variant='standard'
+                            className="bg-white w-24"
+                            sx={{ paddingLeft: 0.5 }}
+                            onChange={handleChangeTipoCambio}
+                        />
+                    </div>
                 </DialogTitle>
                 <DialogContent>
                     <form>

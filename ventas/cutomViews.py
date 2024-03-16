@@ -343,7 +343,7 @@ class LeadMultipleCreationManual(APIView):
             if campanias_exclude.filter(codigo=leadIter.get("campania")):
                 leadIter["campania"] = -1
             elif not campanias_proyecto.filter(codigo=leadIter.get("campania")):
-                leadIter["campania"] = str(proyectoObject.nombre+"_organico")
+                leadIter["campania"] = ""
                 lead_notserializer["flag_campania"] = True
 
             else:

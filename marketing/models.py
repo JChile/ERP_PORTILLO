@@ -25,14 +25,6 @@ class Proyecto(models.Model):
     def __str__(self):
         return self.nombre
 
-    def save(self, *args, **kwargs):
-
-        if not self.pk:
-            super().save(*args, **kwargs)
-            Campania.objects.create(nombre=str(self.nombre)+"_organico", codigo=str(
-                self.nombre)+"_organico", proyecto=self, categoria=Categoria.objects.get(nombre="Desconocido"))
-            return
-        super().save(*args, **kwargs)
 
 
 class PresupuestoProyecto(models.Model):

@@ -1,26 +1,26 @@
-import React, { useState, useEffect, useContext } from "react";
-import { useNavigate, useParams } from "react-router-dom";
-import { MenuItem, Select, TextField } from "@mui/material";
-import { useAlertMUI } from "../../../hooks";
-import { CustomAlert, CustomCircularProgress } from "../../../components";
+import React, { useState, useEffect, useContext } from "react"
+import { useNavigate, useParams } from "react-router-dom"
+import { MenuItem, Select, TextField } from "@mui/material"
+import { useAlertMUI } from "../../../hooks"
+import { CustomAlert, CustomCircularProgress } from "../../../components"
 import {
   createImagenProyecto,
   createVideoProyecto,
   getProyecto,
   updateProyecto,
-} from "../helpers";
-import { combinarErrores, validIdURL } from "../../../utils";
-import { AuthContext } from "../../../auth";
-import CarouselComponentImageAdd from "../components/CarouselImageAdd";
-import CarouselComponentVideoAdd from "../components/CarouselVideoAdd";
+} from "../helpers"
+import { combinarErrores, validIdURL } from "../../../utils"
+import { AuthContext } from "../../../auth"
+import CarouselComponentImageAdd from "../components/CarouselImageAdd"
+import CarouselComponentVideoAdd from "../components/CarouselVideoAdd"
 
 export const UpdateProyecto = () => {
-  const { authTokens, currentUser } = useContext(AuthContext);
-  const { idProyecto } = useParams();
+  const { authTokens, currentUser } = useContext(AuthContext)
+  const { idProyecto } = useParams()
 
-  const [flagLoading, setFlagLoading] = useState(false);
+  const [flagLoading, setFlagLoading] = useState(false)
 
-  const numericId = parseInt(idProyecto);
+  const numericId = parseInt(idProyecto)
   const [project, setProject] = useState({
     nombre: "",
     codigo: "",
@@ -29,12 +29,12 @@ export const UpdateProyecto = () => {
     estado: "",
     imagenes: [],
     videos: [],
-  });
+  })
 
   const { nombre, codigo, ubicacion, descripcion, estado, imagenes, videos } =
-    project;
-  const [imageList, setImageList] = useState([]);
-  const [videoList, setVideoList] = useState([]);
+    project
+  const [imageList, setImageList] = useState([])
+  const [videoList, setVideoList] = useState([])
 
   const {
     feedbackCreate,
@@ -42,201 +42,201 @@ export const UpdateProyecto = () => {
     setFeedbackMessages,
     handleCloseFeedback,
     handleClickFeedback,
-  } = useAlertMUI();
+  } = useAlertMUI()
 
-  const [visibleProgress, setVisibleProgress] = useState(false);
+  const [visibleProgress, setVisibleProgress] = useState(false)
 
   const obtenerProyecto = async () => {
     if (validIdURL(numericId)) {
-      setVisibleProgress(true);
+      setVisibleProgress(true)
       try {
-        const result = await getProyecto(idProyecto, authTokens["access"]);
+        const result = await getProyecto(idProyecto, authTokens["access"])
         setProject({
           ...result,
           imagenes: result.imagenes,
           videos: result.videos,
-        });
-        setVisibleProgress(false);
-        setFlagLoading(true);
+        })
+        setVisibleProgress(false)
+        setFlagLoading(true)
       } catch (error) {
-        setVisibleProgress(false);
-        const pilaError = combinarErrores(error);
+        setVisibleProgress(false)
+        const pilaError = combinarErrores(error)
         // mostramos feedback de error
         setFeedbackMessages({
           style_message: "error",
           feedback_description_error: pilaError,
-        });
-        handleClickFeedback();
+        })
+        handleClickFeedback()
       }
     } else {
-      onNavigateBack();
+      onNavigateBack()
     }
-  };
+  }
 
   const handledForm = (event) => {
-    const { name, value } = event.target;
+    const { name, value } = event.target
     setProject({
       ...project,
       [name]: value,
-    });
-  };
+    })
+  }
 
-  const navigate = useNavigate();
+  const navigate = useNavigate()
   const onNavigateBack = () => {
-    navigate(-1);
-  };
+    navigate(-1)
+  }
 
   const validateProject = (nombre, ubicacion, codigo) => {
-    const errors = [];
+    const errors = []
 
     if (nombre.length === 0) {
-      errors.push("- El nombre del proyecto es obligatorio.");
+      errors.push("- El nombre del proyecto es obligatorio.")
     }
     if (!ubicacion) {
-      errors.push("- La ubicacion es obligatoria.");
+      errors.push("- La ubicacion es obligatoria.")
     }
     if (!codigo) {
-      errors.push("- El código es obligatorio.");
+      errors.push("- El código es obligatorio.")
     }
-    return errors.join("\n");
-  };
+    return errors.join("\n")
+  }
 
   const actualizarProyecto = async () => {
-    const validationMessage = validateProject(nombre, ubicacion, codigo);
+    const validationMessage = validateProject(nombre, ubicacion, codigo)
 
     if (validationMessage) {
       // Si hay campos faltantes, mostrar una alerta con los mensajes de error concatenados
       setFeedbackMessages({
         style_message: "warning",
         feedback_description_error: validationMessage,
-      });
-      handleClickFeedback();
+      })
+      handleClickFeedback()
     } else {
-      setVisibleProgress(true);
+      setVisibleProgress(true)
       try {
         const formatProject = {
           ...project,
           usuarioActualizador: currentUser["user_id"],
           usuarioCreador: currentUser["user_id"],
-        };
+        }
         const result = await updateProyecto(
           idProyecto,
           formatProject,
           authTokens["access"]
-        );
+        )
         try {
           for (const imageFile of imageList) {
             if (typeof imageFile === "undefined") {
-              return;
+              return
             }
-            const formData = new FormData();
-            formData.append("imagen", imageFile);
-            formData.append("proyecto", idProyecto);
-            const imgs = await createImagenProyecto(formData);
-            console.log("imagen creado exitosamente");
+            const formData = new FormData()
+            formData.append("imagen", imageFile)
+            formData.append("proyecto", idProyecto)
+            const imgs = await createImagenProyecto(formData)
+            console.log("imagen creado exitosamente")
           }
           for (const videoFile of videoList) {
             if (typeof videoFile === "undefined") {
-              return;
+              return
             }
-            const formData = new FormData();
-            formData.append("video", videoFile);
-            formData.append("proyecto", idProyecto);
-            const vid = await createVideoProyecto(formData);
-            console.log("video creado exitosamente");
+            const formData = new FormData()
+            formData.append("video", videoFile)
+            formData.append("proyecto", idProyecto)
+            const vid = await createVideoProyecto(formData)
+            console.log("video creado exitosamente")
           }
         } catch (error) {
-          console.error(error);
+          console.error(error)
         }
-        setVisibleProgress(false);
-        onNavigateBack();
+        setVisibleProgress(false)
+        onNavigateBack()
       } catch (error) {
-        setVisibleProgress(false);
-        const pilaError = combinarErrores(error);
+        setVisibleProgress(false)
+        const pilaError = combinarErrores(error)
         // mostramos feedback de error
         setFeedbackMessages({
           style_message: "error",
           feedback_description_error: pilaError,
-        });
-        handleClickFeedback();
+        })
+        handleClickFeedback()
       }
     }
-  };
+  }
 
   const handleFileSelect = (event) => {
     const previewContainerImage = document.getElementById(
       "preview-containerImage"
-    );
+    )
     const previewContainerVideo = document.getElementById(
       "preview-containerVideo"
-    );
+    )
 
-    const files = event.target.files;
+    const files = event.target.files
 
     for (const file of files) {
-      const reader = new FileReader();
+      const reader = new FileReader()
 
       reader.onload = function (e) {
-        const previewContainer = document.createElement("div");
+        const previewContainer = document.createElement("div")
 
         if (file.type.includes("image")) {
           previewContainer.className =
-            "relative w-24 h-24 border border-gray-300 rounded overflow-hidden";
-          const img = document.createElement("img");
-          img.src = e.target.result;
-          img.className = "w-full h-full object-cover";
-          previewContainer.appendChild(img);
+            "relative w-24 h-24 border border-gray-300 rounded overflow-hidden"
+          const img = document.createElement("img")
+          img.src = e.target.result
+          img.className = "w-full h-full object-cover"
+          previewContainer.appendChild(img)
 
-          setImageList((prevList) => [...prevList, file]);
+          setImageList((prevList) => [...prevList, file])
         } else if (file.type.includes("video")) {
           previewContainer.className =
-            "relative w-40 h-40 border border-gray-300 rounded overflow-hidden";
-          const video = document.createElement("video");
-          video.src = e.target.result;
-          video.className = "w-full h-full object-cover";
-          video.setAttribute("controls", "");
-          previewContainer.appendChild(video);
+            "relative w-40 h-40 border border-gray-300 rounded overflow-hidden"
+          const video = document.createElement("video")
+          video.src = e.target.result
+          video.className = "w-full h-full object-cover"
+          video.setAttribute("controls", "")
+          previewContainer.appendChild(video)
 
-          setVideoList((prevList) => [...prevList, file]);
+          setVideoList((prevList) => [...prevList, file])
         }
 
-        const closeIcon = document.createElement("div");
+        const closeIcon = document.createElement("div")
         closeIcon.className =
-          "absolute top-0 right-0 cursor-pointer p-1 rounded-full bg-red-500 text-white";
-        closeIcon.innerHTML = "x";
+          "absolute top-0 right-0 cursor-pointer p-1 rounded-full bg-red-500 text-white"
+        closeIcon.innerHTML = "x"
         closeIcon.addEventListener("click", () => {
           // Eliminar la previsualización al hacer clic en la "X"
           if (file.type.includes("image")) {
-            const fileInput = document.getElementById("fileImage");
-            fileInput.value = "";
-            previewContainer.parentNode.removeChild(previewContainer);
-            setImageList((prevList) => prevList.filter((img) => img !== file));
+            const fileInput = document.getElementById("fileImage")
+            fileInput.value = ""
+            previewContainer.parentNode.removeChild(previewContainer)
+            setImageList((prevList) => prevList.filter((img) => img !== file))
           } else if (file.type.includes("video")) {
-            const fileInputVideo = document.getElementById("fileVideo");
-            fileInputVideo.value = "";
-            previewContainer.parentNode.removeChild(previewContainer);
+            const fileInputVideo = document.getElementById("fileVideo")
+            fileInputVideo.value = ""
+            previewContainer.parentNode.removeChild(previewContainer)
             setVideoList((prevList) =>
               prevList.filter((video) => video !== file)
-            );
+            )
           }
-        });
+        })
 
-        previewContainer.appendChild(closeIcon);
+        previewContainer.appendChild(closeIcon)
 
         if (file.type.includes("image")) {
-          previewContainerImage.appendChild(previewContainer);
+          previewContainerImage.appendChild(previewContainer)
         } else if (file.type.includes("video")) {
-          previewContainerVideo.appendChild(previewContainer);
+          previewContainerVideo.appendChild(previewContainer)
         }
-      };
+      }
 
-      reader.readAsDataURL(file);
+      reader.readAsDataURL(file)
     }
-  };
+  }
 
   useEffect(() => {
-    obtenerProyecto();
-  }, []);
+    obtenerProyecto()
+  }, [])
 
   return (
     <>
@@ -394,5 +394,5 @@ export const UpdateProyecto = () => {
       {/* CIRCULAR PROGRESS */}
       {visibleProgress && <CustomCircularProgress />}
     </>
-  );
-};
+  )
+}

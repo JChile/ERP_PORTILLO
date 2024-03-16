@@ -1,9 +1,8 @@
-import { useContext, useEffect, useState } from "react";
-import { AuthContext } from "../../../../auth";
-import { useNavigate, useParams } from "react-router-dom";
+import { useContext, useEffect, useState } from "react"
+import { AuthContext } from "../../../../auth"
+import { useNavigate, useParams } from "react-router-dom"
 import {
   Button,
-  IconButton,
   Paper,
   Table,
   TableBody,
@@ -11,96 +10,85 @@ import {
   TableContainer,
   TableHead,
   TableRow,
-} from "@mui/material";
-import { CustomCircularProgress } from "../../../../components";
-import { FiPlusCircle } from "react-icons/fi";
-import { getProyecto } from "../../helpers";
-import { FaRegEdit } from "react-icons/fa";
-import { CreatePresupuesto } from "./CreatePresupuesto";
-import { obtenerTipoCambio } from "../../helpers/obtenerTipoCambio";
-import { obtenerPresupuestosProyecto } from "../../helpers/obtenerPresupuestos";
-import { EditarPresupuesto } from "./EditPresupuesto";
+} from "@mui/material"
+import { CustomCircularProgress } from "../../../../components"
+import { FiPlusCircle } from "react-icons/fi"
+import { getProyecto } from "../../helpers"
+import { CreatePresupuesto } from "./CreatePresupuesto"
+import { obtenerPresupuestosProyecto } from "../../helpers/obtenerPresupuestos"
+import { EditarPresupuesto } from "./EditPresupuesto"
+import { RowPresupuestoProyecto } from "../../components/presupuesto/RowPresupuestoProyecto"
 
 export const PresupuestoProyecto = () => {
-  const { authTokens } = useContext(AuthContext);
-  const { idProyecto } = useParams();
-  const [isFormOpen, setIsFormOpen] = useState(false);
-  const [isFormEdit, setIsFormEdit] = useState(false);
-  const [presupuestoToEdit, setPresupuestoToEdit] = useState(0);
+  const { authTokens } = useContext(AuthContext)
+  const { idProyecto } = useParams()
+  const [isFormOpen, setIsFormOpen] = useState(false)
+  const [isFormEdit, setIsFormEdit] = useState(false)
+  const [presupuestoToEdit, setPresupuestoToEdit] = useState(0)
   const [project, setProject] = useState({
     nombre: "",
     codigo: "",
     ubicacion: "",
     descripcion: "",
-  });
+  })
 
-  const { nombre, codigo } = project;
+  const { nombre, codigo } = project
 
-  const [visibleProgress, setVisibleProgress] = useState(false);
-  const [tipoCambio, setTipoCambio] = useState(1);
-  const [presupuestos, setPresupuestos] = useState([]);
+  const [visibleProgress, setVisibleProgress] = useState(false)
+  const [presupuestos, setPresupuestos] = useState([])
 
   const obtenerPresupuestos = async () => {
-    setVisibleProgress(true);
+    setVisibleProgress(true)
     try {
-      const data = await obtenerPresupuestosProyecto(idProyecto);
-      setPresupuestos(data);
-      setVisibleProgress(false);
+      const data = await obtenerPresupuestosProyecto(idProyecto)
+      console.log(data)
+      setPresupuestos(data)
+      setVisibleProgress(false)
     } catch (error) {
-      setVisibleProgress(false);
+      setVisibleProgress(false)
     }
-  };
-
-  const obtenerTipoCambioDolarActual = async () => {
-    try {
-      const result = await obtenerTipoCambio();
-      setTipoCambio(result);
-    } catch (error) {
-      alert(error.message)
-    }
-  };
+  }
 
   const obtenerProyecto = async () => {
     if (idProyecto) {
-      setVisibleProgress(true);
+      setVisibleProgress(true)
       try {
-        const result = await getProyecto(idProyecto, authTokens["access"]);
-        setProject(result);
-        setVisibleProgress(false);
-        setFlagLoading(true);
+        const result = await getProyecto(idProyecto, authTokens["access"])
+        setProject(result)
+        setVisibleProgress(false)
+        setFlagLoading(true)
       } catch (error) {
-        setVisibleProgress(false);
+        setVisibleProgress(false)
       }
     } else {
-      onNavigateBack();
+      onNavigateBack()
     }
-  };
+  }
 
   const onEdit = async (id) => {
-    setPresupuestoToEdit(id);
-    setIsFormEdit(true);
-  };
+    setPresupuestoToEdit(id)
+    setIsFormEdit(true)
+  }
 
   const onSubmit = async () => {
-    setIsFormOpen(false);
-    obtenerPresupuestos();
-  };
+    setIsFormOpen(false)
+    obtenerPresupuestos()
+  }
 
   const onSubmitEdit = async () => {
-    setIsFormEdit(false);
-    obtenerPresupuestos();
-  };
+    setIsFormEdit(false)
+    obtenerPresupuestos()
+  }
 
-  const navigate = useNavigate();
+  const navigate = useNavigate()
   const onNavigateBack = () => {
-    navigate(-1);
-  };
+    navigate(-1)
+  }
 
   useEffect(() => {
-    obtenerProyecto();
-    obtenerPresupuestos();
-    obtenerTipoCambioDolarActual();
-  }, []);
+    obtenerProyecto()
+    obtenerPresupuestos()
+  }, [])
 
   return (
     <>
@@ -128,7 +116,7 @@ export const PresupuestoProyecto = () => {
             color="primary"
             variant="contained"
             onClick={() => {
-              setIsFormOpen(true);
+              setIsFormOpen(true)
             }}
           >
             Agregar
@@ -151,43 +139,19 @@ export const PresupuestoProyecto = () => {
                       },
                     }}
                   >
-                    <TableCell>Editar</TableCell>
+                    <TableCell>Acciones</TableCell>
                     <TableCell>Mes</TableCell>
-                    <TableCell>Presupuesto Soles inicial</TableCell>
-                    <TableCell>Presupuesto Dolares</TableCell>
+                    <TableCell>Presupuesto inicial</TableCell>
+                    <TableCell>Gasto total</TableCell>
+                    <TableCell>Presupuesto resto</TableCell>
                     <TableCell>
-                      A tipo cambio hoy <span>({tipoCambio.compra})</span>
+                      <span>Tipo de cambio</span>
                     </TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
                   {presupuestos.map((presupuesto) => (
-                    <TableRow key={presupuesto.id}>
-                      <TableCell>
-                        <IconButton
-                          size="m"
-                          color="primary"
-                          onClick={() => onEdit(presupuesto.id)}
-                        >
-                          <FaRegEdit />
-                        </IconButton>
-                      </TableCell>
-                      <TableCell>
-                        <span style={{ fontWeight: "bold" }}>
-                          {showMonthParser(presupuesto["fechaPresupuesto"])}
-                        </span>
-                      </TableCell>
-                      <TableCell>{presupuesto.presupuestoSoles}</TableCell>
-                      <TableCell>{presupuesto.presupuestoDolares}</TableCell>
-                      <TableCell>
-                        {isNaN(presupuesto.presupuestoDolares) ||
-                          isNaN(tipoCambio.compra)
-                          ? "No se pudo obtener el tipo cambio de hoy"
-                          : (
-                            presupuesto.presupuestoDolares * tipoCambio.compra
-                          ).toFixed(2)}
-                      </TableCell>
-                    </TableRow>
+                    <RowPresupuestoProyecto key={presupuesto.id} presupuesto={presupuesto} onEdit={onEdit} />
                   ))}
                 </TableBody>
               </Table>
@@ -201,7 +165,6 @@ export const PresupuestoProyecto = () => {
         <CreatePresupuesto
           idProyecto={project.id}
           handleCloseForm={() => setIsFormOpen(false)}
-          tipoCambio={tipoCambio.compra}
           submit={onSubmit}
         />
       )}
@@ -213,18 +176,5 @@ export const PresupuestoProyecto = () => {
         />
       )}
     </>
-  );
-};
-
-const showMonthParser = (dateString) => {
-  // Dividir la cadena de fecha en partes (año, mes, día)
-  const [year, month, day] = dateString.split('-');
-
-  // Crear la instancia de Date utilizando los componentes de la fecha
-  const date = new Date(year, month - 1, day);
-
-  // Obtener el nombre del mes
-  const nameMonth = date.toLocaleString('default', { month: 'long' });
-
-  return nameMonth.toUpperCase();
+  )
 }

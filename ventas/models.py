@@ -41,7 +41,7 @@ class Lead(models.Model):
     apellido = models.CharField(max_length=100, null=False, blank=True)
     asignado = models.BooleanField(default=False)
     celular =  models.CharField(max_length=100)
-    celular2 =  models.CharField(null = True,blank=True)
+    celular2 =  models.CharField(max_length=100,null = True,blank=True)
     comentario = models.TextField(max_length=200, null=False, blank=True)
     horaRecepcion = models.DateTimeField(
         default=timezone.now, null=True, blank=True)

@@ -1,34 +1,34 @@
-import React, { useContext, useRef, useState } from "react";
-import { HotTable } from "@handsontable/react";
-import { registerAllModules } from "handsontable/registry";
-import "handsontable/dist/handsontable.full.min.css";
-import { BoxOptionsImportLeads, BoxValidateImportLeads } from "../components";
-import * as XLSX from "xlsx/xlsx.mjs";
-import { CustomAlert, CustomCircularProgress } from "../../../components";
-import { useAlertMUI } from "../../../hooks";
-import { combinarErrores } from "../../../utils";
-import { MdDeleteForever } from "react-icons/md";
-import { importLeadsModeAutomatic, validateImportLeads } from "../helpers";
-import { AuthContext } from "../../../auth";
-import { exportErrorsImportacion } from "../components/importaciones/exportErrorsImportacion";
+import React, { useContext, useRef, useState } from "react"
+import { HotTable } from "@handsontable/react"
+import { registerAllModules } from "handsontable/registry"
+import "handsontable/dist/handsontable.full.min.css"
+import { BoxOptionsImportLeads, BoxValidateImportLeads } from "../components"
+import * as XLSX from "xlsx/xlsx.mjs"
+import { CustomAlert, CustomCircularProgress } from "../../../components"
+import { useAlertMUI } from "../../../hooks"
+import { combinarErrores } from "../../../utils"
+import { MdDeleteForever } from "react-icons/md"
+import { importLeadsModeAutomatic, validateImportLeads } from "../helpers"
+import { AuthContext } from "../../../auth"
+import { exportErrorsImportacion } from "../components/importaciones/exportErrorsImportacion"
 
 export const AddLeadSheet = () => {
   // auth context
-  const { authTokens } = useContext(AuthContext);
+  const { authTokens } = useContext(AuthContext)
   // referencia al archivo
-  const fileInputRef = useRef(null);
+  const fileInputRef = useRef(null)
   // estado que controla si se subio o no un archivo
-  const [selectedFile, setSelectedFile] = useState(null);
+  const [selectedFile, setSelectedFile] = useState(null)
   // toda la data exportada del excel
-  const [dataImport, setDataImport] = useState([]);
+  const [dataImport, setDataImport] = useState([])
   // data de errores
-  const [errorsImport, setErrorsImport] = useState([]);
+  const [errorsImport, setErrorsImport] = useState([])
 
-  const [showOptions, setShowOptions] = useState(false);
-  const [showDialogErrors, setShowDialogErrors] = useState(false);
+  const [showOptions, setShowOptions] = useState(false)
+  const [showDialogErrors, setShowDialogErrors] = useState(false)
 
   // referencia al proyecto
-  const [refProyecto, setRefProyecto] = useState(0);
+  const [refProyecto, setRefProyecto] = useState(0)
 
   // hook alert
   const {
@@ -37,151 +37,151 @@ export const AddLeadSheet = () => {
     setFeedbackMessages,
     handleCloseFeedback,
     handleClickFeedback,
-  } = useAlertMUI();
+  } = useAlertMUI()
 
   // estado de progress
-  const [visibleProgress, setVisibleProgress] = useState(false);
+  const [visibleProgress, setVisibleProgress] = useState(false)
 
   // cada vez que se importa un archivo se ejecuta la funcion onload
   const handleFileUpload = () => {
-    const file = fileInputRef.current.files[0];
+    const file = fileInputRef.current.files[0]
     if (file) {
-      const reader = new FileReader();
-      reader.readAsBinaryString(file);
+      const reader = new FileReader()
+      reader.readAsBinaryString(file)
 
       reader.onload = (event) => {
-        setSelectedFile(reader.result);
-      };
+        setSelectedFile(reader.result)
+      }
       reader.onerror = () => {
         setFeedbackMessages({
           style_message: "error",
           feedback_description_error: "Error al leer el archivo",
-        });
-        handleClickFeedback();
-      };
+        })
+        handleClickFeedback()
+      }
     } else {
-      setSelectedFile(null);
+      setSelectedFile(null)
     }
-  };
+  }
 
   // resetFileInput
   const resetFileInput = () => {
-    fileInputRef.current.value = "";
-    setSelectedFile(null);
-  };
+    fileInputRef.current.value = ""
+    setSelectedFile(null)
+  }
 
   // mostrar dialogo de errores
   const onShowDialogErrors = () => {
-    setShowDialogErrors(true);
-  };
+    setShowDialogErrors(true)
+  }
 
   // cerrar dialogo de errores
   const onCloseDialogErrors = () => {
-    setShowDialogErrors(false);
-    limpiarDataImportacion();
-  };
+    setShowDialogErrors(false)
+    limpiarDataImportacion()
+  }
 
   // limpiar data de importacion
   const limpiarDataImportacion = () => {
-    setErrorsImport([]);
-    setDataImport([]);
-    setRefProyecto(0);
-  };
+    setErrorsImport([])
+    setDataImport([])
+    setRefProyecto(0)
+  }
 
   // mostrar opciones de importacion
   const onShowOptions = () => {
-    setShowOptions(true);
-  };
+    setShowOptions(true)
+  }
 
   // cerrar opciones de importación
   const onCloseOptions = () => {
-    setShowOptions(false);
-  };
+    setShowOptions(false)
+  }
 
   // funcion para encontrar numeros repetidos
   function encontrarNumerosRepetidos(dataDeImportacion) {
-    const numerosRepetidos = {};
+    const numerosRepetidos = {}
 
     // Recorrer la data de importación
     dataDeImportacion.forEach((item, index) => {
-      const celular = item.celular;
+      const celular = item.celular
 
       if (celular) {
         if (numerosRepetidos[celular]) {
-          numerosRepetidos[celular].push(index);
+          numerosRepetidos[celular].push(index)
         } else {
-          numerosRepetidos[celular] = [index];
+          numerosRepetidos[celular] = [index]
         }
       }
-    });
+    })
 
-    let mensaje = "";
+    let mensaje = ""
 
     // Crear mensaje con saltos de línea para números repetidos
     for (const celular in numerosRepetidos) {
       if (numerosRepetidos[celular].length > 1) {
-        mensaje += `El número ${celular} se repite en la data de importación.\n`;
+        mensaje += `El número ${celular} se repite en la data de importación.\n`
       }
     }
 
-    return mensaje;
+    return mensaje
   }
 
   const handleValidateImportClick = async (desde, hasta, proyecto) => {
     // primero leemos el excel
-    const workbook = XLSX.read(selectedFile, { type: "binary" });
-    const sheetName = workbook.SheetNames[0];
-    const worksheet = workbook.Sheets[sheetName];
+    const workbook = XLSX.read(selectedFile, { type: "binary" })
+    const sheetName = workbook.SheetNames[0]
+    const worksheet = workbook.Sheets[sheetName]
     // setiamos la configuracion
-    setRefProyecto(proyecto);
+    setRefProyecto(proyecto)
 
     // Obtén los datos como arreglo de objetos, comenzando desde la fila 6 (skipHeaderRows: 5)
     const jsonData = XLSX.utils.sheet_to_json(worksheet, {
       raw: false,
-    });
+    })
     const jsonDataRange = jsonData.slice(
       parseInt(desde) - 2,
       parseInt(hasta) - 1
-    );
+    )
     // guardamos la data a importar
-    setDataImport(jsonDataRange);
+    setDataImport(jsonDataRange)
 
-    const advertenciasRepetidos = encontrarNumerosRepetidos(jsonDataRange);
+    const advertenciasRepetidos = encontrarNumerosRepetidos(jsonDataRange)
     if (advertenciasRepetidos.length !== 0) {
       setFeedbackMessages({
         style_message: "warning",
         feedback_description_error: advertenciasRepetidos,
-      });
-      handleClickFeedback();
+      })
+      handleClickFeedback()
     } else {
       setFeedbackMessages({
         style_message: "success",
         feedback_description_error: "No hay celulares repetidos",
-      });
-      handleClickFeedback();
+      })
+      handleClickFeedback()
     }
 
     const dataImportValidate = {
       proyecto_id: proyecto,
       data: jsonDataRange,
-    };
+    }
     // enviamos la data al backend para que sea validada
     try {
       const result = await validateImportLeads(
         dataImportValidate,
         authTokens["access"]
-      );
+      )
       // guardamos los errores
-      setErrorsImport(result["inadecuado"]);
+      setErrorsImport(result["inadecuado"])
     } catch (error) {
-      const pilaError = combinarErrores(error);
+      const pilaError = combinarErrores(error)
       setFeedbackMessages({
         style_message: "error",
         feedback_description_error: pilaError,
-      });
-      handleClickFeedback();
+      })
+      handleClickFeedback()
     }
-  };
+  }
 
   // mostrar cuadro de opciones
   const onShowOptionsImport = () => {
@@ -189,104 +189,104 @@ export const AddLeadSheet = () => {
       setFeedbackMessages({
         style_message: "warning",
         feedback_description_error: "No has cargado ningún archivo",
-      });
-      handleClickFeedback();
+      })
+      handleClickFeedback()
     } else {
-      onShowOptions();
+      onShowOptions()
     }
-  };
+  }
 
   // revisar importacion de archivo
   const onValidateImportFileLeads = (options) => {
-    const { rangoDesde, rangoHasta, proyecto } = options;
+    const { rangoDesde, rangoHasta, proyecto } = options
     // cerramos dialogo de opciones
-    onCloseOptions();
+    onCloseOptions()
     // mostramos carga
-    setVisibleProgress(true);
+    setVisibleProgress(true)
     // validamos la importación
-    handleValidateImportClick(rangoDesde, rangoHasta, proyecto);
+    handleValidateImportClick(rangoDesde, rangoHasta, proyecto)
     // ocultamos carga
-    setVisibleProgress(false);
+    setVisibleProgress(false)
     // abrimos dialogo de errores
-    onShowDialogErrors();
-  };
+    onShowDialogErrors()
+  }
 
   function compararCelular(item, errorItem) {
-    return item.celular === errorItem.data.celular;
+    return item.celular === errorItem.data.celular
   }
 
   // importar archivo
   const onImportFileLeads = async (esConErrores) => {
     // cerramos cuadro de dialogo de errores
-    onCloseDialogErrors();
+    onCloseDialogErrors()
 
     // mostramos loading
-    setVisibleProgress(true);
+    setVisibleProgress(true)
 
     // mandamos la información al backend
-    let dataImportAux = [...dataImport];
+    let dataImportAux = [...dataImport]
 
     // si no se quiere importar con errores
     if (!esConErrores) {
       dataImportAux = dataImport.filter((item) => {
         return !errorsImport.some((errorItem) =>
           compararCelular(item, errorItem)
-        );
-      });
+        )
+      })
     }
 
-    let auxErrorsImport = [...errorsImport];
-    console.log("DATA A IMPORTAR: ", dataImportAux);
-    console.log("DATA CON ERROR: ", errorsImport);
+    let auxErrorsImport = [...errorsImport]
+    console.log("DATA A IMPORTAR: ", dataImportAux)
+    console.log("DATA CON ERROR: ", errorsImport)
 
     // realizamos la comunicacion con el backend
     try {
-      const query = `proyecto=${refProyecto}`;
+      const query = `proyecto=${refProyecto}`
       const result = await importLeadsModeAutomatic(
         dataImportAux,
         authTokens["access"],
         query
-      );
-      console.log(result);
-      const { no_guardados, guardados } = result;
+      )
+      console.log(result)
+      const { no_guardados, guardados } = result
       if (no_guardados.length === 0) {
         // mostramos mensaje de exito
         setFeedbackMessages({
           style_message: "success",
           feedback_description_error: `Se importaron correctamente todos los leads. Total guardados: ${guardados.length}`,
-        });
-        handleClickFeedback();
+        })
+        handleClickFeedback()
       } else {
         // mostramos mensaje de fracaso
         setFeedbackMessages({
           style_message: "error",
           feedback_description_error: `Algunos leads no se pudieron crear. Total no creados: ${no_guardados.length}`,
-        });
-        handleClickFeedback();
+        })
+        handleClickFeedback()
         // añadimos al arreglo de errores
-        auxErrorsImport = [...no_guardados];
+        auxErrorsImport = [...no_guardados]
       }
       // ahora exportamos la información de errores
       if (auxErrorsImport.length !== 0) {
-        exportErrorsImportacion(auxErrorsImport);
+        exportErrorsImportacion(auxErrorsImport)
       }
     } catch (error) {
-      console.log(error);
-      const pilaError = combinarErrores(error);
+      console.log(error)
+      const pilaError = combinarErrores(error)
       // mostramos feedback de error
       setFeedbackMessages({
         style_message: "error",
         feedback_description_error: pilaError,
-      });
-      handleClickFeedback();
+      })
+      handleClickFeedback()
     }
     // limpiamos las variables de importacion
-    limpiarDataImportacion();
+    limpiarDataImportacion()
     // borramos el archivo de importacion
-    resetFileInput();
+    resetFileInput()
     // ocultamos loading
-    setVisibleProgress(false);
-  };
+    setVisibleProgress(false)
+  }
 
   return (
     <>
@@ -351,5 +351,5 @@ export const AddLeadSheet = () => {
       {/* CIRCULAR PROGRESS */}
       {visibleProgress && <CustomCircularProgress />}
     </>
-  );
-};
+  )
+}

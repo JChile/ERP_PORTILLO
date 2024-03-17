@@ -1,10 +1,10 @@
-import React, { useRef, useState } from "react";
-import "react-responsive-carousel/lib/styles/carousel.min.css";
-import { Carousel } from "react-responsive-carousel";
-import { IoIosAddCircleOutline } from "react-icons/io";
-import IconButton from "@mui/material/IconButton";
-import { MdDeleteForever } from "react-icons/md";
-import { deleteImagenProyecto } from "../helpers";
+import React, { useRef, useState } from "react"
+import "react-responsive-carousel/lib/styles/carousel.min.css"
+import { Carousel } from "react-responsive-carousel"
+import { IoIosAddCircleOutline } from "react-icons/io"
+import IconButton from "@mui/material/IconButton"
+import { MdDeleteForever } from "react-icons/md"
+import { deleteImagenProyecto } from "../helpers"
 import {
   Dialog,
   DialogContent,
@@ -12,35 +12,35 @@ import {
   DialogContentText,
   DialogActions,
   Button,
-} from "@mui/material";
+} from "@mui/material"
 
 const CarouselComponentImageAdd = ({ images, handleFileSelect, obtenerProyecto }) => {
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
-  const [selectedItemToDelete, setSelectedItemToDelete] = useState(null);
-  const carouselRef = useRef(null);
+  const [currentIndex, setCurrentIndex] = useState(0)
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false)
+  const [selectedItemToDelete, setSelectedItemToDelete] = useState(null)
+  const carouselRef = useRef(null)
 
   const onDeleteItemSelected = async (idItem) => {
-    setSelectedItemToDelete(idItem);
-    setShowDeleteDialog(true);
-  };
+    setSelectedItemToDelete(idItem)
+    setShowDeleteDialog(true)
+  }
 
   const handleDeleteConfirmation = async () => {
     try {
-      await deleteImagenProyecto(selectedItemToDelete);
-      console.log("Eliminando imagen: " + selectedItemToDelete);
-      obtenerProyecto();
-      setCurrentIndex(0);
+      await deleteImagenProyecto(selectedItemToDelete)
+      console.log("Eliminando imagen: " + selectedItemToDelete)
+      obtenerProyecto()
+      setCurrentIndex(0)
     } catch (error) {
-      console.error(error);
+      console.error(error)
     } finally {
-      setShowDeleteDialog(false);
+      setShowDeleteDialog(false)
     }
-  };
+  }
 
   const handleDeleteDialogClose = () => {
-    setShowDeleteDialog(false);
-  };
+    setShowDeleteDialog(false)
+  }
 
   const carouselItems = images.map((imagen) => (
     <div key={imagen.id}>
@@ -58,7 +58,7 @@ const CarouselComponentImageAdd = ({ images, handleFileSelect, obtenerProyecto }
         </IconButton>
       </div>
     </div>
-  ));
+  ))
 
   return (
     <>
@@ -125,7 +125,7 @@ const CarouselComponentImageAdd = ({ images, handleFileSelect, obtenerProyecto }
         </DialogActions>
       </Dialog>
     </>
-  );
-};
+  )
+}
 
-export default CarouselComponentImageAdd;
+export default CarouselComponentImageAdd

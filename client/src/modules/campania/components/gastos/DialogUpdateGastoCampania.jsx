@@ -90,14 +90,14 @@ export const DialogUpdateGastoCampania = ({ handleConfirm, data }) => {
             <IconButton color='warning' variant='contained' onClick={handleClickOpen}>
                 <FiEdit2 />
             </IconButton>
-            <Dialog open={open} onClose={handleClose}>
+            <Dialog open={open} onClose={handleClose} maxWidth="xs">
                 <DialogTitle
                     className="flex justify-between items-center"
                     style={{ background: "#9E154A", color: "#fff" }}
                 >
                     <span>Registrar gasto </span>
                     <span style={{ fontSize: 13, opacity: 0.7 }}>
-                        (Tipo cambio hoy: {tipoCambio})
+                        (Tipo cambio guardado: {tipoCambio})
                     </span>
                 </DialogTitle>
                 <DialogContent>

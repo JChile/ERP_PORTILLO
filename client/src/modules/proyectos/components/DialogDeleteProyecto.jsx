@@ -5,8 +5,8 @@ import {
   DialogContentText,
   DialogActions,
   Button,
-} from "@mui/material";
-import React from "react";
+} from "@mui/material"
+import React from "react"
 
 export const DialogDeleteProyecto = ({
   item,
@@ -41,7 +41,7 @@ export const DialogDeleteProyecto = ({
           variant="contained"
           color="error"
           onClick={() => {
-            onDeleteItemSelected(item);
+            onDeleteItemSelected(item)
           }}
           autoFocus
         >
@@ -49,5 +49,5 @@ export const DialogDeleteProyecto = ({
         </Button>
       </DialogActions>
     </Dialog>
-  );
-};
+  )
+}

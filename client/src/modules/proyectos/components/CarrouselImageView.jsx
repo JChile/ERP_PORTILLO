@@ -1,6 +1,6 @@
-import React from "react";
-import "react-responsive-carousel/lib/styles/carousel.min.css";
-import { Carousel } from "react-responsive-carousel";
+import React from "react"
+import "react-responsive-carousel/lib/styles/carousel.min.css"
+import { Carousel } from "react-responsive-carousel"
 
 const CarouselComponentImageView = ({ images }) => {
   const carouselItems = images.map((imagen) => (
@@ -11,7 +11,7 @@ const CarouselComponentImageView = ({ images }) => {
         className="w-64 h-64"
       />
     </div>
-  ));
+  ))
 
   return (
     <Carousel
@@ -26,7 +26,7 @@ const CarouselComponentImageView = ({ images }) => {
     >
       {carouselItems}
     </Carousel>
-  );
-};
+  )
+}
 
-export default CarouselComponentImageView;
+export default CarouselComponentImageView

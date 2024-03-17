@@ -1,32 +1,32 @@
-import React, { useContext, useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
-import jwtDecode from "jwt-decode";
-import { getLead, updateLead } from "../helpers";
-import { Checkbox } from "@mui/material";
-import { useAlertMUI } from "../../../hooks";
+import React, { useContext, useEffect, useState } from "react"
+import { useNavigate, useParams } from "react-router-dom"
+import jwtDecode from "jwt-decode"
+import { getLead, updateLead } from "../helpers"
+import { Checkbox } from "@mui/material"
+import { useAlertMUI } from "../../../hooks"
 import {
   CustomAlert,
   CustomCircularProgress,
   FilterEstadoLead,
-} from "../../../components";
-import { FilterObjecion } from "../../../components/filters/objecion/FilterObjecion";
-import { FilterAsesor } from "../../../components/filters/asesor/FilterAsesor";
-import { AuthContext } from "../../../auth";
-import { MuiTelInput } from "mui-tel-input";
+} from "../../../components"
+import { FilterObjecion } from "../../../components/filters/objecion/FilterObjecion"
+import { FilterAsesor } from "../../../components/filters/asesor/FilterAsesor"
+import { AuthContext } from "../../../auth"
+import { MuiTelInput } from "mui-tel-input"
 import {
   combinarErrores,
   formatCelular,
   obtenerHoraActualFormatPostgress,
   validIdURL,
-} from "../../../utils";
-import { FilterProyectoCampania } from "../../../components/multiple-filters/proyecto-campania/FilterProyectoCampania";
+} from "../../../utils"
+import { FilterProyectoCampania } from "../../../components/multiple-filters/proyecto-campania/FilterProyectoCampania"
 
 export const UpdateLead = () => {
-  const { idLead } = useParams();
-  const numericId = parseInt(idLead);
-  const { authTokens, currentUser } = useContext(AuthContext);
+  const { idLead } = useParams()
+  const numericId = parseInt(idLead)
+  const { authTokens, currentUser } = useContext(AuthContext)
 
-  const [flagLoading, setFlagLoading] = useState(false);
+  const [flagLoading, setFlagLoading] = useState(false)
 
   const [lead, setLead] = useState({
     nombre: "",
@@ -41,7 +41,7 @@ export const UpdateLead = () => {
     objecion: null,
     campania: null,
     campaniaName: "",
-  });
+  })
 
   const {
     nombre,
@@ -56,7 +56,7 @@ export const UpdateLead = () => {
     objecion,
     campania,
     campaniaName,
-  } = lead;
+  } = lead
 
   const {
     feedbackCreate,
@@ -64,15 +64,15 @@ export const UpdateLead = () => {
     setFeedbackMessages,
     handleCloseFeedback,
     handleClickFeedback,
-  } = useAlertMUI();
+  } = useAlertMUI()
 
-  const [visibleProgress, setVisibleProgress] = useState(false);
+  const [visibleProgress, setVisibleProgress] = useState(false)
 
   const obtenerLead = async (idLead) => {
     if (validIdURL(numericId)) {
       try {
-        setVisibleProgress(true);
-        const result = await getLead(idLead, authTokens["access"]);
+        setVisibleProgress(true)
+        const result = await getLead(idLead, authTokens["access"])
         const formatResult = {
           ...result,
           asesor: result.asesor ? result.asesor["id"] : null,
@@ -80,182 +80,140 @@ export const UpdateLead = () => {
           campaniaName: result.campania ? result.campania["nombre"] : "",
           objecion: result.objecion ? result.objecion["id"] : null,
           estadoLead: result.estadoLead ? result.estadoLead : null,
-        };
-        console.log(formatResult);
-        setLead(formatResult);
+        }
+        console.log(formatResult)
+        setLead(formatResult)
         // comprobar si se realizo con exito la creación del usuario
-        setVisibleProgress(false);
-        setFlagLoading(true);
+        setVisibleProgress(false)
+        setFlagLoading(true)
       } catch (error) {
-        setVisibleProgress(false);
-        const pilaError = combinarErrores(error);
+        setVisibleProgress(false)
+        const pilaError = combinarErrores(error)
         // mostramos feedback de error
         setFeedbackMessages({
           style_message: "error",
           feedback_description_error: pilaError,
-        });
-        handleClickFeedback();
+        })
+        handleClickFeedback()
       }
     } else {
-      onNavigateBack();
+      onNavigateBack()
     }
-  };
+  }
   // change check llamada
   const onAddCheckInputLlamar = (event) => {
-    setLead({ ...lead, llamar: !llamar });
-  };
+    setLead({ ...lead, llamar: !llamar })
+  }
 
   // change check llamada
   const onAddCheckInputImportante = (event) => {
-    setLead({ ...lead, importante: !importante });
-  };
+    setLead({ ...lead, importante: !importante })
+  }
 
   // change campaña
   const onAddCampania = (item) => {
-    const label = item["id"] ? item["label"] : "";
-    setLead({ ...lead, campania: item.id, campaniaName: label });
-  };
+    const label = item["id"] ? item["label"] : ""
+    setLead({ ...lead, campania: item.id, campaniaName: label })
+  }
 
   // change estado lead
   const onAddEstadoLead = (item) => {
-    setLead({ ...lead, estadoLead: item.id });
-  };
+    setLead({ ...lead, estadoLead: item.id })
+  }
 
   // change asesor
   const onAddAsesor = (item) => {
-    setLead({ ...lead, asesor: item.id });
-  };
+    setLead({ ...lead, asesor: item.id })
+  }
 
   // change objecion
   const onAddObjecion = (item) => {
-    setLead({ ...lead, objecion: item.id });
-  };
+    setLead({ ...lead, objecion: item.id })
+  }
 
   const validateLead = () => {
-    const errors = [];
+    const errors = []
 
     // validacion de celular
-    if (celular.length !== 0 && celular !== "+51") {
-      const formatCelular = celular.match(/^\+(\d{1,2})\s*(\d[\s\d]+)$/);
-      if (formatCelular) {
-        const replaceCelular = formatCelular[2].replace(/\s/g, "");
-        if (!/^9\d{8}$/.test(replaceCelular)) {
-          errors.push("El celular no cumple con el formato adecuado");
-        }
-      } else {
-        if (!/^9\d{8}$/.test(celular)) {
-          errors.push("El celular no cumple con el formato adecuado");
-        }
-      }
-    } else {
-      errors.push("El celular es obligatorio");
-    }
-
-    // validacion de celular 2
-    if (celular2 && celular2.length !== 0 && celular2 !== "+51") {
-      const formatCelular2 = celular2.match(/^\+(\d{1,2})\s*(\d[\s\d]+)$/);
-      if (formatCelular2) {
-        const replaceCelular2 = formatCelular2[2].replace(/\s/g, "");
-        if (!/^9\d{8}$/.test(replaceCelular2)) {
-          errors.push("El celular 2 no cumple con el formato adecuado");
-        }
-      } else {
-        if (!/^9\d{8}$/.test(celular2)) {
-          errors.push("El celular no cumple con el formato adecuado");
-        }
-      }
+    if (celular.length === 0) {
+      errors.push("El celular es obligatorio")
     }
 
     // validacion de campaña
     if (!campania) {
-      errors.push("Debes seleccionar una campaña");
+      errors.push("Debes seleccionar una campaña")
     }
 
     // validacion de estado de lead
     if (!estadoLead) {
-      errors.push("Debes seleccionar un estado de lead");
+      errors.push("Debes seleccionar un estado de lead")
     }
 
     // validacion de objecion
     if (!objecion) {
-      errors.push("Debes seleccionar una objecion");
+      errors.push("Debes seleccionar una objecion")
     }
 
-    return errors.join("\n");
-  };
+    return errors.join("\n")
+  }
 
-  const navigate = useNavigate();
+  const navigate = useNavigate()
   const onNavigateBack = () => {
-    navigate(-1);
-  };
+    navigate(-1)
+  }
 
   const actualizarLead = async () => {
     // activamos el progress
-    setVisibleProgress(true);
-    const validationMessage = validateLead();
+    setVisibleProgress(true)
+    const validationMessage = validateLead()
 
     if (validationMessage) {
-      setVisibleProgress(false);
+      setVisibleProgress(false)
       // Si hay campos faltantes, mostrar una alerta con los mensajes de error concatenados
       setFeedbackMessages({
         style_message: "warning",
         feedback_description_error: validationMessage,
-      });
-      handleClickFeedback();
+      })
+      handleClickFeedback()
     } else {
       try {
-        let auxCelular2 = "";
-        if (celular2) {
-          auxCelular2 =
-            celular2.length !== 0 && celular2 !== "+51"
-              ? /^9\d{8}$/.test(lead["celular2"])
-                ? lead["celular2"]
-                : formatCelular(lead["celular2"])
-              : "";
-        }
-
-        console.log(auxCelular2)
         const formatLead = {
           ...lead,
-          celular: /^9\d{8}$/.test(lead["celular"])
-            ? lead["celular"]
-            : formatCelular(lead["celular"]),
-          celular2: auxCelular2,
           usuarioActualizador: currentUser["user_id"],
           fecha_actualizacion: obtenerHoraActualFormatPostgress(),
-        };
+        }
 
         const result = await updateLead(
           idLead,
           formatLead,
           authTokens["access"]
-        );
-        setVisibleProgress(false);
-        onNavigateBack();
+        )
+        setVisibleProgress(false)
+        onNavigateBack()
       } catch (error) {
-        console.log(error);
-        setVisibleProgress(false);
-        const pilaError = combinarErrores(error);
+        console.log(error)
+        setVisibleProgress(false)
+        const pilaError = combinarErrores(error)
         setFeedbackMessages({
           style_message: "error",
           feedback_description_error: pilaError,
-        });
-        handleClickFeedback();
+        })
+        handleClickFeedback()
       }
     }
-  };
+  }
 
   const handledForm = (event) => {
-    const { name, value } = event.target;
+    const { name, value } = event.target
     setLead({
       ...lead,
       [name]: value,
-    });
-  };
+    })
+  }
 
   useEffect(() => {
-    obtenerLead(idLead);
-  }, []);
+    obtenerLead(idLead)
+  }, [])
 
   return (
     <>
@@ -292,9 +250,6 @@ export const UpdateLead = () => {
               <label className="flex flex-col gap-y-1">
                 <span className="block text-sm font-medium">Celular</span>
                 <MuiTelInput
-                  defaultCountry="PE"
-                  disableDropdown
-                  forceCallingCode
                   value={celular}
                   onChange={(value) => {
                     handledForm({
@@ -302,7 +257,7 @@ export const UpdateLead = () => {
                         name: "celular",
                         value: value,
                       },
-                    });
+                    })
                   }}
                 />
               </label>
@@ -310,9 +265,6 @@ export const UpdateLead = () => {
               <label className="flex flex-col gap-y-1">
                 <span className="block text-sm font-medium">Celular 2</span>
                 <MuiTelInput
-                  defaultCountry="PE"
-                  disableDropdown
-                  forceCallingCode
                   value={celular2}
                   onChange={(value) => {
                     handledForm({
@@ -320,11 +272,11 @@ export const UpdateLead = () => {
                         name: "celular2",
                         value: value,
                       },
-                    });
+                    })
                   }}
                 />
               </label>
-              
+
               <div className="flex flex-row gap-x-4">
                 <label className="flex flex-row gap-y-1">
                   <span className="text-sm font-medium flex items-center me-2">
@@ -425,5 +377,5 @@ export const UpdateLead = () => {
       {/* CIRCULAR PROGRESS */}
       {visibleProgress && <CustomCircularProgress />}
     </>
-  );
-};
+  )
+}

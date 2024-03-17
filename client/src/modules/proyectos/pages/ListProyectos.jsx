@@ -1,105 +1,105 @@
-import React, { useEffect, useState, useContext } from "react";
-import { Button, Card, CardContent, Typography, Avatar } from "@mui/material";
-import { Link, useNavigate } from "react-router-dom";
-import IconButton from "@mui/material/IconButton";
-import { BsBuildingsFill } from "react-icons/bs";
-import { FaCircleDollarToSlot } from "react-icons/fa6";
-import { deleteProyecto, getProyectos } from "../helpers";
-import { FaRegEdit } from "react-icons/fa";
-import { MdAdd, MdDeleteForever } from "react-icons/md";
-import { DialogDeleteProyecto } from "../components/DialogDeleteProyecto";
-import { combinarErrores } from "../../../utils";
-import { AuthContext } from "../../../auth";
-import { useAlertMUI } from "../../../hooks";
-import { CustomCircularProgress, CustomAlert } from "../../../components";
-import CarouselComponentImageView from "../components/CarrouselImageView";
-import { CiLocationOn } from "react-icons/ci";
+import React, { useEffect, useState, useContext } from "react"
+import { Button, Card, CardContent, Typography, Avatar } from "@mui/material"
+import { Link, useNavigate } from "react-router-dom"
+import IconButton from "@mui/material/IconButton"
+import { BsBuildingsFill } from "react-icons/bs"
+import { FaCircleDollarToSlot } from "react-icons/fa6"
+import { deleteProyecto, getProyectos } from "../helpers"
+import { FaRegEdit } from "react-icons/fa"
+import { MdAdd, MdDeleteForever } from "react-icons/md"
+import { DialogDeleteProyecto } from "../components/DialogDeleteProyecto"
+import { combinarErrores } from "../../../utils"
+import { AuthContext } from "../../../auth"
+import { useAlertMUI } from "../../../hooks"
+import { CustomCircularProgress, CustomAlert } from "../../../components"
+import CarouselComponentImageView from "../components/CarrouselImageView"
+import { CiLocationOn } from "react-icons/ci"
 
 const ListProyectos = () => {
-  const { authTokens } = useContext(AuthContext);
-  const [activeButton, setActiveButton] = useState(true);
-  const [showDialog, setShowDialog] = useState(false);
-  const [projects, setProjects] = useState([]);
-  const [projectsTemporal, setProjectsTemporal] = useState([]);
-  const [itemSeleccionado, setItemSeleccionado] = useState(null);
-  const [visibleProgress, setVisibleProgress] = useState(false);
+  const { authTokens } = useContext(AuthContext)
+  const [activeButton, setActiveButton] = useState(true)
+  const [showDialog, setShowDialog] = useState(false)
+  const [projects, setProjects] = useState([])
+  const [projectsTemporal, setProjectsTemporal] = useState([])
+  const [itemSeleccionado, setItemSeleccionado] = useState(null)
+  const [visibleProgress, setVisibleProgress] = useState(false)
   const handleButtonState = (buttonState) => {
-    setActiveButton(buttonState);
-  };
+    setActiveButton(buttonState)
+  }
   const {
     feedbackCreate,
     feedbackMessages,
     setFeedbackMessages,
     handleCloseFeedback,
     handleClickFeedback,
-  } = useAlertMUI();
+  } = useAlertMUI()
 
   const obtenerProyectos = async () => {
-    setVisibleProgress(true);
+    setVisibleProgress(true)
     try {
       const data = await getProyectos(
         `estado=${activeButton ? "A" : "I"}`,
         authTokens["access"]
-      );
-      setProjects(data);
-      setProjectsTemporal(data);
-      setVisibleProgress(false);
+      )
+      setProjects(data)
+      setProjectsTemporal(data)
+      setVisibleProgress(false)
     } catch (error) {
-      setVisibleProgress(false);
-      const pilaError = combinarErrores(error);
+      setVisibleProgress(false)
+      const pilaError = combinarErrores(error)
       // mostramos feedback de error
       setFeedbackMessages({
         style_message: "error",
         feedback_description_error: pilaError,
-      });
-      handleClickFeedback();
+      })
+      handleClickFeedback()
     }
-  };
+  }
 
-  const navigate = useNavigate();
+  const navigate = useNavigate()
 
   const onCloseDeleteDialog = () => {
-    setShowDialog(false);
-    setItemSeleccionado(null);
-  };
+    setShowDialog(false)
+    setItemSeleccionado(null)
+  }
 
   const verDialog = (item) => {
-    setShowDialog(true);
-    setItemSeleccionado(item);
-  };
+    setShowDialog(true)
+    setItemSeleccionado(item)
+  }
 
   const onDeleteItemSelected = async (item) => {
-    const { id } = item;
+    const { id } = item
     try {
       const body = {
         estado: "I",
-      };
-      const result = await deleteProyecto(id, body, authTokens["access"]);
-      obtenerProyectos();
-      onCloseDeleteDialog();
+      }
+      const result = await deleteProyecto(id, body, authTokens["access"])
+      obtenerProyectos()
+      onCloseDeleteDialog()
     } catch (error) {
-      setVisibleProgress(false);
-      const pilaError = combinarErrores(error);
+      setVisibleProgress(false)
+      const pilaError = combinarErrores(error)
       // mostramos feedback de error
       setFeedbackMessages({
         style_message: "error",
         feedback_description_error: pilaError,
-      });
-      handleClickFeedback();
+      })
+      handleClickFeedback()
     }
-  };
+  }
 
   const onEditItemSelected = (id) => {
-    navigate(`/proyecto/update/${id}`);
-  };
+    navigate(`/proyecto/update/${id}`)
+  }
 
   const onClickViewPresupuesto = (id) => {
-    navigate(`/proyecto/presupuesto/${id}`);
-  };
+    navigate(`/proyecto/presupuesto/${id}`)
+  }
 
   useEffect(() => {
-    obtenerProyectos();
-  }, [activeButton]);
+    obtenerProyectos()
+  }, [activeButton])
 
   return (
     <>
@@ -225,7 +225,7 @@ const ListProyectos = () => {
       {/* CIRCULAR PROGRESS */}
       {visibleProgress && <CustomCircularProgress />}
     </>
-  );
-};
+  )
+}
 
-export default ListProyectos;
+export default ListProyectos

@@ -63,7 +63,7 @@ class UserList(generics.ListCreateAPIView):
     serializer_class = UserSerializer
     queryset = User.objects.all()
 
-    def list(self, request):
+    def get(self, request):
         estado = request.query_params.get('estado')
         is_active = request.query_params.get('is_active')
 
@@ -84,6 +84,9 @@ class UserList(generics.ListCreateAPIView):
             groupSerializer = GruopSerializer(groups_queryset, many=True)
             i["groups"] = groupSerializer.data
         return Response(dataJson)
+
+
+
 
 
 def mergePermissionsIdWithContentType(permissionSerializer, moduloSerializer, contentType_queryset):

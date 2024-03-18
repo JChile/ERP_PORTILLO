@@ -75,7 +75,9 @@ class ReporteMarketing(APIView):
         asesor_data = UserSerializer(asesor_queryset, many = True, fields = ['id', 'first_name', 'last_name', 'username','codigoAsesor'])
 
         fecha_inicio = datetime(int(anio), int(mes), 1,0,0,0)
+        print("FECHA INICION : ", fecha_inicio)
         fecha_fin = ultimo_dia_mes(fecha_inicio).replace(hour=23, minute=59, second=59)
+        print("FECHA FIN : ", fecha_fin)
         lead_queryset = Lead.objects.filter(asignado = True, fecha_asignacion__range = (fecha_inicio, fecha_fin))
         
         for i in semanas:
@@ -90,7 +92,7 @@ class ReporteMarketing(APIView):
                 j["numeroLeads"] =  lead_queryset.filter(campania = j["id"], fecha_asignacion__range = (str(desde)+" 00:00:00", str(hasta)+" 23:59:59") ).count()
             semanas[i]["asesores"] = json.loads(json.dumps(asesor_data.data))
             for k in semanas[i]["asesores"]:
-                k["numeroLeads"] = lead_queryset.filter(asesor = k["id"], fecha_asignacion__range = (str(desde)+" 00:00:00", str(hasta)+" 23:59:59") ).count()
+                k["numeroLeads"] = lead_queryset.filter(asesor = k["id"], campania__in=campania_queryset, fecha_asignacion__range = (str(desde)+" 00:00:00", str(hasta)+" 23:59:59") ).count()
 
 
         return Response(semanas)

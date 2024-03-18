@@ -142,3 +142,9 @@ class DesasignacionConfiguracionSerializer(serializers.ModelSerializer):
     class Meta:
         model = DesasignacionConfiguracion
         fields = '__all__'
+
+
+class EstadoSeparacionLeadSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = EstadoSeparacionLead
+        fields = '__all__'

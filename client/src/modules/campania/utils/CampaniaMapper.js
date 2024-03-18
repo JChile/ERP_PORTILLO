@@ -66,7 +66,7 @@ export const dataMapper = async ({ query, token }) => {
 
   // Crear tabla de costos por lead por semana por asesor
   const costoLeadRows = [
-    ["COSTO/LEAD $", ...dolaresLeadList],
+    ["COSTO/LEAD $", ...dolaresLeadList, ],
     ["COSTO/LEAD S/", ...solesLeadList],
   ];
 
@@ -196,7 +196,7 @@ export const dataMapper = async ({ query, token }) => {
     costoLeadAsesorHeader: ["Asesor", ...addSymbol('$',headerWeeks), "Total $", "Total S/"],
     costoLeadAsesorRows: [...costoLeadAsesoresRows, totalesCostoLeadColumnas],
 
-    costoLeadHeader: ["Cost/Lead", ...addSymbol('$',headerWeeks)],
+    costoLeadHeader: ["Cost/Lead", ...headerWeeks,],
     costoLeadRows: costoLeadRows,
   };
 };

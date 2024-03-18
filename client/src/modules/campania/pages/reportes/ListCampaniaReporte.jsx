@@ -23,34 +23,37 @@ import {
 import { RowPresupuestoProyecto } from "../../../proyectos/components/presupuesto/RowPresupuestoProyecto";
 import { showMonthParser } from "../../../../utils";
 import { jsPDF } from "jspdf";
-import html2canvas from "html2canvas"; 
+import html2canvas from "html2canvas";
 
 export default function ListCampaniaReportes() {
   const { authTokens } = useContext(AuthContext);
   const [data, setData] = useState(null);
   const [proyectoGasto, setProyectoGasto] = useState(null);
+  const [error, setError] = useState(null);
   const [proyecto, setProyecto] = useState();
   const [selectedDate, setSelectedDate] = useState(dayjs(""));
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const formatQuery = `proyecto=${proyecto}&anio=${selectedDate.year()}&mes=${
-      selectedDate.month() + 1
-    }`;
-    const saldoQuery = await obtenerPresupuestosProyectoMes(
-      proyecto,
-      selectedDate.year(),
-      selectedDate.month() + 1
-    );
-    const info = await dataMapper({
-      query: formatQuery,
-      token: authTokens["access"],
-    });
-
-    console.log({ saldoQuery, info });
-
-    setProyectoGasto(saldoQuery);
-    setData(info);
+    try {
+      const formatQuery = `proyecto=${proyecto}&anio=${selectedDate.year()}&mes=${
+        selectedDate.month() + 1
+      }`;
+      const saldoQuery = await obtenerPresupuestosProyectoMes(
+        proyecto,
+        selectedDate.year(),
+        selectedDate.month() + 1
+      );
+      const info = await dataMapper({
+        query: formatQuery,
+        token: authTokens["access"],
+      });
+      setProyectoGasto(saldoQuery);
+      setData(info);
+      setError(null);
+    } catch (error) {
+      setError(error);
+    }
   };
 
   const onAddProyecto = (item) => {
@@ -58,7 +61,7 @@ export default function ListCampaniaReportes() {
   };
 
   const exportToPDF = (e) => {
-    e.preventDefault()
+    e.preventDefault();
     window.print();
   };
 
@@ -95,48 +98,66 @@ export default function ListCampaniaReportes() {
             Buscar
           </Button>
         </div>
-        <div>
-          {proyectoGasto && <DatosPresupuesto presupuesto={proyectoGasto} />}
-          {proyectoGasto && <Button variant="contained" onClick={exportToPDF} sx={{ marginTop: 2}}>
-            Exportar a PDF
-          </Button>}
-        </div>
+        {!error && (
+          <div>
+            {proyectoGasto && <DatosPresupuesto presupuesto={proyectoGasto} />}
+            {proyectoGasto && (
+              <Button
+                variant="contained"
+                onClick={exportToPDF}
+                sx={{ marginTop: 2 }}
+              >
+                Exportar a PDF
+              </Button>
+            )}
+          </div>
+        )}
       </form>
-      <div className="flex flex-col gap-3 mt-5">
-        {data && (
-          <CampaignTable
-            title={"Inversion en dólares ($)"}
-            headers={data.header}
-            rows={data.rows}
-          />
-        )}
-        {data && (
-          <CampaignTable
-            title={"Costo por lead"}
-            headers={data.costoLeadHeader}
-            rows={data.costoLeadRows}
-          />
-        )}
-        {data && (
-          <CampaignTable
-            title={"Leads por asesor (# Cantidad de leads)"}
-            headers={data.leadAsignadosHeader}
-            rows={data.leadAsignadosRows}
-          />
-        )}
-        {data && (
-          <CampaignTable
-            title={"Inversión por asesor"}
-            headers={data.costoLeadAsesorHeader}
-            rows={data.costoLeadAsesorRows}
-          />
-        )}
-      </div>
+      {!error ? (
+        <div className="flex flex-col gap-3 mt-5">
+          {data && (
+            <CampaignTable
+              title={"Inversion en dólares ($)"}
+              headers={data.header}
+              rows={data.rows}
+            />
+          )}
+          {data && (
+            <CampaignTable
+              title={"Costo por lead"}
+              headers={data.costoLeadHeader}
+              rows={data.costoLeadRows}
+            />
+          )}
+          {data && (
+            <CampaignTable
+              title={"Leads por asesor (# Cantidad de leads)"}
+              headers={data.leadAsignadosHeader}
+              rows={data.leadAsignadosRows}
+            />
+          )}
+          {data && (
+            <CampaignTable
+              title={"Inversión por asesor"}
+              headers={data.costoLeadAsesorHeader}
+              rows={data.costoLeadAsesorRows}
+            />
+          )}
+        </div>
+      ) : (
+        <div
+          className="mt-5 mx-2 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative"
+          role="alert"
+        >
+          <strong className="font-bold">Información no disponible: </strong>
+          <span className="block sm:inline">
+            No se encontro presupuesto de un proyecto con los datos indicados
+          </span>
+        </div>
+      )}
     </div>
   );
 }
-
-
 
 const DatosPresupuesto = ({ presupuesto }) => {
   const restoPresupuestoDolares = restarPresupuestos(

@@ -12,5 +12,6 @@ export const obtenerPresupuestosProyectoMes = async (id, anio, mes ) => {
   // http://127.0.0.1:8000/api/presupuestoProyecto/?proyecto=1&anio=2024&mes=3
   const URL = `${DOMAIN}/api/presupuestoProyecto/?proyecto=${id}&anio=${anio}&mes=${mes}`;
   const { data } = await axios.get(URL);
+  if (data.message) throw Error("No se encontro presupuesto proyecto con los datos indicados")
   return data;
 }

@@ -116,6 +116,8 @@ export const CalendarView = () => {
       const events = await getEvents(authTokens, query);
       const typeEvents = await getTipoEventos();
 
+      console.log(events)
+
       setOriginalEvents(events);
       setTypeEvents(typeEvents);
       const transformedEvents = events.map((item) => transformToEvent(item));

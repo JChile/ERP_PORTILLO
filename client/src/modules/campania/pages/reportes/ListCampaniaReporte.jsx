@@ -16,14 +16,7 @@ import { dataMapper } from "../../utils/CampaniaMapper";
 import { DatePicker } from "@mui/x-date-pickers";
 import dayjs from "dayjs";
 import { FilterProyectos } from "../../../../components";
-import {
-  obtenerPresupuestosProyecto,
-  obtenerPresupuestosProyectoMes,
-} from "../../../proyectos/helpers/obtenerPresupuestos";
-import { RowPresupuestoProyecto } from "../../../proyectos/components/presupuesto/RowPresupuestoProyecto";
-import { showMonthParser } from "../../../../utils";
-import { jsPDF } from "jspdf";
-import html2canvas from "html2canvas";
+import { obtenerPresupuestosProyectoMes } from "../../../proyectos/helpers/obtenerPresupuestos";
 
 export default function ListCampaniaReportes() {
   const { authTokens } = useContext(AuthContext);
@@ -299,7 +292,14 @@ const CampaignTable = ({ title, headers, rows }) => {
           </TableHead>
           <TableBody>
             {rows.map((row, rowIndex) => (
-              <TableRow key={rowIndex}>
+              <TableRow
+                key={rowIndex}
+                className={
+                  rowIndex === rows.length - 1
+                    ? "bg-stone-400 font-bold"
+                    : "font-bold"
+                }
+              >
                 {row.map((cell, cellIndex) => (
                   <TableCell key={cellIndex} align="center">
                     {cell}

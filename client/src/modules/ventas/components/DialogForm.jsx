@@ -105,41 +105,39 @@ export const DialogForm = ({ isOpen, onClose, onCreateRegistroEvento }) => {
                   value={titulo}
                   onChange={handleChangeForm}
                   name="titulo"
+                />
+                <div className="grid grid-cols-2 gap-y-4 gap-x-4">
+                  <FilterTipoEvento
+                    defaultValue={tipo}
+                    onNewInput={onAddTipoEvento}
                   />
-                <LocalizationProvider dateAdapter={AdapterDayjs}>
-                  <div className="grid grid-cols-2 gap-y-4 gap-x-4">
-                    <FilterTipoEvento
-                      defaultValue={tipo}
-                      onNewInput={onAddTipoEvento}
-                    />
-                    <DateTimePicker
-                      disablePast
-                      type="date"
-                      label="Fecha"
-                      onChange={(value) => {
-                        const target = { name: "fecha", value: value };
-                        handleChangeForm({ target });
-                      }}
-                      name="fecha"
-                    />
-                    <TextField
-                      type="number"
-                      label="Duración (min)"
-                      placeholder="Duración"
-                      value={duracion}
-                      onChange={handleChangeForm}
-                      name="duracion"
-                    />
-                    <TextField
-                      type="text"
-                      multiline
-                      label="Observaciones"
-                      name="observacion"
-                      value={observacion}
-                      onChange={handleChangeForm}
-                    />
-                  </div>
-                </LocalizationProvider>
+                  <DateTimePicker
+                    disablePast
+                    type="date"
+                    label="Fecha"
+                    onChange={(value) => {
+                      const target = { name: "fecha", value: value };
+                      handleChangeForm({ target });
+                    }}
+                    name="fecha"
+                  />
+                  <TextField
+                    type="number"
+                    label="Duración (min)"
+                    placeholder="Duración"
+                    value={duracion}
+                    onChange={handleChangeForm}
+                    name="duracion"
+                  />
+                  <TextField
+                    type="text"
+                    multiline
+                    label="Observaciones"
+                    name="observacion"
+                    value={observacion}
+                    onChange={handleChangeForm}
+                  />
+                </div>
               </div>
             </FormControl>
             {/* Mostrar mensajes de error debajo de los campos del formulario */}

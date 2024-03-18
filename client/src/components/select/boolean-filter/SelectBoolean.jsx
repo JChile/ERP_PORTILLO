@@ -1,5 +1,5 @@
-import React, { useState, useContext, useEffect } from "react";
-import { FormControl, MenuItem, Select } from "@mui/material";
+import React, { useState, useContext, useEffect } from "react"
+import { FormControl, MenuItem, Select } from "@mui/material"
 
 export const SelectBoolean = ({
   onNewInput,
@@ -7,8 +7,8 @@ export const SelectBoolean = ({
   size = "small",
   filterName = "",
 }) => {
-  const [options, setOptions] = useState([]);
-  const [value, setValue] = useState(defaultValue);
+  const [options, setOptions] = useState([])
+  const [value, setValue] = useState(defaultValue)
 
   const obtenerEstadoLeads = () => {
     const formatSelect = [
@@ -20,22 +20,22 @@ export const SelectBoolean = ({
         value: false,
         label: "No",
       },
-    ];
-    setOptions(formatSelect);
-  };
+    ]
+    setOptions(formatSelect)
+  }
 
   const handleChange = (event) => {
-    const selectValue = event.target.value;
-    onNewInput(selectValue, filterName);
-  };
+    const selectValue = event.target.value
+    onNewInput(selectValue, filterName)
+  }
 
   useEffect(() => {
-    obtenerEstadoLeads();
-  }, []);
+    obtenerEstadoLeads()
+  }, [])
 
   useEffect(() => {
-    setValue(defaultValue);
-  }, [defaultValue]);
+    setValue(defaultValue)
+  }, [defaultValue])
 
   return (
     <FormControl sx={{ m: 1, minWidth: 120 }} size={size}>
@@ -55,5 +55,5 @@ export const SelectBoolean = ({
         ))}
       </Select>
     </FormControl>
-  );
-};
+  )
+}

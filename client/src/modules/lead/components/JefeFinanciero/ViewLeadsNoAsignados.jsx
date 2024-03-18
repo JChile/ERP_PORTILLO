@@ -1,6 +1,6 @@
-import React, { useContext, useEffect, useState } from "react";
-import { getLeads } from "../../helpers";
-import { AuthContext } from "../../../../auth";
+import React, { useContext, useEffect, useState } from "react"
+import { getLeads } from "../../helpers"
+import { AuthContext } from "../../../../auth"
 import {
   Button,
   Checkbox,
@@ -13,48 +13,49 @@ import {
   TablePagination,
   TableRow,
   TextField,
-} from "@mui/material";
-import { RowItemLeadNoAsignado } from "./RowItemLeadNoAsignado";
-import { MdClose, MdSearch } from "react-icons/md";
+} from "@mui/material"
+import { RowItemLeadNoAsignado } from "./RowItemLeadNoAsignado"
+import { MdClose, MdSearch } from "react-icons/md"
 import {
   CustomAlert,
   CustomCircularProgress,
   CustomDatePickerFilter,
-} from "../../../../components";
-import { useAlertMUI, useCustomTablePagination } from "../../../../hooks";
+} from "../../../../components"
+import { useAlertMUI, useCustomTablePagination } from "../../../../hooks"
 import {
   SelectEstadoLead,
   SelectProyecto,
-} from "../../../../components/select";
-import { MassActionsViewLeadsNoAsignados } from "./acciones-masivas/MassActionsViewLeadsNoAsignados";
-import { combinarErrores, formatDate_ISO861_to_date } from "../../../../utils";
-import SelectAsesor from "../../../../components/select/asesor-filter/SelectAsesor";
+} from "../../../../components/select"
+import { MassActionsViewLeadsNoAsignados } from "./acciones-masivas/MassActionsViewLeadsNoAsignados"
+import { combinarErrores, formatDate_ISO861_to_date } from "../../../../utils"
+import SelectAsesor from "../../../../components/select/asesor-filter/SelectAsesor"
 
 export const ViewLeadsNoAsignados = ({ startDate, endDate, flagReload }) => {
   // auth token
-  const { authTokens } = useContext(AuthContext);
+  const { authTokens } = useContext(AuthContext)
   // leads traidos de la peticion
-  const [leadsNoAsignados, setLeadsNoAsignados] = useState([]);
+  const [leadsNoAsignados, setLeadsNoAsignados] = useState([])
   // leads filtrados
-  const [auxLeadsNoAsignados, setAuxLeadsNoAsignados] = useState([]);
+  const [auxLeadsNoAsignados, setAuxLeadsNoAsignados] = useState([])
   // option check all
-  const [checked, setChecked] = React.useState(false);
+  const [checked, setChecked] = React.useState(false)
   // filtros
   const [filterData, setFilterData] = useState({
     celular: "",
     nombre: "",
     proyecto: "",
     asesor: "",
+    estadoLead: "",
     fecha_desasignacion: "",
-  });
-  const { celular, nombre, proyecto, asesor, fecha_desasignacion } = filterData;
+  })
+  const { celular, nombre, proyecto, asesor, estadoLead, fecha_desasignacion } = filterData
 
   // flag reset
-  const [flagReset, setFlagReset] = useState(false);
+  const [flagReset, setFlagReset] = useState(false)
   // counter elementos seleccionados
-  const [countSelectedElements, setCountSelectedElements] = useState(0);
+  const [countSelectedElements, setCountSelectedElements] = useState(0)
   // visible progress
-  const [visibleProgress, setVisibleProgress] = useState(true);
+  const [visibleProgress, setVisibleProgress] = useState(true)
   // pagination
   const {
     page,
@@ -62,7 +63,7 @@ export const ViewLeadsNoAsignados = ({ startDate, endDate, flagReload }) => {
     handleChangePage,
     handleChangeRowsPerPage,
     paginatedItems,
-  } = useCustomTablePagination(auxLeadsNoAsignados, 25);
+  } = useCustomTablePagination(auxLeadsNoAsignados, 25)
   // custom alert
   const {
     feedbackCreate,
@@ -70,31 +71,32 @@ export const ViewLeadsNoAsignados = ({ startDate, endDate, flagReload }) => {
     setFeedbackMessages,
     handleCloseFeedback,
     handleClickFeedback,
-  } = useAlertMUI();
+  } = useAlertMUI()
 
   // funcion para manejar los filtros
   const handledFilterData = () => {
-    setVisibleProgress(true);
+    setVisibleProgress(true)
     const dataFilter = leadsNoAsignados.filter((element) => {
-      const celularElement = element["celular"].toString().toLowerCase();
+      const celularElement = element["celular"].toString().toLowerCase()
       const nombreElement = `${element["nombre"]
         .toString()
-        .toLowerCase()} ${element["apellido"].toString().toLowerCase()}`;
+        .toLowerCase()} ${element["apellido"].toString().toLowerCase()}`
       const proyectoElement = element["campania"]["proyecto"]["nombre"]
         .toString()
-        .toLowerCase();
+        .toLowerCase()
+      const estadoLeadElement = element["estadoLead"]["nombre"].toString().toLowerCase()
       // Componente nombre completo
       const asesorNombre = element["penultimo_asesor"]["first_name"]
         .toString()
-        .toLowerCase();
+        .toLowerCase()
       const asesorApellido = element["penultimo_asesor"]["last_name"]
         .toString()
-        .toLowerCase();
+        .toLowerCase()
 
-      const asesorElement = `${asesorNombre} ${asesorApellido}`;
+      const asesorElement = `${asesorNombre} ${asesorApellido}`
       const fechaDesasignacionElement = formatDate_ISO861_to_date(
         element["fecha_desasignacion"]
-      );
+      )
 
       // Verifica si alguna propiedad de filterData está vacía y omite el filtro
       if (
@@ -104,6 +106,8 @@ export const ViewLeadsNoAsignados = ({ startDate, endDate, flagReload }) => {
           !nombreElement.includes(filterData["nombre"].toLowerCase())) ||
         (filterData["proyecto"] !== "" &&
           !proyectoElement.includes(filterData["proyecto"].toLowerCase())) ||
+        (filterData["estadoLead"] !== "" &&
+          !estadoLeadElement.includes(filterData["estadoLead"].toLowerCase())) ||
         (filterData["asesor"] !== "" &&
           !asesorElement.includes(filterData["asesor"].toLowerCase())) ||
         (filterData["fecha_desasignacion"] !== "" &&
@@ -111,15 +115,15 @@ export const ViewLeadsNoAsignados = ({ startDate, endDate, flagReload }) => {
             filterData["fecha_desasignacion"].toLowerCase()
           ))
       ) {
-        return false;
+        return false
       }
 
-      return true;
-    });
-    setAuxLeadsNoAsignados(dataFilter);
-    setFlagReset(true);
-    setVisibleProgress(false);
-  };
+      return true
+    })
+    setAuxLeadsNoAsignados(dataFilter)
+    setFlagReset(true)
+    setVisibleProgress(false)
+  }
 
   // reseteamos la data
   const handledResetDataFilter = () => {
@@ -128,71 +132,72 @@ export const ViewLeadsNoAsignados = ({ startDate, endDate, flagReload }) => {
       return {
         ...element,
         isSelected: false,
-      };
-    });
-    setAuxLeadsNoAsignados(resetData);
+      }
+    })
+    setAuxLeadsNoAsignados(resetData)
     //luego reseteamos los filtros
     setFilterData({
       celular: "",
+      estadoLead: "",
       nombre: "",
       proyecto: "",
       asesor: "",
       fecha_desasignacion: "",
-    });
+    })
     // cambiamos el flag de reset
-    setFlagReset(false);
-  };
+    setFlagReset(false)
+  }
 
   // manejar filtros para campos de valor
   const handledFilterInputValues = (e) => {
-    const { target } = e;
-    const { value, name } = target;
+    const { target } = e
+    const { value, name } = target
     setFilterData({
       ...filterData,
       [name]: value,
-    });
+    })
     // cuando se detecte un cambio, cambiamos el valor del flag de reset
-    setFlagReset(false);
-  };
+    setFlagReset(false)
+  }
 
   // manejar filtros para campos de filtros autocomplete
   const handledFilterSelectValues = (value, name) => {
     setFilterData({
       ...filterData,
       [name]: value,
-    });
+    })
     // cuando se detecte un cambio, cambiamos el valor del flag de reset
-    setFlagReset(false);
-  };
+    setFlagReset(false)
+  }
 
   // manejador de filtros para date values
   const handledFilterDateValues = (newDate, filterName) => {
     setFilterData({
       ...filterData,
       [filterName]: newDate,
-    });
-    setFlagReset(false);
-  };
+    })
+    setFlagReset(false)
+  }
 
   // seleccionar todos los datos filtrados
   const handleChangeCheckAll = (event) => {
-    const state = event.target.checked;
-    setChecked(state);
+    const state = event.target.checked
+    setChecked(state)
     const leadsChecked = auxLeadsNoAsignados.map((element) => {
       return {
         ...element,
         isSelected: state,
-      };
-    });
+      }
+    })
     // actualizamos el numero de elementos seleccionados
     if (state) {
-      setCountSelectedElements(leadsChecked.length);
+      setCountSelectedElements(leadsChecked.length)
     } else {
-      setCountSelectedElements(0);
+      setCountSelectedElements(0)
     }
     // actualizamos el valor del filtro
-    setAuxLeadsNoAsignados(leadsChecked);
-  };
+    setAuxLeadsNoAsignados(leadsChecked)
+  }
 
   // seleccionar un elemento
   const handledCheckElement = (event, idItem) => {
@@ -200,59 +205,59 @@ export const ViewLeadsNoAsignados = ({ startDate, endDate, flagReload }) => {
       element.id === idItem
         ? { ...element, isSelected: event.target.checked }
         : element
-    );
+    )
     // actualizamos el valor del filtro
-    setAuxLeadsNoAsignados(dataItemChecked);
+    setAuxLeadsNoAsignados(dataItemChecked)
     // si hay algun cambio, el checkall pasa a false
-    setChecked(false);
+    setChecked(false)
     // actualizamos el counter
     if (event.target.checked) {
-      setCountSelectedElements((c) => c + 1);
+      setCountSelectedElements((c) => c + 1)
     } else {
-      setCountSelectedElements((c) => c - 1);
+      setCountSelectedElements((c) => c - 1)
     }
-  };
+  }
 
   // traer informacion de leads no asociados
   const traerInformacionLeadNoAsociados = async () => {
     // mostrar el progress
-    setVisibleProgress(true);
-    setCountSelectedElements(0);
+    setVisibleProgress(true)
+    setCountSelectedElements(0)
     try {
-      let query = "asignado=False&estado=A&recienCreado=False";
+      let query = "asignado=False&estado=A&recienCreado=False"
       if (startDate && endDate) {
-        query += `&desde=${startDate}T00:00:00&hasta=${endDate}T23:59:59`;
+        query += `&desde=${startDate}T00:00:00&hasta=${endDate}T23:59:59`
       }
       // se debe traer en un rango de 30 dias
-      const result = await getLeads(authTokens["access"], query);
-      console.log(result);
+      const result = await getLeads(authTokens["access"], query)
+      console.log(result)
       const formatData = result.map((element) => {
         return {
           ...element,
           isSelected: false,
-        };
-      });
-      setLeadsNoAsignados(formatData);
-      setAuxLeadsNoAsignados(formatData);
+        }
+      })
+      setLeadsNoAsignados(formatData)
+      setAuxLeadsNoAsignados(formatData)
       // ocultar el progress
-      setVisibleProgress(false);
+      setVisibleProgress(false)
     } catch (error) {
-      const pilaError = combinarErrores(error);
+      const pilaError = combinarErrores(error)
       // mostramos feedback de error
       setFeedbackMessages({
         style_message: "error",
         feedback_description_error: pilaError,
-      });
-      handleClickFeedback();
+      })
+      handleClickFeedback()
       // ocultar el progress
-      setVisibleProgress(false);
+      setVisibleProgress(false)
     }
-  };
+  }
 
   // eventos que se ejecutan antes de renderizar el componente
   useEffect(() => {
-    traerInformacionLeadNoAsociados();
-  }, [flagReload]);
+    traerInformacionLeadNoAsociados()
+  }, [flagReload])
 
   return (
     <>
@@ -308,6 +313,8 @@ export const ViewLeadsNoAsignados = ({ startDate, endDate, flagReload }) => {
                 <TableCell>Celular</TableCell>
                 <TableCell>Nombre</TableCell>
                 <TableCell>Proyecto</TableCell>
+                <TableCell>Campaña</TableCell>
+                <TableCell align="center">Estado</TableCell>
                 <TableCell>Último asesor</TableCell>
                 <TableCell>Fecha desasignacion</TableCell>
               </TableRow>
@@ -372,6 +379,14 @@ export const ViewLeadsNoAsignados = ({ startDate, endDate, flagReload }) => {
                     defaultValue={proyecto}
                   />
                 </TableCell>
+                <TableCell>Sin filtros</TableCell>
+                <TableCell>
+                  <SelectEstadoLead
+                    size="small"
+                    onNewInput={handledFilterSelectValues}
+                    defaultValue={estadoLead}
+                  />
+                </TableCell>
                 <TableCell>
                   <SelectAsesor
                     size="small"
@@ -405,5 +420,5 @@ export const ViewLeadsNoAsignados = ({ startDate, endDate, flagReload }) => {
         handleCloseFeedback={handleCloseFeedback}
       />
     </>
-  );
-};
+  )
+}

@@ -1,14 +1,23 @@
 import React from "react"
+import { formatDate_ISO861_to_formatdate } from "../../../../utils"
 import { Checkbox, TableCell, TableRow } from "@mui/material"
+import { FiCheckCircle, FiXCircle } from "react-icons/fi"
 import { Link, useNavigate } from "react-router-dom"
 import { CustomMoreVerticalActions } from "../../../../components"
-import { formatDate_ISO861_to_formatdate } from "../../../../utils"
 
-export const RowItemLeadNoAsignado = ({ item, checkedElement }) => {
-  const { id, campania, estadoLead } = item
+export const RowItemLeadMarketingInactivo = ({
+  item,
+  checkedElement,
+  onChangeLead,
+}) => {
+  const { campania, id } = item
   const { proyecto } = campania
 
   const navigate = useNavigate()
+
+  const onChangeLeadSelected = () => {
+    onChangeLead(item)
+  }
 
   const onEditItemSelected = () => {
     navigate(`/lead/update/${id}`)
@@ -25,9 +34,10 @@ export const RowItemLeadNoAsignado = ({ item, checkedElement }) => {
           inputProps={{ "aria-label": "controlled" }}
         />
         <CustomMoreVerticalActions
-          activeOnDelete={false}
-          activeOnActive={false}
           onEdit={onEditItemSelected}
+          activeOnDelete={item["estado"] === "A"}
+          onActive={onChangeLeadSelected}
+          onDelete={onChangeLeadSelected}
         />
       </TableCell>
       <TableCell>
@@ -50,20 +60,29 @@ export const RowItemLeadNoAsignado = ({ item, checkedElement }) => {
           </div>
         </Link>
       </TableCell>
-      <TableCell>{`${item["nombre"]} ${item["apellido"]}`}</TableCell>
+      <TableCell>
+        {`${item["nombre"]} ${item["apellido"]}`}
+      </TableCell>
       <TableCell>{proyecto["nombre"]}</TableCell>
       <TableCell>{campania["nombre"]}</TableCell>
       <TableCell align="center">
-        <span style={{ backgroundColor: estadoLead["color"] }} className={`inline-block px-2 py-1 text-sm font-semibold leading-none rounded-full text-white`}>
-          {estadoLead["nombre"]}
-        </span>
+        {item["asignado"] === true ? (
+          <FiCheckCircle
+            color="green"
+            style={{ margin: "auto", display: "block", fontSize: "20px" }}
+          />
+        ) : (
+          <FiXCircle
+            color="red"
+            style={{ margin: "auto", display: "block", fontSize: "20px" }}
+          />
+        )}
       </TableCell>
       <TableCell>
-        {item["penultimo_asesor"]["first_name"]}{" "}
-        {item["penultimo_asesor"]["last_name"]}
+        {formatDate_ISO861_to_formatdate(item["horaRecepcion"])}
       </TableCell>
       <TableCell>
-        {formatDate_ISO861_to_formatdate(item["fecha_desasignacion"])}
+        {formatDate_ISO861_to_formatdate(item["fecha_creacion"])}
       </TableCell>
     </TableRow>
   )

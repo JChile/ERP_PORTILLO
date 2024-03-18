@@ -1,12 +1,12 @@
-import React, { useContext, useEffect, useState } from "react";
-import { useAlertMUI, useCustomTablePagination } from "../../../../hooks";
-import { useNavigate } from "react-router-dom";
+import React, { useContext, useEffect, useState } from "react"
+import { useAlertMUI, useCustomTablePagination } from "../../../../hooks"
+import { useNavigate } from "react-router-dom"
 import {
   CustomAlert,
   CustomCircularProgress,
   CustomDatePickerFilter,
-} from "../../../../components";
-import { AuthContext } from "../../../../auth";
+} from "../../../../components"
+import { AuthContext } from "../../../../auth"
 import {
   Button,
   Checkbox,
@@ -19,23 +19,23 @@ import {
   TablePagination,
   TableRow,
   TextField,
-} from "@mui/material";
-import { MdClose, MdSearch } from "react-icons/md";
-import { SelectBoolean, SelectProyecto } from "../../../../components/select";
-import { RowItemLeadMarketing } from "./RowItemLeadMarketing";
-import { MassActionsViewLeadsMarketing } from "./acciones-masivas/MassActionsViewLeadsMarketing";
-import { combinarErrores, formatDate_ISO861_to_date } from "../../../../utils";
-import { deleteLead, getLeads } from "../../helpers";
+} from "@mui/material"
+import { MdClose, MdSearch } from "react-icons/md"
+import { SelectBoolean, SelectEstadoLead, SelectProyecto } from "../../../../components/select"
+import { RowItemLeadMarketing } from "./RowItemLeadMarketing"
+import { MassActionsViewLeadsMarketing } from "./acciones-masivas/MassActionsViewLeadsMarketing"
+import { combinarErrores, formatDate_ISO861_to_date } from "../../../../utils"
+import { deleteLead, getLeads } from "../../helpers"
 
 export const ViewLeadMarketingActivo = ({ startDate, endDate, flagReload }) => {
-  const { authTokens } = useContext(AuthContext);
+  const { authTokens } = useContext(AuthContext)
 
-  const [leads, setLeads] = useState([]);
-  const [auxLeads, setAuxLeads] = useState([]);
-  const [checked, setChecked] = useState(false);
+  const [leads, setLeads] = useState([])
+  const [auxLeads, setAuxLeads] = useState([])
+  const [checked, setChecked] = useState(false)
 
   // visible progress
-  const [visibleProgress, setVisibleProgress] = useState(false);
+  const [visibleProgress, setVisibleProgress] = useState(false)
 
   // pagination
   const {
@@ -44,7 +44,7 @@ export const ViewLeadMarketingActivo = ({ startDate, endDate, flagReload }) => {
     handleChangePage,
     handleChangeRowsPerPage,
     paginatedItems,
-  } = useCustomTablePagination(auxLeads, 25);
+  } = useCustomTablePagination(auxLeads, 25)
 
   const {
     feedbackCreate,
@@ -52,127 +52,131 @@ export const ViewLeadMarketingActivo = ({ startDate, endDate, flagReload }) => {
     handleClickFeedback,
     handleCloseFeedback,
     setFeedbackMessages,
-  } = useAlertMUI();
+  } = useAlertMUI()
 
   // hook navegacion
-  const navigate = useNavigate();
+  const navigate = useNavigate()
 
   // flag reset
-  const [flagReset, setFlagReset] = useState();
-  const [countSelectedElements, setCountSelectedElements] = useState(0);
+  const [flagReset, setFlagReset] = useState()
+  const [countSelectedElements, setCountSelectedElements] = useState(0)
 
   // numero de items seleccionados
   const [filterData, setFilterData] = useState({
     celular: "",
+    nombre: "",
+    estadoLead: "",
     proyecto: "",
     asignado: "",
     horaRecepcion: "",
-    fecha_creacion: "",
-  });
+  })
 
-  const { celular, asignado, proyecto, horaRecepcion, fecha_creacion } =
-    filterData;
+  const { celular, nombre, estadoLead, asignado, proyecto, horaRecepcion } =
+    filterData
 
   const handledFilterData = () => {
-    setVisibleProgress(true);
+    setVisibleProgress(true)
     const dataFilter = leads.filter((element) => {
-      const celularElement = element["celular"].toString().toLowerCase();
+      const celularElement = element["celular"].toString().toLowerCase()
+      const parserNombreApellido = `${element["nombre"]} ${element["apellido"]}`
+      const nombreElement = parserNombreApellido.toString().toLowerCase()
+      const estadoLeadElement = element["estadoLead"]["nombre"].toString().toLowerCase()
       const proyectoElement = element["campania"]["proyecto"]["nombre"]
         .toString()
-        .toLowerCase();
-      const asignadoElement = element["asignado"] ? "si" : "no";
+        .toLowerCase()
+      const asignadoElement = element["asignado"] ? "si" : "no"
       const horaRecepcionElement = formatDate_ISO861_to_date(
         element["horaRecepcion"]
-      );
-      const fechaCreacionElement = formatDate_ISO861_to_date(
-        element["fecha_creacion"]
-      );
+      )
 
       if (
         (filterData["celular"] !== "" &&
           !celularElement.includes(filterData["celular"].toLowerCase())) ||
+        (filterData["nombre"] !== "" &&
+          !nombreElement.includes(filterData["nombre"].toLowerCase())) ||
         (filterData["proyecto"] !== "" &&
           !proyectoElement.includes(filterData["proyecto"].toLowerCase())) ||
+        (filterData["estadoLead"] !== "" &&
+          !estadoLeadElement.includes(filterData["estadoLead"].toLowerCase())) ||
         (filterData["asignado"] !== "" &&
           !asignadoElement.includes(filterData["asignado"].toLowerCase())) ||
         (filterData["horaRecepcion"] !== "" &&
-          !horaRecepcionElement.includes(filterData["horaRecepcion"])) ||
-        (filterData["fecha_creacion"] !== "" &&
-          !fechaCreacionElement.includes(filterData["fecha_creacion"]))
+          !horaRecepcionElement.includes(filterData["horaRecepcion"]))
       ) {
-        return false;
+        return false
       }
-      return true;
-    });
+      return true
+    })
 
-    setAuxLeads(dataFilter);
-    setFlagReset(true);
-    setVisibleProgress(false);
-  };
+    setAuxLeads(dataFilter)
+    setFlagReset(true)
+    setVisibleProgress(false)
+  }
 
   const handledResetDataFilter = () => {
     const resetDate = leads.map((element) => {
-      return { ...element, isSelected: false };
-    });
-    setAuxLeads(resetDate);
+      return { ...element, isSelected: false }
+    })
+    setAuxLeads(resetDate)
     // reset filtros
     setFilterData({
       celular: "",
+      nombre: "",
       proyecto: "",
+      estadoLead: "",
       asignado: "",
       horaRecepcion: "",
-      fecha_creacion: "",
-    });
-    setFlagReset(false);
-  };
+    })
+    setFlagReset(false)
+  }
 
   // manejador de filtros para select values
   const handledFilterSelectValues = (value, name) => {
     setFilterData({
       ...filterData,
       [name]: value,
-    });
-    setFlagReset(false);
-  };
+    })
+    setFlagReset(false)
+  }
 
   // manejador de filtros para input values
   const handledFilterInputValues = (event) => {
-    const { target } = event;
-    const { value, name } = target;
+    const { target } = event
+    const { value, name } = target
     setFilterData({
       ...filterData,
       [name]: value,
-    });
-    setFlagReset(false);
-  };
+    })
+    setFlagReset(false)
+  }
 
   // manejador de filtros para date values
   const handledFilterDateValues = (newDate, filterName) => {
     setFilterData({
       ...filterData,
       [filterName]: newDate,
-    });
-    setFlagReset(false);
-  };
+    })
+    setFlagReset(false)
+  }
 
   // FUNCIONES PARA EL MANEJO DE LOS LEADS POR MARKETING
   const handleChangeCheckAll = (event) => {
-    const state = event.target.checked;
-    setChecked(state);
+    const state = event.target.checked
+    setChecked(state)
     const leadsChecked = auxLeads.map((element) => {
       return {
         ...element,
         isSelected: state,
-      };
-    });
+      }
+    })
     // actualizamos el numero de elmenentos seleccionados
     if (state) {
-      setCountSelectedElements(leadsChecked.length);
+      setCountSelectedElements(leadsChecked.length)
     } else {
-      setCountSelectedElements(0);
+      setCountSelectedElements(0)
     }
-    setAuxLeads(leadsChecked);
-  };
+    setAuxLeads(leadsChecked)
+  }
 
   // seleccionar un elemento
   const handledCheckElement = (event, idItem) => {
@@ -180,83 +184,83 @@ export const ViewLeadMarketingActivo = ({ startDate, endDate, flagReload }) => {
       element.id === idItem
         ? { ...element, isSelected: event.target.checked }
         : element
-    );
+    )
     // actualizamos el valor del filtro
-    setAuxLeads(dataItemChecked);
+    setAuxLeads(dataItemChecked)
     // si hay algun cambio, el checkall pasa a false
-    setChecked(false);
+    setChecked(false)
     // actualizamos el counter
     if (event.target.checked) {
-      setCountSelectedElements((c) => c + 1);
+      setCountSelectedElements((c) => c + 1)
     } else {
-      setCountSelectedElements((c) => c - 1);
+      setCountSelectedElements((c) => c - 1)
     }
-  };
+  }
 
   // eliminar un lead
   const onEliminarLead = async (item) => {
-    setVisibleProgress(true);
-    const { id } = item;
+    setVisibleProgress(true)
+    const { id } = item
     const body = {
       estado: "I",
       celular: item["celular"],
       campania: item["campania"]["id"],
-    };
+    }
     try {
-      const result = await deleteLead(id, body, authTokens["access"]);
+      const result = await deleteLead(id, body, authTokens["access"])
       // obtenemos las campañas
-      traerLeads();
+      traerLeads()
       // cerramos el loader
-      setVisibleProgress(false);
+      setVisibleProgress(false)
     } catch (error) {
       // ocultar el progress
-      setVisibleProgress(false);
-      const pilaError = combinarErrores(error);
+      setVisibleProgress(false)
+      const pilaError = combinarErrores(error)
       // mostramos feedback de error
       setFeedbackMessages({
         style_message: "error",
         feedback_description_error: pilaError,
-      });
-      handleClickFeedback();
+      })
+      handleClickFeedback()
       // cerramos el loader
-      setVisibleProgress(false);
+      setVisibleProgress(false)
     }
-  };
+  }
 
   // traer leads
   const traerLeads = async () => {
-    setFlagReset(false);
-    setVisibleProgress(true);
-    setCountSelectedElements(0);
+    setFlagReset(false)
+    setVisibleProgress(true)
+    setCountSelectedElements(0)
     try {
-      let query = "estado=A";
+      let query = "estado=A"
       if (startDate && endDate) {
-        query += `&desde=${startDate}T00:00:00&hasta=${endDate}T23:59:59`;
+        query += `&desde=${startDate}T00:00:00&hasta=${endDate}T23:59:59`
       }
-      const rowData = await getLeads(authTokens["access"], query);
+      const rowData = await getLeads(authTokens["access"], query)
       const formatData = rowData.map((element) => {
         return {
           ...element,
           isSelected: false,
-        };
-      });
-      setLeads(formatData);
-      setAuxLeads(formatData);
-      setVisibleProgress(false);
+        }
+      })
+      setLeads(formatData)
+      setAuxLeads(formatData)
+      setVisibleProgress(false)
     } catch (error) {
-      const pilaError = combinarErrores(error);
+      const pilaError = combinarErrores(error)
       setFeedbackMessages({
         style_message: "error",
         feedback_description_error: pilaError,
-      });
-      handleClickFeedback();
-      setVisibleProgress(false);
+      })
+      handleClickFeedback()
+      setVisibleProgress(false)
     }
-  };
+  }
 
   useEffect(() => {
-    traerLeads();
-  }, [flagReload]);
+    traerLeads()
+  }, [flagReload])
 
   return (
     <>
@@ -314,10 +318,12 @@ export const ViewLeadMarketingActivo = ({ startDate, endDate, flagReload }) => {
                   />
                 </TableCell>
                 <TableCell>Celular</TableCell>
+                <TableCell>Nombre</TableCell>
                 <TableCell>Proyecto</TableCell>
+                <TableCell>Campaña</TableCell>
                 <TableCell align="center">Asignado</TableCell>
+                <TableCell align="center">Estado</TableCell>
                 <TableCell>Fecha recepción</TableCell>
-                <TableCell>Fecha creación</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -356,9 +362,22 @@ export const ViewLeadMarketingActivo = ({ startDate, endDate, flagReload }) => {
                     size="small"
                     variant="outlined"
                     placeholder="Número"
+                    autoComplete="off"
                     type="number"
                     name="celular"
                     value={celular}
+                    onChange={handledFilterInputValues}
+                  />
+                </TableCell>
+                <TableCell>
+                  <TextField
+                    size="small"
+                    variant="outlined"
+                    placeholder="Nombre"
+                    autoComplete="off"
+                    type="text"
+                    name="nombre"
+                    value={nombre}
                     onChange={handledFilterInputValues}
                   />
                 </TableCell>
@@ -369,6 +388,9 @@ export const ViewLeadMarketingActivo = ({ startDate, endDate, flagReload }) => {
                     defaultValue={proyecto}
                   />
                 </TableCell>
+                <TableCell>
+                  Sin filtros
+                </TableCell>
                 <TableCell align="center">
                   <SelectBoolean
                     filterName="asignado"
@@ -377,17 +399,17 @@ export const ViewLeadMarketingActivo = ({ startDate, endDate, flagReload }) => {
                   />
                 </TableCell>
                 <TableCell>
-                  <CustomDatePickerFilter
-                    onNewFecha={handledFilterDateValues}
-                    filterName="horaRecepcion"
-                    defaultValue={horaRecepcion}
+                  <SelectEstadoLead
+                    size="small"
+                    onNewInput={handledFilterSelectValues}
+                    defaultValue={estadoLead}
                   />
                 </TableCell>
                 <TableCell>
                   <CustomDatePickerFilter
                     onNewFecha={handledFilterDateValues}
-                    filterName="fecha_creacion"
-                    defaultValue={fecha_creacion}
+                    filterName="horaRecepcion"
+                    defaultValue={horaRecepcion}
                   />
                 </TableCell>
               </TableRow>
@@ -410,5 +432,5 @@ export const ViewLeadMarketingActivo = ({ startDate, endDate, flagReload }) => {
         handleCloseFeedback={handleCloseFeedback}
       />
     </>
-  );
-};
+  )
+}

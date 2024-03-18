@@ -1,3 +1,19 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+
+@media print {
+   /* Estilos específicos para la impresión */
+   body {
+     font-size: 12pt;
+     font-family: Arial, sans-serif;
+   }
+ 
+   /* Establece la orientación horizontal */
+   @page {
+     size: landscape;
+   }
+ 
+   /* Otros estilos necesarios para la impresión */
+ }

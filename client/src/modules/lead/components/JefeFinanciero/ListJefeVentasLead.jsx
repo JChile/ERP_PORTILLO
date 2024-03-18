@@ -1,28 +1,28 @@
-import React, { useEffect, useState } from "react";
-import { Button, Tab, Tabs, TextField } from "@mui/material";
-import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { ViewLeadsNoAsignados } from "./ViewLeadsNoAsignados";
-import ViewLeadAsignados from "./ViewLeadAsignados";
-import { MdClear, MdFilterAlt, MdFilterList } from "react-icons/md";
-import { CustomDatePicker } from "../../../../components";
+import React, { useEffect, useState } from "react"
+import { Button, Tab, Tabs, TextField } from "@mui/material"
+import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers"
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs"
+import { ViewLeadsNoAsignados } from "./ViewLeadsNoAsignados"
+import ViewLeadAsignados from "./ViewLeadAsignados"
+import { MdClear, MdFilterAlt, MdFilterList } from "react-icons/md"
+import { CustomDatePicker } from "../../../../components"
 
 const ListJefeVentasLead = () => {
   // flag reload
-  const [flagReload, setFlagReload] = useState(false);
+  const [flagReload, setFlagReload] = useState(false)
 
   // filtros de fechas
   const [filterDate, setFilterDate] = useState({
     startDate: null,
     endDate: null,
-  });
-  const { startDate, endDate } = filterDate;
+  })
+  const { startDate, endDate } = filterDate
 
   // change flag
   const onSubmitFilter = (event) => {
     // cambiamos el flag de reload
-    setFlagReload((prev) => !prev);
-  };
+    setFlagReload((prev) => !prev)
+  }
 
   // funcion para cambiar fecha desde
   const onChangeDatePickerFechaDesde = (newDate) => {
@@ -30,8 +30,8 @@ const ListJefeVentasLead = () => {
     setFilterDate({
       ...filterDate,
       startDate: newDate,
-    });
-  };
+    })
+  }
 
   // funcion para cambiar fecha hasta
   const onChangeDatePickerFechaHasta = (newDate) => {
@@ -39,12 +39,12 @@ const ListJefeVentasLead = () => {
     setFilterDate({
       ...filterDate,
       endDate: newDate,
-    });
-  };
+    })
+  }
 
   // manejadores de tabs
-  const [value, setValue] = useState(0);
-  const handleChange = (event, newValue) => setValue(newValue);
+  const [value, setValue] = useState(0)
+  const handleChange = (event, newValue) => setValue(newValue)
 
   return (
     <React.Fragment>
@@ -119,8 +119,8 @@ const ListJefeVentasLead = () => {
         </CustomTabPanel>
       </div>
     </React.Fragment>
-  );
-};
+  )
+}
 
 /**
  * Custom tab panel to use as tab wrapper.
@@ -128,7 +128,7 @@ const ListJefeVentasLead = () => {
  * @returns
  */
 const CustomTabPanel = (props) => {
-  const { children, value, index, ...other } = props;
+  const { children, value, index, ...other } = props
   return (
     <div
       role="tabpanel"
@@ -138,7 +138,7 @@ const CustomTabPanel = (props) => {
     >
       {value === index && <div>{children}</div>}
     </div>
-  );
-};
+  )
+}
 
-export default ListJefeVentasLead;
+export default ListJefeVentasLead

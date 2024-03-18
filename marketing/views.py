@@ -236,7 +236,7 @@ class CampaniaList(generics.ListCreateAPIView):
                 campania_queryset = str(Campania.objects.filter(proyecto = campania.proyecto, categoria = campania.categoria).count())
                 if len(campania_queryset) ==1:
                     campania_queryset = "0"+campania_queryset
-                campania.codigo = (campania.proyecto.codigo+"_"+campania.categoria.codigo+"_"+mes_actual+"_"+campania_queryset).upper()
+                campania.codigo = (campania.proyecto.codigo+"_"+campania.categoria.codigo+"_"+mes_actual+campania_queryset).upper()
                 campania.save()
             except:
                 return Response({"message" : "Campaña se creo pero sin su codigo, defina uno"}, status=status.HTTP_400_BAD_REQUEST)

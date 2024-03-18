@@ -1,24 +1,21 @@
 import React, { useContext, useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { useFilterGastos } from '../../hooks'
-import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, FormControl, IconButton, InputAdornment, InputLabel, MenuItem, OutlinedInput, Paper, Select, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField } from '@mui/material'
-import { CustomAlert, CustomCircularProgress, CustomDatePicker, CustomDatePickerMonth } from '../../../../components'
+import { FormControl, MenuItem, Paper, Select, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material'
+import { CustomAlert, CustomCircularProgress, CustomDatePickerMonth } from '../../../../components'
 import { DialogCreateGastoCampania, RowGastoCampania } from '../../components'
-import { FiPlusCircle } from "react-icons/fi";
 import { getGastosCampaniaById } from '../../helpers/gastos/getGastosCampaniaById'
 import { AuthContext } from '../../../../auth'
 import { combinarErrores, obtenerHoraActualFormatPostgress } from '../../../../utils'
 import { useAlertMUI } from '../../../../hooks'
-import { IoIosAlert } from 'react-icons/io'
-import { consultTipoCambio } from '../../helpers/gastos/consultTipoCambio'
 import { createGastosCampania } from '../../helpers/gastos/createGastosCampania'
 import { getCampania } from '../../helpers/getCampania'
 import { consultPresupuestoProyectoDate } from '../../helpers/gastos/consultPresupuestoProyectoDate'
 import { deleteGastosCampania } from '../../helpers/gastos/deleteGastosCampania'
 import { updateGastosCampania } from '../../helpers/gastos/updateGastosCampania'
 
-// funcion total gasto por semana
-const calculateSpentByWeek = (dataWeek, data) => {
+// funcion total gasto por semana en dolares
+const calculateSpentByWeekDolares = (dataWeek, data) => {
     const inicioSemana = dataWeek[0]
     const finSemana = dataWeek[1]
     let sumaTotal = 0
@@ -29,7 +26,22 @@ const calculateSpentByWeek = (dataWeek, data) => {
             sumaTotal += element["gastoDolares"]
         }
     })
-    return sumaTotal
+    return sumaTotal.toFixed(2)
+}
+
+// funcion total gasto por semana en soles
+const calculateSpentByWeekSoles = (dataWeek, data) => {
+    const inicioSemana = dataWeek[0]
+    const finSemana = dataWeek[1]
+    let sumaTotal = 0
+    data.forEach((element) => {
+        const parserDate = new Date(element["fechaGasto"] + "T00:00:00Z")
+        const day = parserDate.getUTCDate()
+        if (inicioSemana <= day && finSemana >= day) {
+            sumaTotal += element["gastoSoles"]
+        }
+    })
+    return sumaTotal.toFixed(2)
 }
 
 export const ListCampaniaGastos = () => {
@@ -109,7 +121,6 @@ export const ListCampaniaGastos = () => {
         setVisibleProgress(true);
         try {
             const resultPeticion = await getGastosCampaniaById(`campania=${idCampania}`, authTokens["access"])
-            console.log(resultPeticion)
             setVisibleProgress(false);
             setData(resultPeticion)
         } catch (error) {
@@ -134,7 +145,6 @@ export const ListCampaniaGastos = () => {
         }
         try {
             const resultPeticion = await updateGastosCampania(idGastoCampania, formatData, authTokens["access"])
-            console.log(resultPeticion)
 
             const findIndexGasto = data.findIndex((element) => element.id === idGastoCampania)
 
@@ -221,9 +231,11 @@ export const ListCampaniaGastos = () => {
     }
 
     // informacion de semanas por mes
-    const semanasFecha = getSemanasPorMes(date);
+    const semanasFecha = getSemanasPorMes(date)
+
     // formato de fechas
     const fechaFormat = showDataParser(selectedSemana, semanasFecha, date)
+
     // data
     const filteredData = filtrarGastosPorSemana(data, semanasFecha, selectedSemana, date)
 
@@ -294,6 +306,9 @@ export const ListCampaniaGastos = () => {
                                                 },
                                             }}
                                         >
+                                            <TableCell>
+                                                Tipo moneda
+                                            </TableCell>
                                             {
                                                 semanasFecha.map((element, index) => (
                                                     <TableCell align='center' key={index}
@@ -311,10 +326,25 @@ export const ListCampaniaGastos = () => {
                                     </TableHead>
                                     <TableBody>
                                         <TableRow>
+                                            <TableCell style={{ background: '#404040', color: 'white' }}>
+                                                Dolares
+                                            </TableCell>
                                             {
                                                 semanasFecha.map((element, index) => (
                                                     <TableCell align='center' key={index} style={{ backgroundColor: index === selectedSemana ? '#7de37f' : 'white' }} >
-                                                        {calculateSpentByWeek(element, filteredData)}
+                                                        $ {calculateSpentByWeekDolares(element, filteredData)}
+                                                    </TableCell>
+                                                ))
+                                            }
+                                        </TableRow>
+                                        <TableRow>
+                                            <TableCell style={{ background: '#404040', color: 'white' }}>
+                                                Soles
+                                            </TableCell>
+                                            {
+                                                semanasFecha.map((element, index) => (
+                                                    <TableCell align='center' key={index} style={{ backgroundColor: index === selectedSemana ? '#7de37f' : 'white' }} >
+                                                        S/ {calculateSpentByWeekSoles(element, filteredData)}
                                                     </TableCell>
                                                 ))
                                             }
@@ -341,10 +371,10 @@ export const ListCampaniaGastos = () => {
                                                 },
                                             }}
                                         >
-                                            <TableCell>Fecha</TableCell>
-                                            <TableCell>Mes</TableCell>
-                                            <TableCell>Dia</TableCell>
-                                            <TableCell>Gasto</TableCell>
+                                            <TableCell>Fecha registro</TableCell>
+                                            <TableCell>Tipo cambio</TableCell>
+                                            <TableCell>Gasto soles</TableCell>
+                                            <TableCell>Gasto dolares</TableCell>
                                             <TableCell>Acciones</TableCell>
                                         </TableRow>
                                     </TableHead>
@@ -365,6 +395,14 @@ export const ListCampaniaGastos = () => {
                         </Paper>
                     </div>
                 </section>
+                <div className="flex justify-center mt-4 mb-4">
+                    <button
+                        className="bg-gray-500 hover:bg-gray-600 text-white py-2 px-4 rounded"
+                        onClick={onNavigateBack}
+                    >
+                        Volver
+                    </button>
+                </div>
             </main>
             {/* COMPONENTE ALERTA */}
             <CustomAlert

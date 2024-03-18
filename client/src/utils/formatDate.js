@@ -63,3 +63,16 @@ export const obtenerHoraActualFormatPostgress = () => {
 function agregarCero(numero) {
   return numero < 10 ? `0${numero}` : numero;
 }
+
+export function showMonthParser(dateString) {
+  // Dividir la cadena de fecha en partes (año, mes, día)
+  const [year, month, day] = dateString.split('-');
+
+  // Crear la instancia de Date utilizando los componentes de la fecha
+  const date = new Date(year, month - 1, day);
+
+  // Obtener el nombre del mes
+  const nameMonth = date.toLocaleString('default', { month: 'long' });
+
+  return nameMonth.toUpperCase();
+}

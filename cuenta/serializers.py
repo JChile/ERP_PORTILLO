@@ -33,6 +33,7 @@ class UserInfoSerializer(serializers.ModelSerializer):
         model = User
         fields = ['first_name', 'last_name', 'email']
 
+from rest_framework.response import Response
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -53,6 +54,8 @@ class UserSerializer(serializers.ModelSerializer):
                 self.fields.pop(field_name)
 
     def create(self, validated_data):
+        if User.objects.filter(username = validated_data["username"]).first()!=None:
+            raise serializers.ValidationError({'username':'Ya existe un usuario con este nombre de usuario.'})
         user = super(UserSerializer, self).create(validated_data)
         user.set_password(validated_data['password'])
         user.save()

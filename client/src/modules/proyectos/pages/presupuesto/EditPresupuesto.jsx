@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react"
 import {
   Dialog,
   DialogTitle,
@@ -9,60 +9,60 @@ import {
   InputLabel,
   OutlinedInput,
   InputAdornment,
-} from "@mui/material";
-import { IoIosAlert } from "react-icons/io";
-import { CustomDatePicker } from "../../../../components";
-import { obtenerPresupuestoProyecto } from "../../helpers/obtenerPresupuesto";
-import { updatePresupuesto } from "../../helpers/updatePresupuesto";
+} from "@mui/material"
+import { IoIosAlert } from "react-icons/io"
+import { CustomDatePicker } from "../../../../components"
+import { obtenerPresupuestoProyecto } from "../../helpers/obtenerPresupuesto"
+import { updatePresupuesto } from "../../helpers/updatePresupuesto"
 
 export const EditarPresupuesto = ({
   idPresupuesto,
   handleCloseForm,
   submit,
 }) => {
-  const [alertDolar, setAlertDolar] = useState(false);
-  const [alertSol, setAlertSol] = useState(false);
-  const [alertFecha, setAlertFecha] = useState(false);
+  const [alertDolar, setAlertDolar] = useState(false)
+  const [alertSol, setAlertSol] = useState(false)
+  const [alertFecha, setAlertFecha] = useState(false)
   const [presupuesto, setPresupuesto] = useState({
     presupuestoSoles: 0,
     presupuestoDolares: 0,
     tipoCambioSoles: 0,
     fechaPresupuesto: "",
-  });
+  })
 
   const {
     presupuestoSoles,
     presupuestoDolares,
     tipoCambioSoles,
     fechaPresupuesto,
-  } = presupuesto;
+  } = presupuesto
 
   const obtenerPresupuesto = async () => {
     try {
-      const result = await obtenerPresupuestoProyecto(idPresupuesto);
+      const result = await obtenerPresupuestoProyecto(idPresupuesto)
       setPresupuesto({
         ...result,
-      });
+      })
     } catch (error) {
-      handleCloseForm();
+      handleCloseForm()
     }
-  };
+  }
 
   const handleInputChange = (event) => {
-    const { name, value } = event.target;
-    let newValue = value;
+    const { name, value } = event.target
+    let newValue = value
 
     if (isNaN(value) || value < 0 || value === "") {
-      setAlertSol(true);
-      setAlertDolar(true);
+      setAlertSol(true)
+      setAlertDolar(true)
     } else {
-      setAlertSol(false);
-      setAlertDolar(false);
+      setAlertSol(false)
+      setAlertDolar(false)
     }
     if (name === "presupuestoSoles") {
-      newValue = (parseFloat(value) / tipoCambioSoles).toFixed(2);
+      newValue = (parseFloat(value) / tipoCambioSoles).toFixed(2)
     } else if (name === "presupuestoDolares") {
-      newValue = (parseFloat(value) * tipoCambioSoles).toFixed(2);
+      newValue = (parseFloat(value) * tipoCambioSoles).toFixed(2)
     }
 
     setPresupuesto({
@@ -72,36 +72,36 @@ export const EditarPresupuesto = ({
       ...(name === "presupuestoSoles"
         ? { presupuestoDolares: newValue }
         : { presupuestoSoles: newValue }),
-    });
-  };
+    })
+  }
 
   const handleFecha = (newDate) => {
     if (newDate != "") {
-      setAlertFecha(false);
+      setAlertFecha(false)
     }
     setPresupuesto({
       ...presupuesto,
       fechaPresupuesto: newDate,
-    });
-  };
+    })
+  }
 
   const validateData = () =>
-    presupuestoSoles > 0 && presupuestoDolares > 0 && fechaPresupuesto !== "";
+    presupuestoSoles > 0 && presupuestoDolares > 0 && fechaPresupuesto !== ""
 
   const handleFormSubmit = async () => {
     if (validateData()) {
-      const result = await updatePresupuesto(idPresupuesto, presupuesto);
-      submit();
+      const result = await updatePresupuesto(idPresupuesto, presupuesto)
+      submit()
     } else {
-      setAlertSol(presupuestoSoles <= 0);
-      setAlertDolar(presupuestoDolares <= 0);
-      setAlertFecha(fechaPresupuesto === "");
+      setAlertSol(presupuestoSoles <= 0)
+      setAlertDolar(presupuestoDolares <= 0)
+      setAlertFecha(fechaPresupuesto === "")
     }
-  };
+  }
 
   useEffect(() => {
-    obtenerPresupuesto();
-  }, []);
+    obtenerPresupuesto()
+  }, [])
 
   return (
     <Dialog open={true} onClose={handleCloseForm}>
@@ -185,5 +185,5 @@ export const EditarPresupuesto = ({
         </Button>
       </DialogActions>
     </Dialog>
-  );
-};
+  )
+}

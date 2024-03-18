@@ -1,19 +1,19 @@
-import React, { useContext } from "react";
-import { AuthContext, AuthProvider, Login, MainContainerApp } from "../auth";
-import { Route, Routes } from "react-router-dom";
-import { RolRoutes } from "../modules/roles";
-import { UsuarioRoutes } from "../modules/usuario";
-import { CampaniaRoutes } from "../modules/campania";
-import { LeadRoutes } from "../modules/lead";
-import { ControllNotFoundPage, HomePage, NotFoundPage } from "../components";
-import { VentasRouter } from "../modules/ventas/router/VentasRouter";
-import { ProyectoRoutes } from "../modules/proyectos/router/ProyectoRoutes";
-import { ProductoRoutes } from "../modules/productos/router/ProductoRoutes";
-import ReportesRoutes from "../modules/reportes/router/ReportesRoutes";
-import { PrivateModuleRouter } from "./PrivateModuleRouter";
-import { PublicRoutes } from "./PublicRoutes";
-import { NotPublicPage } from "../components/NotPublicPage";
-import { NotAccessPage } from "../components/NotAccessPage";
+import React, { useContext } from "react"
+import { AuthContext, AuthProvider, Login, MainContainerApp } from "../auth"
+import { Route, Routes } from "react-router-dom"
+import { RolRoutes } from "../modules/roles"
+import { UsuarioRoutes } from "../modules/usuario"
+import { CampaniaRoutes } from "../modules/campania"
+import { LeadRoutes } from "../modules/lead"
+import { ControllNotFoundPage, HomePage, NotFoundPage } from "../components"
+import { VentasRouter } from "../modules/ventas/router/VentasRouter"
+import { ProyectoRoutes } from "../modules/proyectos/router/ProyectoRoutes"
+import { ProductoRoutes } from "../modules/productos/router/ProductoRoutes"
+import ReportesRoutes from "../modules/reportes/router/ReportesRoutes"
+import { PrivateModuleRouter } from "./PrivateModuleRouter"
+import { PublicRoutes } from "./PublicRoutes"
+import { NotPublicPage } from "../components/NotPublicPage"
+import { NotAccessPage } from "../components/NotAccessPage"
 
 export const AppRouter = () => {
   return (
@@ -26,10 +26,10 @@ export const AppRouter = () => {
         <Route path="no-found-page" element={<NotFoundPage />} />
       </Routes>
     </AuthProvider>
-  );
-};
+  )
+}
 const AppRouterContent = () => {
-  const { permissions } = useContext(AuthContext);
+  const { permissions } = useContext(AuthContext)
 
   return (
     <>
@@ -133,5 +133,5 @@ const AppRouterContent = () => {
         </Routes>
       </MainContainerApp>
     </>
-  );
-};
+  )
+}

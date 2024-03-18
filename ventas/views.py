@@ -168,7 +168,7 @@ class LeadList(generics.ListCreateAPIView):
 
         leadSerializer = LeadSerializer(lead_queryset, many=True)
         estadoLead_queryset = EstadoLead.objects.all()
-        
+        estadoSeparacion_queryset = EstadoSeparacionLead.objects.all()
 
         leadData = leadSerializer.data
         for i in leadData:
@@ -188,10 +188,16 @@ class LeadList(generics.ListCreateAPIView):
             
             estadoSerializer = EstadoLeadSerializer(
                 estadoLead_data) if estadoLead_data else None
-
+            
+            estadoSeparacion = estadoSeparacion_queryset.filter(pk = i["estadoSeparacionLead"]).first()
+            estadoSeparacionSerializer = EstadoSeparacionLeadSerializer(
+                estadoSeparacion) if estadoSeparacion else None
+            
             i["asesor"] = userSerializer.data if userSerializer else None
             i["campania"] = campaniaSerializer.data if campaniaSerializer else None
             i["estadoLead"] = estadoSerializer.data if estadoSerializer else None
+            i["estadoSeparacionLead"] = estadoSeparacionSerializer.data if estadoSeparacionSerializer else None
+
             i["campania"]["proyecto"] = ProyectoSerializer(
                 Proyecto.objects.filter(pk=i["campania"]["proyecto"]).first()).data
             i["objecion"] = objecionSerializer.data if objecionSerializer else None
@@ -202,7 +208,7 @@ class LeadList(generics.ListCreateAPIView):
                 'id', 'first_name', 'last_name', 'username')).data if asesor_desasignado!=None else None
                 
                 if i["penultimo_asesor"] == None :
-                    i["penultimo_asesor"] = {"first_name" : Nonem }
+                    i["penultimo_asesor"] = {"first_name" : None }
 
         return Response(leadData)
 
@@ -1099,3 +1105,14 @@ class DesasignacionConfiguracionDetail(generics.RetrieveUpdateDestroyAPIView):
             serializer.save()
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+
+
+class EstadoSeparacionLeadList(generics.ListCreateAPIView):
+    serializer_class = EstadoSeparacionLeadSerializer
+    queryset = EstadoSeparacionLead.objects.all()
+
+class EstadoSeparacionLeadDetail(generics.RetrieveUpdateDestroyAPIView):
+    serializer_class = EstadoSeparacionLeadSerializer
+    queryset = EstadoSeparacionLead.objects.all()

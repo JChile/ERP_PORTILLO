@@ -24,7 +24,7 @@ export const dataMapper = async ({ query, token }) => {
     headerWeeks.push(`SEM${semana}`);
   }
   header.push("Total Leads");
-  header.push("Total Inversión");
+  header.push("Total Inversión $");
 
   const solesLeadList = [];
   const dolaresLeadList = [];

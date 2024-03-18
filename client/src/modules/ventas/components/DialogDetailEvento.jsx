@@ -64,10 +64,10 @@ export const DialogDetailEvento = ({
       errors.push("El tipo es obligatorio");
     }
     if (!objecion) {
-      errors.push("Seleccione una objección")
+      errors.push("Seleccione una objección");
     }
     if (!estadoEvento) {
-      errors.push("Seleccione un estado")
+      errors.push("Seleccione un estado");
     }
 
     return errors.join("\n");
@@ -261,16 +261,14 @@ export const DialogDetailEvento = ({
             <Typography variant="subtitle1" sx={{ fontWeight: "bold" }}>
               Fecha evento:
             </Typography>
-            <LocalizationProvider dateAdapter={AdapterDayjs}>
-              <DesktopDateTimePicker
-                disabled={!editData}
-                disablePast
-                name="start"
-                value={dayjs(start)}
-                slotProps={{ textField: { size: "small", fullWidth: true } }}
-                onChange={(value) => handleChangeDate(value)}
-              />
-            </LocalizationProvider>
+            <DesktopDateTimePicker
+              disabled={!editData}
+              disablePast
+              name="start"
+              value={dayjs(start)}
+              slotProps={{ textField: { size: "small", fullWidth: true } }}
+              onChange={(value) => handleChangeDate(value)}
+            />
             <Typography variant="subtitle1" sx={{ fontWeight: "bold" }}>
               Duración:
             </Typography>

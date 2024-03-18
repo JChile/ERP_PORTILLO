@@ -7,7 +7,6 @@ import {
   CustomDatePickerFilter,
 } from "../../../../components";
 import { AuthContext } from "../../../../auth";
-import { useNavigate } from "react-router-dom";
 import { useAlertMUI, useCustomTablePagination } from "../../../../hooks";
 import { combinarErrores, formatDate_ISO861_to_date } from "../../../../utils";
 import {
@@ -126,7 +125,7 @@ export const ListAsesorVentasLead = () => {
           !proyectoElement.includes(filterData["proyecto"].toLowerCase())) ||
         (filterData["fecha_asignacion"] !== "" &&
           !fechaAsignacionElement.includes(filterData["fecha_asignacion"])) ||
-        (filterData["estadoLead"] !== "" && 
+        (filterData["estadoLead"] !== "" &&
           !estadoLeadElement.includes(filterData["estadoLead"].toLowerCase()))
       ) {
         return false;
@@ -149,6 +148,7 @@ export const ListAsesorVentasLead = () => {
       nombre: "",
       celular: "",
       proyecto: "",
+      estadoLead: "",
       fecha_asignacion: "",
     });
     setFlagReset(false);
@@ -412,7 +412,7 @@ export const ListAsesorVentasLead = () => {
                       Sin filtros
                     </TableCell>
                     <TableCell>
-                      <SelectEstadoLead 
+                      <SelectEstadoLead
                         size="small"
                         onNewInput={handledFilterSelectValues}
                         defaultValue={estadoLead}

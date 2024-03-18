@@ -10,46 +10,47 @@ import {
   TablePagination,
   TableRow,
   TextField,
-} from "@mui/material";
-import React, { useContext, useEffect, useState } from "react";
-import { AuthContext } from "../../../../auth";
-import { getLeads } from "../../helpers";
-import RowItemLeadAsignado from "./RowItemLeadAsignado";
-import { MdClose, MdSearch } from "react-icons/md";
+} from "@mui/material"
+import React, { useContext, useEffect, useState } from "react"
+import { AuthContext } from "../../../../auth"
+import { getLeads } from "../../helpers"
+import RowItemLeadAsignado from "./RowItemLeadAsignado"
+import { MdClose, MdSearch } from "react-icons/md"
 import {
   SelectEstadoLead,
   SelectProyecto,
-} from "../../../../components/select";
-import SelectAsesor from "../../../../components/select/asesor-filter/SelectAsesor";
-import { useAlertMUI, useCustomTablePagination } from "../../../../hooks";
-import { combinarErrores, formatDate_ISO861_to_date } from "../../../../utils";
-import MassActionsViewLeadsAsignados from "./acciones-masivas/MassActionsViewLeadsAsignados";
+} from "../../../../components/select"
+import SelectAsesor from "../../../../components/select/asesor-filter/SelectAsesor"
+import { useAlertMUI, useCustomTablePagination } from "../../../../hooks"
+import { combinarErrores, formatDate_ISO861_to_date } from "../../../../utils"
+import MassActionsViewLeadsAsignados from "./acciones-masivas/MassActionsViewLeadsAsignados"
 import {
   CustomAlert,
   CustomCircularProgress,
   CustomDatePickerFilter,
-} from "../../../../components";
+} from "../../../../components"
 
 const ViewLeadAsignados = ({ startDate, endDate, flagReload }) => {
-  const { authTokens } = useContext(AuthContext);
-  const [leadAsignados, setLeadsAsignados] = useState([]);
-  const [auxLeadsAsignados, setAuxLeadsAsignados] = useState([]);
-  const [checked, setChecked] = useState(false);
+  const { authTokens } = useContext(AuthContext)
+  const [leadAsignados, setLeadsAsignados] = useState([])
+  const [auxLeadsAsignados, setAuxLeadsAsignados] = useState([])
+  const [checked, setChecked] = useState(false)
   // numero de items seleccionados
   const [filterData, setFilterData] = useState({
     celular: "",
     nombre: "",
+    estadoLead: "",
     proyecto: "",
     asesor: "",
     fecha_asignacion: "",
-  });
+  })
 
-  const { celular, nombre, proyecto, asesor, fecha_asignacion } = filterData;
+  const { celular, nombre, proyecto, asesor, estadoLead, fecha_asignacion } = filterData
 
   // flag reset
-  const [flagReset, setFlagReset] = useState();
-  const [countSelectedElements, setCountSelectedElements] = useState(0);
-  const [visibleProgress, setVisibleProgress] = useState(true);
+  const [flagReset, setFlagReset] = useState()
+  const [countSelectedElements, setCountSelectedElements] = useState(0)
+  const [visibleProgress, setVisibleProgress] = useState(true)
 
   // pagination
   const {
@@ -58,7 +59,7 @@ const ViewLeadAsignados = ({ startDate, endDate, flagReload }) => {
     handleChangePage,
     handleChangeRowsPerPage,
     paginatedItems,
-  } = useCustomTablePagination(auxLeadsAsignados, 25);
+  } = useCustomTablePagination(auxLeadsAsignados, 25)
 
   const {
     feedbackCreate,
@@ -66,30 +67,31 @@ const ViewLeadAsignados = ({ startDate, endDate, flagReload }) => {
     handleClickFeedback,
     handleCloseFeedback,
     setFeedbackMessages,
-  } = useAlertMUI();
+  } = useAlertMUI()
 
   const handledFilterData = () => {
-    setVisibleProgress(true);
+    setVisibleProgress(true)
     const dataFilter = leadAsignados.filter((element) => {
-      const celularElement = element["celular"].toString().toLowerCase();
+      const celularElement = element["celular"].toString().toLowerCase()
       const nombreElement = `${element["nombre"]
         .toString()
-        .toLowerCase()} ${element["apellido"].toString().toLowerCase()}`;
+        .toLowerCase()} ${element["apellido"].toString().toLowerCase()}`
       const proyectoElement = element["campania"]["proyecto"]["nombre"]
         .toString()
-        .toLowerCase();
+        .toLowerCase()
+      const estadoLeadElement = element["estadoLead"]["nombre"].toString().toLowerCase()
       // Componente nombre completo
       const asesorNombre = element["asesor"]["first_name"]
         .toString()
-        .toLowerCase();
+        .toLowerCase()
       const asesorApellido = element["asesor"]["last_name"]
         .toString()
-        .toLowerCase();
+        .toLowerCase()
 
-      const asesorElement = `${asesorNombre} ${asesorApellido}`;
+      const asesorElement = `${asesorNombre} ${asesorApellido}`
       const fechaAsignacionElement = formatDate_ISO861_to_date(
         element["fecha_asignacion"]
-      );
+      )
 
       if (
         (filterData["celular"] !== "" &&
@@ -98,140 +100,143 @@ const ViewLeadAsignados = ({ startDate, endDate, flagReload }) => {
           !nombreElement.includes(filterData["nombre"].toLowerCase())) ||
         (filterData["proyecto"] !== "" &&
           !proyectoElement.includes(filterData["proyecto"].toLowerCase())) ||
+        (filterData["estadoLead"] !== "" &&
+          !estadoLeadElement.includes(filterData["estadoLead"].toLowerCase())) ||
         (filterData["asesor"] !== "" &&
           !asesorElement.includes(filterData["asesor"].toLowerCase())) ||
         (filterData["fecha_asignacion"] !== "" &&
           !fechaAsignacionElement.includes(filterData["fecha_asignacion"]))
       ) {
-        return false;
+        return false
       }
-      return true;
-    });
+      return true
+    })
 
-    setAuxLeadsAsignados(dataFilter);
-    setFlagReset(true);
-    setVisibleProgress(false);
-  };
+    setAuxLeadsAsignados(dataFilter)
+    setFlagReset(true)
+    setVisibleProgress(false)
+  }
 
   const handledResetDataFilter = () => {
     const resetDate = leadAsignados.map((element) => {
-      return { ...element, isSelected: false };
-    });
-    setAuxLeadsAsignados(resetDate);
+      return { ...element, isSelected: false }
+    })
+    setAuxLeadsAsignados(resetDate)
     // reset filtros
     setFilterData({
       celular: "",
       nombre: "",
       apellido: "",
       proyecto: "",
+      estadoLead: "",
       asesor: "",
       fecha_asignacion: "",
-    });
-    setFlagReset(false);
-  };
+    })
+    setFlagReset(false)
+  }
 
   const handledFilterSelectValues = (value, name) => {
     setFilterData({
       ...filterData,
       [name]: value,
-    });
-    setFlagReset(false);
-  };
+    })
+    setFlagReset(false)
+  }
 
   const handledFilterInputValues = (event) => {
-    const { target } = event;
-    const { value, name } = target;
+    const { target } = event
+    const { value, name } = target
     setFilterData({
       ...filterData,
       [name]: value,
-    });
-    setFlagReset(false);
-  };
+    })
+    setFlagReset(false)
+  }
 
   // manejador de filtros para date values
   const handledFilterDateValues = (newDate, filterName) => {
     setFilterData({
       ...filterData,
       [filterName]: newDate,
-    });
-    setFlagReset(false);
-  };
+    })
+    setFlagReset(false)
+  }
 
   const handleChangeCheckAll = (event) => {
-    const state = event.target.checked;
-    setChecked(state);
+    const state = event.target.checked
+    setChecked(state)
     const leadsChecked = auxLeadsAsignados.map((element) => {
       return {
         ...element,
         isSelected: state,
-      };
-    });
+      }
+    })
     // actualizamos el numero de elmenentos seleccionados
     if (state) {
-      setCountSelectedElements(leadsChecked.length);
+      setCountSelectedElements(leadsChecked.length)
     } else {
-      setCountSelectedElements(0);
+      setCountSelectedElements(0)
     }
-    setAuxLeadsAsignados(leadsChecked);
-  };
+    setAuxLeadsAsignados(leadsChecked)
+  }
 
   const handledCheckElement = (event, idItem) => {
-    const isChecked = event.target.checked;
+    const isChecked = event.target.checked
     const leadsChecked = auxLeadsAsignados.map((element) => {
       if (element.id === idItem) {
         return {
           ...element,
           isSelected: isChecked,
-        };
+        }
       }
-      return element;
-    });
+      return element
+    })
 
-    setAuxLeadsAsignados(leadsChecked);
+    setAuxLeadsAsignados(leadsChecked)
 
     // Calcula el nuevo contador
     const newCount = leadsChecked.reduce(
       (count, element) => count + (element.isSelected ? 1 : 0),
       0
-    );
+    )
 
-    setCountSelectedElements(newCount);
-    setChecked(false);
-  };
+    setCountSelectedElements(newCount)
+    setChecked(false)
+  }
 
   const traerLeadAsiganados = async () => {
-    setVisibleProgress(true);
-    setCountSelectedElements(0);
+    setVisibleProgress(true)
+    setCountSelectedElements(0)
     try {
-      let query = "asignado=True&estado=A";
+      let query = "asignado=True&estado=A"
       if (startDate && endDate) {
-        query += `&desde=${startDate}T00:00:00&hasta=${endDate}T23:59:59`;
+        query += `&desde=${startDate}T00:00:00&hasta=${endDate}T23:59:59`
       }
 
-      const rowData = await getLeads(authTokens["access"], query);
+      const rowData = await getLeads(authTokens["access"], query)
       const formatData = rowData.map((element) => {
         return {
           ...element,
           isSelected: false,
-        };
-      });
-      setLeadsAsignados(formatData);
-      setAuxLeadsAsignados(formatData);
-      setVisibleProgress(false);
+        }
+      })
+      setLeadsAsignados(formatData)
+      setAuxLeadsAsignados(formatData)
+      setVisibleProgress(false)
     } catch (error) {
-      const pilaError = combinarErrores(error);
+      const pilaError = combinarErrores(error)
       setFeedbackMessages({
         style_message: "error",
         feedback_description_error: pilaError,
-      });
-      handleClickFeedback();
-      setVisibleProgress(false);
+      })
+      handleClickFeedback()
+      setVisibleProgress(false)
     }
-  };
+  }
 
   useEffect(() => {
-    traerLeadAsiganados();
-  }, [flagReload]);
+    traerLeadAsiganados()
+  }, [flagReload])
 
   return (
     <React.Fragment>
@@ -288,6 +293,8 @@ const ViewLeadAsignados = ({ startDate, endDate, flagReload }) => {
                 <TableCell>Número</TableCell>
                 <TableCell>Nombre</TableCell>
                 <TableCell>Proyecto</TableCell>
+                <TableCell>Campaña</TableCell>
+                <TableCell align="center">Estado</TableCell>
                 <TableCell>Actual asesor</TableCell>
                 <TableCell>Fecha asignacion</TableCell>
               </TableRow>
@@ -349,6 +356,14 @@ const ViewLeadAsignados = ({ startDate, endDate, flagReload }) => {
                     defaultValue={proyecto}
                   />
                 </TableCell>
+                <TableCell>Sin filtros</TableCell>
+                <TableCell>
+                  <SelectEstadoLead
+                    size="small"
+                    onNewInput={handledFilterSelectValues}
+                    defaultValue={estadoLead}
+                  />
+                </TableCell>
                 <TableCell>
                   <SelectAsesor
                     size="small"
@@ -382,7 +397,7 @@ const ViewLeadAsignados = ({ startDate, endDate, flagReload }) => {
         handleCloseFeedback={handleCloseFeedback}
       />
     </React.Fragment>
-  );
-};
+  )
+}
 
-export default ViewLeadAsignados;
+export default ViewLeadAsignados

@@ -1,27 +1,27 @@
-import React from "react";
-import { formatDate_ISO861_to_formatdate } from "../../../../utils";
-import { Checkbox, TableCell, TableRow } from "@mui/material";
-import { FiCheckCircle, FiXCircle } from "react-icons/fi";
-import { Link, useNavigate } from "react-router-dom";
-import { CustomMoreVerticalActions } from "../../../../components";
+import React from "react"
+import { formatDate_ISO861_to_formatdate } from "../../../../utils"
+import { Checkbox, TableCell, TableRow } from "@mui/material"
+import { FiCheckCircle, FiXCircle } from "react-icons/fi"
+import { Link, useNavigate } from "react-router-dom"
+import { CustomMoreVerticalActions } from "../../../../components"
 
 export const RowItemLeadMarketing = ({
   item,
   checkedElement,
   onChangeLead,
 }) => {
-  const { campania, id } = item;
-  const { proyecto } = campania;
+  const { campania, id, estadoLead } = item
+  const { proyecto } = campania
 
-  const navigate = useNavigate();
+  const navigate = useNavigate()
 
   const onChangeLeadSelected = () => {
-    onChangeLead(item);
-  };
+    onChangeLead(item)
+  }
 
   const onEditItemSelected = () => {
-    navigate(`/lead/update/${id}`);
-  };
+    navigate(`/lead/update/${id}`)
+  }
 
   return (
     <TableRow>
@@ -29,7 +29,7 @@ export const RowItemLeadMarketing = ({
         <Checkbox
           checked={item["isSelected"]}
           onChange={(e) => {
-            checkedElement(e, item.id);
+            checkedElement(e, item.id)
           }}
           inputProps={{ "aria-label": "controlled" }}
         />
@@ -49,10 +49,10 @@ export const RowItemLeadMarketing = ({
             transition: "color 0.3s", // Add a smooth transition effect
           }}
           onMouseEnter={(e) => {
-            e.target.style.color = "blue";
+            e.target.style.color = "blue"
           }}
           onMouseLeave={(e) => {
-            e.target.style.color = "black";
+            e.target.style.color = "black"
           }}
         >
           <div className="flex flex-col gap-y-2">
@@ -60,7 +60,11 @@ export const RowItemLeadMarketing = ({
           </div>
         </Link>
       </TableCell>
+      <TableCell>
+        {`${item["nombre"]} ${item["apellido"]}`}
+      </TableCell>
       <TableCell>{proyecto["nombre"]}</TableCell>
+      <TableCell>{campania["nombre"]}</TableCell>
       <TableCell align="center">
         {item["asignado"] === true ? (
           <FiCheckCircle
@@ -74,12 +78,14 @@ export const RowItemLeadMarketing = ({
           />
         )}
       </TableCell>
+      <TableCell align="center">
+        <span style={{ backgroundColor: estadoLead["color"] }} className={`inline-block px-2 py-1 text-sm font-semibold leading-none rounded-full text-white`}>
+          {estadoLead["nombre"]}
+        </span>
+      </TableCell>
       <TableCell>
         {formatDate_ISO861_to_formatdate(item["horaRecepcion"])}
       </TableCell>
-      <TableCell>
-        {formatDate_ISO861_to_formatdate(item["fecha_creacion"])}
-      </TableCell>
     </TableRow>
-  );
-};
+  )
+}

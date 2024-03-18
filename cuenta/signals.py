@@ -13,7 +13,7 @@ def crear_datos(sender, **kwargs):
     
     # Verifica si las migraciones pertenecen a tu aplicación
     if sender.name == 'cuenta':
-        if True:
+        if False:
             EstadoRegistro.objects.get_or_create(estado='A', nombre='Activo')
             EstadoRegistro.objects.get_or_create(estado='I', nombre='Inactivo')
 

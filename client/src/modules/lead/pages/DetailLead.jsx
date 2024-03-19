@@ -48,6 +48,7 @@ export const DetailLead = () => {
     importante: false,
     estado: "A",
     estadoLead: "EP",
+    estadoSeparacion: null,
     objecion: {
       nombre: "",
     },
@@ -58,8 +59,10 @@ export const DetailLead = () => {
     whatsapps: [],
     eventos: [],
     fecha_actualizacion: null,
+    usuarioActualizador: null,
     fecha_asignacion: null,
     fecha_creacion: null,
+    usuarioCreador: null,
     fecha_desasignacion: null,
     horaRecepcion: null,
   })
@@ -75,6 +78,7 @@ export const DetailLead = () => {
     importante,
     estado,
     estadoLead,
+    estadoSeparacion,
     objecion,
     campania,
     llamadas,
@@ -82,7 +86,9 @@ export const DetailLead = () => {
     eventos,
     asignado,
     fecha_actualizacion,
+    usuarioActualizador,
     fecha_asignacion,
+    usuarioCreador,
     fecha_creacion,
     fecha_desasignacion,
     horaRecepcion,
@@ -263,9 +269,6 @@ export const DetailLead = () => {
     obtenerLead()
   }, [])
 
-
-  console.log(lead)
-
   return (
     <>
       <div className="flex flex-col gap-y-4">
@@ -369,6 +372,34 @@ export const DetailLead = () => {
                   </span>
                 </label>
               )}
+              {/* FECHA DE CREACION */}
+              {fecha_creacion && (
+                <label className="flex gap-y-1 ">
+                  <span className="block text-sm font-medium min-w-[10rem] text-zinc-500">
+                    Fecha creación:
+                  </span>
+                  <span className="block text-sm">
+                    <span className="block text-sm">
+                      {formatDate_ISO861_to_formatdate(fecha_creacion)}
+                    </span>
+                  </span>
+                </label>
+              )}
+              {/* USUARIO CREADOR */}
+              {
+                usuarioCreador && (
+                  <label className="flex gap-y-1 ">
+                    <span className="block text-sm font-medium min-w-[10rem] text-zinc-500">
+                      Usuario creador:
+                    </span>
+                    <span className="block text-sm">
+                      <span className="block text-sm">
+                        {usuarioCreador}
+                      </span>
+                    </span>
+                  </label>
+                )
+              }
             </div>
 
             <div className="w-full flex flex-col gap-y-3">
@@ -384,6 +415,13 @@ export const DetailLead = () => {
                   Objeciones:
                 </span>
                 <span className="block text-sm">{objecion?.nombre || ""}</span>
+              </label>
+
+              <label className="flex gap-y-1 ">
+                <span className="block text-sm font-medium min-w-[10rem] text-zinc-500">
+                  Estado separaciones:
+                </span>
+                <span className="block text-sm">{estadoSeparacion?.nombre || "No registrado"}</span>
               </label>
 
               <label className="flex gap-y-1 ">
@@ -427,19 +465,6 @@ export const DetailLead = () => {
                   </span>
                 </span>
               </label>
-              {/* FECHA DE CREACION */}
-              {fecha_creacion && (
-                <label className="flex gap-y-1 ">
-                  <span className="block text-sm font-medium min-w-[10rem] text-zinc-500">
-                    Fecha creación:
-                  </span>
-                  <span className="block text-sm">
-                    <span className="block text-sm">
-                      {formatDate_ISO861_to_formatdate(fecha_creacion)}
-                    </span>
-                  </span>
-                </label>
-              )}
               {/* FECHA ACTUALIZACION */}
               {
                 <label className="flex gap-y-1 ">
@@ -452,6 +477,22 @@ export const DetailLead = () => {
                     </span>
                   </span>
                 </label>
+              }
+
+              {/* USUARIO ACTUALIZAR */}
+              {
+                usuarioActualizador && (
+                  <label className="flex gap-y-1 ">
+                    <span className="block text-sm font-medium min-w-[10rem] text-zinc-500">
+                      Usuario actualizador:
+                    </span>
+                    <span className="block text-sm">
+                      <span className="block text-sm">
+                        {usuarioActualizador}
+                      </span>
+                    </span>
+                  </label>
+                )
               }
               {/* FECHA DESASIGNACION */}
               {fecha_desasignacion && (

@@ -88,7 +88,7 @@ export const ViewLeadMarketingRecienCreado = ({
       const proyectoElement = element["campania"]["proyecto"]["nombre"]
         .toString()
         .toLowerCase()
-      const importanteElement = element["asignado"] ? "si" : "no"
+      const importanteElement = element["importante"] ? "si" : "no"
       const horaRecepcionElement = formatDate_ISO861_to_date(
         element["horaRecepcion"]
       )

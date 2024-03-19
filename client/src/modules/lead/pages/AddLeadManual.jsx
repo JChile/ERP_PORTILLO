@@ -4,8 +4,8 @@ import { useNavigate } from "react-router-dom"
 import { createLead } from "../helpers"
 import {
   CustomAlert,
-  FilterCampania,
   CustomCircularProgress,
+  FilterEstadoSeparacion,
 } from "../../../components"
 import { FilterEstadoLead } from "../../../components/filters/estado_leads/FilterEstadoLead"
 import { FilterObjecion } from "../../../components/filters/objecion/FilterObjecion"
@@ -13,7 +13,7 @@ import { FilterAsesor } from "../../../components/filters/asesor/FilterAsesor"
 import { useAlertMUI } from "../../../hooks"
 import { MuiTelInput } from "mui-tel-input"
 import { AuthContext } from "../../../auth"
-import { combinarErrores, formatCelular } from "../../../utils"
+import { combinarErrores } from "../../../utils"
 import { FilterProyectoCampania } from "../../../components/multiple-filters/proyecto-campania/FilterProyectoCampania"
 
 export const AddLeadManual = () => {
@@ -29,6 +29,7 @@ export const AddLeadManual = () => {
     llamar: true,
     asesor: null,
     estadoLead: "EP",
+    estadoSeparacion: null,
     objecion: 1,
     campania: null,
     campaniaName: "",
@@ -47,6 +48,7 @@ export const AddLeadManual = () => {
     estadoLead,
     objecion,
     horaRecepcion,
+    estadoSeparacion,
     campania,
     campaniaName,
   } = lead
@@ -94,6 +96,10 @@ export const AddLeadManual = () => {
 
   const onAddObjecion = (item) => {
     setLead({ ...lead, objecion: item.id })
+  }
+
+  const onAddEstadoSeparacion = (item) => {
+    setLead({ ...lead, estadoSeparacion: item.id })
   }
 
   const validateLead = () => {
@@ -281,6 +287,13 @@ export const AddLeadManual = () => {
               <FilterObjecion
                 onNewInput={onAddObjecion}
                 defaultValue={objecion}
+              />
+            </label>
+            <label className="flex flex-col gap-y-1">
+              <span className="block text-sm font-medium">Estado separación</span>
+              <FilterEstadoSeparacion
+                onNewInput={onAddEstadoSeparacion}
+                defaultValue={estadoSeparacion}
               />
             </label>
 

@@ -283,6 +283,7 @@ class LeadDetail(generics.RetrieveUpdateDestroyAPIView):
 
         campania_data = get_or_none(Campania, id=lead_data["campania"])
         objecion_data = get_or_none(Objecion, id=lead_data["objecion"])
+        
 
         userSerializer = UserSerializer(user_data, fields=(
             'id', 'first_name', 'last_name', 'username')) if user_data else None
@@ -322,10 +323,15 @@ class LeadDetail(generics.RetrieveUpdateDestroyAPIView):
 
         # lead_data["usuarioCreador"] = usuarioCreadorSerializer.data if usuarioCreadorSerializer else None
         # lead_data["usuarioActualizador"]=  usuarioActualizadorSerializer.data if usuarioActualizadorSerializer else None
+        tipoEvento_queryset = TipoEvento.objects.all()
+        estadoEvento_queryset = EstadoEvento.objects.all()
         for eventoIter in lead_data["eventos"] :
             asesor =  asesor_queryset.filter(id = eventoIter["asesor"]).first()
             eventoIter["asesor"] = UserSerializer(asesor ,fields=('id', 'first_name', 'last_name', 'username', 'codigoAsesor')).data if asesor != None else None
-
+            tipoEvento =  tipoEvento_queryset.filter(id = eventoIter["tipo"]).first()
+            eventoIter["tipo"] = TipoEventoSerializer(tipoEvento).data if tipoEvento != None else None
+            estadoEvento =  estadoEvento_queryset.filter(id = eventoIter["estadoEvento"]).first()
+            eventoIter["estadoEvento"] = EstadoEventoSerializer(estadoEvento).data if estadoEvento != None else None
 
         return Response(lead_data)
 
@@ -669,6 +675,7 @@ class EventoDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Evento.objects.all()
 
     def retrieve(self, request, pk=None):
+        print("entra aqui")
         if not (bool(request.user.groups.first().permissions.filter(codename=PermissionEvento.CAN_VIEW) or request.user.is_superuser)):
             return Response({"message": "Usuario no tiene permisos para ver eventos"}, status.HTTP_403_FORBIDDEN)
         try:
@@ -697,6 +704,37 @@ class EventoDetail(generics.RetrieveUpdateDestroyAPIView):
         evento_dataJson["estadoEvento"] = estadoEventoSerializer.data if estadoEventoSerializer else None
 
         return Response(evento_dataJson)
+    
+    def put(self, request, pk):
+        try:
+            instancia = Evento.objects.get(pk=pk)
+        except Evento.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+        data = request.data
+        print(data)
+        serializer = EventoSerializer(instancia, data=data)
+
+
+
+        if serializer.is_valid():
+            serializer.save()
+            tipoEvento_queryset = TipoEvento.objects.all()
+            estadoEvento_queryset = EstadoEvento.objects.all()
+            user_queryset = User.objects.all()
+            
+            tipoEvento =  tipoEvento_queryset.filter(id = data["tipo"]).first()
+            data["tipo"] = TipoEventoSerializer(tipoEvento).data if tipoEvento != None else None
+            
+            estadoEvento =  estadoEvento_queryset.filter(id = data["estadoEvento"]).first()
+            data["estadoEvento"] = EstadoEventoSerializer(estadoEvento).data if estadoEvento != None else None
+            
+            asesor =  user_queryset.filter(id = data["asesor"]).first()
+            data["asesor"] = UserSerializer(asesor, fields =('id', 'first_name', 'last_name', 'username','codigoAsesor')).data if asesor != None else None
+
+            return Response(data)
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
 
 class TipoEventoList(generics.ListCreateAPIView):

@@ -308,16 +308,21 @@ class LeadDetail(generics.RetrieveUpdateDestroyAPIView):
         lead_data["eventos"] = EventoSerializer(
             Evento.objects.filter(lead=lead.pk), many=True).data
 
-        # for eventoIter in lead_data["eventos"] :
-        #     lead = Lead.objects.filter(id = eventoIter["lead"]).first()
-        #     tipoEvento = TipoEvento.objects.filter(id = eventoIter["tipo"]).first()
-        #     estadoEvento = EstadoEvento.objects.filter(id = eventoIter["estadoEvento"]).first()
-        #     objecion = Objecion.objects.filter(id = eventoIter["objecion"]).first()
+        asesor_queryset = User.objects.all()
+        usuarioCreador_data = asesor_queryset.filter(pk = lead_data["usuarioCreador"]).first()
+        usuarioActualizador_data = asesor_queryset.filter(pk = lead_data["usuarioActualizador"]).first()
 
-        #     eventoIter["lead"] = UserSerializer(asesor ,fields=('id', 'first_name', 'last_name', 'username', 'codigoAsesor')).data if asesor != None else None
-        #     eventoIter["tipo"] =  TipoEventoSerializer(tipoEvento).data if tipoEvento != None else None
-        #     eventoIter["estadoEvento"] =  EstadoEventoSerializer(estadoEvento).data if estadoEvento != None else None
-        #     eventoIter["objecion"] =  ObjecionSerializer(objecion).data if objecion != None else None
+        usuarioCreadorSerializer = UserSerializer(
+            usuarioCreador_data, fields=('id', 'first_name', 'last_name', 'username', 'codigoAsesor')) if usuarioCreador_data else None
+        usuarioActualizadorSerializer = UserSerializer(
+            usuarioActualizador_data,fields=('id', 'first_name', 'last_name', 'username', 'codigoAsesor')) if usuarioActualizador_data else None        
+
+        # lead_data["usuarioCreador"] = usuarioCreadorSerializer.data if usuarioCreadorSerializer else None
+        # lead_data["usuarioActualizador"]=  usuarioActualizadorSerializer.data if usuarioActualizadorSerializer else None
+        for eventoIter in lead_data["eventos"] :
+            asesor =  asesor_queryset.filter(id = eventoIter["objecion"]).first()
+            eventoIter["asesor"] = UserSerializer(asesor ,fields=('id', 'first_name', 'last_name', 'username', 'codigoAsesor')).data if asesor != None else None
+
 
         return Response(lead_data)
 
@@ -606,7 +611,6 @@ class EventoList(generics.ListCreateAPIView):
             evento_queryset = evento_queryset
 
         evento_data = EventoSerializer(evento_queryset, many=True).data
-        print(evento_data)
         for eventoIterador in evento_data:
             asesor = get_or_none(User, id=eventoIterador["asesor"])
             tipo = get_or_none(TipoEvento, id=eventoIterador["tipo"])

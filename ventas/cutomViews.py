@@ -627,11 +627,22 @@ class DesAsignacionMasivaLeadsById(APIView):
         return Response({"Leads no desasignados": error})
 
 
-
+@permission_classes([IsAuthenticated])
 class RegistroMensajesMasivos(APIView):
     def post(self, request):
         request_data = request.data
-        asesor = request_data["asesor"]
+        
+
+
+        asesorId = request.user.id
         arrLead = request_data["leads"]
+        mensaje = request_data["mensaje"]
+
+        asesor = User.objects.filter(id =asesorId).first()
+        lead_queryset =  Lead.objects.filter(id__in = arrLead)
+
+        for leadIter in lead_queryset:
+            WhatsApp.objects.create(asesor = asesor, lead = leadIter, detalle = mensaje)
+
 
         return Response(request_data)

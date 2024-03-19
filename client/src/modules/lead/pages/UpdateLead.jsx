@@ -39,7 +39,7 @@ export const UpdateLead = () => {
     llamar: true,
     asesor: null,
     estadoLead: null,
-    estadoSeparacion: null,
+    estadoSeparacionLead: null,
     objecion: null,
     campania: null,
     campaniaName: "",
@@ -55,7 +55,7 @@ export const UpdateLead = () => {
     llamar,
     asesor,
     estadoLead,
-    estadoSeparacion,
+    estadoSeparacionLead,
     objecion,
     campania,
     campaniaName,
@@ -76,6 +76,7 @@ export const UpdateLead = () => {
       try {
         setVisibleProgress(true)
         const result = await getLead(idLead, authTokens["access"])
+        console.log(result)
         const formatResult = {
           ...result,
           asesor: result.asesor ? result.asesor["id"] : null,
@@ -83,6 +84,7 @@ export const UpdateLead = () => {
           campaniaName: result.campania ? result.campania["nombre"] : "",
           objecion: result.objecion ? result.objecion["id"] : null,
           estadoLead: result.estadoLead ? result.estadoLead : null,
+          estadoSeparacionLead: result.estadoSeparacionLead ? result.estadoSeparacionLead : null
         }
         console.log(formatResult)
         setLead(formatResult)
@@ -135,8 +137,8 @@ export const UpdateLead = () => {
   }
 
   // change objecion
-  const onAddEstadoSeparacion = (item) => {
-    setLead({ ...lead, estadoSeparacion: item.id })
+  const onAddEstadoSeparacionLead = (item) => {
+    setLead({ ...lead, estadoSeparacionLead: item.id })
   }
 
   const validateLead = () => {
@@ -185,6 +187,7 @@ export const UpdateLead = () => {
       handleClickFeedback()
     } else {
       try {
+        console.log(lead)
         const formatLead = {
           ...lead,
           usuarioActualizador: currentUser["user_id"],
@@ -331,8 +334,8 @@ export const UpdateLead = () => {
               <label className="flex flex-col gap-y-1">
                 <span className="block text-sm font-medium">Estado separación</span>
                 <FilterEstadoSeparacion
-                  defaultValue={estadoSeparacion}
-                  onNewInput={onAddEstadoSeparacion}
+                  defaultValue={estadoSeparacionLead}
+                  onNewInput={onAddEstadoSeparacionLead}
                 />
               </label>
 

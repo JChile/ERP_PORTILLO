@@ -16,7 +16,6 @@ export const SelectSeparacionLead = ({
 
   const obtenerEstadosLead = async () => {
     const result = await getEstadoSeparacion();
-    console.log(result)
     const formatSelect = [
       ...result.map((element) => {
         return {

@@ -320,7 +320,7 @@ class LeadDetail(generics.RetrieveUpdateDestroyAPIView):
         # lead_data["usuarioCreador"] = usuarioCreadorSerializer.data if usuarioCreadorSerializer else None
         # lead_data["usuarioActualizador"]=  usuarioActualizadorSerializer.data if usuarioActualizadorSerializer else None
         for eventoIter in lead_data["eventos"] :
-            asesor =  asesor_queryset.filter(id = eventoIter["objecion"]).first()
+            asesor =  asesor_queryset.filter(id = eventoIter["asesor"]).first()
             eventoIter["asesor"] = UserSerializer(asesor ,fields=('id', 'first_name', 'last_name', 'username', 'codigoAsesor')).data if asesor != None else None
 
 

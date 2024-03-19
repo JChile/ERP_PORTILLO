@@ -6,6 +6,7 @@ import {
   CustomDatePicker,
   CustomDatePickerFilter,
 } from "../../../../components";
+import { SelectSeparacionLead } from "../../../../components/select/separacion-filter/SelectSeparacionLead";
 import { AuthContext } from "../../../../auth";
 import { useAlertMUI, useCustomTablePagination } from "../../../../hooks";
 import { combinarErrores, formatDate_ISO861_to_date } from "../../../../utils";
@@ -65,9 +66,18 @@ export const ListAsesorVentasLead = () => {
     importante: "",
     estadoLead: "",
     fecha_asignacion: "",
+    estadoSeparacionLead: "",
   });
 
-  const { nombre, celular, importante, proyecto, estadoLead, fecha_asignacion } = filterData;
+  const { 
+    nombre, 
+    celular, 
+    importante, 
+    proyecto, 
+    estadoLead, 
+    fecha_asignacion, 
+    estadoSeparacionLead
+  } = filterData;
 
   // flag reload
   const [flagReload, setFlagReload] = useState(false);
@@ -116,6 +126,9 @@ export const ListAsesorVentasLead = () => {
       const fechaAsignacionElement = formatDate_ISO861_to_date(
         element["fecha_asignacion"]
       );
+      const separacionLead = element["estadoSeparacionLead"]
+        ? element["estadoSeparacionLead"]["nombre"]
+        : "None";
 
       if (
         (filterData["nombre"] !== "" &&
@@ -129,7 +142,9 @@ export const ListAsesorVentasLead = () => {
         (filterData["fecha_asignacion"] !== "" &&
           !fechaAsignacionElement.includes(filterData["fecha_asignacion"])) ||
         (filterData["estadoLead"] !== "" &&
-          !estadoLeadElement.includes(filterData["estadoLead"].toLowerCase()))
+          !estadoLeadElement.includes(filterData["estadoLead"].toLowerCase())) ||
+        (filterData["estadoSeparacionLead"] !== "" &&
+          !separacionLead.includes(filterData["estadoSeparacionLead"]))
       ) {
         return false;
       }
@@ -154,6 +169,7 @@ export const ListAsesorVentasLead = () => {
       importante: "",
       estadoLead: "",
       fecha_asignacion: "",
+      estadoSeparacionLead: ""
     });
     setFlagReset(false);
   };
@@ -350,6 +366,7 @@ export const ListAsesorVentasLead = () => {
                     <TableCell>Campaña</TableCell>
                     <TableCell align="center">Importante</TableCell>
                     <TableCell align="center">Estado</TableCell>
+                    <TableCell>Separación</TableCell>
                     <TableCell>Fecha asignacion</TableCell>
                   </TableRow>
                 </TableHead>
@@ -428,6 +445,13 @@ export const ListAsesorVentasLead = () => {
                         size="small"
                         onNewInput={handledFilterSelectValues}
                         defaultValue={estadoLead}
+                      />
+                    </TableCell>
+                    <TableCell>
+                      <SelectSeparacionLead
+                        size="small"
+                        onNewInput={handledFilterSelectValues}
+                        defaultValue={estadoSeparacionLead}
                       />
                     </TableCell>
                     <TableCell>

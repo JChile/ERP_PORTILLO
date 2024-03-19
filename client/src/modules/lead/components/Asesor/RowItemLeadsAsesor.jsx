@@ -73,6 +73,9 @@ export const RowItemLeadsAsesor = ({ item, checkedElement }) => {
         </span>
       </TableCell>
       <TableCell>
+        {item["estadoSeparacionLead"] ? item["estadoSeparacionLead"]["nombre"] : "No"}
+      </TableCell>
+      <TableCell>
         {formatDate_ISO861_to_formatdate(item["fecha_asignacion"])}
       </TableCell>
     </TableRow>

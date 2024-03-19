@@ -31,6 +31,7 @@ export const DialogDetailEvento = ({
   onUpdateEvent,
   showLead = true,
 }) => {
+
   const [originalData, setOriginalData] = useState(selectedEvent);
   const [dataAuxEvento, setDataAuxEvento] = useState({
     id: originalData.id,
@@ -59,9 +60,6 @@ export const DialogDetailEvento = ({
     objecion,
     asesor,
   } = dataAuxEvento;
-
-
-  console.log(dataAuxEvento)
 
   const [editData, setEditData] = useState(false);
 
@@ -126,6 +124,7 @@ export const DialogDetailEvento = ({
         titulo: title,
         fecha_visita: formatData.toDate().toISOString(),
       });
+
       setOriginalData(dataAuxEvento);
       setEditData(false);
     }

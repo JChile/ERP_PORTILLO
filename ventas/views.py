@@ -611,7 +611,7 @@ class EventoList(generics.ListCreateAPIView):
             estadoEventoSerializer = EstadoEventoSerializer(
                 estadoEvento) if estadoEvento else None
             userAsesorSerializer = UserSerializer(asesor, fields=(
-                'id', 'first_name', 'last_name', 'username')) if asesor else None
+                'id', 'first_name', 'last_name', 'username','codigoAsesor')) if asesor else None
             tipoSerializer = TipoEventoSerializer(tipo) if tipo else None
             leadSerializer = LeadSerializer(lead) if lead else None
 

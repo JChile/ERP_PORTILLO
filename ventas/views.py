@@ -731,6 +731,7 @@ class EventoDetail(generics.RetrieveUpdateDestroyAPIView):
             asesor =  user_queryset.filter(id = data["asesor"]).first()
             data["asesor"] = UserSerializer(asesor, fields =('id', 'first_name', 'last_name', 'username','codigoAsesor')).data if asesor != None else None
 
+            print(data)
             return Response(data)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

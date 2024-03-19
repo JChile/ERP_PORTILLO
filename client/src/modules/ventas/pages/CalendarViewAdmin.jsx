@@ -181,6 +181,8 @@ export const CalendarViewAdmin = () => {
     getCalendarData(authTokens.access);
   }, [flagLoader]);
 
+  console.log(calendarEvents)
+
   return (
     <React.Fragment>
       <div className="flex flex-col gap-y-3">
@@ -343,7 +345,7 @@ const transformToEvent = (oldEvent) => {
     start: startEvent,
     end: endEvent,
     duracion: oldEvent.duracion,
-    tipo: oldEvent.tipo.id,
+    tipo: oldEvent.tipo,
     estadoEvento: oldEvent.estadoEvento.id,
     observacion: oldEvent.observacion,
     objecion: oldEvent.objecion,

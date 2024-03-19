@@ -171,6 +171,9 @@ export const CalendarView = () => {
     getCalendarData(authTokens.access);
   }, [flagLoader]);
 
+
+  console.log(calendarEvents)
+
   return (
     <React.Fragment>
       <div className="flex flex-col gap-y-3">

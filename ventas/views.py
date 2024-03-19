@@ -579,9 +579,16 @@ class EventoList(generics.ListCreateAPIView):
         estado = request.query_params.get('estado')
         desde = request.query_params.get('desde')
         hasta = request.query_params.get('hasta')
+        asesor =  request.query_params.get('asesor')
 
         if estado:
             evento_queryset = Evento.objects.all().filter(estado=estado)
+        else:
+            evento_queryset = Evento.objects.all()
+
+        
+        if asesor != None:
+            evento_queryset = evento_queryset.filter(asesor=asesor)
 
         if desde and hasta:
             evento_queryset = evento_queryset.filter(

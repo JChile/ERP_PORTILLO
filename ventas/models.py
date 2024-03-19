@@ -11,6 +11,8 @@ class TipoEvento(models.Model):
     nombre = models.CharField(max_length=100, null=True)
     estado = models.ForeignKey(
         EstadoRegistro, on_delete=models.SET_NULL, default='A', null=True)
+    color = models.CharField(max_length=100, null=True)
+
 
     def __str__(self):
         return self.nombre
@@ -36,16 +38,15 @@ class EstadoLead(models.Model):
         return self.descripcion
 
 
-
+#Nuevo
 class EstadoSeparacionLead(models.Model):
-    nombre = models.CharField(max_length=2, primary_key=True)
-    descripcion = models.CharField(max_length=50, null=True, default=None)
+    nombre = models.CharField(max_length=20)
     color =  models.CharField(max_length=10)
     estado = models.ForeignKey(
         EstadoRegistro, on_delete=models.SET_NULL, default='A', null=True)
 
     def __str__(self):
-        return self.descripcion
+        return self.nombre
 
 
 class Lead(models.Model):

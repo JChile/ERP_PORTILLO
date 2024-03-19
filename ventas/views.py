@@ -235,11 +235,14 @@ class LeadList(generics.ListCreateAPIView):
         if data.get("asesor") != None:
             data["fecha_asignacion"] = timezone.now()
         
-        print("aaaaaaaaaaaaaaa : ", data["celular"][3:])
-        if data["celular"][:3] == "+51":
-         data["celular"] = str(data["celular"][1:]).replace(" ", "")
-        if data["celular2"][:3] == "+51":
-         data["celular2"] = str(data["celular2"][1:]).replace(" ", "") 
+        print("aaaaaaaaaaaaaaa : ", data["celular2"])
+        
+        if data["celular"] != None:
+            if data["celular"][:3] == "+51":
+                data["celular"] = str(data["celular"][1:]).replace(" ", "")
+        if data["celular2"] != None:
+            if data["celular2"][:3] == "+51":
+                data["celular2"] = str(data["celular2"][1:]).replace(" ", "") 
         serializer = LeadSerializer(data=data)
 
         if serializer.is_valid():
@@ -354,10 +357,12 @@ class LeadDetail(generics.RetrieveUpdateDestroyAPIView):
                 HistoricoLeadAsesor.objects.create(
                     lead=instancia, usuario=asesor)
 
-        if data["celular"][:3] == "+51":
-         data["celular"] = str(data["celular"][1:]).replace(" ", "")
-        if data["celular2"][:3] == "+51":
-         data["celular2"] = str(data["celular2"][1:]).replace(" ", "") 
+        if data["celular"] != None:
+            if data["celular"][:3] == "+51":
+                data["celular"] = str(data["celular"][1:]).replace(" ", "")
+        if data["celular2"] != None:
+            if data["celular2"][:3] == "+51":
+                data["celular2"] = str(data["celular2"][1:]).replace(" ", "") 
         serializer = LeadSerializer(instancia, data=data)
         print(serializer)
         if serializer.is_valid():

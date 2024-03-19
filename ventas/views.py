@@ -674,6 +674,7 @@ class EventoDetail(generics.RetrieveUpdateDestroyAPIView):
 
         evento_dataJson = EventoSerializer(evento).data
 
+        print(evento_dataJson)
         asesor = get_or_none(User, id=evento_dataJson["asesor"])
         tipo = get_or_none(TipoEvento, id=evento_dataJson["tipo"])
         estadoEvento =  get_or_none(EstadoEvento, id=evento_dataJson["estadoEvento"])

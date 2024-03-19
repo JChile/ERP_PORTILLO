@@ -185,7 +185,6 @@ class LeadList(generics.ListCreateAPIView):
             objecion_data =  objecion_queryset.filter(id=i["objecion"]).first()
             estadoLead_data = estadoLead_queryset.filter(nombre=i["estadoLead"]).first()
 
-            print(estadoLead_data)
             userSerializer = UserSerializer(user_data, fields=(
                 'id', 'first_name', 'last_name', 'username')) if user_data else None
 

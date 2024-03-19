@@ -625,3 +625,13 @@ class DesAsignacionMasivaLeadsById(APIView):
                 pass
 
         return Response({"Leads no desasignados": error})
+
+
+
+class RegistroMensajesMasivos(APIView):
+    def post(self, request):
+        request_data = request.data
+        asesor = request_data["asesor"]
+        arrLead = request_data["leads"]
+
+        return Response(request_data)

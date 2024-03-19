@@ -45,7 +45,10 @@ export const DialogDetailEvento = ({
     observacion,
     estadoEvento,
     objecion,
+    asesor,
   } = dataAuxEvento;
+
+  console.log(dataAuxEvento);
 
   const [editData, setEditData] = useState(false);
 
@@ -149,10 +152,6 @@ export const DialogDetailEvento = ({
     }));
   };
 
-  useEffect(() => {
-    dayjs.locale("es");
-  }, []);
-
   return (
     <Dialog
       fullWidth={true}
@@ -171,7 +170,9 @@ export const DialogDetailEvento = ({
         }}
         id="customized-dialog-title"
       >
-        Detalle Evento
+        <div>
+          Detalle Evento (<span className="font-normal">{`${asesor.first_name}`}</span>)
+        </div>
         {editData ? (
           <div>
             <IconButton color="success" onClick={onSaveChanges}>
@@ -192,8 +193,6 @@ export const DialogDetailEvento = ({
         )}
       </DialogTitle>
       <DialogContent dividers>
-        {/* SEPARÓ? */}
-
         <Grid container spacing={4}>
           <Grid item xs={6}>
             <Typography variant="subtitle1" sx={{ fontWeight: "bold" }}>

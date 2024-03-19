@@ -81,7 +81,7 @@ const initialState = {
   loadState: true,
 };
 
-export const CalendarView = () => {
+export const CalendarViewAdmin = () => {
   const { authTokens, currentUser } = useContext(AuthContext);
   const [state, dispatch] = useReducer(reducer, initialState);
   const [flagLoader, setFlagLoader] = useState(false);
@@ -94,6 +94,9 @@ export const CalendarView = () => {
   const [desdeValue, setDesdeValue] = useState(null);
   const [hastaValue, setHastaValue] = useState(null);
 
+  const [asesores, setAsesores] = useState([]);
+  const [asesorSelected, setAsesorSelected] = useState(null)
+
   const handleTempFilters = (event) => {
     const { name, checked } = event.target;
     const updatedFilters = {
@@ -104,9 +107,9 @@ export const CalendarView = () => {
   };
 
   const applyFilters = () => {
-    const filtered = originalEvents.filter(
-      (event) => tempFilters[event.tipo.nombre]
-    );
+    const filtered = originalEvents.filter((event) => {
+      return tempFilters[event.tipo.nombre];
+    });
     const transformedEvents = filtered.map((item) => transformToEvent(item));
     setCalendarEvents(transformedEvents);
     setSelectedFilters(tempFilters);
@@ -122,8 +125,11 @@ export const CalendarView = () => {
       const typeEvents = await getTipoEventos();
       const asesores = await getAsesorActivo(authTokens);
 
+      console.log(events)
+
       setOriginalEvents(events);
       setTypeEvents(typeEvents);
+      setAsesores(asesores);
       const transformedEvents = events.map((item) => transformToEvent(item));
       if (Object.keys(selectedFilters).length === 0) {
         const initialFilters = {};
@@ -197,6 +203,7 @@ export const CalendarView = () => {
             Filtrar
           </Button>
         </div>
+        <Typography variant="subtitle1">Filtro por asesor</Typography>
         <FormControl
           sx={{
             display: "flex",
@@ -204,6 +211,24 @@ export const CalendarView = () => {
             justifyContent: "space-between",
           }}
         >
+          <React.Fragment>
+            <InputLabel id="asesor-label-id">Asesor</InputLabel>
+            <Select
+              labelId="asesor-label-id"
+              label="Asesor"
+              size="small"
+              value={20}
+              sx={{ width: "11.4rem" }}
+            >
+               {
+                  asesores.map((item,index) => {
+                     return <MenuItem>{item.codigo}</MenuItem>
+                  })
+               }
+              <MenuItem value={10}>Ten</MenuItem>
+              <MenuItem value={20}>Twenty</MenuItem>
+            </Select>
+          </React.Fragment>
           <Button
             onClick={() => {
               setTempFilters({ ...selectedFilters });

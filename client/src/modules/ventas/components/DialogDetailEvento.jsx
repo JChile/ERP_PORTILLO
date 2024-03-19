@@ -45,6 +45,7 @@ export const DialogDetailEvento = ({
     observacion,
     estadoEvento,
     objecion,
+    asesor,
   } = dataAuxEvento;
 
   const [editData, setEditData] = useState(false);
@@ -64,10 +65,10 @@ export const DialogDetailEvento = ({
       errors.push("El tipo es obligatorio");
     }
     if (!objecion) {
-      errors.push("Seleccione una objección")
+      errors.push("Seleccione una objección");
     }
     if (!estadoEvento) {
-      errors.push("Seleccione un estado")
+      errors.push("Seleccione un estado");
     }
 
     return errors.join("\n");
@@ -149,10 +150,6 @@ export const DialogDetailEvento = ({
     }));
   };
 
-  useEffect(() => {
-    dayjs.locale("es");
-  }, []);
-
   return (
     <Dialog
       fullWidth={true}
@@ -171,7 +168,12 @@ export const DialogDetailEvento = ({
         }}
         id="customized-dialog-title"
       >
-        Detalle Evento
+        <div>
+          Detalle Evento
+          <span className="font-normal">
+            {` (${asesor.first_name} ${asesor.last_name}) | ${asesor.codigoAsesor} `}
+          </span>
+        </div>
         {editData ? (
           <div>
             <IconButton color="success" onClick={onSaveChanges}>
@@ -192,8 +194,6 @@ export const DialogDetailEvento = ({
         )}
       </DialogTitle>
       <DialogContent dividers>
-        {/* SEPARÓ? */}
-
         <Grid container spacing={4}>
           <Grid item xs={6}>
             <Typography variant="subtitle1" sx={{ fontWeight: "bold" }}>
@@ -261,16 +261,14 @@ export const DialogDetailEvento = ({
             <Typography variant="subtitle1" sx={{ fontWeight: "bold" }}>
               Fecha evento:
             </Typography>
-            <LocalizationProvider dateAdapter={AdapterDayjs}>
-              <DesktopDateTimePicker
-                disabled={!editData}
-                disablePast
-                name="start"
-                value={dayjs(start)}
-                slotProps={{ textField: { size: "small", fullWidth: true } }}
-                onChange={(value) => handleChangeDate(value)}
-              />
-            </LocalizationProvider>
+            <DesktopDateTimePicker
+              disabled={!editData}
+              disablePast
+              name="start"
+              value={dayjs(start)}
+              slotProps={{ textField: { size: "small", fullWidth: true } }}
+              onChange={(value) => handleChangeDate(value)}
+            />
             <Typography variant="subtitle1" sx={{ fontWeight: "bold" }}>
               Duración:
             </Typography>

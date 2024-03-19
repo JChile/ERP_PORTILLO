@@ -11,6 +11,8 @@ class TipoEvento(models.Model):
     nombre = models.CharField(max_length=100, null=True)
     estado = models.ForeignKey(
         EstadoRegistro, on_delete=models.SET_NULL, default='A', null=True)
+    color = models.CharField(max_length=100, null=True)
+
 
     def __str__(self):
         return self.nombre
@@ -36,6 +38,17 @@ class EstadoLead(models.Model):
         return self.descripcion
 
 
+#Nuevo
+class EstadoSeparacionLead(models.Model):
+    nombre = models.CharField(max_length=20)
+    color =  models.CharField(max_length=10)
+    estado = models.ForeignKey(
+        EstadoRegistro, on_delete=models.SET_NULL, default='A', null=True)
+
+    def __str__(self):
+        return self.nombre
+
+
 class Lead(models.Model):
     nombre = models.CharField(max_length=100, null=False, blank=True)
     apellido = models.CharField(max_length=100, null=False, blank=True)
@@ -57,6 +70,8 @@ class Lead(models.Model):
         EstadoRegistro, on_delete=models.SET_NULL, default='A', null=True)
     estadoLead = models.ForeignKey(
         EstadoLead, on_delete=models.SET_NULL, null=True, blank=True, default="EP")
+    estadoSeparacionLead = models.ForeignKey(
+        EstadoSeparacionLead, on_delete=models.SET_NULL, null=True, blank=True) #nuevo   
     fecha_asignacion = models.DateTimeField(blank=True, null=True)
     fecha_desasignacion = models.DateTimeField(blank=True, null=True)
     recienCreado = models.BooleanField(default=True)

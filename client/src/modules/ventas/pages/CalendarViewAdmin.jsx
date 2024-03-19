@@ -27,6 +27,7 @@ import { obtenerHoraActualFormatPostgress } from "../../../utils";
 import { MdFilter, MdFilterAlt } from "react-icons/md";
 import { useAlertMUI } from "../../../hooks";
 import { getAsesorActivo } from "../../../components/filters/asesor/getAsesor";
+import { FilterAsesor } from "../../../components/filters/asesor/FilterAsesor";
 
 const localizer = momentLocalizer(moment);
 
@@ -81,7 +82,7 @@ const initialState = {
   loadState: true,
 };
 
-export const CalendarView = () => {
+export const CalendarViewAdmin = () => {
   const { authTokens, currentUser } = useContext(AuthContext);
   const [state, dispatch] = useReducer(reducer, initialState);
   const [flagLoader, setFlagLoader] = useState(false);
@@ -93,6 +94,7 @@ export const CalendarView = () => {
   const [tempFilters, setTempFilters] = useState({});
   const [desdeValue, setDesdeValue] = useState(null);
   const [hastaValue, setHastaValue] = useState(null);
+  const [asesorSelected, setAsesorSelected] = useState(null);
 
   const handleTempFilters = (event) => {
     const { name, checked } = event.target;
@@ -104,24 +106,27 @@ export const CalendarView = () => {
   };
 
   const applyFilters = () => {
-    const filtered = originalEvents.filter(
-      (event) => tempFilters[event.tipo.nombre]
+    const filtered = originalEvents.filter((event) => {
+      return tempFilters[event.tipo.nombre];
+    });
+    const transformedEvents = filtered.map((item) =>
+      transformToEvent(item)
     );
-    const transformedEvents = filtered.map((item) => transformToEvent(item));
     setCalendarEvents(transformedEvents);
     setSelectedFilters(tempFilters);
   };
 
   const getCalendarData = async (authTokens) => {
     let query = "";
+    if (asesorSelected) {
+      query += `asesor=${asesorSelected}&`;
+    }
     if (desdeValue && hastaValue) {
-      query = `desde=${desdeValue}T00:00:00&hasta=${hastaValue}T23:59:59`;
+      query += `desde=${desdeValue}T00:00:00&hasta=${hastaValue}T23:59:59`;
     }
     try {
       const events = await getEvents(authTokens, query);
       const typeEvents = await getTipoEventos();
-      const asesores = await getAsesorActivo(authTokens);
-
       setOriginalEvents(events);
       setTypeEvents(typeEvents);
       const transformedEvents = events.map((item) => transformToEvent(item));
@@ -167,10 +172,14 @@ export const CalendarView = () => {
     setFlagLoader((prev) => !prev);
   };
 
+
+  const onChangeAsesor = (newValue) => {
+   setAsesorSelected(newValue.id)
+  }
+
   useEffect(() => {
     getCalendarData(authTokens.access);
   }, [flagLoader]);
-
 
   console.log(calendarEvents)
 
@@ -178,8 +187,8 @@ export const CalendarView = () => {
     <React.Fragment>
       <div className="flex flex-col gap-y-3">
         <Typography variant="h4">Eventos Registrados</Typography>
-        <Typography variant="subtitle1">Filtro por fechas</Typography>
-        <div className="w-fit flex flex-col sm:flex-row gap-y-4 gap-x-4">
+        <Typography variant="subtitle1">Filtros</Typography>
+        <div className="w-fit grid sm:grid-cols-2 gap-y-4 gap-x-4">
           <CustomDatePicker
             label="Fecha Desde"
             onNewFecha={onChangeDatePickerFechaDesde}
@@ -191,10 +200,12 @@ export const CalendarView = () => {
             defaultValue={hastaValue}
           />
 
+          <FilterAsesor label="Asesor" onNewInput={onChangeAsesor} defaultValue={asesorSelected}/>
+
           <Button
             startIcon={<MdFilterAlt />}
             variant="contained"
-            sx={{ textTransform: "capitalize", width: "11.4rem" }}
+            sx={{ textTransform: "capitalize" }}
             onClick={onSubmitFilter}
           >
             Filtrar
@@ -204,7 +215,7 @@ export const CalendarView = () => {
           sx={{
             display: "flex",
             flexDirection: "row",
-            justifyContent: "space-between",
+            justifyContent: "flex-end",
           }}
         >
           <Button

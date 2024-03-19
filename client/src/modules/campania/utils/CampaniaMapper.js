@@ -66,8 +66,8 @@ export const dataMapper = async ({ query, token }) => {
 
   // Crear tabla de costos por lead por semana por asesor
   const costoLeadRows = [
-    ["COSTO/LEAD $", ...dolaresLeadList, ],
-    ["COSTO/LEAD S/", ...solesLeadList],
+    ["COSTO/LEAD $", ...dolaresLeadList, calcularPromedio(dolaresLeadList).toFixed(2)],
+    ["COSTO/LEAD S/", ...solesLeadList, calcularPromedio(solesLeadList).toFixed(2)],
   ];
 
   // Crear filas de datos para la tabla
@@ -196,10 +196,29 @@ export const dataMapper = async ({ query, token }) => {
     costoLeadAsesorHeader: ["Asesor", ...addSymbol('$',headerWeeks), "Total $", "Total S/"],
     costoLeadAsesorRows: [...costoLeadAsesoresRows, totalesCostoLeadColumnas],
 
-    costoLeadHeader: ["Cost/Lead", ...headerWeeks,],
+    costoLeadHeader: ["COSTO/LEAD", ...headerWeeks, "PROM. LEAD"],
     costoLeadRows: costoLeadRows,
   };
 };
+
+
+function calcularPromedio(datos) {
+  let suma = 0;
+  let cantidadValida = 0;
+
+  for (let i = 0; i < datos.length; i++) {
+      if (typeof datos[i] === 'number' && isFinite(datos[i]) && !isNaN(datos[i])) {
+          suma += datos[i];
+          cantidadValida++;
+      }
+  }
+
+  if (cantidadValida === 0) {
+      return NaN; // No hay datos válidos para calcular el promedio
+  }
+
+  return suma / cantidadValida;
+}
 
 
 /**

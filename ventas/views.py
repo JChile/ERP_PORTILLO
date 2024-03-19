@@ -168,16 +168,23 @@ class LeadList(generics.ListCreateAPIView):
 
         leadSerializer = LeadSerializer(lead_queryset, many=True)
         estadoLead_queryset = EstadoLead.objects.all()
+        estadoSeparacion_queryset = EstadoSeparacionLead.objects.all()
+        leadData = leadSerializer.data
+
+        camapania_queryset = Campania.objects.all()
+        objecion_queryset = Objecion.objects.all()
+        estadoLead_queryset = EstadoLead.objects.all()
+        user_queryset = User.objects.all()
+        proyecto_queryset = Proyecto.objects.all()
+
         
 
-        leadData = leadSerializer.data
         for i in leadData:
-            user_data = get_or_none(User, id=i["asesor"])
+            user_data = user_queryset.filter(id=i["asesor"]).first()
+            campania_data = camapania_queryset.filter(id=i["campania"]).first()
+            objecion_data =  objecion_queryset.filter(id=i["objecion"]).first()
+            estadoLead_data = estadoLead_queryset.filter(nombre=i["estadoLead"]).first()
 
-            campania_data = get_or_none(Campania, id=i["campania"])
-            objecion_data = get_or_none(Objecion, id=i["objecion"])
-            estadoLead_data = get_or_none(EstadoLead, nombre=i["estadoLead"])
-            print(estadoLead_data)
             userSerializer = UserSerializer(user_data, fields=(
                 'id', 'first_name', 'last_name', 'username')) if user_data else None
 
@@ -188,21 +195,27 @@ class LeadList(generics.ListCreateAPIView):
             
             estadoSerializer = EstadoLeadSerializer(
                 estadoLead_data) if estadoLead_data else None
-
+            
+            estadoSeparacion = estadoSeparacion_queryset.filter(pk = i["estadoSeparacionLead"]).first()
+            estadoSeparacionSerializer = EstadoSeparacionLeadSerializer(
+                estadoSeparacion) if estadoSeparacion else None
+            
             i["asesor"] = userSerializer.data if userSerializer else None
             i["campania"] = campaniaSerializer.data if campaniaSerializer else None
             i["estadoLead"] = estadoSerializer.data if estadoSerializer else None
+            i["estadoSeparacionLead"] = estadoSeparacionSerializer.data if estadoSeparacionSerializer else None
+
             i["campania"]["proyecto"] = ProyectoSerializer(
-                Proyecto.objects.filter(pk=i["campania"]["proyecto"]).first()).data
+                proyecto_queryset.filter(pk=i["campania"]["proyecto"]).first()).data
             i["objecion"] = objecionSerializer.data if objecionSerializer else None
             if flag_desasignado_asesor:
                 lead_lastAsesor = historico_desasignaciones.filter(lead = i["id"]).order_by('-fecha').first()
-                asesor_desasignado = User.objects.filter(pk = lead_lastAsesor.usuario.pk).first() if lead_lastAsesor != None else None
+                asesor_desasignado = user_queryset.filter(pk = lead_lastAsesor.usuario.pk).first() if lead_lastAsesor != None else None
                 i["penultimo_asesor"] = UserSerializer(asesor_desasignado, fields=(
                 'id', 'first_name', 'last_name', 'username')).data if asesor_desasignado!=None else None
                 
                 if i["penultimo_asesor"] == None :
-                    i["penultimo_asesor"] = {"first_name" : Nonem }
+                    i["penultimo_asesor"] = {"first_name" : None }
 
         return Response(leadData)
 
@@ -221,7 +234,12 @@ class LeadList(generics.ListCreateAPIView):
 
         if data.get("asesor") != None:
             data["fecha_asignacion"] = timezone.now()
-
+        
+        print("aaaaaaaaaaaaaaa : ", data["celular"][3:])
+        if data["celular"][:3] == "+51":
+         data["celular"] = str(data["celular"][1:]).replace(" ", "")
+        if data["celular2"][:3] == "+51":
+         data["celular2"] = str(data["celular2"][1:]).replace(" ", "") 
         serializer = LeadSerializer(data=data)
 
         if serializer.is_valid():
@@ -290,16 +308,21 @@ class LeadDetail(generics.RetrieveUpdateDestroyAPIView):
         lead_data["eventos"] = EventoSerializer(
             Evento.objects.filter(lead=lead.pk), many=True).data
 
-        # for eventoIter in lead_data["eventos"] :
-        #     lead = Lead.objects.filter(id = eventoIter["lead"]).first()
-        #     tipoEvento = TipoEvento.objects.filter(id = eventoIter["tipo"]).first()
-        #     estadoEvento = EstadoEvento.objects.filter(id = eventoIter["estadoEvento"]).first()
-        #     objecion = Objecion.objects.filter(id = eventoIter["objecion"]).first()
+        asesor_queryset = User.objects.all()
+        usuarioCreador_data = asesor_queryset.filter(pk = lead_data["usuarioCreador"]).first()
+        usuarioActualizador_data = asesor_queryset.filter(pk = lead_data["usuarioActualizador"]).first()
 
-        #     eventoIter["lead"] = UserSerializer(asesor ,fields=('id', 'first_name', 'last_name', 'username', 'codigoAsesor')).data if asesor != None else None
-        #     eventoIter["tipo"] =  TipoEventoSerializer(tipoEvento).data if tipoEvento != None else None
-        #     eventoIter["estadoEvento"] =  EstadoEventoSerializer(estadoEvento).data if estadoEvento != None else None
-        #     eventoIter["objecion"] =  ObjecionSerializer(objecion).data if objecion != None else None
+        usuarioCreadorSerializer = UserSerializer(
+            usuarioCreador_data, fields=('id', 'first_name', 'last_name', 'username', 'codigoAsesor')) if usuarioCreador_data else None
+        usuarioActualizadorSerializer = UserSerializer(
+            usuarioActualizador_data,fields=('id', 'first_name', 'last_name', 'username', 'codigoAsesor')) if usuarioActualizador_data else None        
+
+        # lead_data["usuarioCreador"] = usuarioCreadorSerializer.data if usuarioCreadorSerializer else None
+        # lead_data["usuarioActualizador"]=  usuarioActualizadorSerializer.data if usuarioActualizadorSerializer else None
+        for eventoIter in lead_data["eventos"] :
+            asesor =  asesor_queryset.filter(id = eventoIter["asesor"]).first()
+            eventoIter["asesor"] = UserSerializer(asesor ,fields=('id', 'first_name', 'last_name', 'username', 'codigoAsesor')).data if asesor != None else None
+
 
         return Response(lead_data)
 
@@ -331,6 +354,10 @@ class LeadDetail(generics.RetrieveUpdateDestroyAPIView):
                 HistoricoLeadAsesor.objects.create(
                     lead=instancia, usuario=asesor)
 
+        if data["celular"][:3] == "+51":
+         data["celular"] = str(data["celular"][1:]).replace(" ", "")
+        if data["celular2"][:3] == "+51":
+         data["celular2"] = str(data["celular2"][1:]).replace(" ", "") 
         serializer = LeadSerializer(instancia, data=data)
         print(serializer)
         if serializer.is_valid():
@@ -557,9 +584,16 @@ class EventoList(generics.ListCreateAPIView):
         estado = request.query_params.get('estado')
         desde = request.query_params.get('desde')
         hasta = request.query_params.get('hasta')
+        asesor =  request.query_params.get('asesor')
 
         if estado:
             evento_queryset = Evento.objects.all().filter(estado=estado)
+        else:
+            evento_queryset = Evento.objects.all()
+
+        
+        if asesor != None:
+            evento_queryset = evento_queryset.filter(asesor=asesor)
 
         if desde and hasta:
             evento_queryset = evento_queryset.filter(
@@ -577,7 +611,6 @@ class EventoList(generics.ListCreateAPIView):
             evento_queryset = evento_queryset
 
         evento_data = EventoSerializer(evento_queryset, many=True).data
-        print(evento_data)
         for eventoIterador in evento_data:
             asesor = get_or_none(User, id=eventoIterador["asesor"])
             tipo = get_or_none(TipoEvento, id=eventoIterador["tipo"])
@@ -588,7 +621,7 @@ class EventoList(generics.ListCreateAPIView):
             estadoEventoSerializer = EstadoEventoSerializer(
                 estadoEvento) if estadoEvento else None
             userAsesorSerializer = UserSerializer(asesor, fields=(
-                'id', 'first_name', 'last_name', 'username')) if asesor else None
+                'id', 'first_name', 'last_name', 'username','codigoAsesor')) if asesor else None
             tipoSerializer = TipoEventoSerializer(tipo) if tipo else None
             leadSerializer = LeadSerializer(lead) if lead else None
 
@@ -1099,3 +1132,14 @@ class DesasignacionConfiguracionDetail(generics.RetrieveUpdateDestroyAPIView):
             serializer.save()
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+
+
+class EstadoSeparacionLeadList(generics.ListCreateAPIView):
+    serializer_class = EstadoSeparacionLeadSerializer
+    queryset = EstadoSeparacionLead.objects.all()
+
+class EstadoSeparacionLeadDetail(generics.RetrieveUpdateDestroyAPIView):
+    serializer_class = EstadoSeparacionLeadSerializer
+    queryset = EstadoSeparacionLead.objects.all()

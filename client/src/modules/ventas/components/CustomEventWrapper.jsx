@@ -2,9 +2,9 @@ import React from "react";
 
 export const CustomEventWrapper = (props) => {
   const { event, children, onSelectEvent } = props;
-
+  const {tipo} = event
   const eventStyle = {
-    backgroundColor: "blue",
+    backgroundColor: `${tipo.color}`,
     opacity: "0.9",
     padding: "1px",
     borderRadius: "5px",

@@ -50,6 +50,10 @@ urlpatterns = [
     re_path(r'^estadoLeadActivo/$', views.EstadoLeadActivos.as_view()),
     re_path(r'^estadoLeadInactivo/$', views.EstadoLeadInactivos.as_view()),
 
+    re_path(r'^estadoSeparacionLead/$', views.EstadoSeparacionLeadList.as_view()),
+    re_path(r'^estadoSeparacionLead/(?P<nombre>[\w-]+)$',
+            views.EstadoSeparacionLeadDetail.as_view()),
+
     re_path(r'^evento/$', views.EventoList.as_view()),
     re_path(r'^evento/(?P<pk>[\w-]+)$', views.EventoDetail.as_view()),
     re_path(r'^eventoActivo/$', views.EventoListActivos.as_view()),
@@ -120,6 +124,8 @@ urlpatterns = [
 
     re_path(r'^desasignacionConfiguracion/$', views.DesasignacionConfiguracionList.as_view()),
     re_path(r'^desasignacionConfiguracion/(?P<pk>[\w-]+)$',views.DesasignacionConfiguracionDetail.as_view()),
+    
+    re_path(r'^registroMasivoMensajes/$', cutomViews.RegistroMensajesMasivos.as_view()),
 
 
 ]

@@ -78,7 +78,11 @@ class ReporteProyectoCampaniaDetail(APIView):
 
         desde = request.query_params.get('desde')
         hasta = request.query_params.get('hasta')
+        asesor = request.query_params.get('asesor')
+
         diasAtras = timezone.now() - timedelta(days=30)
+
+
 
         estadoCampania = request.query_params.get('estadoCampania')
 
@@ -91,9 +95,16 @@ class ReporteProyectoCampaniaDetail(APIView):
         
         for campaniaIter in proyecto_data["campanias"]:
             if desde and hasta:
-                campaniaIter["leads"] = LeadListSerializer(Lead.objects.filter(campania = campaniaIter["id"],fecha_creacion__range = [desde,hasta]), many =True).data
+                if asesor != None:
+                    campaniaIter["leads"] = LeadListSerializer(Lead.objects.filter(asesor = asesor, campania = campaniaIter["id"],fecha_creacion__range = [desde,hasta]), many =True).data
+                else :
+                    campaniaIter["leads"] = LeadListSerializer(Lead.objects.filter(campania = campaniaIter["id"],fecha_creacion__range = [desde,hasta]), many =True).data
+
             else:
-                campaniaIter["leads"] = LeadListSerializer(Lead.objects.filter(campania = campaniaIter["id"], fecha_creacion__gte=diasAtras), many =True).data
+                if asesor != None:
+                    campaniaIter["leads"] = LeadListSerializer(Lead.objects.filter(asesor = asesor, campania = campaniaIter["id"], fecha_creacion__gte=diasAtras), many =True).data
+                else:
+                    campaniaIter["leads"] = LeadListSerializer(Lead.objects.filter(campania = campaniaIter["id"], fecha_creacion__gte=diasAtras), many =True).data
 
         return Response(proyecto_data, status.HTTP_200_OK)
 

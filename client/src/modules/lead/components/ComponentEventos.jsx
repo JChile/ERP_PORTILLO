@@ -185,6 +185,7 @@ const transformToEvent = (oldEvent) => {
   const startEvent = new Date(oldEvent.fecha_visita);
   const durationMilliseconds = oldEvent.duracion * 60000;
   const endEvent = new Date(startEvent.getTime() + durationMilliseconds);
+
   return {
     id: oldEvent.id,
     separado: oldEvent.separado,
@@ -196,7 +197,8 @@ const transformToEvent = (oldEvent) => {
     tipo: oldEvent.tipo,
     estadoEvento: oldEvent.estadoEvento,
     observacion: oldEvent.observacion,
-    objecion: oldEvent.objecion
+    objecion: oldEvent.objecion,
+    asesor: oldEvent.asesor
   };
 };
 

@@ -27,6 +27,7 @@ import { obtenerHoraActualFormatPostgress } from "../../../utils";
 import { MdFilter, MdFilterAlt } from "react-icons/md";
 import { useAlertMUI } from "../../../hooks";
 import { getAsesorActivo } from "../../../components/filters/asesor/getAsesor";
+import { FilterAsesor } from "../../../components/filters/asesor/FilterAsesor";
 
 const localizer = momentLocalizer(moment);
 
@@ -93,9 +94,7 @@ export const CalendarViewAdmin = () => {
   const [tempFilters, setTempFilters] = useState({});
   const [desdeValue, setDesdeValue] = useState(null);
   const [hastaValue, setHastaValue] = useState(null);
-
-  const [asesores, setAsesores] = useState([]);
-  const [asesorSelected, setAsesorSelected] = useState(null)
+  const [asesorSelected, setAsesorSelected] = useState(null);
 
   const handleTempFilters = (event) => {
     const { name, checked } = event.target;
@@ -110,26 +109,26 @@ export const CalendarViewAdmin = () => {
     const filtered = originalEvents.filter((event) => {
       return tempFilters[event.tipo.nombre];
     });
-    const transformedEvents = filtered.map((item) => transformToEvent(item));
+    const transformedEvents = filtered.map((item) =>
+      transformToEvent(item)
+    );
     setCalendarEvents(transformedEvents);
     setSelectedFilters(tempFilters);
   };
 
   const getCalendarData = async (authTokens) => {
     let query = "";
+    if (asesorSelected) {
+      query += `asesor=${asesorSelected}&`;
+    }
     if (desdeValue && hastaValue) {
-      query = `desde=${desdeValue}T00:00:00&hasta=${hastaValue}T23:59:59`;
+      query += `desde=${desdeValue}T00:00:00&hasta=${hastaValue}T23:59:59`;
     }
     try {
       const events = await getEvents(authTokens, query);
       const typeEvents = await getTipoEventos();
-      const asesores = await getAsesorActivo(authTokens);
-
-      console.log(events)
-
       setOriginalEvents(events);
       setTypeEvents(typeEvents);
-      setAsesores(asesores);
       const transformedEvents = events.map((item) => transformToEvent(item));
       if (Object.keys(selectedFilters).length === 0) {
         const initialFilters = {};
@@ -173,6 +172,11 @@ export const CalendarViewAdmin = () => {
     setFlagLoader((prev) => !prev);
   };
 
+
+  const onChangeAsesor = (newValue) => {
+   setAsesorSelected(newValue.id)
+  }
+
   useEffect(() => {
     getCalendarData(authTokens.access);
   }, [flagLoader]);
@@ -181,8 +185,8 @@ export const CalendarViewAdmin = () => {
     <React.Fragment>
       <div className="flex flex-col gap-y-3">
         <Typography variant="h4">Eventos Registrados</Typography>
-        <Typography variant="subtitle1">Filtro por fechas</Typography>
-        <div className="w-fit flex flex-col sm:flex-row gap-y-4 gap-x-4">
+        <Typography variant="subtitle1">Filtros</Typography>
+        <div className="w-fit grid sm:grid-cols-2 gap-y-4 gap-x-4">
           <CustomDatePicker
             label="Fecha Desde"
             onNewFecha={onChangeDatePickerFechaDesde}
@@ -194,41 +198,24 @@ export const CalendarViewAdmin = () => {
             defaultValue={hastaValue}
           />
 
+          <FilterAsesor label="Asesor" onNewInput={onChangeAsesor} defaultValue={asesorSelected}/>
+
           <Button
             startIcon={<MdFilterAlt />}
             variant="contained"
-            sx={{ textTransform: "capitalize", width: "11.4rem" }}
+            sx={{ textTransform: "capitalize" }}
             onClick={onSubmitFilter}
           >
             Filtrar
           </Button>
         </div>
-        <Typography variant="subtitle1">Filtro por asesor</Typography>
         <FormControl
           sx={{
             display: "flex",
             flexDirection: "row",
-            justifyContent: "space-between",
+            justifyContent: "flex-end",
           }}
         >
-          <React.Fragment>
-            <InputLabel id="asesor-label-id">Asesor</InputLabel>
-            <Select
-              labelId="asesor-label-id"
-              label="Asesor"
-              size="small"
-              value={20}
-              sx={{ width: "11.4rem" }}
-            >
-               {
-                  asesores.map((item,index) => {
-                     return <MenuItem>{item.codigo}</MenuItem>
-                  })
-               }
-              <MenuItem value={10}>Ten</MenuItem>
-              <MenuItem value={20}>Twenty</MenuItem>
-            </Select>
-          </React.Fragment>
           <Button
             onClick={() => {
               setTempFilters({ ...selectedFilters });

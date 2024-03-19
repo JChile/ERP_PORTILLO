@@ -17,6 +17,7 @@ import { AuthContext } from "../../../auth";
 import { EstadoLeadDiagram } from "../components/EstadoLeadDiagrams";
 import { ObjecionLeadDiagram } from "../components/ObjecionesLeadDiagram";
 import LoadingObjecionIcon from "../../../assets/loading_objecion.svg";
+import { FilterAsesor } from "../../../components/filters/asesor/FilterAsesor";
 
 export const ReporteLeadStatus = () => {
   const [proyecto, setProyecto] = useState();
@@ -28,6 +29,7 @@ export const ReporteLeadStatus = () => {
   const [visibleProgress, setVisibleProgress] = useState(false);
   const { authTokens } = useContext(AuthContext);
   const [reportGenerated, setReportGenerated] = useState(false);
+  const [asesor, setAsesor] = useState();
 
   const [desdeValue, setDesdeValue] = useState(null);
   const [hastaValue, setHastaValue] = useState(null);
@@ -38,6 +40,10 @@ export const ReporteLeadStatus = () => {
 
   const onChangeDatePickerFechaHasta = (newDate) => {
     setHastaValue(newDate);
+  };
+
+  const onAddAsesor = (newAsesor) => {
+    setAsesor(newAsesor.id);
   };
 
   const {
@@ -72,12 +78,16 @@ export const ReporteLeadStatus = () => {
       setVisibleProgress(true);
       try {
         let query = "";
+        if (asesor) {
+          query = `asesor=${asesor}`;
+        }
         if (desdeValue && hastaValue) {
-          query = `&desde=${desdeValue}T00:00:00&hasta=${hastaValue}T23:59:59`;
+          query += `&desde=${desdeValue}T00:00:00&hasta=${hastaValue}T23:59:59`;
         }
         const result = await getProyectoCampania(
           id + "?estadoCampania=A" + query
         );
+        console.log(query)
         setData(result);
         const conteoObjeciones = {};
         const conteoEstados = {};
@@ -158,6 +168,8 @@ export const ReporteLeadStatus = () => {
         <label className="flex flex-col gap-y-1">
           <span className="block text-sm font-medium">Proyecto</span>
           <FilterProyectos onNewInput={onAddProyecto} defaultValue={proyecto} />
+          <span>Asesor</span>
+          <FilterAsesor onNewInput={onAddAsesor} defaultValue={asesor} />
         </label>
         <Button variant="contained" onClick={() => getDataProyecto(proyecto)}>
           Generar Reporte

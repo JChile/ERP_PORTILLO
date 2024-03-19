@@ -4,7 +4,7 @@ export const CustomEventWrapper = (props) => {
   const { event, children, onSelectEvent } = props;
 
   const eventStyle = {
-    backgroundColor: "blue",
+    backgroundColor: "#9e154a",
     opacity: "0.9",
     padding: "1px",
     borderRadius: "5px",

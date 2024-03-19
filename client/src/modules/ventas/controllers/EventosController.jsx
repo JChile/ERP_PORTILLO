@@ -6,11 +6,13 @@ import { CalendarViewAdmin } from "../pages/CalendarViewAdmin";
 
 const EventosController = () => {
   const { currentUser } = useContext(AuthContext);
+  const { user } = currentUser;
 
   switch (currentUser.groups) {
     case "asesor": {
-      return <CalendarViewAdmin />;
+      return user.isAdmin ?  <CalendarViewAdmin />: <CalendarView />;
     }
+
     default: {
       return <NoAccessEventos />;
     }

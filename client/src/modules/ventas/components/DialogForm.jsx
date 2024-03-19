@@ -6,6 +6,8 @@ import {
   DialogContent,
   DialogTitle,
   FormControl,
+  PopoverPaper,
+  Popper,
   TextField,
   Typography,
 } from "@mui/material";
@@ -20,6 +22,7 @@ import dayjs from "dayjs";
 import "dayjs/locale/es";
 import { useAlertMUI } from "../../../hooks";
 import { CustomAlert } from "../../../components";
+import { PickersPopper } from "@mui/x-date-pickers/internals";
 
 export const DialogForm = ({ isOpen, onClose, onCreateRegistroEvento }) => {
   const { form, handleChangeForm } = useForm({

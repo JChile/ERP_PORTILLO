@@ -48,8 +48,6 @@ export const DialogDetailEvento = ({
     asesor,
   } = dataAuxEvento;
 
-  console.log(dataAuxEvento);
-
   const [editData, setEditData] = useState(false);
 
   const validateForm = () => {
@@ -171,7 +169,10 @@ export const DialogDetailEvento = ({
         id="customized-dialog-title"
       >
         <div>
-          Detalle Evento (<span className="font-normal">{`${asesor.first_name}`}</span>)
+          Detalle Evento
+          <span className="font-normal">
+            {` (${asesor.first_name} ${asesor.last_name}) | ${asesor.codigoAsesor} `}
+          </span>
         </div>
         {editData ? (
           <div>

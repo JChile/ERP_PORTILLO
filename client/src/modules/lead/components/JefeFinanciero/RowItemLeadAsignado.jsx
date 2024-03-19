@@ -57,6 +57,9 @@ const RowItemLeadAsignado = ({ item, checkedElement }) => {
         </span>
       </TableCell>
       <TableCell>
+        {item["estadoSeparacionLead"] ? item["estadoSeparacionLead"]["nombre"] : "No"}
+      </TableCell>
+      <TableCell>
         {item["asesor"]["first_name"]} {item["asesor"]["last_name"]}
       </TableCell>
       <TableCell>

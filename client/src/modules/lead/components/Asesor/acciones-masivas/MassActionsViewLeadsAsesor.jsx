@@ -22,6 +22,7 @@ import { combinarErrores } from "../../../../../utils";
 import { asignarAsesorToLeads } from "../../../helpers";
 import { exportLeadsAsesor } from "./exportLeadsAsesor";
 import { FaWhatsapp } from "react-icons/fa";
+import { sendMassiveMessage } from "../../../helpers/whatsapp/sendMassiveMessages";
 
 const ITEM_HEIGHT = 48;
 
@@ -45,13 +46,9 @@ export const MassActionsViewLeadsAsesor = ({
   // funcion para asignar asesor a leads seleccionados
   const enviarMensajesMasivos = async (textMessage) => {
     setVisibleProgress(true);
-    //const formatData = {
-    //  asesor: asesores.map((element) => element.id),
-    //  lead: data.map((element) => element.id),
-    //};
     try {
       // aqui se enviara la query para crear mensajes masivos. <-----------.
-      
+      const response = await sendMassiveMessage(data, textMessage, authTokens["access"]);
       // volvemos a cargar la información
       onLoadData();
       // mostramos feedback de error
@@ -115,6 +112,7 @@ export const MassActionsViewLeadsAsesor = ({
           handleConfirm={enviarMensajesMasivos}
           onCloseMenu={handleClose}
           disabled={data.length === 0}
+          leadsQuantiy={data.length}
         />
         <MenuItem
           key={"exportar"}
@@ -129,10 +127,8 @@ export const MassActionsViewLeadsAsesor = ({
   );
 };
 
-const MassiveMessages = ({ handleConfirm, onCloseMenu, disabled }) => {
-  const [open, setOpen] = React.useState(false);
-  const { authTokens } = useContext(AuthContext);
-  const [leadsSeleccionados, setLeadsSeleccionados] = useState([]);
+const MassiveMessages = ({ handleConfirm, onCloseMenu, disabled, leadsQuantiy }) => {
+  const [open, setOpen] = useState(false);
   const [textMessage, setTextMessage] = useState();
 
   const handleClickOpen = () => {
@@ -171,7 +167,7 @@ const MassiveMessages = ({ handleConfirm, onCloseMenu, disabled }) => {
       <Dialog open={open} onClose={handleClose} maxWidth="xs" fullWidth={true}>
         <DialogTitle>Enviar mensaje</DialogTitle>
         <DialogContent>
-          <p className="mb-4">41 lead(s) seleccionados</p>
+          <p className="mb-4">{leadsQuantiy} lead(s) seleccionados</p>
           <FormGroup>
             <TextField
               label="Mensaje masivo"

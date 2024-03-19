@@ -609,12 +609,16 @@ class EventoList(generics.ListCreateAPIView):
             fecha_dentro_de_30_dias = fecha_actual + timedelta(days=30)
             evento_queryset = evento_queryset.filter(
                 fecha_visita__range=[fecha_hace_30_dias, fecha_dentro_de_30_dias])
+        
+
 
         if request.user.isAdmin == False:
             evento_queryset = evento_queryset.filter(asesor=usuarioId)
         elif request.user.isAdmin == True:
             evento_queryset = evento_queryset
 
+
+        print(evento_queryset)
         evento_data = EventoSerializer(evento_queryset, many=True).data
         for eventoIterador in evento_data:
             asesor = get_or_none(User, id=eventoIterador["asesor"])
@@ -674,6 +678,7 @@ class EventoDetail(generics.RetrieveUpdateDestroyAPIView):
 
         evento_dataJson = EventoSerializer(evento).data
 
+        print(evento_dataJson)
         asesor = get_or_none(User, id=evento_dataJson["asesor"])
         tipo = get_or_none(TipoEvento, id=evento_dataJson["tipo"])
         estadoEvento =  get_or_none(EstadoEvento, id=evento_dataJson["estadoEvento"])

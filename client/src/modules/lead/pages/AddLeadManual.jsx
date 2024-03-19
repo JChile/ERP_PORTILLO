@@ -29,7 +29,7 @@ export const AddLeadManual = () => {
     llamar: true,
     asesor: null,
     estadoLead: "EP",
-    estadoSeparacion: null,
+    estadoSeparacionLead: null,
     objecion: 1,
     campania: null,
     campaniaName: "",
@@ -48,7 +48,7 @@ export const AddLeadManual = () => {
     estadoLead,
     objecion,
     horaRecepcion,
-    estadoSeparacion,
+    estadoSeparacionLead,
     campania,
     campaniaName,
   } = lead
@@ -98,8 +98,8 @@ export const AddLeadManual = () => {
     setLead({ ...lead, objecion: item.id })
   }
 
-  const onAddEstadoSeparacion = (item) => {
-    setLead({ ...lead, estadoSeparacion: item.id })
+  const onAddEstadoSeparacionLead = (item) => {
+    setLead({ ...lead, estadoSeparacionLead: item.id })
   }
 
   const validateLead = () => {
@@ -292,8 +292,8 @@ export const AddLeadManual = () => {
             <label className="flex flex-col gap-y-1">
               <span className="block text-sm font-medium">Estado separación</span>
               <FilterEstadoSeparacion
-                onNewInput={onAddEstadoSeparacion}
-                defaultValue={estadoSeparacion}
+                onNewInput={onAddEstadoSeparacionLead}
+                defaultValue={estadoSeparacionLead}
               />
             </label>
 

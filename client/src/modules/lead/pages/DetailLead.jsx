@@ -48,7 +48,7 @@ export const DetailLead = () => {
     importante: false,
     estado: "A",
     estadoLead: "EP",
-    estadoSeparacion: null,
+    estadoSeparacionLead: null,
     objecion: {
       nombre: "",
     },
@@ -78,7 +78,7 @@ export const DetailLead = () => {
     importante,
     estado,
     estadoLead,
-    estadoSeparacion,
+    estadoSeparacionLead,
     objecion,
     campania,
     llamadas,
@@ -421,7 +421,7 @@ export const DetailLead = () => {
                 <span className="block text-sm font-medium min-w-[10rem] text-zinc-500">
                   Estado separaciones:
                 </span>
-                <span className="block text-sm">{estadoSeparacion?.nombre || "No registrado"}</span>
+                <span className="block text-sm">{estadoSeparacionLead?.nombre || "No registrado"}</span>
               </label>
 
               <label className="flex gap-y-1 ">

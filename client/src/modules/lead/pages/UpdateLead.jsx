@@ -8,6 +8,7 @@ import {
   CustomAlert,
   CustomCircularProgress,
   FilterEstadoLead,
+  FilterEstadoSeparacion,
 } from "../../../components"
 import { FilterObjecion } from "../../../components/filters/objecion/FilterObjecion"
 import { FilterAsesor } from "../../../components/filters/asesor/FilterAsesor"
@@ -38,6 +39,7 @@ export const UpdateLead = () => {
     llamar: true,
     asesor: null,
     estadoLead: null,
+    estadoSeparacion: null,
     objecion: null,
     campania: null,
     campaniaName: "",
@@ -53,6 +55,7 @@ export const UpdateLead = () => {
     llamar,
     asesor,
     estadoLead,
+    estadoSeparacion,
     objecion,
     campania,
     campaniaName,
@@ -129,6 +132,11 @@ export const UpdateLead = () => {
   // change objecion
   const onAddObjecion = (item) => {
     setLead({ ...lead, objecion: item.id })
+  }
+
+  // change objecion
+  const onAddEstadoSeparacion = (item) => {
+    setLead({ ...lead, estadoSeparacion: item.id })
   }
 
   const validateLead = () => {
@@ -317,6 +325,14 @@ export const UpdateLead = () => {
                 <FilterObjecion
                   defaultValue={objecion}
                   onNewInput={onAddObjecion}
+                />
+              </label>
+
+              <label className="flex flex-col gap-y-1">
+                <span className="block text-sm font-medium">Estado separación</span>
+                <FilterEstadoSeparacion
+                  defaultValue={estadoSeparacion}
+                  onNewInput={onAddEstadoSeparacion}
                 />
               </label>
 

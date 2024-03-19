@@ -62,11 +62,12 @@ export const ListAsesorVentasLead = () => {
     nombre: "",
     celular: "",
     proyecto: "",
+    importante: "",
     estadoLead: "",
     fecha_asignacion: "",
   });
 
-  const { nombre, celular, proyecto, estadoLead, fecha_asignacion } = filterData;
+  const { nombre, celular, importante, proyecto, estadoLead, fecha_asignacion } = filterData;
 
   // flag reload
   const [flagReload, setFlagReload] = useState(false);
@@ -110,11 +111,11 @@ export const ListAsesorVentasLead = () => {
       const proyectoElement = element["campania"]["proyecto"]["nombre"]
         .toString()
         .toLowerCase();
+      const importanteElement = element["importante"] ? "si" : "no"
       const estadoLeadElement = element["estadoLead"]["nombre"].toString().toLowerCase();
       const fechaAsignacionElement = formatDate_ISO861_to_date(
         element["fecha_asignacion"]
       );
-      console.log(estadoLeadElement)
 
       if (
         (filterData["nombre"] !== "" &&
@@ -123,6 +124,8 @@ export const ListAsesorVentasLead = () => {
           !celularElement.includes(filterData["celular"].toLowerCase())) ||
         (filterData["proyecto"] !== "" &&
           !proyectoElement.includes(filterData["proyecto"].toLowerCase())) ||
+        (filterData["importante"] !== "" &&
+          !importanteElement.includes(filterData["importante"].toLowerCase())) ||
         (filterData["fecha_asignacion"] !== "" &&
           !fechaAsignacionElement.includes(filterData["fecha_asignacion"])) ||
         (filterData["estadoLead"] !== "" &&
@@ -148,6 +151,7 @@ export const ListAsesorVentasLead = () => {
       nombre: "",
       celular: "",
       proyecto: "",
+      importante: "",
       estadoLead: "",
       fecha_asignacion: "",
     });
@@ -344,6 +348,7 @@ export const ListAsesorVentasLead = () => {
                     <TableCell>Nombre</TableCell>
                     <TableCell>Proyecto</TableCell>
                     <TableCell>Campaña</TableCell>
+                    <TableCell align="center">Importante</TableCell>
                     <TableCell align="center">Estado</TableCell>
                     <TableCell>Fecha asignacion</TableCell>
                   </TableRow>
@@ -410,6 +415,13 @@ export const ListAsesorVentasLead = () => {
                     </TableCell>
                     <TableCell>
                       Sin filtros
+                    </TableCell>
+                    <TableCell align="center">
+                      <SelectBoolean
+                        filterName="importante"
+                        onNewInput={handledFilterSelectValues}
+                        defaultValue={importante}
+                      />
                     </TableCell>
                     <TableCell>
                       <SelectEstadoLead

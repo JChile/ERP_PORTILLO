@@ -18,6 +18,7 @@ import { EstadoLeadDiagram } from "../components/EstadoLeadDiagrams";
 import { ObjecionLeadDiagram } from "../components/ObjecionesLeadDiagram";
 import LoadingObjecionIcon from "../../../assets/loading_objecion.svg";
 import { FilterAsesor } from "../../../components/filters/asesor/FilterAsesor";
+import { combinarErrores } from "../../../utils";
 
 export const ReporteLeadStatus = () => {
   const [proyecto, setProyecto] = useState();
@@ -77,15 +78,15 @@ export const ReporteLeadStatus = () => {
     } else {
       setVisibleProgress(true);
       try {
-        let query = "";
+        let query = "?";
         if (asesor) {
-          query = `asesor=${asesor}`;
+          query += `asesor=${asesor}`;
         }
         if (desdeValue && hastaValue) {
           query += `&desde=${desdeValue}T00:00:00&hasta=${hastaValue}T23:59:59`;
         }
         const result = await getProyectoCampania(
-          id + "?estadoCampania=A" + query
+          id + query + "&estadoCampania=A" 
         );
         console.log(query)
         setData(result);

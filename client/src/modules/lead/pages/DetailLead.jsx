@@ -184,7 +184,6 @@ export const DetailLead = () => {
           return element;
         }
       });
-      console.log(updateDataLlamada);
       setLead({
         ...lead,
         llamadas: updateDataLlamada,
@@ -201,7 +200,6 @@ export const DetailLead = () => {
 
   const createEventoLead = async (itemData) => {
     try {
-      console.log(itemData);
       const result = await createEvent(itemData, authTokens["access"]);
       const createDataEvento = [...eventos, result];
       setLead({
@@ -220,7 +218,6 @@ export const DetailLead = () => {
 
   const updateEventoLead = async (id, itemData) => {
     try {
-      console.log("CAMBIOS AQUI", itemData);
       const result = await updateEvent(id, itemData, authTokens["access"]);
       const updateDataEvento = eventos.map((elemento) => {
         return elemento.id === id ? result : elemento;
@@ -245,7 +242,6 @@ export const DetailLead = () => {
       try {
         setVisibleProgress(true);
         const auxLead = await getLead(numericId, authTokens.access);
-        console.log(auxLead);
         setLead(auxLead);
         // comprobar si se realizo con exito la creación del usuario
         setVisibleProgress(false);

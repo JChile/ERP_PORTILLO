@@ -1130,7 +1130,8 @@ CREATE TABLE public.ventas_lead (
     objecion_id bigint,
     "usuarioActualizador_id" bigint,
     "usuarioCreador_id" bigint,
-    "estadoSeparacionLead_id" bigint
+    "estadoSeparacionLead_id" bigint,
+    producto_id bigint
 );
 
 
@@ -2451,6 +2452,7 @@ COPY public.django_migrations (id, app, name, applied) FROM stdin;
 59	ventas	0007_remove_lead_estadoseparacionlead	2024-03-18 17:09:36.375751-05
 60	ventas	0008_delete_estadoseparacionlead	2024-03-18 17:22:29.739874-05
 61	ventas	0009_estadoseparacionlead_lead_estadoseparacionlead	2024-03-18 17:24:35.123062-05
+62	ventas	0002_lead_producto	2024-03-20 14:29:41.84268-05
 \.
 
 
@@ -2768,14 +2770,14 @@ COPY public.ventas_historicoleadasesor (id, fecha_creacion, lead_id, usuario_id)
 -- Data for Name: ventas_lead; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public.ventas_lead (id, nombre, apellido, asignado, celular, celular2, comentario, "horaRecepcion", llamar, importante, fecha_asignacion, fecha_desasignacion, "recienCreado", fecha_creacion, fecha_actualizacion, asesor_id, campania_id, estado_id, "estadoLead_id", objecion_id, "usuarioActualizador_id", "usuarioCreador_id", "estadoSeparacionLead_id") FROM stdin;
-75	Danitza		t	51999999999	\N		2024-02-09 00:00:00-05	t	f	2024-03-18 18:17:35-05	2024-03-19 08:41:42-05	f	2024-03-18 18:16:06-05	2024-03-19 09:04:48.153262-05	15	1	A	EP	1	17	17	3
-70	Jean Carlo		t	942452151	\N		2024-02-09 00:00:00-05	t	f	2024-03-18 18:17:35.759841-05	2024-03-19 09:05:49.487765-05	f	2024-03-18 18:16:06.372504-05	2024-03-19 09:05:49.503419-05	14	1	A	TB	2	17	\N	\N
-470			t	51963333333			2024-03-19 09:12:27.087703-05	t	f	2024-03-19 09:12:27.076939-05	\N	f	2024-03-19 09:12:27.087816-05	2024-03-19 09:12:27.088559-05	16	2	A	SE	2	\N	18	\N
-73	Concepción		t	959037568	+9696		2024-02-09 00:00:00-05	t	t	2024-03-18 18:17:35.730383-05	2024-03-19 09:28:32.503929-05	f	2024-03-18 18:16:06.400363-05	2024-03-19 09:28:32.52006-05	14	1	A	EP	3	14	\N	\N
-71	Grethel		t	933598002	\N		2024-02-09 00:00:00-05	t	f	2024-03-18 18:17:35.752653-05	2024-03-19 10:25:44.53647-05	f	2024-03-18 18:16:06.381412-05	2024-03-19 10:25:44.554456-05	16	1	A	EP	1	17	\N	4
-74	Guido		t	994608955	\N		2024-02-09 00:00:00-05	t	f	2024-03-18 18:17:35.723512-05	\N	f	2024-03-18 18:16:06.4098-05	2024-03-18 18:17:35.724507-05	16	1	A	EP	1	\N	\N	\N
-72	Jorge		t	959683480	\N		2024-02-09 00:00:00-05	t	f	2024-03-18 18:17:35.740758-05	\N	f	2024-03-18 18:16:06.391818-05	2024-03-18 18:17:35.744228-05	15	1	A	EP	1	\N	\N	\N
+COPY public.ventas_lead (id, nombre, apellido, asignado, celular, celular2, comentario, "horaRecepcion", llamar, importante, fecha_asignacion, fecha_desasignacion, "recienCreado", fecha_creacion, fecha_actualizacion, asesor_id, campania_id, estado_id, "estadoLead_id", objecion_id, "usuarioActualizador_id", "usuarioCreador_id", "estadoSeparacionLead_id", producto_id) FROM stdin;
+75	Danitza		t	51999999999	\N		2024-02-09 00:00:00-05	t	f	2024-03-18 18:17:35-05	2024-03-19 08:41:42-05	f	2024-03-18 18:16:06-05	2024-03-19 09:04:48.153262-05	15	1	A	EP	1	17	17	3	\N
+70	Jean Carlo		t	942452151	\N		2024-02-09 00:00:00-05	t	f	2024-03-18 18:17:35.759841-05	2024-03-19 09:05:49.487765-05	f	2024-03-18 18:16:06.372504-05	2024-03-19 09:05:49.503419-05	14	1	A	TB	2	17	\N	\N	\N
+470			t	51963333333			2024-03-19 09:12:27.087703-05	t	f	2024-03-19 09:12:27.076939-05	\N	f	2024-03-19 09:12:27.087816-05	2024-03-19 09:12:27.088559-05	16	2	A	SE	2	\N	18	\N	\N
+73	Concepción		t	959037568	+9696		2024-02-09 00:00:00-05	t	t	2024-03-18 18:17:35.730383-05	2024-03-19 09:28:32.503929-05	f	2024-03-18 18:16:06.400363-05	2024-03-19 09:28:32.52006-05	14	1	A	EP	3	14	\N	\N	\N
+71	Grethel		t	933598002	\N		2024-02-09 00:00:00-05	t	f	2024-03-18 18:17:35.752653-05	2024-03-19 10:25:44.53647-05	f	2024-03-18 18:16:06.381412-05	2024-03-19 10:25:44.554456-05	16	1	A	EP	1	17	\N	4	\N
+74	Guido		t	994608955	\N		2024-02-09 00:00:00-05	t	f	2024-03-18 18:17:35.723512-05	\N	f	2024-03-18 18:16:06.4098-05	2024-03-18 18:17:35.724507-05	16	1	A	EP	1	\N	\N	\N	\N
+72	Jorge		t	959683480	\N		2024-02-09 00:00:00-05	t	f	2024-03-18 18:17:35.740758-05	\N	f	2024-03-18 18:16:06.391818-05	2024-03-18 18:17:35.744228-05	15	1	A	EP	1	\N	\N	\N	\N
 \.
 
 
@@ -2983,7 +2985,7 @@ SELECT pg_catalog.setval('public.django_content_type_id_seq', 45, true);
 -- Name: django_migrations_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.django_migrations_id_seq', 61, true);
+SELECT pg_catalog.setval('public.django_migrations_id_seq', 62, true);
 
 
 --
@@ -4421,6 +4423,13 @@ CREATE INDEX ventas_lead_objecion_id_0176a2b4 ON public.ventas_lead USING btree 
 
 
 --
+-- Name: ventas_lead_producto_id_7c52a6b2; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX ventas_lead_producto_id_7c52a6b2 ON public.ventas_lead USING btree (producto_id);
+
+
+--
 -- Name: ventas_lead_usuarioActualizador_id_a33040e6; Type: INDEX; Schema: public; Owner: postgres
 --
 
@@ -5234,6 +5243,14 @@ ALTER TABLE ONLY public.ventas_lead
 
 ALTER TABLE ONLY public.ventas_lead
     ADD CONSTRAINT ventas_lead_objecion_id_0176a2b4_fk_ventas_objecion_id FOREIGN KEY (objecion_id) REFERENCES public.ventas_objecion(id) DEFERRABLE INITIALLY DEFERRED;
+
+
+--
+-- Name: ventas_lead ventas_lead_producto_id_7c52a6b2_fk_ventas_producto_id; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.ventas_lead
+    ADD CONSTRAINT ventas_lead_producto_id_7c52a6b2_fk_ventas_producto_id FOREIGN KEY (producto_id) REFERENCES public.ventas_producto(id) DEFERRABLE INITIALLY DEFERRED;
 
 
 --

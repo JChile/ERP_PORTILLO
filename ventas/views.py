@@ -313,16 +313,25 @@ class LeadDetail(generics.RetrieveUpdateDestroyAPIView):
             Evento.objects.filter(lead=lead.pk), many=True).data
 
         asesor_queryset = User.objects.all()
+        estadoSeparacionLead_queryset = EstadoSeparacionLead.objects.all()
+        
         usuarioCreador_data = asesor_queryset.filter(pk = lead_data["usuarioCreador"]).first()
         usuarioActualizador_data = asesor_queryset.filter(pk = lead_data["usuarioActualizador"]).first()
+        estadoSeparacionLead_data = estadoSeparacionLead_queryset.filter(pk = lead_data["estadoSeparacionLead"]).first()
+        usuarioCreador_data = asesor_queryset.filter(pk = lead_data["usuarioCreador"]).first()
+        usuarioActualizador_data = asesor_queryset.filter(pk = lead_data["usuarioActualizador"]).first()
+        
 
         usuarioCreadorSerializer = UserSerializer(
             usuarioCreador_data, fields=('id', 'first_name', 'last_name', 'username', 'codigoAsesor')) if usuarioCreador_data else None
         usuarioActualizadorSerializer = UserSerializer(
             usuarioActualizador_data,fields=('id', 'first_name', 'last_name', 'username', 'codigoAsesor')) if usuarioActualizador_data else None        
+        estadoSeparacionSerializer = EstadoSeparacionLeadSerializer(estadoSeparacionLead_data) if estadoSeparacionLead_data else None
 
         lead_data["usuarioCreador"] = usuarioCreadorSerializer.data if usuarioCreadorSerializer else None
         lead_data["usuarioActualizador"]=  usuarioActualizadorSerializer.data if usuarioActualizadorSerializer else None
+        lead_data["estadoSeparacionLead"]=  estadoSeparacionSerializer.data if estadoSeparacionSerializer else None
+
         tipoEvento_queryset = TipoEvento.objects.all()
         estadoEvento_queryset = EstadoEvento.objects.all()
         for eventoIter in lead_data["eventos"] :
@@ -363,12 +372,36 @@ class LeadDetail(generics.RetrieveUpdateDestroyAPIView):
                 HistoricoLeadAsesor.objects.create(
                     lead=instancia, usuario=asesor)
 
-        if data["celular"] != None:
-            if data["celular"][:3] == "+51":
-                data["celular"] = str(data["celular"][1:]).replace(" ", "")
-        if data["celular2"] != None:
-            if data["celular2"][:3] == "+51":
-                data["celular2"] = str(data["celular2"][1:]).replace(" ", "") 
+        try :
+            if data["celular"] != None:
+                if data["celular"][:3] == "+51":
+                    data["celular"] = str(data["celular"][1:]).replace(" ", "")
+        except:
+            pass
+
+        try :
+            if data["celular2"] != None:
+                if data["celular2"][:3] == "+51":
+                    data["celular2"] = str(data["celular2"][1:]).replace(" ", "") 
+        except:
+            pass
+        
+        serializer = LeadSerializer(instancia, data=data)
+        print(serializer)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+    def delete(self, request, pk):
+        try:
+            instancia = Lead.objects.get(pk=pk)
+        except Lead.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+        
+        data = request.data
         serializer = LeadSerializer(instancia, data=data)
         print(serializer)
         if serializer.is_valid():
@@ -787,7 +820,7 @@ class ProductoList(generics.ListCreateAPIView):
             tipoProducto = get_or_none(TipoProducto, id=i["tipo"])
             proyecto = get_or_none(Proyecto, id=i["proyecto"])
 
-            tipoProductoSerializer = ProyectoSerializer(
+            tipoProductoSerializer = TipoProductoSerializer(
                 tipoProducto) if tipoProducto else None
             proyectoSerializer = ProyectoSerializer(
                 proyecto) if proyecto else None
@@ -846,7 +879,7 @@ class ProductoDetail(generics.RetrieveUpdateDestroyAPIView):
         tipoProducto =get_or_none(TipoProducto, id=producto_datajson["tipo"])
         proyecto = get_or_none(Proyecto, id=producto_datajson["proyecto"])
 
-        tipoProductoSerializer = ProyectoSerializer(
+        tipoProductoSerializer = TipoProductoSerializer(
             tipoProducto) if tipoProducto else None
         proyectoSerializer = ProyectoSerializer(proyecto) if proyecto else None
 

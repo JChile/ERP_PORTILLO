@@ -14,6 +14,7 @@ import json
 from rest_framework.decorators import permission_classes
 from ventas.consts import *
 
+import django_filters.rest_framework
 
 class GroupList(generics.ListCreateAPIView):
     serializer_class = GruopSerializer
@@ -36,17 +37,7 @@ class GroupDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Group.objects.all()
     serializer_class = GruopSerializer
 
-    def retrieve(self, request, pk=None):
-        groups_queryset = Group.objects.all()
-        group = get_object_or_404(groups_queryset, pk=pk)
-        groupserializer = GruopSerializer(group)
-        permissions_queryset = Permission.objects.all().filter(
-            id__in=groupserializer.data["permissions"])
-        permissionSerializer = PermissionSerializer(
-            permissions_queryset, many=True)
-        dataJson = groupserializer.data
-        dataJson["permissions"] = permissionSerializer.data
-        return Response(dataJson)
+
 
 
 class PermissionList(generics.ListCreateAPIView):
@@ -59,6 +50,7 @@ class PermissionDetail(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = PermissionSerializer
 
 
+#mejorado
 class UserList(generics.ListCreateAPIView):
     serializer_class = UserSerializer
     queryset = User.objects.all()
@@ -73,16 +65,9 @@ class UserList(generics.ListCreateAPIView):
         if is_active:
             user_queryset = user_queryset.filter(is_active=is_active)
 
-
-
-        userSerializer = UserSerializer(user_queryset, many=True)
+        userSerializer = UserDepth1Serializer(user_queryset, many=True)
         dataJson = userSerializer.data
-        for i in dataJson:
-            i.pop("password")
-            i.pop("user_permissions")
-            groups_queryset = Group.objects.all().filter(id__in=i["groups"])
-            groupSerializer = GruopSerializer(groups_queryset, many=True)
-            i["groups"] = groupSerializer.data
+
         return Response(dataJson)
 
 

@@ -403,7 +403,7 @@ export const DetailLead = () => {
                     Usuario creador:
                   </span>
                   <span className="block text-sm">
-                    <span className="block text-sm">{usuarioCreador}</span>
+                    <span className="block text-sm">{`${usuarioCreador["first_name"]} ${usuarioCreador["last_name"]}`}</span>
                   </span>
                 </label>
               )}
@@ -495,7 +495,7 @@ export const DetailLead = () => {
                     Usuario actualizador:
                   </span>
                   <span className="block text-sm">
-                    <span className="block text-sm">{usuarioActualizador}</span>
+                    <span className="block text-sm">{`${usuarioActualizador["first_name"]} ${usuarioActualizador["last_name"]}`}</span>
                   </span>
                 </label>
               )}

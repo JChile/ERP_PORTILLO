@@ -312,10 +312,10 @@ export const DetailLead = () => {
                 <a
                   target="_blank"
                   href={`https://wa.me/${celular}`}
-                  className="block text-sm"
+                  className="text-sm flex align-middle gap-x-2"
                   rel="noopener"
                 >
-                  <FaWhatsapp color="green"/>
+                  <FaWhatsapp color="green" size={18} />
                   {celular || ""}
                 </a>
               </label>
@@ -324,14 +324,17 @@ export const DetailLead = () => {
                 <span className="block text-sm font-medium min-w-[10rem] text-zinc-500">
                   Celular2:
                 </span>
-                <a
-                  target="_blank"
-                  href={`https://wa.me/${celular2}`}
-                  className="block text-sm"
-                  rel="noopener"
-                >
-                  {celular2 || ""}
-                </a>
+                {celular2 && (
+                  <a
+                    target="_blank"
+                    href={`https://wa.me/${celular2}`}
+                    className="text-sm flex"
+                    rel="noopener"
+                  >
+                    <FaWhatsapp color="green" size={18} />
+                    {celular2 || ""}
+                  </a>
+                )}
               </div>
 
               <label className="flex gap-y-1 items-center">

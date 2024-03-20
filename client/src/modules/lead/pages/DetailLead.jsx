@@ -37,6 +37,7 @@ export const DetailLead = () => {
 
   const isAsesor = currentUser["groups"] === "asesor" ? true : false;
   const [tabIndex, setTabIndex] = useState(0);
+  const [flagReload, setFlagReload] = useState(false);
   const [lead, setLead] = useState({
     nombre: "",
     apellido: "",
@@ -202,6 +203,7 @@ export const DetailLead = () => {
   const createEventoLead = async (itemData) => {
     try {
       const result = await createEvent(itemData, authTokens["access"]);
+      setFlagReload(prev => !prev)
       const createDataEvento = [...eventos, result];
       setLead({
         ...lead,
@@ -263,7 +265,9 @@ export const DetailLead = () => {
 
   useEffect(() => {
     obtenerLead();
-  }, []);
+  }, [flagReload]);
+
+  console.log(flagReload)
 
   return (
     <>

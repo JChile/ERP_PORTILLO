@@ -16,6 +16,7 @@ from rest_framework.decorators import permission_classes
 from .consts import *
 from multimedia.models import VideoProducto, ImagenProducto
 from multimedia.serializers import VideoProductoSerializer, ImagenProductoSerializer
+import random
 
 
 def get_or_none(classmodel, **kwargs):
@@ -208,6 +209,10 @@ class LeadList(generics.ListCreateAPIView):
             i["campania"]["proyecto"] = ProyectoSerializer(
                 proyecto_queryset.filter(pk=i["campania"]["proyecto"]).first()).data
             i["objecion"] = objecionSerializer.data if objecionSerializer else None
+            i["numLlamandas"] = random.randint(1, 100)
+            i["numWhatsapps"] = random.randint(1, 100)
+            i["numEventos"] = random.randint(1, 100)
+
             if flag_desasignado_asesor:
                 lead_lastAsesor = historico_desasignaciones.filter(lead = i["id"]).order_by('-fecha').first()
                 asesor_desasignado = user_queryset.filter(pk = lead_lastAsesor.usuario.pk).first() if lead_lastAsesor != None else None

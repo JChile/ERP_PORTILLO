@@ -117,7 +117,7 @@ class Lead(models.Model):
         User, on_delete=models.SET_NULL, null=True,blank=True, related_name='usuarioActualizadorLead')
     fecha_creacion = models.DateTimeField(default = timezone.now)
     fecha_actualizacion = models.DateTimeField(auto_now=True)
-    producto = models.ForeignKey(Producto, on_delete=models.SET_NULL)
+    producto = models.ForeignKey(Producto, null=True, on_delete=models.SET_NULL)
     def __str__(self):
         if self.nombre == "":
             return str(self.celular)

@@ -28,6 +28,7 @@ import {
 import { MdArrowBack } from "react-icons/md";
 import ComponentEventos from "../components/ComponentEventos";
 import { createEvent, updateEvent } from "../../ventas/helpers/eventCases";
+import { FaWhatsapp } from "react-icons/fa";
 
 export const DetailLead = () => {
   const { idLead } = useParams();
@@ -314,6 +315,7 @@ export const DetailLead = () => {
                   className="block text-sm"
                   rel="noopener"
                 >
+                  <FaWhatsapp color="green"/>
                   {celular || ""}
                 </a>
               </label>

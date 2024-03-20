@@ -363,12 +363,20 @@ class LeadDetail(generics.RetrieveUpdateDestroyAPIView):
                 HistoricoLeadAsesor.objects.create(
                     lead=instancia, usuario=asesor)
 
-        if data["celular"] != None:
-            if data["celular"][:3] == "+51":
-                data["celular"] = str(data["celular"][1:]).replace(" ", "")
-        if data["celular2"] != None:
-            if data["celular2"][:3] == "+51":
-                data["celular2"] = str(data["celular2"][1:]).replace(" ", "") 
+        try :
+            if data["celular"] != None:
+                if data["celular"][:3] == "+51":
+                    data["celular"] = str(data["celular"][1:]).replace(" ", "")
+        except:
+            pass
+
+        try :
+            if data["celular2"] != None:
+                if data["celular2"][:3] == "+51":
+                    data["celular2"] = str(data["celular2"][1:]).replace(" ", "") 
+        except:
+            pass
+        
         serializer = LeadSerializer(instancia, data=data)
         print(serializer)
         if serializer.is_valid():

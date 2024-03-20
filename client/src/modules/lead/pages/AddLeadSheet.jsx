@@ -14,7 +14,7 @@ import { exportErrorsImportacion } from "../components/importaciones/exportError
 
 export const AddLeadSheet = () => {
   // auth context
-  const { authTokens } = useContext(AuthContext)
+  const { authTokens, currentUser } = useContext(AuthContext)
   // referencia al archivo
   const fileInputRef = useRef(null)
   // estado que controla si se subio o no un archivo
@@ -236,14 +236,19 @@ export const AddLeadSheet = () => {
     }
 
     let auxErrorsImport = [...errorsImport]
-    console.log("DATA A IMPORTAR: ", dataImportAux)
-    console.log("DATA CON ERROR: ", errorsImport)
 
     // realizamos la comunicacion con el backend
     try {
+      // añadimos en cada objeto el usuario creador
+      const dataImportAuxWithUser = dataImportAux.map((element) => {
+        return {
+          ...element,
+          usuarioCreador: currentUser["user_id"]
+        }
+      })
       const query = `proyecto=${refProyecto}`
       const result = await importLeadsModeAutomatic(
-        dataImportAux,
+        dataImportAuxWithUser,
         authTokens["access"],
         query
       )

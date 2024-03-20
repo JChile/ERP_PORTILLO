@@ -220,7 +220,7 @@ export const DetailLead = () => {
 
   const updateEventoLead = async (id, itemData) => {
     try {
-      console.log("CAMBIOS AQUI",itemData);
+      console.log("CAMBIOS AQUI", itemData);
       const result = await updateEvent(id, itemData, authTokens["access"]);
       const updateDataEvento = eventos.map((elemento) => {
         return elemento.id === id ? result : elemento;
@@ -405,7 +405,7 @@ export const DetailLead = () => {
                     Usuario creador:
                   </span>
                   <span className="block text-sm">
-                    <span className="block text-sm">{usuarioCreador}</span>
+                    <span className="block text-sm">{`${usuarioCreador["first_name"]} ${usuarioCreador["last_name"]}`}</span>
                   </span>
                 </label>
               )}
@@ -497,7 +497,7 @@ export const DetailLead = () => {
                     Usuario actualizador:
                   </span>
                   <span className="block text-sm">
-                    <span className="block text-sm">{usuarioActualizador}</span>
+                    <span className="block text-sm">{`${usuarioActualizador["first_name"]} ${usuarioActualizador["last_name"]}`}</span>
                   </span>
                 </label>
               )}

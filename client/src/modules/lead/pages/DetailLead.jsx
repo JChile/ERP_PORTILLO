@@ -203,12 +203,12 @@ export const DetailLead = () => {
   const createEventoLead = async (itemData) => {
     try {
       const result = await createEvent(itemData, authTokens["access"]);
-      setFlagReload(prev => !prev)
       const createDataEvento = [...eventos, result];
       setLead({
         ...lead,
         eventos: createDataEvento,
       });
+      setFlagReload(prev => !prev)
     } catch (error) {
       const pilaError = combinarErrores(error);
       setFeedbackMessages({
@@ -266,8 +266,6 @@ export const DetailLead = () => {
   useEffect(() => {
     obtenerLead();
   }, [flagReload]);
-
-  console.log(flagReload)
 
   return (
     <>

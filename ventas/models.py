@@ -7,6 +7,41 @@ from django.core.validators import RegexValidator
 from django.core.exceptions import ValidationError
 
 
+
+class TipoProducto(models.Model):
+    nombre = models.CharField(max_length=100, null=False, blank=True)
+    estado = models.ForeignKey(
+        EstadoRegistro, on_delete=models.SET_NULL, default='A', null=True)
+
+    def __str__(self):
+        return self.nombre
+
+
+class Producto(models.Model):
+    nombre = models.CharField(max_length=100)
+    codigo = models.CharField(
+        max_length=100, null=False, blank=True, unique=True)
+    tipo = models.ForeignKey(
+        TipoProducto, on_delete=models.CASCADE)
+    proyecto = models.ForeignKey(
+        Proyecto, on_delete=models.CASCADE)
+    reservado = models.BooleanField(default=False)
+    numero = models.IntegerField(null=True, blank=True, default=0)
+    area = models.FloatField(null=True, blank=True, default=0)
+    estado = models.ForeignKey(
+        EstadoRegistro, on_delete=models.SET_NULL, default='A', null=True)
+
+    usuarioCreador = models.ForeignKey(
+        User, on_delete=models.SET_NULL, null=True, blank=True, related_name='usuarioCreadorProducto')
+    usuarioActualizador = models.ForeignKey(
+        User, on_delete=models.SET_NULL, null=True, blank=True,related_name='usuarioActualizadorProducto')
+    fecha_creacion = models.DateTimeField(default = timezone.now)
+    fecha_actualizacion = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.nombre
+
+
 class TipoEvento(models.Model):
     nombre = models.CharField(max_length=100, null=True)
     estado = models.ForeignKey(
@@ -36,6 +71,7 @@ class EstadoLead(models.Model):
 
     def __str__(self):
         return self.descripcion
+
 
 
 #Nuevo
@@ -81,7 +117,7 @@ class Lead(models.Model):
         User, on_delete=models.SET_NULL, null=True,blank=True, related_name='usuarioActualizadorLead')
     fecha_creacion = models.DateTimeField(default = timezone.now)
     fecha_actualizacion = models.DateTimeField(auto_now=True)
-
+    producto = models.ForeignKey(Producto, on_delete=models.SET_NULL)
     def __str__(self):
         if self.nombre == "":
             return str(self.celular)
@@ -218,39 +254,6 @@ class Evento(models.Model):
             self.estadoEvento = estadoEvento  
         super().save(*args, **kwargs)
 
-
-class TipoProducto(models.Model):
-    nombre = models.CharField(max_length=100, null=False, blank=True)
-    estado = models.ForeignKey(
-        EstadoRegistro, on_delete=models.SET_NULL, default='A', null=True)
-
-    def __str__(self):
-        return self.nombre
-
-
-class Producto(models.Model):
-    nombre = models.CharField(max_length=100)
-    codigo = models.CharField(
-        max_length=100, null=False, blank=True, unique=True)
-    tipo = models.ForeignKey(
-        TipoProducto, on_delete=models.CASCADE)
-    proyecto = models.ForeignKey(
-        Proyecto, on_delete=models.CASCADE)
-    reservado = models.BooleanField(default=False)
-    numero = models.IntegerField(null=True, blank=True, default=0)
-    area = models.FloatField(null=True, blank=True, default=0)
-    estado = models.ForeignKey(
-        EstadoRegistro, on_delete=models.SET_NULL, default='A', null=True)
-
-    usuarioCreador = models.ForeignKey(
-        User, on_delete=models.SET_NULL, null=True, blank=True, related_name='usuarioCreadorProducto')
-    usuarioActualizador = models.ForeignKey(
-        User, on_delete=models.SET_NULL, null=True, blank=True,related_name='usuarioActualizadorProducto')
-    fecha_creacion = models.DateTimeField(default = timezone.now)
-    fecha_actualizacion = models.DateTimeField(auto_now=True)
-
-    def __str__(self):
-        return self.nombre
 
 
 class TipoCotizacion(models.Model):

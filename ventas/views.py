@@ -378,6 +378,22 @@ class LeadDetail(generics.RetrieveUpdateDestroyAPIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
+    def delete(self, request, pk):
+        try:
+            instancia = Lead.objects.get(pk=pk)
+        except Lead.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+        
+        data = request.data
+        serializer = LeadSerializer(instancia, data=data)
+        print(serializer)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
 # @permission_classes([IsAuthenticated])
 # class LeadListSinFiltros(LeadList):
 #     def list(self, request):

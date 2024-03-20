@@ -11,6 +11,8 @@ import {
   IconButton,
   Menu,
   MenuItem,
+  TextField,
+  TextareaAutosize,
 } from "@mui/material";
 import { FiChevronsRight, FiMoreVertical } from "react-icons/fi";
 import { FaFileExcel } from "react-icons/fa6";
@@ -19,6 +21,9 @@ import { AuthContext } from "../../../../../auth";
 import { combinarErrores } from "../../../../../utils";
 import { asignarAsesorToLeads } from "../../../helpers";
 import { exportLeadsAsesor } from "./exportLeadsAsesor";
+import { FaWhatsapp } from "react-icons/fa";
+import { sendMassiveMessage } from "../../../helpers/whatsapp/sendMassiveMessages";
+import { CustomTextArea } from "../../../../../components";
 
 const ITEM_HEIGHT = 48;
 
@@ -40,15 +45,14 @@ export const MassActionsViewLeadsAsesor = ({
   };
 
   // funcion para asignar asesor a leads seleccionados
-  const asignarAsesorLeadsSeleccionado = async (asesores) => {
+  const enviarMensajesMasivos = async (textMessage) => {
     setVisibleProgress(true);
-    const formatData = {
-      asesor: asesores.map((element) => element.id),
-      lead: data.map((element) => element.id),
-    };
+    const leadData = data.map((item) => item.id);
     try {
-      const result = await asignarAsesorToLeads(
-        formatData,
+      // aqui se enviara la query para crear mensajes masivos. <-----------.
+      const response = await sendMassiveMessage(
+        leadData,
+        textMessage,
         authTokens["access"]
       );
       // volvemos a cargar la información
@@ -56,7 +60,7 @@ export const MassActionsViewLeadsAsesor = ({
       // mostramos feedback de error
       setFeedbackMessages({
         style_message: "success",
-        feedback_description_error: "Se asigno correctamente",
+        feedback_description_error: "Se envio correctamente",
       });
       handleClickFeedback();
       // ocultar el progress
@@ -110,11 +114,12 @@ export const MassActionsViewLeadsAsesor = ({
           },
         }}
       >
-        {/* <DialogAsignacionAsesorMasiva
-          handleConfirm={asignarAsesorLeadsSeleccionado}
+        <MassiveMessages
+          handleConfirm={enviarMensajesMasivos}
           onCloseMenu={handleClose}
           disabled={data.length === 0}
-        /> */}
+          leadsQuantiy={data.length}
+        />
         <MenuItem
           key={"exportar"}
           onClick={exportLeadsSeleccionados}
@@ -128,14 +133,14 @@ export const MassActionsViewLeadsAsesor = ({
   );
 };
 
-const DialogAsignacionAsesorMasiva = ({
+const MassiveMessages = ({
   handleConfirm,
   onCloseMenu,
   disabled,
+  leadsQuantiy,
 }) => {
-  const [open, setOpen] = React.useState(false);
-  const [asesoresActivos, setAsesoresActivos] = useState([]);
-  const { authTokens } = useContext(AuthContext);
+  const [open, setOpen] = useState(false);
+  const [textMessage, setTextMessage] = useState();
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -144,64 +149,19 @@ const DialogAsignacionAsesorMasiva = ({
     setOpen(false);
   };
 
-  const traerInformacionAsesoresActivos = async () => {
-    try {
-      const result = await getAsesorActivo(authTokens["access"]);
-      const formatData = result.map((element) => {
-        return {
-          ...element,
-          isSelected: false,
-        };
-      });
-      setAsesoresActivos(formatData);
-    } catch (error) {
-      const pilaError = combinarErrores(error);
-      // mostramos feedback de error
-      alert(pilaError);
-    }
-  };
-
-  // actualizar cambio de estado de elemento
-  const handleChangeCheckboxElement = (e, idItem) => {
-    const dataUpdateAsesores = asesoresActivos.map((element) => {
-      if (element.id === idItem) {
-        return {
-          ...element,
-          isSelected: e.target.checked,
-        };
-      } else {
-        return element;
-      }
-    });
-    // actualizar data
-    setAsesoresActivos(dataUpdateAsesores);
-  };
-
   // funcion para formatear la data
-  const filterAsesoresSeleccionados = () => {
-    const filterAsesoresChecked = asesoresActivos.filter((element) => {
-      if (element["isSelected"]) {
-        return true;
-      } else {
-        return false;
-      }
-    });
-
-    if (filterAsesoresChecked.length === 0) {
-      alert("Debes seleccionar al menos 1 asesor");
+  const enviarMensajes = () => {
+    if (!textMessage) {
+      alert("Ingresa como mínimo un caracter");
     } else {
       // llamamos a la funcion de confirmacion
-      handleConfirm(filterAsesoresChecked);
+      handleConfirm(textMessage);
       // cerramos el cuadro de dialogo
       handleClose();
       // cerramos el menu de opciones
       onCloseMenu();
     }
   };
-
-  useEffect(() => {
-    traerInformacionAsesoresActivos();
-  }, []);
 
   return (
     <div>
@@ -212,29 +172,28 @@ const DialogAsignacionAsesorMasiva = ({
         }}
         disabled={disabled}
       >
-        <FiChevronsRight />
-        <span className="ps-2">Asignar asesor</span>
+        <FaWhatsapp />
+        <span className="ps-2">Enviar mensaje</span>
       </MenuItem>
-      <Dialog open={open} onClose={handleClose}>
-        <DialogTitle>Asignar asesor</DialogTitle>
+      <Dialog open={open} onClose={handleClose} maxWidth="xs" fullWidth={true}>
+        <DialogTitle>Enviar mensaje</DialogTitle>
         <DialogContent>
-          <p className="mb-4">Seleciona 1 o más asesores</p>
+          <p className="mb-4">{leadsQuantiy} lead(s) seleccionados</p>
           <FormGroup>
-            {asesoresActivos.map((element) => (
-              <FormControlLabel
-                key={element.id}
-                control={
-                  <Checkbox
-                    checked={element.isSelected}
-                    onChange={(e) => {
-                      handleChangeCheckboxElement(e, element.id);
-                    }}
-                    name="gilad"
-                  />
-                }
-                label={`${element["first_name"]} ${element["last_name"]} (${element["codigoAsesor"]})`}
-              />
-            ))}
+            <TextareaAutosize
+              label="Mensaje masivo"
+              value={textMessage}
+              onChange={(event) => setTextMessage(event.target.value)}
+              rowsMin={5} // Ajuste del número mínimo de filas
+              style={{
+                width: "100%", // Ancho fijo
+                height: "150px", // Altura fija
+                border: "1px solid #ccc",
+                padding: "8px",
+                borderRadius: "4px",
+              }} // Ajuste del estilo
+              placeholder="Escribe tu mensaje aquí..." // Agregado de placeholder
+            />
           </FormGroup>
         </DialogContent>
         <DialogActions>
@@ -251,15 +210,12 @@ const DialogAsignacionAsesorMasiva = ({
             Cancelar
           </Button>
           <Button
-            onClick={() => {
-              // ejecutamos la eliminación
-              filterAsesoresSeleccionados();
-            }}
+            onClick={() => enviarMensajes()}
             variant="contained"
-            color="error"
+            color="success"
             autoFocus
           >
-            Confirmar
+            Enviar
           </Button>
         </DialogActions>
       </Dialog>

@@ -323,6 +323,9 @@ export const CalendarView = () => {
 };
 
 const transformToEvent = (oldEvent) => {
+
+  console.log(oldEvent)
+
   const startEvent = new Date(oldEvent.fecha_visita);
   const durationMilliseconds = oldEvent.duracion * 60000;
   const endEvent = new Date(startEvent.getTime() + durationMilliseconds);
@@ -335,7 +338,7 @@ const transformToEvent = (oldEvent) => {
     end: endEvent,
     duracion: oldEvent.duracion,
     tipo: oldEvent.tipo,
-    estadoEvento: oldEvent.estadoEvento.id,
+    estadoEvento: oldEvent.estadoEvento,
     observacion: oldEvent.observacion,
     objecion: oldEvent.objecion,
     asesor: oldEvent.asesor,

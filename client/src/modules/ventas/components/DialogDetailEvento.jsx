@@ -31,8 +31,21 @@ export const DialogDetailEvento = ({
   onUpdateEvent,
   showLead = true,
 }) => {
+
   const [originalData, setOriginalData] = useState(selectedEvent);
-  const [dataAuxEvento, setDataAuxEvento] = useState(originalData);
+  const [dataAuxEvento, setDataAuxEvento] = useState({
+    id: originalData.id,
+    separado: originalData.separado,
+    title: originalData.title,
+    lead: originalData.lead,
+    start: originalData.start,
+    duracion: originalData.duracion,
+    tipo: originalData.tipo.id,
+    estadoEvento: originalData.estadoEvento.id,
+    observacion: originalData.observacion,
+    objecion: originalData.objecion,
+    asesor: originalData.asesor,
+  });
 
   const {
     id,
@@ -111,6 +124,7 @@ export const DialogDetailEvento = ({
         titulo: title,
         fecha_visita: formatData.toDate().toISOString(),
       });
+
       setOriginalData(dataAuxEvento);
       setEditData(false);
     }

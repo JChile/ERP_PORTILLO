@@ -346,7 +346,7 @@ const transformToEvent = (oldEvent) => {
     end: endEvent,
     duracion: oldEvent.duracion,
     tipo: oldEvent.tipo,
-    estadoEvento: oldEvent.estadoEvento.id,
+    estadoEvento: oldEvent.estadoEvento,
     observacion: oldEvent.observacion,
     objecion: oldEvent.objecion,
     asesor: oldEvent.asesor,

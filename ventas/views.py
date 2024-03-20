@@ -811,7 +811,7 @@ class ProductoList(generics.ListCreateAPIView):
             tipoProducto = get_or_none(TipoProducto, id=i["tipo"])
             proyecto = get_or_none(Proyecto, id=i["proyecto"])
 
-            tipoProductoSerializer = ProyectoSerializer(
+            tipoProductoSerializer = TipoProductoSerializer(
                 tipoProducto) if tipoProducto else None
             proyectoSerializer = ProyectoSerializer(
                 proyecto) if proyecto else None
@@ -870,7 +870,7 @@ class ProductoDetail(generics.RetrieveUpdateDestroyAPIView):
         tipoProducto =get_or_none(TipoProducto, id=producto_datajson["tipo"])
         proyecto = get_or_none(Proyecto, id=producto_datajson["proyecto"])
 
-        tipoProductoSerializer = ProyectoSerializer(
+        tipoProductoSerializer = TipoProductoSerializer(
             tipoProducto) if tipoProducto else None
         proyectoSerializer = ProyectoSerializer(proyecto) if proyecto else None
 

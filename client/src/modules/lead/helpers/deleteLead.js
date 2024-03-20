@@ -6,8 +6,8 @@ export const deleteLead = async (idItem, body, authToken) => {
     const URL = `${DOMAIN}/api/lead/${idItem}`;
     const { data } = await axios.delete(
       URL,
-      { ...body },
       {
+        data: body, // Aquí debes pasar el cuerpo de la solicitud dentro del objeto "data"
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${authToken}`,

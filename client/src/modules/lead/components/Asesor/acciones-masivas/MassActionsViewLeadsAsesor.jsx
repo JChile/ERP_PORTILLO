@@ -23,6 +23,7 @@ import { asignarAsesorToLeads } from "../../../helpers";
 import { exportLeadsAsesor } from "./exportLeadsAsesor";
 import { FaWhatsapp } from "react-icons/fa";
 import { sendMassiveMessage } from "../../../helpers/whatsapp/sendMassiveMessages";
+import { CustomTextArea } from "../../../../../components";
 
 const ITEM_HEIGHT = 48;
 
@@ -46,9 +47,14 @@ export const MassActionsViewLeadsAsesor = ({
   // funcion para asignar asesor a leads seleccionados
   const enviarMensajesMasivos = async (textMessage) => {
     setVisibleProgress(true);
+    const leadData = data.map((item) => item.id);
     try {
       // aqui se enviara la query para crear mensajes masivos. <-----------.
-      const response = await sendMassiveMessage(data, textMessage, authTokens["access"]);
+      const response = await sendMassiveMessage(
+        leadData,
+        textMessage,
+        authTokens["access"]
+      );
       // volvemos a cargar la información
       onLoadData();
       // mostramos feedback de error
@@ -127,7 +133,12 @@ export const MassActionsViewLeadsAsesor = ({
   );
 };
 
-const MassiveMessages = ({ handleConfirm, onCloseMenu, disabled, leadsQuantiy }) => {
+const MassiveMessages = ({
+  handleConfirm,
+  onCloseMenu,
+  disabled,
+  leadsQuantiy,
+}) => {
   const [open, setOpen] = useState(false);
   const [textMessage, setTextMessage] = useState();
 
@@ -169,13 +180,19 @@ const MassiveMessages = ({ handleConfirm, onCloseMenu, disabled, leadsQuantiy })
         <DialogContent>
           <p className="mb-4">{leadsQuantiy} lead(s) seleccionados</p>
           <FormGroup>
-            <TextField
+            <TextareaAutosize
               label="Mensaje masivo"
               value={textMessage}
-              variant="outlined"
               onChange={(event) => setTextMessage(event.target.value)}
-              minRows="5"
-              multiline
+              rowsMin={5} // Ajuste del número mínimo de filas
+              style={{
+                width: "100%", // Ancho fijo
+                height: "150px", // Altura fija
+                border: "1px solid #ccc",
+                padding: "8px",
+                borderRadius: "4px",
+              }} // Ajuste del estilo
+              placeholder="Escribe tu mensaje aquí..." // Agregado de placeholder
             />
           </FormGroup>
         </DialogContent>

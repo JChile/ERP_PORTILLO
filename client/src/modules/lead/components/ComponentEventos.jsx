@@ -60,7 +60,6 @@ const ComponentEventos = ({
       lead: parseInt(lead.id),
       usuarioCreador: currentUser["user_id"],
     };
-    console.log(formatData)
     onCreateDataEvento(formatData);
   };
 
@@ -71,6 +70,7 @@ const ComponentEventos = ({
       fecha_actualizacion: obtenerHoraActualFormatPostgress(),
       asesor: currentUser["user_id"]
     };
+    console.log(formatData)
     onUpdateDataEvento(id, formatData);
   };
 
@@ -181,16 +181,15 @@ const ComponentEventos = ({
  * @returns event in calendar_view
  */
 const transformToEvent = (oldEvent) => {
-  console.log(oldEvent);
+  
   const startEvent = new Date(oldEvent.fecha_visita);
   const durationMilliseconds = oldEvent.duracion * 60000;
   const endEvent = new Date(startEvent.getTime() + durationMilliseconds);
-
   return {
     id: oldEvent.id,
     separado: oldEvent.separado,
     title: oldEvent.titulo,
-    lead: oldEvent.lead,
+    lead: {id: oldEvent.lead},
     start: startEvent,
     end: endEvent,
     duracion: oldEvent.duracion,

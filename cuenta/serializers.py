@@ -54,6 +54,7 @@ class UserSerializer(serializers.ModelSerializer):
                 self.fields.pop(field_name)
 
     def create(self, validated_data):
+        print(validated_data)
         if User.objects.filter(username = validated_data["username"]).first()!=None:
             raise serializers.ValidationError({'username':'Ya existe un usuario con este nombre de usuario.'})
         user = super(UserSerializer, self).create(validated_data)
@@ -99,3 +100,21 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
             token['user'] = UserDetail().retrieve(request = None, pk=id).data
 
         return token
+
+
+
+class UserDepth1Serializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = '__all__'
+        depth = 1
+
+    
+class GroupDepth1Serializer(serializers.ModelSerializer):
+    class Meta:
+        model = Group
+        fields = '__all__'
+        depth = 1
+
+
+

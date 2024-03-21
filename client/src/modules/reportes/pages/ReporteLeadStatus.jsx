@@ -85,13 +85,15 @@ export const ReporteLeadStatus = () => {
         if (desdeValue && hastaValue) {
           query += `&desde=${desdeValue}T00:00:00&hasta=${hastaValue}T23:59:59`;
         }
-        const result = await getProyectoCampania(
-          id + query + "&estadoCampania=A" 
-        );
-        console.log(query)
+        const result = await getProyectoCampania(id + query + "&estadoCampania=A");
+
         setData(result);
         const conteoObjeciones = {};
         const conteoEstados = {};
+
+        let size = 0;
+        result.campanias.forEach((campania) => size += campania.leads.length)
+
         result.campanias.forEach((campania) => {
           campania.leads.forEach((lead) => {
             const objecionId = lead.objecion;
@@ -108,17 +110,21 @@ export const ReporteLeadStatus = () => {
             }
           });
         });
+
         const objecionesConConteo = dataObjecionesLead.map((objecion) => ({
           id: objecion.id,
           nombre: objecion.nombre,
           conteo: conteoObjeciones[objecion.id] || 0, // Si no hay conteo, poner 0
+          porcentaje: (conteoObjeciones[objecion.id] / size)*100 || 0
         }));
-
+        
         const estadosConConteo = dataEstadosLead.map((estado) => ({
           nombre: estado.nombre,
           descripcion: estado.descripcion,
           conteo: conteoEstados[estado.nombre] || 0, // Si no hay conteo, poner 0
+          porcentaje: (conteoEstados[estado.nombre] / size)*100 || 0
         }));
+
         setAuxDataObjeciones(objecionesConConteo);
         setAuxDataEstados(estadosConConteo);
         setReportGenerated(true);
@@ -196,7 +202,8 @@ export const ReporteLeadStatus = () => {
                     }}
                   >
                     <TableCell>Objeciones</TableCell>
-                    <TableCell>Número de Leads</TableCell>
+                    <TableCell align="center">Número de Leads</TableCell>
+                    <TableCell align="center">%</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
@@ -204,7 +211,8 @@ export const ReporteLeadStatus = () => {
                     auxDataObjeciones.map((value) => (
                       <TableRow key={value.id}>
                         <TableCell>{value.nombre}</TableCell>
-                        <TableCell>{value.conteo}</TableCell>
+                        <TableCell align="center">{value.conteo}</TableCell>
+                        <TableCell align="center">{value.porcentaje.toFixed(2)}%</TableCell>
                       </TableRow>
                     ))}
                 </TableBody>
@@ -226,17 +234,19 @@ export const ReporteLeadStatus = () => {
                     }}
                   >
                     <TableCell>Estados</TableCell>
-                    <TableCell>Número de Leads</TableCell>
+                    <TableCell align="center">Número de Leads</TableCell>
+                    <TableCell align="center">%</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
                   {auxDataEstados &&
-                    auxDataEstados.map((value) => (
-                      <TableRow key={value.nombre}>
+                    auxDataEstados.map((value) => {
+                      return <TableRow key={value.nombre}>
                         <TableCell>{value.descripcion}</TableCell>
-                        <TableCell>{value.conteo}</TableCell>
+                        <TableCell align="center">{value.conteo}</TableCell>
+                        <TableCell align="center">{value.porcentaje.toFixed(2)}%</TableCell>
                       </TableRow>
-                    ))}
+                    })}
                 </TableBody>
               </Table>
               <div className="flex flex-row items-center justify-center mt-4">

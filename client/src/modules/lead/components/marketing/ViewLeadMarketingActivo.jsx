@@ -26,6 +26,7 @@ import { RowItemLeadMarketing } from "./RowItemLeadMarketing"
 import { MassActionsViewLeadsMarketing } from "./acciones-masivas/MassActionsViewLeadsMarketing"
 import { combinarErrores, formatDate_ISO861_to_date } from "../../../../utils"
 import { deleteLead, getLeads } from "../../helpers"
+import SelectAsesor from "../../../../components/select/asesor-filter/SelectAsesor"
 
 export const ViewLeadMarketingActivo = ({ startDate, endDate, flagReload }) => {
   const { authTokens } = useContext(AuthContext)
@@ -69,9 +70,10 @@ export const ViewLeadMarketingActivo = ({ startDate, endDate, flagReload }) => {
     proyecto: "",
     asignado: "",
     horaRecepcion: "",
+    asesor: ""
   })
 
-  const { celular, nombre, estadoLead, asignado, proyecto, horaRecepcion } =
+  const { celular, nombre, estadoLead, asignado, proyecto, horaRecepcion, asesor } =
     filterData
 
   const handledFilterData = () => {
@@ -88,6 +90,7 @@ export const ViewLeadMarketingActivo = ({ startDate, endDate, flagReload }) => {
       const horaRecepcionElement = formatDate_ISO861_to_date(
         element["horaRecepcion"]
       )
+      const asesorElement = `${element["asesor"]["first_name"]} ${element["asesor"]["last_name"]}`
 
       if (
         (filterData["celular"] !== "" &&
@@ -101,7 +104,9 @@ export const ViewLeadMarketingActivo = ({ startDate, endDate, flagReload }) => {
         (filterData["asignado"] !== "" &&
           !asignadoElement.includes(filterData["asignado"].toLowerCase())) ||
         (filterData["horaRecepcion"] !== "" &&
-          !horaRecepcionElement.includes(filterData["horaRecepcion"]))
+          !horaRecepcionElement.includes(filterData["horaRecepcion"])) ||
+        (filterData["asesor"] !== "" && 
+          !asesorElement.includes(filterData["asesor"].toLocaleLowerCase()))
       ) {
         return false
       }
@@ -324,6 +329,7 @@ export const ViewLeadMarketingActivo = ({ startDate, endDate, flagReload }) => {
                 <TableCell align="center">Asignado</TableCell>
                 <TableCell align="center">Estado</TableCell>
                 <TableCell>Fecha recepción</TableCell>
+                <TableCell>Asesor</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -410,6 +416,13 @@ export const ViewLeadMarketingActivo = ({ startDate, endDate, flagReload }) => {
                     onNewFecha={handledFilterDateValues}
                     filterName="horaRecepcion"
                     defaultValue={horaRecepcion}
+                  />
+                </TableCell>
+                <TableCell>
+                  <SelectAsesor 
+                    filterName="asesor"
+                    onNewInput={handledFilterSelectValues}
+                    defaultValue={asesor}
                   />
                 </TableCell>
               </TableRow>

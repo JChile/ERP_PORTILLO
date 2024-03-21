@@ -29,16 +29,18 @@ export const ReportesHome = () => {
             Ingresar
           </Link>
         </div>
-
-        <div className="bg-white p-6 rounded-lg shadow-md flex flex-col items-center">
-          <h2 className="text-xl font-bold mb-2">Reportes Retorno Campaña</h2>
-          <Link
-            className={`bg-blue-500 text-white px-4 py-2 rounded-md`}
-            to="/reportes/retornoCampania"
-          >
-            Ingresar
-          </Link>
-        </div>
+        {/**
+         <div className="bg-white p-6 rounded-lg shadow-md flex flex-col items-center">
+           <h2 className="text-xl font-bold mb-2">Reportes Retorno Campaña</h2>
+           <Link
+             className={`bg-blue-500 text-white px-4 py-2 rounded-md`}
+             to="/reportes/retornoCampania"
+           >
+             Ingresar
+           </Link>
+         </div>
+         */
+        }
       </div>
     </div>
   );

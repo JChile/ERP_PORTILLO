@@ -223,13 +223,10 @@ class CampaniaList(generics.ListCreateAPIView):
 
     def create(self, request):
         print(request.data)
+        request.data["codigo"] =  request.data["nombre"] 
         data = CampaniaSerializer(data=request.data)
         if data.is_valid():
             data.save()
-            campania = Campania.objects.get(pk=data.data["id"])
-            campania.codigo = campania.nombre
-            campania.save()
-            
             return Response({"message" : "Campaña se creo correctamente"}, status=status.HTTP_201_CREATED)
         return Response(data.errors, status=status.HTTP_400_BAD_REQUEST)
 

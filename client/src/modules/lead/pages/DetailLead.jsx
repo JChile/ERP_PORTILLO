@@ -1,14 +1,9 @@
 import React, { useContext, useEffect, useState } from "react";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import {
-  createLlamada,
-  createWhatsapp,
   getLead,
-  updateWhatsapp,
-  updateLlamada,
 } from "../helpers";
 import {
-  Box,
   Button,
   Checkbox,
   Paper,
@@ -16,7 +11,6 @@ import {
   Tabs,
   Typography,
 } from "@mui/material";
-import { ComponentLlamadas, ComponentWhatsapp } from "../components";
 import { AuthContext } from "../../../auth";
 import { CustomAlert, CustomCircularProgress } from "../../../components";
 import { useAlertMUI } from "../../../hooks";
@@ -26,8 +20,6 @@ import {
   validIdURL,
 } from "../../../utils";
 import { MdArrowBack } from "react-icons/md";
-import ComponentEventos from "../components/ComponentEventos";
-import { createEvent, updateEvent } from "../../ventas/helpers/eventCases";
 import { FaWhatsapp } from "react-icons/fa";
 
 export const DetailLead = () => {
@@ -35,9 +27,6 @@ export const DetailLead = () => {
   const numericId = parseInt(idLead);
   const { authTokens, currentUser } = useContext(AuthContext);
 
-  const isAsesor = currentUser["groups"] === "asesor" ? true : false;
-  const [tabIndex, setTabIndex] = useState(0);
-  const [flagReload, setFlagReload] = useState(false);
   const [lead, setLead] = useState({
     nombre: "",
     apellido: "",
@@ -112,133 +101,6 @@ export const DetailLead = () => {
 
   const [visibleProgress, setVisibleProgress] = useState(false);
 
-  // crear informacion de whatsapp
-  const createWhatsappMessage = async (itemData) => {
-    try {
-      const result = await createWhatsapp(itemData, authTokens["access"]);
-      const createDataWhatsapp = [...whatsapps, result];
-      setLead({
-        ...lead,
-        whatsapps: createDataWhatsapp,
-      });
-    } catch (error) {
-      const pilaError = combinarErrores(error);
-      setFeedbackMessages({
-        style_message: "error",
-        feedback_description_error: pilaError,
-      });
-      handleClickFeedback();
-    }
-  };
-
-  // actualizar informacion de whatsapp
-  const updateWhatsappMessage = async (id, itemData) => {
-    try {
-      const result = await updateWhatsapp(id, itemData, authTokens["access"]);
-      const updateDataWhatsapp = whatsapps.map((element) => {
-        if (element.id === id) {
-          return result;
-        } else {
-          return element;
-        }
-      });
-      setLead({
-        ...lead,
-        whatsapps: updateDataWhatsapp,
-      });
-    } catch (error) {
-      const pilaError = combinarErrores(error);
-      setFeedbackMessages({
-        style_message: "error",
-        feedback_description_error: pilaError,
-      });
-      handleClickFeedback();
-    }
-  };
-
-  // crear informacion de llamada
-  const createLlamadaLead = async (itemData) => {
-    try {
-      const result = await createLlamada(itemData, authTokens["access"]);
-      const createDataLlamada = [...llamadas, result];
-      setLead({
-        ...lead,
-        llamadas: createDataLlamada,
-      });
-    } catch (error) {
-      const pilaError = combinarErrores(error);
-      setFeedbackMessages({
-        style_message: "error",
-        feedback_description_error: pilaError,
-      });
-      handleClickFeedback();
-    }
-  };
-
-  // actualizar informacion de whatsapp
-  const updateLlamadaLead = async (id, itemData) => {
-    try {
-      const result = await updateLlamada(id, itemData, authTokens["access"]);
-      const updateDataLlamada = llamadas.map((element) => {
-        if (element.id === id) {
-          return result;
-        } else {
-          return element;
-        }
-      });
-      setLead({
-        ...lead,
-        llamadas: updateDataLlamada,
-      });
-    } catch (error) {
-      const pilaError = combinarErrores(error);
-      setFeedbackMessages({
-        style_message: "error",
-        feedback_description_error: pilaError,
-      });
-      handleClickFeedback();
-    }
-  };
-
-  const createEventoLead = async (itemData) => {
-    try {
-      const result = await createEvent(itemData, authTokens["access"]);
-      setFlagReload(prev => !prev)
-      const createDataEvento = [...eventos, result];
-      setLead({
-        ...lead,
-        eventos: createDataEvento,
-      });
-    } catch (error) {
-      const pilaError = combinarErrores(error);
-      setFeedbackMessages({
-        style_message: "error",
-        feedback_description_error: pilaError,
-      });
-      handleClickFeedback();
-    }
-  };
-
-  const updateEventoLead = async (id, itemData) => {
-    try {
-      const result = await updateEvent(id, itemData, authTokens["access"]);
-      const updateDataEvento = eventos.map((elemento) => {
-        return elemento.id === id ? result : elemento;
-      });
-      setLead({
-        ...lead,
-        eventos: updateDataEvento,
-      });
-    } catch (error) {
-      const pilaError = combinarErrores(error);
-      setFeedbackMessages({
-        style_message: "error",
-        feedback_description_error: pilaError,
-      });
-      handleClickFeedback();
-    }
-  };
-
   // obtener informacion del lead
   const obtenerLead = async () => {
     if (validIdURL(numericId)) {
@@ -265,9 +127,7 @@ export const DetailLead = () => {
 
   useEffect(() => {
     obtenerLead();
-  }, [flagReload]);
-
-  console.log(flagReload)
+  }, []);
 
   return (
     <>
@@ -531,49 +391,6 @@ export const DetailLead = () => {
             </div>
           </div>
         </Paper>
-
-        {isAsesor && (
-          <React.Fragment>
-            <Tabs
-              aria-label="basic tabs"
-              value={tabIndex}
-              onChange={(event, newValue) => setTabIndex(newValue)}
-              sx={{ marginTop: 3 }}
-              centered
-              variant="fullWidth"
-            >
-              <Tab sx={{ textTransform: "capitalize" }} label="Whatsapp" />
-              <Tab sx={{ textTransform: "capitalize" }} label="Llamada" />
-              <Tab sx={{ textTransform: "capitalize" }} label="Eventos" />
-            </Tabs>
-
-            <CustomTabPanel value={tabIndex} index={0}>
-              <ComponentWhatsapp
-                lead={idLead}
-                dataWhatsapp={whatsapps}
-                onUpdateDataWhatsapp={updateWhatsappMessage}
-                onCreateDataWhatsapp={createWhatsappMessage}
-              />
-            </CustomTabPanel>
-            <CustomTabPanel value={tabIndex} index={1}>
-              <ComponentLlamadas
-                lead={idLead}
-                dataLlamada={llamadas}
-                onUpdatedataLlamada={updateLlamadaLead}
-                onCreatedataLlamada={createLlamadaLead}
-              />
-            </CustomTabPanel>
-
-            <CustomTabPanel value={tabIndex} index={2}>
-              <ComponentEventos
-                lead={lead}
-                dataEventos={eventos}
-                onUpdateDataEvento={updateEventoLead}
-                onCreateDataEvento={createEventoLead}
-              />
-            </CustomTabPanel>
-          </React.Fragment>
-        )}
         <Button
           startIcon={<MdArrowBack />}
           variant="contained"

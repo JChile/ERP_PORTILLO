@@ -4,6 +4,10 @@ import { Checkbox, TableCell, TableRow } from "@mui/material";
 import { FiCheckCircle, FiXCircle } from "react-icons/fi";
 import { Link, useNavigate } from "react-router-dom";
 import { CustomMoreVerticalActions } from "../../../../components";
+import { FaWhatsapp } from "react-icons/fa";
+import { IoIosCall } from "react-icons/io";
+import { FaCalendarAlt } from "react-icons/fa";
+
 
 export const RowItemLeadsAsesor = ({ item, checkedElement }) => {
   const { campania, id, estadoLead } = item;
@@ -53,7 +57,20 @@ export const RowItemLeadsAsesor = ({ item, checkedElement }) => {
       </TableCell>
       <TableCell>{`${item["nombre"]} ${item["apellido"]}`}</TableCell>
       <TableCell>{proyecto["nombre"]}</TableCell>
-      <TableCell>{campania["nombre"]}</TableCell>
+      <TableCell>
+        <div className="flex gap-x-2 gap-y-1 justify-center">
+          <FaWhatsapp />
+          <span>5</span>
+        </div>
+        <div className="flex gap-x-2 gap-y-1 justify-center">
+          <IoIosCall />
+          <span>5</span>
+        </div>
+        <div className="flex gap-x-2 gap-y-1 justify-center">
+          <FaCalendarAlt />
+          <span>5</span>
+        </div>
+      </TableCell>
       <TableCell align="center">
         {item["importante"] === true ? (
           <FiCheckCircle
@@ -72,7 +89,7 @@ export const RowItemLeadsAsesor = ({ item, checkedElement }) => {
           {estadoLead["nombre"]}
         </span>
       </TableCell>
-      <TableCell>
+      <TableCell align="center">
         {item["estadoSeparacionLead"] ? item["estadoSeparacionLead"]["nombre"] : "No"}
       </TableCell>
       <TableCell>

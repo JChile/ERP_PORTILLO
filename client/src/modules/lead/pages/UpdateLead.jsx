@@ -1,8 +1,7 @@
 import React, { useContext, useEffect, useState } from "react"
 import { useNavigate, useParams } from "react-router-dom"
-import jwtDecode from "jwt-decode"
-import { getLead, updateLead } from "../helpers"
-import { Checkbox } from "@mui/material"
+import { createLlamada, createWhatsapp, getLead, updateLead, updateLlamada, updateWhatsapp } from "../helpers"
+import { Checkbox, Tab, Tabs } from "@mui/material"
 import { useAlertMUI } from "../../../hooks"
 import {
   CustomAlert,
@@ -16,11 +15,13 @@ import { AuthContext } from "../../../auth"
 import { MuiTelInput } from "mui-tel-input"
 import {
   combinarErrores,
-  formatCelular,
   obtenerHoraActualFormatPostgress,
   validIdURL,
 } from "../../../utils"
 import { FilterProyectoCampania } from "../../../components/multiple-filters/proyecto-campania/FilterProyectoCampania"
+import { ComponentLlamadas, ComponentWhatsapp } from "../components"
+import ComponentEventos from "../components/ComponentEventos"
+import { createEvent, updateEvent } from "../../ventas/helpers/eventCases"
 
 export const UpdateLead = () => {
   const { idLead } = useParams()
@@ -28,6 +29,10 @@ export const UpdateLead = () => {
   const { authTokens, currentUser } = useContext(AuthContext)
 
   const [flagLoading, setFlagLoading] = useState(false)
+
+  const isAsesor = currentUser["groups"] === "asesor" ? true : false;
+  const [tabIndex, setTabIndex] = useState(0);
+  const [flagReload, setFlagReload] = useState(false);
 
   const [lead, setLead] = useState({
     nombre: "",
@@ -43,6 +48,9 @@ export const UpdateLead = () => {
     objecion: null,
     campania: null,
     campaniaName: "",
+    llamadas: [],
+    whatsapps: [],
+    eventos: [],
   })
 
   const {
@@ -59,6 +67,9 @@ export const UpdateLead = () => {
     objecion,
     campania,
     campaniaName,
+    llamadas,
+    whatsapps,
+    eventos
   } = lead
 
   const {
@@ -173,6 +184,134 @@ export const UpdateLead = () => {
   const onNavigateBack = () => {
     navigate(-1)
   }
+
+  // ACCIONES DE GESTION
+  // crear informacion de whatsapp
+  const createWhatsappMessage = async (itemData) => {
+    try {
+      const result = await createWhatsapp(itemData, authTokens["access"]);
+      const createDataWhatsapp = [...whatsapps, result];
+      setLead({
+        ...lead,
+        whatsapps: createDataWhatsapp,
+      });
+    } catch (error) {
+      const pilaError = combinarErrores(error);
+      setFeedbackMessages({
+        style_message: "error",
+        feedback_description_error: pilaError,
+      });
+      handleClickFeedback();
+    }
+  };
+
+  // actualizar informacion de whatsapp
+  const updateWhatsappMessage = async (id, itemData) => {
+    try {
+      const result = await updateWhatsapp(id, itemData, authTokens["access"]);
+      const updateDataWhatsapp = whatsapps.map((element) => {
+        if (element.id === id) {
+          return result;
+        } else {
+          return element;
+        }
+      });
+      setLead({
+        ...lead,
+        whatsapps: updateDataWhatsapp,
+      });
+    } catch (error) {
+      const pilaError = combinarErrores(error);
+      setFeedbackMessages({
+        style_message: "error",
+        feedback_description_error: pilaError,
+      });
+      handleClickFeedback();
+    }
+  };
+
+  // crear informacion de llamada
+  const createLlamadaLead = async (itemData) => {
+    try {
+      const result = await createLlamada(itemData, authTokens["access"]);
+      const createDataLlamada = [...llamadas, result];
+      setLead({
+        ...lead,
+        llamadas: createDataLlamada,
+      });
+    } catch (error) {
+      const pilaError = combinarErrores(error);
+      setFeedbackMessages({
+        style_message: "error",
+        feedback_description_error: pilaError,
+      });
+      handleClickFeedback();
+    }
+  };
+
+  // actualizar informacion de whatsapp
+  const updateLlamadaLead = async (id, itemData) => {
+    try {
+      const result = await updateLlamada(id, itemData, authTokens["access"]);
+      const updateDataLlamada = llamadas.map((element) => {
+        if (element.id === id) {
+          return result;
+        } else {
+          return element;
+        }
+      });
+      setLead({
+        ...lead,
+        llamadas: updateDataLlamada,
+      });
+    } catch (error) {
+      const pilaError = combinarErrores(error);
+      setFeedbackMessages({
+        style_message: "error",
+        feedback_description_error: pilaError,
+      });
+      handleClickFeedback();
+    }
+  };
+
+  const createEventoLead = async (itemData) => {
+    try {
+      const result = await createEvent(itemData, authTokens["access"]);
+      setFlagReload(prev => !prev)
+      const createDataEvento = [...eventos, result];
+      setLead({
+        ...lead,
+        eventos: createDataEvento,
+      });
+    } catch (error) {
+      const pilaError = combinarErrores(error);
+      setFeedbackMessages({
+        style_message: "error",
+        feedback_description_error: pilaError,
+      });
+      handleClickFeedback();
+    }
+  };
+
+  const updateEventoLead = async (id, itemData) => {
+    try {
+      const result = await updateEvent(id, itemData, authTokens["access"]);
+      const updateDataEvento = eventos.map((elemento) => {
+        return elemento.id === id ? result : elemento;
+      });
+      setLead({
+        ...lead,
+        eventos: updateDataEvento,
+      });
+    } catch (error) {
+      const pilaError = combinarErrores(error);
+      setFeedbackMessages({
+        style_message: "error",
+        feedback_description_error: pilaError,
+      });
+      handleClickFeedback();
+    }
+  };
 
   const actualizarLead = async () => {
     // activamos el progress
@@ -374,20 +513,64 @@ export const UpdateLead = () => {
             </div>
           </form>
         )}
+        <div className="flex justify-center mt-4 mb-4">
+          <button
+            className="bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded mr-2"
+            onClick={actualizarLead}
+          >
+            Guardar
+          </button>
+          <button
+            className="bg-gray-500 hover:bg-gray-600 text-white py-2 px-4 rounded"
+            onClick={onNavigateBack}
+          >
+            Cancelar
+          </button>
+        </div>
       </div>
-      <div className="flex justify-center mt-4 mb-4">
-        <button
-          className="bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded mr-2"
-          onClick={actualizarLead}
-        >
-          Guardar
-        </button>
-        <button
-          className="bg-gray-500 hover:bg-gray-600 text-white py-2 px-4 rounded"
-          onClick={onNavigateBack}
-        >
-          Cancelar
-        </button>
+      <div>
+        {isAsesor && (
+          <React.Fragment>
+            <Tabs
+              aria-label="basic tabs"
+              value={tabIndex}
+              onChange={(event, newValue) => setTabIndex(newValue)}
+              sx={{ marginTop: 3 }}
+              centered
+              variant="fullWidth"
+            >
+              <Tab sx={{ textTransform: "capitalize" }} label="Whatsapp" />
+              <Tab sx={{ textTransform: "capitalize" }} label="Llamada" />
+              <Tab sx={{ textTransform: "capitalize" }} label="Eventos" />
+            </Tabs>
+
+            <CustomTabPanel value={tabIndex} index={0}>
+              <ComponentWhatsapp
+                lead={idLead}
+                dataWhatsapp={whatsapps}
+                onUpdateDataWhatsapp={updateWhatsappMessage}
+                onCreateDataWhatsapp={createWhatsappMessage}
+              />
+            </CustomTabPanel>
+            <CustomTabPanel value={tabIndex} index={1}>
+              <ComponentLlamadas
+                lead={idLead}
+                dataLlamada={llamadas}
+                onUpdatedataLlamada={updateLlamadaLead}
+                onCreatedataLlamada={createLlamadaLead}
+              />
+            </CustomTabPanel>
+
+            <CustomTabPanel value={tabIndex} index={2}>
+              <ComponentEventos
+                lead={lead}
+                dataEventos={eventos}
+                onUpdateDataEvento={updateEventoLead}
+                onCreateDataEvento={createEventoLead}
+              />
+            </CustomTabPanel>
+          </React.Fragment>
+        )}
       </div>
       {/* COMPONENTE ALERTA */}
       <CustomAlert
@@ -400,3 +583,23 @@ export const UpdateLead = () => {
     </>
   )
 }
+
+/**
+ * Custom tab panel to use as tab wrapper.
+ * @param {*} props
+ * @returns
+ */
+const CustomTabPanel = (props) => {
+  const { children, value, index, ...other } = props;
+  return (
+    <div
+      role="tabpanel"
+      hidden={value !== index}
+      id={`simple-tabpanel-${index}`}
+      style={{ display: "flex", justifyContent: "center" }}
+      {...other}
+    >
+      {value === index && <div>{children}</div>}
+    </div>
+  );
+};

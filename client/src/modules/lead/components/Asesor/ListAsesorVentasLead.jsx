@@ -69,13 +69,13 @@ export const ListAsesorVentasLead = () => {
     estadoSeparacionLead: "",
   });
 
-  const { 
-    nombre, 
-    celular, 
-    importante, 
-    proyecto, 
-    estadoLead, 
-    fecha_asignacion, 
+  const {
+    nombre,
+    celular,
+    importante,
+    proyecto,
+    estadoLead,
+    fecha_asignacion,
     estadoSeparacionLead
   } = filterData;
 
@@ -362,11 +362,11 @@ export const ListAsesorVentasLead = () => {
                     </TableCell>
                     <TableCell>Celular</TableCell>
                     <TableCell>Nombre</TableCell>
-                    <TableCell>Proyecto</TableCell>
-                    <TableCell>Campaña</TableCell>
+                    <TableCell align="center">Proyecto</TableCell>
+                    <TableCell>Registros</TableCell>
                     <TableCell align="center">Importante</TableCell>
                     <TableCell align="center">Estado</TableCell>
-                    <TableCell>Separación</TableCell>
+                    <TableCell align="center">Separación</TableCell>
                     <TableCell>Fecha asignacion</TableCell>
                   </TableRow>
                 </TableHead>
@@ -431,7 +431,6 @@ export const ListAsesorVentasLead = () => {
                       />
                     </TableCell>
                     <TableCell>
-                      Sin filtros
                     </TableCell>
                     <TableCell align="center">
                       <SelectBoolean

@@ -52,7 +52,7 @@ class LeadList(generics.ListCreateAPIView):
 
 
         flag_desasignado_asesor = False
-
+        userId = request.user.id
         if asignado == "False":
             lead_queryset = Lead.objects.filter(asignado=False).order_by('-fecha_creacion')
 
@@ -178,7 +178,16 @@ class LeadList(generics.ListCreateAPIView):
         user_queryset = User.objects.all()
         proyecto_queryset = Proyecto.objects.all()
 
-        
+        if request.user.groups.first().name == "asesor":
+            if request.user.isAdmin == True:        
+                llamada_queryset = Llamada.objects.all()
+                mensaje_queryset = WhatsApp.objects.all()
+                evento_queryset = Evento.objects.all()
+            else:
+                llamada_queryset = Llamada.objects.filter(asesor = userId)
+                mensaje_queryset = WhatsApp.objects.filter(asesor = userId)
+                evento_queryset = Evento.objects.filter(asesor = userId)
+
 
         for i in leadData:
             user_data = user_queryset.filter(id=i["asesor"]).first()
@@ -209,9 +218,11 @@ class LeadList(generics.ListCreateAPIView):
             i["campania"]["proyecto"] = ProyectoSerializer(
                 proyecto_queryset.filter(pk=i["campania"]["proyecto"]).first()).data
             i["objecion"] = objecionSerializer.data if objecionSerializer else None
-            i["numLlamandas"] = random.randint(1, 100)
-            i["numWhatsapps"] = random.randint(1, 100)
-            i["numEventos"] = random.randint(1, 100)
+
+            if request.user.groups.first().name == "asesor":                        
+                i["numLlamandas"] = llamada_queryset.filter(lead = i["id"]).count()
+                i["numWhatsapps"] =mensaje_queryset.filter(lead = i["id"]).count()
+                i["numEventos"] = evento_queryset.filter(lead = i["id"]).count()
 
             if flag_desasignado_asesor:
                 lead_lastAsesor = historico_desasignaciones.filter(lead = i["id"]).order_by('-fecha').first()

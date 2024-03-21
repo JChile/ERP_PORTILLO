@@ -223,28 +223,12 @@ class CampaniaList(generics.ListCreateAPIView):
 
     def create(self, request):
         print(request.data)
+        request.data["codigo"] =  request.data["nombre"] 
         data = CampaniaSerializer(data=request.data)
         if data.is_valid():
             data.save()
-            campania = Campania.objects.get(pk=data.data["id"])
-
-            try :
-                mes_actual = str(datetime.now().month)
-                if len(mes_actual) ==1:
-                    mes_actual = "0"+mes_actual
-                
-                campania_queryset = str(Campania.objects.filter(proyecto = campania.proyecto, categoria = campania.categoria).count())
-                if len(campania_queryset) ==1:
-                    campania_queryset = "0"+campania_queryset
-                if campania.organico ==True:
-                    campania.codigo = ("ORGANICO_"+campania.proyecto.codigo+"_"+campania.categoria.codigo+"_"+mes_actual+campania_queryset).upper()
-                else:
-                    campania.codigo = (campania.proyecto.codigo+"_"+campania.categoria.codigo+"_"+mes_actual+campania_queryset).upper()
-                campania.save()
-            except:
-                return Response({"message" : "Campaña se creo pero sin su codigo, defina uno"}, status=status.HTTP_400_BAD_REQUEST)
             return Response({"message" : "Campaña se creo correctamente"}, status=status.HTTP_201_CREATED)
-        return Response({"message" : "Campaña no se creo"}, status=status.HTTP_400_BAD_REQUEST)
+        return Response(data.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class CampaniaDetail(generics.RetrieveUpdateDestroyAPIView):

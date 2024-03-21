@@ -9,6 +9,7 @@ virtualenv/
 __pycache__
 db.sqlite3
 media
+/portillo_erp/settings.py
 
 package-lock.json
 

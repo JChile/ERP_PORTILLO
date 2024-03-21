@@ -215,6 +215,15 @@ export const ReporteLeadStatus = () => {
                         <TableCell align="center">{value.porcentaje.toFixed(2)}%</TableCell>
                       </TableRow>
                     ))}
+                    <TableRow>
+                      <TableCell>Total</TableCell>
+                      <TableCell align="center">
+                        {auxDataObjeciones.reduce((acc, curr) => acc + curr.conteo, 0)}
+                      </TableCell>
+                      <TableCell align="center">
+                        {auxDataObjeciones.reduce((acc, curr) => acc + curr.porcentaje, 0).toFixed(2)}%
+                      </TableCell>
+                    </TableRow>
                 </TableBody>
               </Table>
               <div className="flex flex-row items-center justify-center mt-4">
@@ -247,6 +256,16 @@ export const ReporteLeadStatus = () => {
                         <TableCell align="center">{value.porcentaje.toFixed(2)}%</TableCell>
                       </TableRow>
                     })}
+                  {/* Total para número de leads y porcentaje */}
+                  <TableRow>
+                    <TableCell>Total</TableCell>
+                    <TableCell align="center">
+                      {auxDataEstados.reduce((acc, curr) => acc + curr.conteo, 0)}
+                    </TableCell>
+                    <TableCell align="center">
+                      {auxDataEstados.reduce((acc, curr) => acc + curr.porcentaje, 0).toFixed(2)}%
+                    </TableCell>
+                  </TableRow>
                 </TableBody>
               </Table>
               <div className="flex flex-row items-center justify-center mt-4">

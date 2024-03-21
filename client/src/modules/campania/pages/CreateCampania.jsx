@@ -112,9 +112,9 @@ export const CreateCampania = () => {
     //validacion de nombre
     if (nombre.length === 0) {
       errors.push("- El nombre de la campaña es obligatorio.");
-    } else if (nombre.length < 10 || nombre.length > 60) {
+    } else if (nombre.length < 4 || nombre.length > 60) {
       errors.push(
-        "- El nombre de la campaña debe tener entre 10 y 60 caracteres"
+        "- El nombre de la campaña debe tener entre 4 y 60 caracteres"
       );
     }
 

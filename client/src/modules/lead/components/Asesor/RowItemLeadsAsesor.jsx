@@ -13,6 +13,8 @@ export const RowItemLeadsAsesor = ({ item, checkedElement }) => {
   const { campania, id, estadoLead } = item;
   const { proyecto } = campania;
 
+  console.log(item);
+
   const navigate = useNavigate();
 
   const onEditItemSelected = () => {
@@ -60,15 +62,15 @@ export const RowItemLeadsAsesor = ({ item, checkedElement }) => {
       <TableCell>
         <div className="flex gap-x-2 gap-y-1 justify-center">
           <FaWhatsapp />
-          <span>5</span>
+          <span>{item["numEventos"]}</span>
         </div>
         <div className="flex gap-x-2 gap-y-1 justify-center">
           <IoIosCall />
-          <span>5</span>
+          <span>{item["numLlamandas"]}</span>
         </div>
         <div className="flex gap-x-2 gap-y-1 justify-center">
           <FaCalendarAlt />
-          <span>5</span>
+          <span>{item["numWhatsapps"]}</span>
         </div>
       </TableCell>
       <TableCell align="center">

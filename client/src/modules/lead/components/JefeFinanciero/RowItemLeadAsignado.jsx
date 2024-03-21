@@ -3,6 +3,8 @@ import { Checkbox, TableCell, TableRow } from "@mui/material"
 import { CustomMoreVerticalActions } from "../../../../components"
 import { useNavigate, Link } from "react-router-dom"
 import { formatDate_ISO861_to_formatdate } from "../../../../utils"
+import { FaCalendarAlt, FaWhatsapp } from "react-icons/fa"
+import { IoIosCall } from "react-icons/io"
 
 const RowItemLeadAsignado = ({ item, checkedElement }) => {
   const { id, campania, estadoLead } = item
@@ -62,6 +64,20 @@ const RowItemLeadAsignado = ({ item, checkedElement }) => {
       <TableCell>
         {item["asesor"]["first_name"]} {item["asesor"]["last_name"]}
       </TableCell>
+      <TableCell>
+          <div className="flex gap-x-2 gap-y-1 justify-center">
+            <FaWhatsapp />
+            <span>{item["numEventos"]}</span>
+          </div>
+          <div className="flex gap-x-2 gap-y-1 justify-center">
+            <IoIosCall />
+            <span>{item["numLlamandas"]}</span>
+          </div>
+          <div className="flex gap-x-2 gap-y-1 justify-center">
+            <FaCalendarAlt />
+            <span>{item["numWhatsapps"]}</span>
+          </div>
+        </TableCell>
       <TableCell>
         {formatDate_ISO861_to_formatdate(item["fecha_asignacion"])}
       </TableCell>

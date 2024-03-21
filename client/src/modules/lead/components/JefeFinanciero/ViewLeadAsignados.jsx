@@ -316,6 +316,7 @@ const ViewLeadAsignados = ({ startDate, endDate, flagReload }) => {
                 <TableCell align="center">Estado</TableCell>
                 <TableCell>Separación</TableCell>
                 <TableCell>Actual asesor</TableCell>
+                <TableCell>Registros</TableCell>
                 <TableCell>Fecha asignacion</TableCell>
               </TableRow>
             </TableHead>
@@ -398,6 +399,7 @@ const ViewLeadAsignados = ({ startDate, endDate, flagReload }) => {
                     defaultValue={asesor}
                   />
                 </TableCell>
+                <TableCell></TableCell>
                 <TableCell>
                   <CustomDatePickerFilter
                     onNewFecha={handledFilterDateValues}

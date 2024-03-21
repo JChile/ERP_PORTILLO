@@ -253,7 +253,21 @@ class CampaniaDetail(generics.RetrieveUpdateDestroyAPIView):
         dataJson["categoria"] = categoriaSerializer.data if categoria != None else None
         return Response(dataJson)
 
+    def put(self, request, pk= None):
+        try:
+            objeto = Campania.objects.get(pk=pk)
+        except Campania.DoesNotExist:
+            return Response({'error': 'El objeto no existe'}, status=status.HTTP_404_NOT_FOUND)
 
+        # Serializa el objeto existente con los datos recibidos en la solicitud
+        request.data["codigo"] =  request.data["nombre"] 
+        serializer = CampaniaSerializer(objeto, data=request.data)
+        if serializer.is_valid():
+            # Actualiza el objeto con los datos validados
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 class ProyectoCampaniaList(APIView):
 
     def get(self, request):

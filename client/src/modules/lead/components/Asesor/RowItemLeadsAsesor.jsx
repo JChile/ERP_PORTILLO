@@ -62,7 +62,7 @@ export const RowItemLeadsAsesor = ({ item, checkedElement }) => {
       <TableCell>
         <div className="flex gap-x-2 gap-y-1 justify-center">
           <FaWhatsapp />
-          <span>{item["numEventos"]}</span>
+          <span>{item["numWhatsapps"]}</span>
         </div>
         <div className="flex gap-x-2 gap-y-1 justify-center">
           <IoIosCall />
@@ -70,7 +70,7 @@ export const RowItemLeadsAsesor = ({ item, checkedElement }) => {
         </div>
         <div className="flex gap-x-2 gap-y-1 justify-center">
           <FaCalendarAlt />
-          <span>{item["numWhatsapps"]}</span>
+          <span>{item["numEventos"]}</span>
         </div>
       </TableCell>
       <TableCell align="center">

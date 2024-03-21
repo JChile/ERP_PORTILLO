@@ -10,8 +10,10 @@ export const RowItemLeadMarketing = ({
   checkedElement,
   onChangeLead,
 }) => {
-  const { campania, id, estadoLead } = item
+  const { campania, id, estadoLead, asesor } = item
   const { proyecto } = campania
+
+  console.log(item)
 
   const navigate = useNavigate()
 
@@ -85,6 +87,9 @@ export const RowItemLeadMarketing = ({
       </TableCell>
       <TableCell>
         {formatDate_ISO861_to_formatdate(item["horaRecepcion"])}
+      </TableCell>
+      <TableCell>
+        {`${asesor["first_name"]} ${asesor["last_name"]}`}
       </TableCell>
     </TableRow>
   )

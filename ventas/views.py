@@ -17,7 +17,6 @@ from .consts import *
 from multimedia.models import VideoProducto, ImagenProducto
 from multimedia.serializers import VideoProductoSerializer, ImagenProductoSerializer
 import random
-from django_filters.rest_framework import DjangoFilterBackend
 
 
 def get_or_none(classmodel, **kwargs):
@@ -810,12 +809,18 @@ class ProductoList(generics.ListCreateAPIView):
             return Response({"message": "Usuario no tiene permisos para ver productos"}, status.HTTP_403_FORBIDDEN)
 
         estado = request.query_params.get('estado')
+        proyecto = request.query_params.get('proyecto')
+
         print(estado)
         if estado:
             producto_queryset = Producto.objects.all().filter(estado=estado).order_by('-fecha_creacion')
         else:
             producto_queryset = Producto.objects.all().order_by('-fecha_creacion')
 
+
+        if proyecto:
+            producto_queryset = producto_queryset.filter(proyecto=proyecto)
+ 
         try:
             producto_datajson = ProductoSerializer(
                 producto_queryset, many=True).data
@@ -841,13 +846,12 @@ class ProductoList(generics.ListCreateAPIView):
         return Response(producto_datajson)
 
 
-class ProductoListSinFiltros(generics.ListCreateAPIView):
-    serializer_class = ProductoSerializer
-    queryset = Producto.objects.all()
-    filter_backends = [DjangoFilterBackend]
-    filterset_fields = ['proyecto', 'codigo','estado']
-
-
+class ProductoListSinFiltros(ProductoList):
+    def list(self, request):
+        if not (bool(request.user.groups.first().permissions.filter(codename=PermissionProducto.CAN_VIEW) or request.user.is_superuser)):
+            return Response({"message": "Usuario no tiene permisos para ver productos"}, status=403)
+        self.queryset = self.queryset.filter()
+        return super().list(request)
 
 
 class ProductoListActivos(ProductoList):

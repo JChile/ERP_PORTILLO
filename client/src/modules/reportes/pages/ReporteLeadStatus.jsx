@@ -115,14 +115,14 @@ export const ReporteLeadStatus = () => {
           id: objecion.id,
           nombre: objecion.nombre,
           conteo: conteoObjeciones[objecion.id] || 0, // Si no hay conteo, poner 0
-          porcentaje: conteoObjeciones[objecion.id] / size || 0
+          porcentaje: (conteoObjeciones[objecion.id] / size)*100 || 0
         }));
         
         const estadosConConteo = dataEstadosLead.map((estado) => ({
           nombre: estado.nombre,
           descripcion: estado.descripcion,
           conteo: conteoEstados[estado.nombre] || 0, // Si no hay conteo, poner 0
-          porcentaje: conteoEstados[estado.nombre] / size || 0
+          porcentaje: (conteoEstados[estado.nombre] / size)*100 || 0
         }));
 
         setAuxDataObjeciones(objecionesConConteo);

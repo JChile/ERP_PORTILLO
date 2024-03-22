@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import IconButton from "@mui/material/IconButton";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
-import { FiCheckCircle } from "react-icons/fi";
+import { FiCheckCircle, FiTrash } from "react-icons/fi";
 import { FiMoreVertical, FiEdit2, FiDelete } from "react-icons/fi";
 import {
   Button,
@@ -12,6 +12,7 @@ import {
   DialogContentText,
   DialogTitle,
 } from "@mui/material";
+import { FaCheckCircle, FaEdit, FaRegEdit, FaTrash } from "react-icons/fa";
 
 const ITEM_HEIGHT = 48;
 
@@ -34,54 +35,22 @@ export const CustomMoreVerticalActions = ({
     setAnchorEl(null);
   };
   return (
-    <>
-      <IconButton
-        aria-label="more"
-        id="long-button"
-        aria-controls={open ? "long-menu" : undefined}
-        aria-expanded={open ? "true" : undefined}
-        aria-haspopup="true"
-        onClick={handleClick}
-      >
-        <FiMoreVertical />
-      </IconButton>
-      <Menu
-        id="long-menu"
-        MenuListProps={{
-          "aria-labelledby": "long-button",
-        }}
-        anchorEl={anchorEl}
-        open={open}
-        onClose={handleClose}
-        PaperProps={{
-          style: {
-            maxHeight: ITEM_HEIGHT * 4.5,
-            width: "20ch",
-          },
-        }}
-      >
-        {activeOnEdit && (
-          <MenuItem key={"Editar"} onClick={onEdit}>
-            <FiEdit2 />
-            <span className="ps-2">Editar</span>
-          </MenuItem>
-        )}
-        {activeOnDelete && (
-          <DialogConfirmDeleteItem
-            title={titleDialog}
-            description={descriptionDialog}
-            handleConfirm={onDelete}
-            onCloseMenu={handleClose}
-          />
-        )}
-        {!activeOnDelete && activeOnActive && (
-          <MenuItem key={"Activar"} onClick={onActive}>
-            <FiCheckCircle />
-            <span className="ps-2">Activar</span>
-          </MenuItem>
-        )}
-      </Menu>
-    </>
+    <React.Fragment>
+      {activeOnEdit && (
+        <FaRegEdit size={16} key={"Editar"} onClick={onEdit} className="inline-block mx-1 cursor-pointer shadow-lg hover:shadow-blue-900" color="blue"/>
+      )}
+      {activeOnDelete && (
+        <DialogConfirmDeleteItem
+          title={titleDialog}
+          description={descriptionDialog}
+          handleConfirm={onDelete}
+          onCloseMenu={handleClose}
+        />
+      )}
+      {!activeOnDelete && activeOnActive && (
+        <FiCheckCircle size={16} key={"Activar"} onClick={onActive} className="inline-block mx-1 cursor-pointer shadow-lg hover:shadow-green-900" color="green" />
+      )}
+    </React.Fragment>
   );
 };
 
@@ -102,11 +71,8 @@ const DialogConfirmDeleteItem = ({
   };
 
   return (
-    <div>
-      <MenuItem key={"Eliminar"} onClick={handleClickOpen}>
-        <FiDelete />
-        <span className="ps-2">Eliminar</span>
-      </MenuItem>
+    <React.Fragment>
+      <FaTrash size={16} key={"Eliminar"} onClick={handleClickOpen} color="red" className="inline-block mx-1 cursor-pointer shadow-lg hover:shadow-red-900" />
       <Dialog open={open} onClose={handleClose}>
         <DialogTitle>{title}</DialogTitle>
         <DialogContent>
@@ -152,6 +118,6 @@ const DialogConfirmDeleteItem = ({
           </Button>
         </DialogActions>
       </Dialog>
-    </div>
+    </React.Fragment>
   );
 };

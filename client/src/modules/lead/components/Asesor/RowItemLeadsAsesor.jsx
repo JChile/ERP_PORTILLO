@@ -4,9 +4,10 @@ import { Checkbox, TableCell, TableRow } from "@mui/material";
 import { FiCheckCircle, FiXCircle } from "react-icons/fi";
 import { Link, useNavigate } from "react-router-dom";
 import { CustomMoreVerticalActions } from "../../../../components";
-import { FaWhatsapp } from "react-icons/fa";
+import { FaEdit, FaTrash, FaWhatsapp } from "react-icons/fa";
 import { IoIosCall } from "react-icons/io";
 import { FaCalendarAlt } from "react-icons/fa";
+import { FaDeleteLeft } from "react-icons/fa6";
 
 
 export const RowItemLeadsAsesor = ({ item, checkedElement }) => {
@@ -31,11 +32,7 @@ export const RowItemLeadsAsesor = ({ item, checkedElement }) => {
           }}
           inputProps={{ "aria-label": "controlled" }}
         />
-        <CustomMoreVerticalActions
-          activeOnDelete={false}
-          activeOnActive={false}
-          onEdit={onEditItemSelected}
-        />
+        <FaEdit className="inline-block" size={18} color="#1976d2" onClick={onEditItemSelected}/>
       </TableCell>
       <TableCell>
         <Link

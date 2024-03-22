@@ -4,6 +4,7 @@ import { Checkbox, TableCell, TableRow } from "@mui/material"
 import { FiCheckCircle, FiXCircle } from "react-icons/fi"
 import { Link, useNavigate } from "react-router-dom"
 import { CustomMoreVerticalActions } from "../../../../components"
+import { FaEdit, FaTrash } from "react-icons/fa"
 
 export const RowItemLeadMarketing = ({
   item,
@@ -19,6 +20,7 @@ export const RowItemLeadMarketing = ({
 
   const onChangeLeadSelected = () => {
     onChangeLead(item)
+
   }
 
   const onEditItemSelected = () => {

@@ -3,6 +3,7 @@ import { Checkbox, TableCell, TableRow } from "@mui/material"
 import { Link, useNavigate } from "react-router-dom"
 import { CustomMoreVerticalActions } from "../../../../components"
 import { formatDate_ISO861_to_formatdate } from "../../../../utils"
+import { FaEdit } from "react-icons/fa"
 
 export const RowItemLeadNoAsignado = ({ item, checkedElement }) => {
   const { id, campania, estadoLead } = item
@@ -24,11 +25,7 @@ export const RowItemLeadNoAsignado = ({ item, checkedElement }) => {
           }}
           inputProps={{ "aria-label": "controlled" }}
         />
-        <CustomMoreVerticalActions
-          activeOnDelete={false}
-          activeOnActive={false}
-          onEdit={onEditItemSelected}
-        />
+        <FaEdit className="inline-block" size={18} color="#1976d2" onClick={onEditItemSelected}/>
       </TableCell>
       <TableCell>
         <Link

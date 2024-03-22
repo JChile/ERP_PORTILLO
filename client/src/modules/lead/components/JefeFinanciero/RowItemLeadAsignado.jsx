@@ -3,7 +3,7 @@ import { Checkbox, TableCell, TableRow } from "@mui/material"
 import { CustomMoreVerticalActions } from "../../../../components"
 import { useNavigate, Link } from "react-router-dom"
 import { formatDate_ISO861_to_formatdate } from "../../../../utils"
-import { FaCalendarAlt, FaWhatsapp } from "react-icons/fa"
+import { FaCalendarAlt, FaEdit, FaWhatsapp } from "react-icons/fa"
 import { IoIosCall } from "react-icons/io"
 
 const RowItemLeadAsignado = ({ item, checkedElement }) => {
@@ -24,11 +24,7 @@ const RowItemLeadAsignado = ({ item, checkedElement }) => {
           onChange={(e) => checkedElement(e, item.id)}
           inputProps={{ "aria-label": "controlled" }}
         />
-        <CustomMoreVerticalActions
-          activeOnDelete={false}
-          activeOnActive={false}
-          onEdit={onEditItemSelected}
-        />
+        <FaEdit className="inline-block" size={18} color="#1976d2" onClick={onEditItemSelected}/>
       </TableCell>
       <TableCell>
         <Link

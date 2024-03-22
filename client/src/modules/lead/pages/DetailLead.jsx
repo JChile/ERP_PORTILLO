@@ -46,9 +46,9 @@ export const DetailLead = () => {
     campania: {
       nombre: "",
     },
-    llamadas: [],
-    whatsapps: [],
-    eventos: [],
+    producto: {
+      nombre: ""
+    },
     fecha_actualizacion: null,
     usuarioActualizador: null,
     fecha_asignacion: null,
@@ -72,9 +72,7 @@ export const DetailLead = () => {
     estadoSeparacionLead,
     objecion,
     campania,
-    llamadas,
-    whatsapps,
-    eventos,
+    producto,
     asignado,
     fecha_actualizacion,
     usuarioActualizador,
@@ -319,7 +317,7 @@ export const DetailLead = () => {
                     : "Asesor no asignado"}
                 </span>
               </label>
-
+              {/* Campaña */}
               <label className="flex gap-y-1 ">
                 <span className="block text-sm font-medium min-w-[10rem] text-zinc-500">
                   Campaña:
@@ -327,6 +325,17 @@ export const DetailLead = () => {
                 <span className="block text-sm">
                   <span className="block text-sm">
                     {campania?.nombre || ""}
+                  </span>
+                </span>
+              </label>
+              {/* Producto */}
+              <label className="flex gap-y-1 ">
+                <span className="block text-sm font-medium min-w-[10rem] text-zinc-500">
+                  Producto:
+                </span>
+                <span className="block text-sm">
+                  <span className="block text-sm">
+                    {producto?.nombre || "No asignado producto"}
                   </span>
                 </span>
               </label>
@@ -409,25 +418,5 @@ export const DetailLead = () => {
       />
       {visibleProgress && <CustomCircularProgress />}
     </>
-  );
-};
-
-/**
- * Custom tab panel to use as tab wrapper.
- * @param {*} props
- * @returns
- */
-const CustomTabPanel = (props) => {
-  const { children, value, index, ...other } = props;
-  return (
-    <div
-      role="tabpanel"
-      hidden={value !== index}
-      id={`simple-tabpanel-${index}`}
-      style={{ display: "flex", justifyContent: "center" }}
-      {...other}
-    >
-      {value === index && <div>{children}</div>}
-    </div>
   );
 };

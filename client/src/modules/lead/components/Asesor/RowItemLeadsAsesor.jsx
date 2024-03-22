@@ -3,18 +3,14 @@ import { formatDate_ISO861_to_formatdate } from "../../../../utils";
 import { Checkbox, TableCell, TableRow } from "@mui/material";
 import { FiCheckCircle, FiXCircle } from "react-icons/fi";
 import { Link, useNavigate } from "react-router-dom";
-import { CustomMoreVerticalActions } from "../../../../components";
-import { FaEdit, FaTrash, FaWhatsapp } from "react-icons/fa";
+import { FaEdit, FaWhatsapp } from "react-icons/fa";
 import { IoIosCall } from "react-icons/io";
 import { FaCalendarAlt } from "react-icons/fa";
-import { FaDeleteLeft } from "react-icons/fa6";
 
 
 export const RowItemLeadsAsesor = ({ item, checkedElement }) => {
   const { campania, id, estadoLead } = item;
   const { proyecto } = campania;
-
-  console.log(item);
 
   const navigate = useNavigate();
 
@@ -32,7 +28,7 @@ export const RowItemLeadsAsesor = ({ item, checkedElement }) => {
           }}
           inputProps={{ "aria-label": "controlled" }}
         />
-        <FaEdit className="inline-block mx-1 cursor-pointer shadow-lg hover:shadow-blue-900" size={16} color="blue" onClick={onEditItemSelected}/>
+        <FaEdit className="inline-block mx-1 cursor-pointer shadow-lg hover:shadow-blue-900" size={16} color="blue" onClick={onEditItemSelected} />
       </TableCell>
       <TableCell>
         <Link
@@ -56,6 +52,7 @@ export const RowItemLeadsAsesor = ({ item, checkedElement }) => {
       </TableCell>
       <TableCell>{`${item["nombre"]} ${item["apellido"]}`}</TableCell>
       <TableCell>{proyecto["nombre"]}</TableCell>
+      <TableCell>{item.producto ? item.producto["nombre"] : "No asignado"}</TableCell>
       <TableCell>
         <div className="flex gap-x-2 gap-y-1 justify-center">
           <FaWhatsapp />

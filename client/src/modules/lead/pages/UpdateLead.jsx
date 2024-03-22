@@ -22,6 +22,7 @@ import { FilterProyectoCampania } from "../../../components/multiple-filters/pro
 import { ComponentLlamadas, ComponentWhatsapp } from "../components"
 import ComponentEventos from "../components/ComponentEventos"
 import { createEvent, updateEvent } from "../../ventas/helpers/eventCases"
+import { FilterProyectoProducto } from "../../../components/multiple-filters"
 
 export const UpdateLead = () => {
   const { idLead } = useParams()
@@ -48,6 +49,8 @@ export const UpdateLead = () => {
     objecion: null,
     campania: null,
     campaniaName: "",
+    producto: null,
+    productoName: "",
     llamadas: [],
     whatsapps: [],
     eventos: [],
@@ -67,6 +70,8 @@ export const UpdateLead = () => {
     objecion,
     campania,
     campaniaName,
+    producto,
+    productoName,
     llamadas,
     whatsapps,
     eventos
@@ -93,6 +98,8 @@ export const UpdateLead = () => {
           asesor: result.asesor ? result.asesor["id"] : null,
           campania: result.campania ? result.campania["id"] : null,
           campaniaName: result.campania ? result.campania["nombre"] : "",
+          producto: result.producto ? result.producto["id"] : null,
+          productoName: result.producto ? result.producto["nombre"] : "",
           objecion: result.objecion ? result.objecion["id"] : null,
           estadoLead: result.estadoLead ? result.estadoLead : null,
           estadoSeparacionLead: result.estadoSeparacionLead ? result.estadoSeparacionLead : null,
@@ -132,6 +139,13 @@ export const UpdateLead = () => {
   const onAddCampania = (item) => {
     const label = item["id"] ? item["label"] : ""
     setLead({ ...lead, campania: item.id, campaniaName: label })
+  }
+
+  // change producto
+  const onAddProducto = (item) => {
+    console.log(item)
+    const label = item["id"] ? item["label"] : ""
+    setLead({ ...lead, producto: item.id, productoName: label })
   }
 
   // change estado lead
@@ -453,6 +467,17 @@ export const UpdateLead = () => {
                   />
                 </label>
               </div>
+              <label className="flex flex-col gap-y-1">
+                <span className="block text-sm font-medium">Comentario</span>
+                <textarea
+                  name="comentario"
+                  rows="3"
+                  className="mt-1 px-3 py-2 bg-white border shadow-sm border-slate-300 placeholder-slate-400 focus:outline-none focus:border-sky-500 focus:ring-sky-500 block w-full rounded-md sm:text-sm focus:ring-1"
+                  placeholder="Comentario"
+                  value={comentario}
+                  onChange={handledForm}
+                ></textarea>
+              </label>
             </div>
 
             <div className="flex-1 flex flex-col gap-y-6">
@@ -499,16 +524,17 @@ export const UpdateLead = () => {
                 <FilterProyectoCampania onAddCampania={onAddCampania} />
               </label>
 
-              <label className="flex flex-col gap-y-1">
-                <span className="block text-sm font-medium">Comentario</span>
-                <textarea
-                  name="comentario"
-                  rows="3"
-                  className="mt-1 px-3 py-2 bg-white border shadow-sm border-slate-300 placeholder-slate-400 focus:outline-none focus:border-sky-500 focus:ring-sky-500 block w-full rounded-md sm:text-sm focus:ring-1"
-                  placeholder="Comentario"
-                  value={comentario}
-                  onChange={handledForm}
-                ></textarea>
+              <label className="flex content-center gap-x-2">
+                <span className="text-sm font-medium flex items-center">
+                  <span className="mr-2">Producto: </span>
+                  {productoName.length !== 0 && (
+                    <span className="inline-block px-2 py-1 text-sm font-semibold leading-none bg-blue-500 text-white rounded-full">
+                      {productoName}
+                    </span>
+                  )}
+                </span>
+                {/* <FilterProyectoCampania onAddCampania={onAddCampania} /> */}
+                <FilterProyectoProducto onAddProducto={onAddProducto} />
               </label>
             </div>
           </form>

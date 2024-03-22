@@ -328,9 +328,6 @@ export const ListAsesorVentasLead = () => {
           {/* SECCION DE DATA */}
           <Paper sx={{ borderRadius: "0px" }}>
             <TableContainer
-              sx={{
-                minHeight: 700,
-              }}
               arial-aria-labelledby="customized table"
             >
               <TablePagination
@@ -343,7 +340,7 @@ export const ListAsesorVentasLead = () => {
                 onPageChange={handleChangePage}
                 onRowsPerPageChange={handleChangeRowsPerPage}
               />
-              <Table stickyHeader>
+              <Table sx={{ minWidth: 700 }}>
                 <TableHead sx={{ background: "black" }}>
                   <TableRow
                     sx={{
@@ -363,6 +360,7 @@ export const ListAsesorVentasLead = () => {
                     <TableCell>Celular</TableCell>
                     <TableCell>Nombre</TableCell>
                     <TableCell align="center">Proyecto</TableCell>
+                    <TableCell align="center">Producto</TableCell>
                     <TableCell>Registros</TableCell>
                     <TableCell align="center">Importante</TableCell>
                     <TableCell align="center">Estado</TableCell>
@@ -406,6 +404,7 @@ export const ListAsesorVentasLead = () => {
                         size="small"
                         variant="outlined"
                         placeholder="Número"
+                        autoComplete="off"
                         type="number"
                         name="celular"
                         value={celular}
@@ -429,6 +428,8 @@ export const ListAsesorVentasLead = () => {
                         onNewInput={handledFilterSelectValues}
                         defaultValue={proyecto}
                       />
+                    </TableCell>
+                    <TableCell>
                     </TableCell>
                     <TableCell>
                     </TableCell>

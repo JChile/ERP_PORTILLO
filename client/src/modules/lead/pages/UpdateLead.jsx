@@ -102,7 +102,7 @@ export const UpdateLead = () => {
           productoName: result.producto ? result.producto["nombre"] : "",
           objecion: result.objecion ? result.objecion["id"] : null,
           estadoLead: result.estadoLead ? result.estadoLead : null,
-          estadoSeparacionLead: result.estadoSeparacionLead ? result.estadoSeparacionLead : null,
+          estadoSeparacionLead: result.estadoSeparacionLead ? result.estadoSeparacionLead["id"] : null,
           usuarioCreador: result.usuarioCreador ? result.usuarioCreador.id : null,
           usuarioActualizador: result.usuarioActualizador ? result.usuarioActualizador.id : null
         }

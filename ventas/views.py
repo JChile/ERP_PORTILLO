@@ -1254,4 +1254,4 @@ class ProductoView(generics.ListAPIView):
     serializer_class = ProductoSerializer
     queryset = Producto.objects.all()  
     filter_backends = [DjangoFilterBackend]
-    filterset_fields = ['proyecto', 'id']
+    filterset_fields = ['proyecto','estado']

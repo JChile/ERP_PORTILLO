@@ -24,7 +24,7 @@ const RowItemLeadAsignado = ({ item, checkedElement }) => {
           onChange={(e) => checkedElement(e, item.id)}
           inputProps={{ "aria-label": "controlled" }}
         />
-        <FaEdit className="inline-block" size={18} color="#1976d2" onClick={onEditItemSelected}/>
+        <FaEdit className="inline-block mx-1 cursor-pointer shadow-lg hover:shadow-blue-900" size={16} color="blue" onClick={onEditItemSelected}/>
       </TableCell>
       <TableCell>
         <Link

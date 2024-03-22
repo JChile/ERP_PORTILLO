@@ -177,6 +177,7 @@ class LeadList(generics.ListCreateAPIView):
         estadoLead_queryset = EstadoLead.objects.all()
         user_queryset = User.objects.all()
         proyecto_queryset = Proyecto.objects.all()
+        producto_queryset = Producto.objects.all()
 
         if request.user.groups.first().name == "asesor":
             if request.user.isAdmin == True:        
@@ -194,6 +195,8 @@ class LeadList(generics.ListCreateAPIView):
             campania_data = camapania_queryset.filter(id=i["campania"]).first()
             objecion_data =  objecion_queryset.filter(id=i["objecion"]).first()
             estadoLead_data = estadoLead_queryset.filter(nombre=i["estadoLead"]).first()
+            producto_data = producto_queryset.filter(id=i["producto"]).first()
+
 
             userSerializer = UserSerializer(user_data, fields=(
                 'id', 'first_name', 'last_name', 'username')) if user_data else None
@@ -202,7 +205,8 @@ class LeadList(generics.ListCreateAPIView):
                 campania_data) if campania_data else None
             objecionSerializer = ObjecionSerializer(
                 objecion_data) if objecion_data else None
-            
+            productoSerializer = ProductoSerializer(
+                producto_data) if producto_data else None
             estadoSerializer = EstadoLeadSerializer(
                 estadoLead_data) if estadoLead_data else None
             
@@ -212,6 +216,7 @@ class LeadList(generics.ListCreateAPIView):
             
             i["asesor"] = userSerializer.data if userSerializer else None
             i["campania"] = campaniaSerializer.data if campaniaSerializer else None
+            i["producto"] = productoSerializer.data if productoSerializer else None
             i["estadoLead"] = estadoSerializer.data if estadoSerializer else None
             i["estadoSeparacionLead"] = estadoSeparacionSerializer.data if estadoSeparacionSerializer else None
 
@@ -296,22 +301,25 @@ class LeadDetail(generics.RetrieveUpdateDestroyAPIView):
         lead_data = leadSerializer.data
 
         user_data = get_or_none(User, id=lead_data["asesor"])
-
         campania_data = get_or_none(Campania, id=lead_data["campania"])
         objecion_data = get_or_none(Objecion, id=lead_data["objecion"])
-        
+        producto_data = get_or_none(Producto, id=lead_data["producto"])
 
         userSerializer = UserSerializer(user_data, fields=(
             'id', 'first_name', 'last_name', 'username')) if user_data else None
 
         campaniaSerializer = CampaniaSerializer(
             campania_data) if campania_data else None
+        productoSerializer = ProductoSerializer(
+            producto_data) if producto_data else None
         objecionSerializer = ObjecionSerializer(
             objecion_data) if objecion_data else None
 
         lead_data["asesor"] = userSerializer.data if userSerializer else None
         lead_data["campania"] = campaniaSerializer.data if campaniaSerializer else None
         lead_data["objecion"] = objecionSerializer.data if objecionSerializer else None
+        lead_data["producto"] = productoSerializer.data if productoSerializer else None
+
         lead_data["whatsapps"] = WhatsAppSerializer(
             WhatsApp.objects.filter(lead=lead.pk), many=True).data
 

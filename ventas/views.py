@@ -1246,3 +1246,12 @@ class EstadoSeparacionLeadList(generics.ListCreateAPIView):
 class EstadoSeparacionLeadDetail(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = EstadoSeparacionLeadSerializer
     queryset = EstadoSeparacionLead.objects.all()
+
+
+from django_filters.rest_framework import DjangoFilterBackend
+
+class ProductoView(generics.ListAPIView):
+    serializer_class = ProductoSerializer
+    queryset = Producto.objects.all()  
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = ['proyecto', 'id']

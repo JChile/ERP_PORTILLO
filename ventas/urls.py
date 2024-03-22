@@ -126,6 +126,7 @@ urlpatterns = [
     re_path(r'^desasignacionConfiguracion/(?P<pk>[\w-]+)$',views.DesasignacionConfiguracionDetail.as_view()),
     
     re_path(r'^registroMasivoMensajes/$', cutomViews.RegistroMensajesMasivos.as_view()),
+    re_path(r'^productoList/$', views.ProductoView.as_view()),
 
 
 ]

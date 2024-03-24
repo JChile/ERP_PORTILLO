@@ -1288,42 +1288,48 @@ class LeadFilter(FilterSet):
     objecion = AllValuesFilter(field_name='objecion__id')
     proyecto = AllValuesFilter(field_name='campania__proyecto')
 
+
     class Meta:
         model = Lead
         fields = []
 
 
-from django.db.models import Q
-
+@permission_classes([IsAuthenticated])
 class LeadViewPagination(generics.ListAPIView):
     serializer_class = LeadBodySerializer
     queryset = Lead.objects.all() 
     pagination_class = LargeResultsSetPagination
     filter_backends = [DjangoFilterBackend, filters.OrderingFilter]
-    filterset_fields = ['campania','asesor','estado', 'asignado', 'recienCreado','estadoSeparacionLead','objecion']
+    #filterset_fields = ['campania','asesor','estado', 'asignado', 'recienCreado','estadoSeparacionLead','objecion']
     ordering_fields = ['fecha_creacion', 'fecha_actualizacion', 'fecha_asignacion','horaRecepcion']
     filterset_class = LeadFilter
 
 
     def get_queryset(self):
-        proyectoId = self.request.query_params.get('proyecto')
-        celularStr = self.request.query_params.get('celular')
-        celular2Str = self.request.query_params.get('celular2')
 
+        fecha_limite = timezone.now() - timedelta(days=60)
+        desde = self.request.query_params.get('desde')
+        hasta = self.request.query_params.get('hasta')
         user = self.request.user
         lead_queryset = super().get_queryset()
+        if desde and hasta:
+            lead_queryset = lead_queryset.filter(horaRecepcion__range=[desde, hasta])
+        else:
+            lead_queryset = lead_queryset.filter(horaRecepcion__gte=fecha_limite)
         
-        if proyectoId is not None:
-            campania_queryset = Campania.objects.filter(proyecto = proyectoId)
-            lead_queryset= lead_queryset.filter(campania__in = campania_queryset)
-        
-        # if celularStr is not None:   
-        #     print(celularStr)
-        #     lead_queryset= lead_queryset.filter(Q(celular__icontains = celularStr))
-     
-        # if celular2Str is not None:   
-        #     lead_queryset= lead_queryset.filter(celular2__icontains = celular2Str)
-        
+        if user.groups.first().name == "marketing":
+            pass
+        elif user.groups.first().name == "asesor":
+            if user.isAdmin == True:
+                pass
+            else:
+                lead_queryset = lead_queryset.filter(asesor=user.id)
+        elif user.groups.first().name == "administrador":
+            pass
+        else:
+            lead_queryset = {}
+            pass
+
         return lead_queryset
 
     

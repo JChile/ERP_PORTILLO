@@ -1,7 +1,10 @@
 from rest_framework import serializers
 from .models import *
 from cuenta.models import *
-
+from .consts import *
+from rest_framework import status
+from marketing.serializers import ProyectoSerializer
+from cuenta.serializers import *
 
 class LeadSerializer(serializers.ModelSerializer):
     class Meta:
@@ -148,3 +151,40 @@ class EstadoSeparacionLeadSerializer(serializers.ModelSerializer):
     class Meta:
         model = EstadoSeparacionLead
         fields = '__all__'
+
+
+
+
+class LeadBodySerializer(serializers.ModelSerializer):
+    numLlamadas = serializers.SerializerMethodField()
+    numWhatsapps = serializers.SerializerMethodField()
+    numEventos = serializers.SerializerMethodField()
+    proyecto = serializers.SerializerMethodField()
+    asesor = UserInfoSerializer()
+    usuarioCreador= UserInfoSerializer()
+    usuarioActualizador= UserInfoSerializer()
+    class Meta:
+        model = Lead
+        fields =  '__all__'
+        depth = 1
+    
+    def get_proyecto(self, obj):
+
+        proyecto = Proyecto.objects.filter(id = obj.campania.proyecto.id).first()
+        proyecto_data = ProyectoSerializer(proyecto).data if proyecto != None else None
+        return proyecto_data
+    
+    def get_numLlamadas(self, obj):
+        asesor_logueado = self.context['request'].user.id  # Obtener el asesor logueado
+        num_llamadas = Llamada.objects.filter(asesor=asesor_logueado, lead=obj).count()
+        return num_llamadas
+
+    def get_numWhatsapps(self, obj):
+        asesor_logueado = self.context['request'].user.id  # Obtener el asesor logueado
+        num_llamadas = WhatsApp.objects.filter(asesor=asesor_logueado, lead=obj).count()
+        return num_llamadas
+    
+    def get_numEventos(self, obj):
+        asesor_logueado = self.context['request'].user.id  # Obtener el asesor logueado
+        num_llamadas = Evento.objects.filter(asesor=asesor_logueado, lead=obj).count()
+        return num_llamadas

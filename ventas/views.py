@@ -16,6 +16,9 @@ from rest_framework.decorators import permission_classes
 from .consts import *
 from multimedia.models import VideoProducto, ImagenProducto
 from multimedia.serializers import VideoProductoSerializer, ImagenProductoSerializer
+from rest_framework.pagination import PageNumberPagination
+from rest_framework import filters
+
 import random
 
 
@@ -26,11 +29,11 @@ def get_or_none(classmodel, **kwargs):
         return None
 
 
-# markting filtrar por fecha creacion
-# asesor fecha asignacion
-# asesor admin asignacion
-# si se filtra por asginado true, fecha asignacion
-# si se filtra por desaginado true, fecha desasignacion
+class LargeResultsSetPagination(PageNumberPagination):
+    page_size = 10
+    page_size_query_param = 'page_size'
+    max_page_size = 100
+
 
 @permission_classes([IsAuthenticated])
 class LeadList(generics.ListCreateAPIView):
@@ -239,6 +242,7 @@ class LeadList(generics.ListCreateAPIView):
                     i["penultimo_asesor"] = {"first_name" : None }
 
         return Response(leadData)
+
 
     def post(self, request, format=None):
         data = request.data
@@ -1263,3 +1267,63 @@ class ProductoView(generics.ListAPIView):
     queryset = Producto.objects.all()  
     filter_backends = [DjangoFilterBackend]
     filterset_fields = ['proyecto','estado']
+
+
+
+
+from django_filters import FilterSet, AllValuesFilter
+from django_filters import CharFilter, NumberFilter, AllValuesFilter, BooleanFilter
+
+class LeadFilter(FilterSet):
+    celular = CharFilter(lookup_expr='icontains')
+    celular2 = CharFilter(lookup_expr='icontains')
+    nombre = CharFilter(lookup_expr='icontains')
+    apellido = CharFilter(lookup_expr='icontains')
+    campania = AllValuesFilter(field_name='campania__id')
+    asesor = AllValuesFilter(field_name='asesor__id')
+    estado = AllValuesFilter(field_name='estado__nombre')
+    asignado = BooleanFilter()
+    recienCreado = BooleanFilter()
+    estadoSeparacionLead = AllValuesFilter(field_name='estadoSeparacionLead__id')
+    objecion = AllValuesFilter(field_name='objecion__id')
+    proyecto = AllValuesFilter(field_name='campania__proyecto')
+
+    class Meta:
+        model = Lead
+        fields = []
+
+
+from django.db.models import Q
+
+class LeadViewPagination(generics.ListAPIView):
+    serializer_class = LeadBodySerializer
+    queryset = Lead.objects.all() 
+    pagination_class = LargeResultsSetPagination
+    filter_backends = [DjangoFilterBackend, filters.OrderingFilter]
+    filterset_fields = ['campania','asesor','estado', 'asignado', 'recienCreado','estadoSeparacionLead','objecion']
+    ordering_fields = ['fecha_creacion', 'fecha_actualizacion', 'fecha_asignacion','horaRecepcion']
+    filterset_class = LeadFilter
+
+
+    def get_queryset(self):
+        proyectoId = self.request.query_params.get('proyecto')
+        celularStr = self.request.query_params.get('celular')
+        celular2Str = self.request.query_params.get('celular2')
+
+        user = self.request.user
+        lead_queryset = super().get_queryset()
+        
+        if proyectoId is not None:
+            campania_queryset = Campania.objects.filter(proyecto = proyectoId)
+            lead_queryset= lead_queryset.filter(campania__in = campania_queryset)
+        
+        # if celularStr is not None:   
+        #     print(celularStr)
+        #     lead_queryset= lead_queryset.filter(Q(celular__icontains = celularStr))
+     
+        # if celular2Str is not None:   
+        #     lead_queryset= lead_queryset.filter(celular2__icontains = celular2Str)
+        
+        return lead_queryset
+
+    

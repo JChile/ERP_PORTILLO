@@ -31,9 +31,8 @@ class ContentTypeSerializer(serializers.ModelSerializer):
 class UserInfoSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['first_name', 'last_name', 'email']
+        fields = ['id','first_name', 'last_name', 'email', 'codigoAsesor']
 
-from rest_framework.response import Response
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:

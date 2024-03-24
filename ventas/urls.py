@@ -128,5 +128,6 @@ urlpatterns = [
     re_path(r'^registroMasivoMensajes/$', cutomViews.RegistroMensajesMasivos.as_view()),
     re_path(r'^productoList/$', views.ProductoView.as_view()),
 
+    re_path(r'^leadList/$', views.LeadViewPagination.as_view()),
 
 ]

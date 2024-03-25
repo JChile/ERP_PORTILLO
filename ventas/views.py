@@ -1272,7 +1272,7 @@ class ProductoView(generics.ListAPIView):
 
 
 from django_filters import FilterSet, AllValuesFilter
-from django_filters import CharFilter, NumberFilter, AllValuesFilter, BooleanFilter
+from django_filters import CharFilter, NumberFilter, AllValuesFilter, BooleanFilter, DateFilter
 
 class LeadFilter(FilterSet):
     celular = CharFilter(lookup_expr='icontains')
@@ -1287,14 +1287,16 @@ class LeadFilter(FilterSet):
     estadoSeparacionLead = AllValuesFilter(field_name='estadoSeparacionLead__id')
     objecion = AllValuesFilter(field_name='objecion__id')
     proyecto = AllValuesFilter(field_name='campania__proyecto')
-
-
+    importante =  BooleanFilter()
+    horaRecepcion = DateFilter(field_name='horaRecepcion', lookup_expr='startswith')
+    fecha_creacion = DateFilter(field_name='fecha_creacion', lookup_expr='startswith')
+    
     class Meta:
         model = Lead
         fields = []
 
 
-# @permission_classes([IsAuthenticated])
+#@permission_classes([IsAuthenticated])
 class LeadViewPagination(generics.ListAPIView):
     serializer_class = LeadBodySerializer
     queryset = Lead.objects.all() 
@@ -1304,32 +1306,30 @@ class LeadViewPagination(generics.ListAPIView):
     ordering_fields = ['fecha_creacion', 'fecha_actualizacion', 'fecha_asignacion','horaRecepcion']
     filterset_class = LeadFilter
 
-"""
-    def get_queryset(self):
 
-        fecha_limite = timezone.now() - timedelta(days=60)
-        desde = self.request.query_params.get('desde')
-        hasta = self.request.query_params.get('hasta')
-        user = self.request.user
-        lead_queryset = super().get_queryset()
-        if desde and hasta:
-            lead_queryset = lead_queryset.filter(horaRecepcion__range=[desde, hasta])
-        else:
-            lead_queryset = lead_queryset.filter(horaRecepcion__gte=fecha_limite)
+    # def get_queryset(self):
+
+    #     fecha_limite = timezone.now() - timedelta(days=60)
+    #     desde = self.request.query_params.get('desde')
+    #     hasta = self.request.query_params.get('hasta')
+    #     user = self.request.user
+    #     lead_queryset = super().get_queryset()
+    #     if desde and hasta:
+    #         lead_queryset = lead_queryset.filter(horaRecepcion__range=[desde, hasta])
+    #     else:
+    #         lead_queryset = lead_queryset.filter(horaRecepcion__gte=fecha_limite)
         
-        if user.groups.first().name == "marketing":
-            pass
-        elif user.groups.first().name == "asesor":
-            if user.isAdmin == True:
-                pass
-            else:
-                lead_queryset = lead_queryset.filter(asesor=user.id)
-        elif user.groups.first().name == "administrador":
-            pass
-        else:
-            lead_queryset = {}
-            pass
+    #     if user.groups.first().name == "marketing":
+    #         pass
+    #     elif user.groups.first().name == "asesor":
+    #         if user.isAdmin == True:
+    #             pass
+    #         else:
+    #             lead_queryset = lead_queryset.filter(asesor=user.id)
+    #     elif user.groups.first().name == "administrador":
+    #         pass
+    #     else:
+    #         lead_queryset = {}
+    #         pass
 
-        return lead_queryset
-
-"""
+    #     return lead_queryset

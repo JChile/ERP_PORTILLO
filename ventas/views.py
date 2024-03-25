@@ -1281,7 +1281,7 @@ class LeadFilter(FilterSet):
     apellido = CharFilter(lookup_expr='icontains')
     campania = AllValuesFilter(field_name='campania__id')
     asesor = AllValuesFilter(field_name='asesor__id')
-    estado = AllValuesFilter(field_name='estado__nombre')
+    estado = AllValuesFilter(field_name='estado__estado')
     asignado = BooleanFilter()
     recienCreado = BooleanFilter()
     estadoSeparacionLead = AllValuesFilter(field_name='estadoSeparacionLead__id')

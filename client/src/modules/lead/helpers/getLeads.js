@@ -12,6 +12,19 @@ export const getLeads = async (token, query) => {
   return data;
 };
 
+export const getLeadsByQuery = async (token, query) => {
+  const DOMAIN = process.env.VITE_BACKEND_URL
+  const URL = `${DOMAIN}/api/leadList/?${query}`
+  const config = {
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
+  }
+  const {data, error} = await axios.get(URL, config)
+  if (error ) throw(error)
+  return data
+}
+
 /** Endpoints para realizar solitudes de leads por asesor,
  *  endpoints relacionados al area de ventas
  *  @param {string} token, user access token

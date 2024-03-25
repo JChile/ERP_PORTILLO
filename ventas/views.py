@@ -1294,7 +1294,7 @@ class LeadFilter(FilterSet):
         fields = []
 
 
-@permission_classes([IsAuthenticated])
+# @permission_classes([IsAuthenticated])
 class LeadViewPagination(generics.ListAPIView):
     serializer_class = LeadBodySerializer
     queryset = Lead.objects.all() 
@@ -1304,7 +1304,7 @@ class LeadViewPagination(generics.ListAPIView):
     ordering_fields = ['fecha_creacion', 'fecha_actualizacion', 'fecha_asignacion','horaRecepcion']
     filterset_class = LeadFilter
 
-
+"""
     def get_queryset(self):
 
         fecha_limite = timezone.now() - timedelta(days=60)
@@ -1332,4 +1332,4 @@ class LeadViewPagination(generics.ListAPIView):
 
         return lead_queryset
 
-    
+"""

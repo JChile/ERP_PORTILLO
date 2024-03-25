@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import { getLeads } from "../../helpers";
+import { getLeads, getLeadsByQuery } from "../../helpers";
 import {
   CustomAlert,
   CustomCircularProgress,
@@ -246,7 +246,9 @@ export const ListAsesorVentasLead = () => {
     setVisibleProgress(true);
     setCountSelectedElements(0);
     try {
-      let query = "estado=A";
+      let query = 'estado=A';
+      //if (filterData['celular']) query += `celular=${filterData['celular']}`
+      //if (filterData['estadoLead']) 
       if (startDate && endDate) {
         query += `&desde=${startDate}T00:00:00&hasta=${endDate}T23:59:59`;
       }

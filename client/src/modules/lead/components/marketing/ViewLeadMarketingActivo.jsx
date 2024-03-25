@@ -238,7 +238,7 @@ export const ViewLeadMarketingActivo = ({ startDate, endDate, flagReload }) => {
     setVisibleProgress(true)
     setCountSelectedElements(0)
     try {
-      let query = "estado=A&asignado=True"
+      let query = 'estado=A&asignado=True'
       if (startDate && endDate) {
         query += `&desde=${startDate}T00:00:00&hasta=${endDate}T23:59:59`
       }

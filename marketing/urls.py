@@ -18,5 +18,8 @@ urlpatterns = [
     re_path(r'^gastoCampania/$', views.GastoCampaniaList.as_view()),
     re_path(r'^gastoCampania/(?P<pk>[0-9]+)$', views.GastoCampaniaDetail.as_view()),
     re_path(r'^cambioDolar/$', views.CambioDolar.as_view()),
+
+    re_path(r'^banco/$', views.BancoList.as_view()),
+    re_path(r'^banco/(?P<pk>[0-9]+)$', views.BancoDetail.as_view()),
 ]
 

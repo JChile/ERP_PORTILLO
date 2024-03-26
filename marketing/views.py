@@ -297,3 +297,13 @@ class CambioDolar(APIView):
     def get(self, request):
         dolar = requests.get("https://api.apis.net.pe/v1/tipo-cambio-sunat")
         return Response(dolar.json())
+
+
+class BancoList(generics.ListCreateAPIView):
+    serializer_class = BancoSerializer
+    queryset = Banco.objects.all()
+
+
+class BancoDetail(generics.RetrieveUpdateDestroyAPIView):
+    serializer_class = BancoSerializer
+    queryset = Banco.objects.all()

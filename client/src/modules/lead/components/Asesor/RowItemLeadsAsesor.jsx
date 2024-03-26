@@ -59,7 +59,7 @@ export const RowItemLeadsAsesor = ({ item, checkedElement }) => {
         </div>
         <div className="flex gap-x-2 gap-y-1 justify-center">
           <IoIosCall />
-          <span>{item["numLlamandas"]}</span>
+          <span>{item["numLlamadas"]}</span>
         </div>
         <div className="flex gap-x-2 gap-y-1 justify-center">
           <FaCalendarAlt />

@@ -46,7 +46,7 @@ export const ViewLeadMarketingActivo = ({ startDate, endDate, flagReload, setFla
     handleChangePage,
     handleChangeRowsPerPage,
     paginatedItems,
-  } = useCustomTablePagination(auxLeads, 10)
+  } = useCustomTablePagination(auxLeads, 25)
 
   const {
     feedbackCreate,
@@ -205,7 +205,7 @@ export const ViewLeadMarketingActivo = ({ startDate, endDate, flagReload, setFla
     setVisibleProgress(true)
     setCountSelectedElements(0)
     try {
-      let query = `asignado=true&estado=A&page=${page + 1}`
+      let query = `asignado=true&estado=A&page=${page + 1}&page_size=${rowsPerPage}`
       if (startDate && endDate) query += `&desde=${startDate}T00:00:00&hasta=${endDate}T23:59:59`
       if (filterData['celular']) query += `&celular=${filterData['celular']}`
       if (filterData['nombre']) query += `&nombre=${filterData['nombre']}`
@@ -242,8 +242,15 @@ export const ViewLeadMarketingActivo = ({ startDate, endDate, flagReload, setFla
     }
   }
 
+  // handle change page
   const handleChangingPage = (event, newPage) => {
     handleChangePage(event, newPage)
+    setFlagReload(prev => !prev)
+  }
+
+  // handle change page rows
+  const handleChangingRowsPerPage = (event) => {
+    handleChangeRowsPerPage(event)
     setFlagReload(prev => !prev)
   }
 
@@ -281,13 +288,14 @@ export const ViewLeadMarketingActivo = ({ startDate, endDate, flagReload, setFla
         >
           <TablePagination
             sx={{ backgroundColor: "#F4F0F0" }}
-            rowsPerPageOptions={[10, 50, 75, 100]}
+            rowsPerPageOptions={[25, 50, 75, 100]}
             component="div"
             count={paginationValue.count}
             rowsPerPage={rowsPerPage}
             page={page}
             onPageChange={handleChangingPage}
-            onRowsPerPageChange={handleChangeRowsPerPage}
+            // onRowsPerPageChange={handleChangeRowsPerPage}
+            onRowsPerPageChange={handleChangingRowsPerPage}
           />
           <Table stickyHeader>
             <TableHead sx={{ background: "black" }}>

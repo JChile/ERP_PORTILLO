@@ -138,7 +138,7 @@ export const ListMarketingLead = () => {
               startDate={startDate}
               endDate={endDate}
               flagReload={flagReload}
-              onSubmitFilter={onSubmitFilter}
+              setFlagReload={setFlagReload}
             />
           </CustomTabPanel>
           <CustomTabPanel value={value} index={1}>
@@ -146,7 +146,7 @@ export const ListMarketingLead = () => {
               startDate={startDate}
               endDate={endDate}
               flagReload={flagReload}
-              onSubmitFilter={onSubmitFilter}
+              setFlagReload={setFlagReload}
             />
           </CustomTabPanel>
           <CustomTabPanel value={value} index={2}>
@@ -154,7 +154,7 @@ export const ListMarketingLead = () => {
               startDate={startDate}
               endDate={endDate}
               flagReload={flagReload}
-              onSubmitFilter={onSubmitFilter}
+              setFlagReload={setFlagReload}
             />
           </CustomTabPanel>
         </React.Fragment>

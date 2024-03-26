@@ -15,6 +15,7 @@ export const SelectEstadoLead = ({
 
   const obtenerEstadoLeads = async () => {
     const result = await getEstadoLead(authTokens["access"])
+    console.log(result)
     const formatSelect = result.map((element) => {
       return {
         value: element.nombre,
@@ -40,6 +41,7 @@ export const SelectEstadoLead = ({
   return (
     <FormControl sx={{ m: 1, minWidth: 120 }} size={size}>
       <Select
+        name={name}
         value={value}
         onChange={handleChange}
         displayEmpty
@@ -49,7 +51,7 @@ export const SelectEstadoLead = ({
           <em>None</em>
         </MenuItem>
         {options.map((element, index) => (
-          <MenuItem key={element.value} value={element.label}>
+          <MenuItem key={element.label} value={element.value}>
             {element.label}
           </MenuItem>
         ))}

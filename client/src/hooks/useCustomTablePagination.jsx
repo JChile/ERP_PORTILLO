@@ -2,7 +2,7 @@ import { useState } from "react";
 
 export const useCustomTablePagination = (
   totalItems,
-  defaultRowsPerPage = 5
+  defaultRowsPerPage = 10,
 ) => {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(defaultRowsPerPage);
@@ -16,16 +16,11 @@ export const useCustomTablePagination = (
     setPage(0);
   };
 
-  const startIndex = page * rowsPerPage;
-  const endIndex = startIndex + rowsPerPage;
-
-  const paginatedItems = totalItems.slice(startIndex, endIndex);
-
   return {
     page,
     rowsPerPage,
     handleChangePage,
     handleChangeRowsPerPage,
-    paginatedItems,
+    paginatedItems: totalItems,
   };
 };

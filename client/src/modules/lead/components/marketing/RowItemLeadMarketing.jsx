@@ -11,8 +11,7 @@ export const RowItemLeadMarketing = ({
   checkedElement,
   onChangeLead,
 }) => {
-  const { campania, id, estadoLead, asesor } = item
-  const { proyecto } = campania
+  const { campania, id, estadoLead, asesor, proyecto } = item
 
   console.log(item)
 

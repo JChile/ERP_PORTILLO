@@ -14,13 +14,14 @@ export const getLeads = async (token, query) => {
 
 export const getLeadsByQuery = async (token, query) => {
   const DOMAIN = process.env.VITE_BACKEND_URL
+  console.log(query)
   const URL = `${DOMAIN}/api/leadList/?${query}`
   const config = {
     headers: {
       Authorization: `Bearer ${token}`
     }
   }
-  const {data, error} = await axios.get(URL, config)
+  const { data, error } = await axios.get(URL, config)
   if (error ) throw(error)
   return data
 }

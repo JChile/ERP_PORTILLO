@@ -24,19 +24,21 @@ import { MdClose, MdSearch } from "react-icons/md"
 import { SelectBoolean, SelectProyecto } from "../../../../components/select"
 import { MassActionsViewLeadsMarketing } from "./acciones-masivas/MassActionsViewLeadsMarketing"
 import { combinarErrores } from "../../../../utils"
-import { getLeads, updateLead } from "../../helpers"
+import { getLeads, getLeadsByQuery, updateLead } from "../../helpers"
 import { RowItemLeadMarketingInactivo } from "./RowItemLeadMarketingInactivo"
 
 export const ViewLeadMarketingInactivo = ({
   startDate,
   endDate,
   flagReload,
+  setFlagReload
 }) => {
   const { authTokens } = useContext(AuthContext)
 
   const [leads, setLeads] = useState([])
   const [auxLeads, setAuxLeads] = useState([])
   const [checked, setChecked] = useState(false)
+  const [paginationValue,setPaginationValue] = useState({count: 0, next: '', previous: ''});
 
   // visible progress
   const [visibleProgress, setVisibleProgress] = useState(false)
@@ -79,44 +81,9 @@ export const ViewLeadMarketingInactivo = ({
     filterData
 
   const handledFilterData = () => {
-    setVisibleProgress(true)
-    const dataFilter = leads.filter((element) => {
-      const celularElement = element["celular"].toString().toLowerCase()
-      const parserNombreApellido = `${element["nombre"]} ${element["apellido"]}`
-      const nombreElement = parserNombreApellido.toString().toLowerCase()
-      const proyectoElement = element["campania"]["proyecto"]["nombre"]
-        .toString()
-        .toLowerCase()
-      const asignadoElement = element["asignado"] ? "si" : "no"
-      const horaRecepcionElement = formatDate_ISO861_to_date(
-        element["horaRecepcion"]
-      )
-      const fechaCreacionElement = formatDate_ISO861_to_date(
-        element["fecha_creacion"]
-      )
-
-      if (
-        (filterData["celular"] !== "" &&
-          !celularElement.includes(filterData["celular"].toLowerCase())) ||
-        (filterData["nombre"] !== "" &&
-          !nombreElement.includes(filterData["nombre"].toLowerCase())) ||
-        (filterData["proyecto"] !== "" &&
-          !proyectoElement.includes(filterData["proyecto"].toLowerCase())) ||
-        (filterData["asignado"] !== "" &&
-          !asignadoElement.includes(filterData["asignado"].toLowerCase())) ||
-        (filterData["horaRecepcion"] !== "" &&
-          !horaRecepcionElement.includes(filterData["horaRecepcion"])) ||
-        (filterData["fecha_creacion"] !== "" &&
-          !fechaCreacionElement.includes(filterData["fecha_creacion"]))
-      ) {
-        return false
-      }
-      return true
-    })
-
-    setAuxLeads(dataFilter)
+    handleChangePage(null, 0)
+    setFlagReload(prev => !prev)
     setFlagReset(true)
-    setVisibleProgress(false)
   }
 
   const handledResetDataFilter = () => {
@@ -235,16 +202,25 @@ export const ViewLeadMarketingInactivo = ({
 
   // traer leads
   const traerLeads = async () => {
-    setFlagReset(false)
+    //setFlagReset(false)
     setVisibleProgress(true)
     setCountSelectedElements(0)
     try {
       let query = "estado=I"
-      if (startDate && endDate) {
-        query += `&desde=${startDate}T00:00:00&hasta=${endDate}T23:59:59`
+      if (startDate && endDate) query += `&desde=${startDate}T00:00:00&hasta=${endDate}T23:59:59`
+      if (filterData['celular']) query += `&celular=${filterData['celular']}`
+      if (filterData['asignado']) {
+        let asignadoAux = filterData['asignado'] === 'Si' ? true : false
+        query += `&asignado=${asignadoAux}`
       }
-      const rowData = await getLeads(authTokens["access"], query)
-      const formatData = rowData.map((element) => {
+      if (filterData['fecha_creacion']) query += `&fecha_creacion=${filterData['fecha_creacion']}`
+      if (filterData['horaRecepcion']) query += `&horaRecepcion=${filterData['horaRecepcion']}`
+      if (filterData['nombre']) query += `&nombre=${filterData['nombre']}`
+      if (filterData['proyecto']) query += `&proyecto=${filterData['proyecto']}`
+
+      const rowData = await getLeadsByQuery(authTokens["access"], query)
+      setPaginationValue({count: rowData.count, next: rowData.next, previous: rowData.previous})
+      const formatData = rowData.results.map((element) => {
         return {
           ...element,
           isSelected: false,
@@ -262,6 +238,11 @@ export const ViewLeadMarketingInactivo = ({
       handleClickFeedback()
       setVisibleProgress(false)
     }
+  }
+
+  const handleChangingPage = (event, newPage) => {
+    handleChangePage(event, newPage)
+    setFlagReload(prev => !prev)
   }
 
   useEffect(() => {
@@ -300,10 +281,10 @@ export const ViewLeadMarketingInactivo = ({
             sx={{ backgroundColor: "#F4F0F0" }}
             rowsPerPageOptions={[25, 50, 75, 100]}
             component="div"
-            count={auxLeads.length}
+            count={paginationValue.count}
             rowsPerPage={rowsPerPage}
             page={page}
-            onPageChange={handleChangePage}
+            onPageChange={handleChangingPage}
             onRowsPerPageChange={handleChangeRowsPerPage}
           />
           <Table stickyHeader>

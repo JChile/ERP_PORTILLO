@@ -25,15 +25,16 @@ import { SelectBoolean, SelectEstadoLead, SelectProyecto } from "../../../../com
 import { RowItemLeadMarketing } from "./RowItemLeadMarketing"
 import { MassActionsViewLeadsMarketing } from "./acciones-masivas/MassActionsViewLeadsMarketing"
 import { combinarErrores, formatDate_ISO861_to_date } from "../../../../utils"
-import { deleteLead, getLeads } from "../../helpers"
+import { deleteLead, getLeads, getLeadsByQuery } from "../../helpers"
 import SelectAsesor from "../../../../components/select/asesor-filter/SelectAsesor"
 
-export const ViewLeadMarketingActivo = ({ startDate, endDate, flagReload }) => {
+export const ViewLeadMarketingActivo = ({ startDate, endDate, flagReload, setFlagReload }) => {
   const { authTokens } = useContext(AuthContext)
 
   const [leads, setLeads] = useState([])
   const [auxLeads, setAuxLeads] = useState([])
   const [checked, setChecked] = useState(false)
+  const [paginationValue,setPaginationValue] = useState({count: 0, next: '', previous: ''});
 
   // visible progress
   const [visibleProgress, setVisibleProgress] = useState(false)
@@ -61,6 +62,7 @@ export const ViewLeadMarketingActivo = ({ startDate, endDate, flagReload }) => {
   // flag reset
   const [flagReset, setFlagReset] = useState()
   const [countSelectedElements, setCountSelectedElements] = useState(0)
+  
 
   // numero de items seleccionados
   const [filterData, setFilterData] = useState({
@@ -77,45 +79,9 @@ export const ViewLeadMarketingActivo = ({ startDate, endDate, flagReload }) => {
     filterData
 
   const handledFilterData = () => {
-    setVisibleProgress(true)
-    const dataFilter = leads.filter((element) => {
-      const celularElement = element["celular"].toString().toLowerCase()
-      const parserNombreApellido = `${element["nombre"]} ${element["apellido"]}`
-      const nombreElement = parserNombreApellido.toString().toLowerCase()
-      const estadoLeadElement = element["estadoLead"]["nombre"].toString().toLowerCase()
-      const proyectoElement = element["campania"]["proyecto"]["nombre"]
-        .toString()
-        .toLowerCase()
-      const asignadoElement = element["asignado"] ? "si" : "no"
-      const horaRecepcionElement = formatDate_ISO861_to_date(
-        element["horaRecepcion"]
-      )
-      const asesorElement = `${element["asesor"]["first_name"]} ${element["asesor"]["last_name"]}`
-
-      if (
-        (filterData["celular"] !== "" &&
-          !celularElement.includes(filterData["celular"].toLowerCase())) ||
-        (filterData["nombre"] !== "" &&
-          !nombreElement.includes(filterData["nombre"].toLowerCase())) ||
-        (filterData["proyecto"] !== "" &&
-          !proyectoElement.includes(filterData["proyecto"].toLowerCase())) ||
-        (filterData["estadoLead"] !== "" &&
-          !estadoLeadElement.includes(filterData["estadoLead"].toLowerCase())) ||
-        (filterData["asignado"] !== "" &&
-          !asignadoElement.includes(filterData["asignado"].toLowerCase())) ||
-        (filterData["horaRecepcion"] !== "" &&
-          !horaRecepcionElement.includes(filterData["horaRecepcion"])) ||
-        (filterData["asesor"] !== "" && 
-          !asesorElement.includes(filterData["asesor"].toLocaleLowerCase()))
-      ) {
-        return false
-      }
-      return true
-    })
-
-    setAuxLeads(dataFilter)
+    handleChangePage(null, 0)
+    setFlagReload(prev => !prev)
     setFlagReset(true)
-    setVisibleProgress(false)
   }
 
   const handledResetDataFilter = () => {
@@ -131,6 +97,7 @@ export const ViewLeadMarketingActivo = ({ startDate, endDate, flagReload }) => {
       estadoLead: "",
       asignado: "",
       horaRecepcion: "",
+      asesor: ''
     })
     setFlagReset(false)
   }
@@ -234,16 +201,28 @@ export const ViewLeadMarketingActivo = ({ startDate, endDate, flagReload }) => {
 
   // traer leads
   const traerLeads = async () => {
-    setFlagReset(false)
+    //setFlagReset(false)
     setVisibleProgress(true)
     setCountSelectedElements(0)
     try {
-      let query = 'estado=A&asignado=True'
-      if (startDate && endDate) {
-        query += `&desde=${startDate}T00:00:00&hasta=${endDate}T23:59:59`
+      let query = `asignado=true&estado=A&page=${page+1}`
+      if (startDate && endDate) query += `&desde=${startDate}T00:00:00&hasta=${endDate}T23:59:59`
+      if (filterData['celular']) query += `&celular=${filterData['celular']}`
+      if (filterData['nombre']) query += `&nombre=${filterData['nombre']}`
+      if (filterData['proyecto']) query += `&proyecto=${filterData['proyecto']}`
+      if (filterData['estadoLead']) {
+        let estadoLead = filterData['estadoLead']
+        query += `&estadoLead=${estadoLead}`
       }
-      const rowData = await getLeads(authTokens["access"], query)
-      const formatData = rowData.map((element) => {
+      if (filterData['horaRecepcion']){
+        query += `&horaRecepcion=${filterData['horaRecepcion']}`
+      }
+      if (filterData['asesor']) query += `&asesor=${filterData['asesor']}`      
+
+      const rowData = await getLeadsByQuery(authTokens["access"], query)
+      setPaginationValue({count: rowData.count, next: rowData.next, previous: rowData.previous})
+
+      const formatData = rowData.results.map((element) => {
         return {
           ...element,
           isSelected: false,
@@ -261,6 +240,11 @@ export const ViewLeadMarketingActivo = ({ startDate, endDate, flagReload }) => {
       handleClickFeedback()
       setVisibleProgress(false)
     }
+  }
+
+  const handleChangingPage = (event, newPage) => {
+    handleChangePage(event, newPage)
+    setFlagReload(prev => !prev)
   }
 
   useEffect(() => {
@@ -299,10 +283,10 @@ export const ViewLeadMarketingActivo = ({ startDate, endDate, flagReload }) => {
             sx={{ backgroundColor: "#F4F0F0" }}
             rowsPerPageOptions={[25, 50, 75, 100]}
             component="div"
-            count={auxLeads.length}
+            count={paginationValue.count}
             rowsPerPage={rowsPerPage}
             page={page}
-            onPageChange={handleChangePage}
+            onPageChange={handleChangingPage}
             onRowsPerPageChange={handleChangeRowsPerPage}
           />
           <Table stickyHeader>
@@ -327,7 +311,7 @@ export const ViewLeadMarketingActivo = ({ startDate, endDate, flagReload }) => {
                 <TableCell>Proyecto</TableCell>
                 <TableCell>Campaña</TableCell>
                 <TableCell align="center">Asignado</TableCell>
-                <TableCell align="center">Estado</TableCell>
+                <TableCell align="center">Estado Lead</TableCell>
                 <TableCell>Fecha recepción</TableCell>
                 <TableCell>Asesor</TableCell>
               </TableRow>

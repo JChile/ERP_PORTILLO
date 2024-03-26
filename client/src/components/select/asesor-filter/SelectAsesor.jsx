@@ -17,7 +17,7 @@ const SelectAsesor = ({
     const result = await getAsesor(authTokens["access"]);
     const formatSelect = result.map((element) => {
       const asesorName = `${element.first_name} ${element.last_name}`;
-      return { value: asesorName, label: asesorName };
+      return { value: element.id, label: asesorName };
     });
     setOptions(formatSelect);
   };
@@ -53,7 +53,7 @@ const SelectAsesor = ({
           <em>None</em>
         </MenuItem>
         {options.map((element, index) => (
-          <MenuItem key={element.value} value={element.label}>
+          <MenuItem key={element.value} value={element.value}>
             {element.label}
           </MenuItem>
         ))}

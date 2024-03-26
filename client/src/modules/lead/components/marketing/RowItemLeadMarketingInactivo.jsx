@@ -10,8 +10,7 @@ export const RowItemLeadMarketingInactivo = ({
   checkedElement,
   onChangeLead,
 }) => {
-  const { campania, id } = item
-  const { proyecto } = campania
+  const { campania, id, proyecto} = item
 
   const navigate = useNavigate()
 

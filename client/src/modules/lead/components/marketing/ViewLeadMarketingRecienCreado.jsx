@@ -25,19 +25,21 @@ import { SelectBoolean, SelectProyecto } from "../../../../components/select"
 import { RowItemLeadMarketing } from "./RowItemLeadMarketing"
 import { MassActionsViewLeadsMarketing } from "./acciones-masivas/MassActionsViewLeadsMarketing"
 import { combinarErrores, formatDate_ISO861_to_date } from "../../../../utils"
-import { deleteLead, getLeads } from "../../helpers"
+import { deleteLead, getLeads, getLeadsByQuery } from "../../helpers"
 import { RowItemLeadMarketingRecienCreado } from "./RowItemLeadMarketingRecienCreado"
 
 export const ViewLeadMarketingRecienCreado = ({
   startDate,
   endDate,
   flagReload,
+  setFlagReload
 }) => {
   const { authTokens } = useContext(AuthContext)
 
   const [leads, setLeads] = useState([])
   const [auxLeads, setAuxLeads] = useState([])
   const [checked, setChecked] = useState(false)
+  const [paginationValue,setPaginationValue] = useState({count: 0, next: '', previous: ''});
 
   // visible progress
   const [visibleProgress, setVisibleProgress] = useState(false)
@@ -49,7 +51,7 @@ export const ViewLeadMarketingRecienCreado = ({
     handleChangePage,
     handleChangeRowsPerPage,
     paginatedItems,
-  } = useCustomTablePagination(auxLeads, 25)
+  } = useCustomTablePagination(auxLeads, 10)
 
   const {
     feedbackCreate,
@@ -76,48 +78,17 @@ export const ViewLeadMarketingRecienCreado = ({
     fecha_creacion: "",
   })
 
-  const { celular, nombre, proyecto, importante, horaRecepcion, fecha_creacion } =
-    filterData
+  const { celular, nombre, proyecto, importante, horaRecepcion, fecha_creacion } = filterData
 
+
+  /**
+   * Cada vez que se realiza un filtro se tiene que reiniciar
+   * las paginas a su estado inicial.
+   */
   const handledFilterData = () => {
-    setVisibleProgress(true)
-    const dataFilter = leads.filter((element) => {
-      const celularElement = element["celular"].toString().toLowerCase()
-      const parserNombreApellido = `${element["nombre"]} ${element["apellido"]}`
-      const nombreElement = parserNombreApellido.toString().toLowerCase()
-      const proyectoElement = element["campania"]["proyecto"]["nombre"]
-        .toString()
-        .toLowerCase()
-      const importanteElement = element["importante"] ? "si" : "no"
-      const horaRecepcionElement = formatDate_ISO861_to_date(
-        element["horaRecepcion"]
-      )
-      const fechaCreacionElement = formatDate_ISO861_to_date(
-        element["fecha_creacion"]
-      )
-
-      if (
-        (filterData["celular"] !== "" &&
-          !celularElement.includes(filterData["celular"].toLowerCase())) ||
-        (filterData["nombre"] !== "" &&
-          !nombreElement.includes(filterData["nombre"].toLowerCase())) ||
-        (filterData["proyecto"] !== "" &&
-          !proyectoElement.includes(filterData["proyecto"].toLowerCase())) ||
-        (filterData["importante"] !== "" &&
-          !importanteElement.includes(filterData["importante"].toLowerCase())) ||
-        (filterData["horaRecepcion"] !== "" &&
-          !horaRecepcionElement.includes(filterData["horaRecepcion"])) ||
-        (filterData["fecha_creacion"] !== "" &&
-          !fechaCreacionElement.includes(filterData["fecha_creacion"]))
-      ) {
-        return false
-      }
-      return true
-    })
-
-    setAuxLeads(dataFilter)
+    handleChangePage(null, 0)
+    setFlagReload(prev => !prev)
     setFlagReset(true)
-    setVisibleProgress(false)
   }
 
   const handledResetDataFilter = () => {
@@ -157,7 +128,13 @@ export const ViewLeadMarketingRecienCreado = ({
     setFlagReset(false)
   }
 
-  // manejador de filtros para date values
+  /**
+   * 
+   * Manejador de filtros para date values.
+   * Falta implementar esta sección.
+   * @param {*} newDate 
+   * @param {*} filterName 
+   */
   const handledFilterDateValues = (newDate, filterName) => {
     setFilterData({
       ...filterData,
@@ -236,16 +213,33 @@ export const ViewLeadMarketingRecienCreado = ({
 
   // traer leads
   const traerLeads = async () => {
-    setFlagReset(false)
+    //setFlagReset(false)
     setVisibleProgress(true)
     setCountSelectedElements(0)
+
     try {
-      let query = "recienCreado=True&estado=A"
-      if (startDate && endDate) {
-        query += `&desde=${startDate}T00:00:00&hasta=${endDate}T23:59:59`
+      let query = `recienCreado=true&estado=A&page=${page+1}`
+      if (startDate && endDate) query += `&desde=${startDate}T00:00:00&hasta=${endDate}T23:59:59`
+      if (filterData['celular']) query += `&celular=${filterData['celular']}`
+      if (filterData['nombre']) query += `&nombre=${filterData['nombre']}`
+      if (filterData['proyecto'])  query += `&proyecto=${filterData['proyecto']}`
+      if (filterData['importante']) {
+        let important = filterData['importante'] === 'Si' ? true : false
+        query += `&importante=${important}`
       }
-      const rowData = await getLeads(authTokens["access"], query)
-      const formatData = rowData.map((element) => {
+      if (filterData['fecha_creacion']) {
+        query += `&fecha_creacion=${filterData['fecha_creacion']}`
+      }
+      if (filterData['horaRecepcion']){
+        query += `&horaRecepcion=${filterData['horaRecepcion']}`
+      }
+      
+
+      const rowData = await getLeadsByQuery(authTokens["access"], query)
+      setPaginationValue({count: rowData.count, next: rowData.next, previous: rowData.previous})
+
+
+      const formatData = rowData.results.map((element) => {
         return {
           ...element,
           isSelected: false,
@@ -263,6 +257,11 @@ export const ViewLeadMarketingRecienCreado = ({
       handleClickFeedback()
       setVisibleProgress(false)
     }
+  }
+
+  const handleChangingPage = (event, newPage) => {
+    handleChangePage(event, newPage)
+    setFlagReload(prev => !prev)
   }
 
   useEffect(() => {
@@ -298,13 +297,14 @@ export const ViewLeadMarketingRecienCreado = ({
         >
           <TablePagination
             sx={{ backgroundColor: "#F4F0F0" }}
-            rowsPerPageOptions={[25, 50, 75, 100]}
+            rowsPerPageOptions={[10, 20, 75, 100]}
             component="div"
-            count={auxLeads.length}
+            count={paginationValue.count}
             rowsPerPage={rowsPerPage}
             page={page}
-            onPageChange={handleChangePage}
+            onPageChange={handleChangingPage}
             onRowsPerPageChange={handleChangeRowsPerPage}
+            
           />
           <Table stickyHeader>
             <TableHead sx={{ background: "black" }}>

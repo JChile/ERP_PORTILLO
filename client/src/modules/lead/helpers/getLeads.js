@@ -22,7 +22,11 @@ export const getLeadsByQuery = async (token, query) => {
     }
   }
   const { data, error } = await axios.get(URL, config)
-  if (error ) throw(error)
+  if (error ) {
+    console.log(data)
+    
+    
+  }
   return data
 }
 

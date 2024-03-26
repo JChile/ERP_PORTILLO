@@ -1306,7 +1306,6 @@ class LeadFilter(FilterSet):
     def filtrar_valor_calculado(self, queryset, name, value):
         historialDesasignacion = DesasignacionLeadAsesor.objects.all().order_by('lead_id','-fecha').distinct('lead_id').values_list('id', flat=True)
         historialDesasignacion = DesasignacionLeadAsesor.objects.filter(id__in = historialDesasignacion).filter(usuario = value)
-        print(DesasignacionLeadAsesorSerlializer(historialDesasignacion, many = True).data)
         leads = historialDesasignacion.values_list('lead_id', flat=True)
         return queryset.filter(id__in=leads)
 

@@ -6,4 +6,5 @@ admin.site.register(Categoria)
 admin.site.register(Proyecto)
 admin.site.register(PresupuestoProyecto)
 admin.site.register(GastoCampania)
+admin.site.register(Banco)
 

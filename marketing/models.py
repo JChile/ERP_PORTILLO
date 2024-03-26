@@ -27,6 +27,15 @@ class Proyecto(models.Model):
 
 
 
+class Banco(models.Model):
+    nombre = models.CharField(max_length=100, unique=True)
+    codigo = models.CharField(max_length=100, unique=True)
+    estado = models.ForeignKey(
+        EstadoRegistro, on_delete=models.SET_NULL, default='A', null=True)
+
+    def __str__(self):
+        return self.nombre
+
 class PresupuestoProyecto(models.Model):
     presupuestoSoles = models.FloatField(default=0)
     gastoTotalCampaniasSoles = models.FloatField(default=0)
@@ -35,6 +44,8 @@ class PresupuestoProyecto(models.Model):
     tipoCambioSoles =  models.FloatField(default=0)
     proyecto = models.ForeignKey(Proyecto, on_delete=models.CASCADE)
     fechaPresupuesto= models.DateField(default=date.today)
+    tarjeta = models.CharField(max_length=100, null=True, blank=True)
+    estado = models.ForeignKey(Banco, on_delete=models.SET_NULL, null=True)
     estado = models.ForeignKey(
         EstadoRegistro, on_delete=models.SET_NULL, default='A', null=True)
     usuarioCreador = models.ForeignKey(
@@ -43,6 +54,7 @@ class PresupuestoProyecto(models.Model):
         User, on_delete=models.SET_NULL,  null=True, blank=True, related_name='usuarioActualizadorPresupuestoProyecto')
     fecha_creacion = models.DateTimeField(default=timezone.now)
     fecha_actualizacion = models.DateTimeField(auto_now=True)
+
     def __str__(self):
         return self.proyecto.nombre + '-' + str(self.presupuestoDolares)
 

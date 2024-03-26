@@ -1275,6 +1275,7 @@ from django_filters import FilterSet, AllValuesFilter
 from django_filters import CharFilter, NumberFilter, AllValuesFilter, BooleanFilter, DateFilter, DateFromToRangeFilter
 
 class LeadFilter(FilterSet):
+
     celular = CharFilter(lookup_expr='icontains')
     celular2 = CharFilter(lookup_expr='icontains')
     nombre = CharFilter(lookup_expr='icontains')
@@ -1282,13 +1283,13 @@ class LeadFilter(FilterSet):
     campania = AllValuesFilter(field_name='campania__id')
     asesor = AllValuesFilter(field_name='asesor__id')
     estado = AllValuesFilter(field_name='estado__estado')
-    asignado = BooleanFilter()
-    recienCreado = BooleanFilter()
+    asignado = BooleanFilter(field_name='asignado')
+    recienCreado = BooleanFilter(field_name='recienCreado')
     estadoLead = AllValuesFilter(field_name='estadoLead__nombre')
     estadoSeparacionLead = AllValuesFilter(field_name='estadoSeparacionLead__id')
     objecion = AllValuesFilter(field_name='objecion__id')
     proyecto = AllValuesFilter(field_name='campania__proyecto')
-    importante =  BooleanFilter()
+    importante =  BooleanFilter(field_name='importante')
     horaRecepcion = DateFilter(field_name='horaRecepcion', lookup_expr='date')
     fecha_creacion = DateFilter(field_name='fecha_creacion', lookup_expr='date')
     fecha_asignacion = DateFilter(field_name='fecha_asignacion', lookup_expr='date')
@@ -1311,6 +1312,8 @@ class LeadViewPagination(generics.ListAPIView):
     #filterset_fields = ['campania','asesor','estado', 'asignado', 'recienCreado','estadoSeparacionLead','objecion']
     ordering_fields = ['fecha_creacion', 'fecha_actualizacion', 'fecha_asignacion','horaRecepcion']
     filterset_class = LeadFilter
+
+
 
 
     # def get_queryset(self):
@@ -1339,3 +1342,17 @@ class LeadViewPagination(generics.ListAPIView):
     #         pass
 
     #     return lead_queryset
+
+    def list(self, request, *args, **kwargs):
+        try:
+            queryset = self.filter_queryset(self.get_queryset())
+            page = self.paginate_queryset(queryset)
+
+            if page is not None:
+                serializer = self.get_serializer(page, many=True)
+                return self.get_paginated_response(serializer.data)
+
+            serializer = self.get_serializer(queryset, many=True)
+            return Response(serializer.data)
+        except Exception as e:
+            return Response({"result": []}, status=404)

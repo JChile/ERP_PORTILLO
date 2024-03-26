@@ -37,7 +37,7 @@ export const CustomMoreVerticalActions = ({
   return (
     <React.Fragment>
       {activeOnEdit && (
-        <FaRegEdit size={16} key={"Editar"} onClick={onEdit} className="inline-block mx-1 cursor-pointer shadow-lg hover:shadow-blue-900" color="blue"/>
+        <FaRegEdit size={20} key={"Editar"} onClick={onEdit} className="inline-block mx-1 cursor-pointer shadow-lg hover:shadow-blue-900" color="blue" />
       )}
       {activeOnDelete && (
         <DialogConfirmDeleteItem
@@ -48,7 +48,7 @@ export const CustomMoreVerticalActions = ({
         />
       )}
       {!activeOnDelete && activeOnActive && (
-        <FiCheckCircle size={16} key={"Activar"} onClick={onActive} className="inline-block mx-1 cursor-pointer shadow-lg hover:shadow-green-900" color="green" />
+        <FiCheckCircle size={20} key={"Activar"} onClick={onActive} className="inline-block mx-1 cursor-pointer shadow-lg hover:shadow-green-900" color="green" />
       )}
     </React.Fragment>
   );

@@ -1272,7 +1272,7 @@ class ProductoView(generics.ListAPIView):
 
 
 from django_filters import FilterSet, AllValuesFilter
-from django_filters import CharFilter, NumberFilter, AllValuesFilter, BooleanFilter, IsoDateTimeFilter
+from django_filters import CharFilter, NumberFilter, AllValuesFilter, BooleanFilter, DateFilter
 
 class LeadFilter(FilterSet):
     celular = CharFilter(lookup_expr='icontains')
@@ -1289,8 +1289,11 @@ class LeadFilter(FilterSet):
     objecion = AllValuesFilter(field_name='objecion__id')
     proyecto = AllValuesFilter(field_name='campania__proyecto')
     importante =  BooleanFilter()
-    horaRecepcion = IsoDateTimeFilter(field_name='horaRecepcion', lookup_expr='date')
-    fecha_creacion = IsoDateTimeFilter(field_name='fecha_creacion', lookup_expr='date')
+    horaRecepcion = DateFilter(field_name='horaRecepcion', lookup_expr='date')
+    fecha_creacion = DateFilter(field_name='fecha_creacion', lookup_expr='date')
+    fecha_asignacion = DateFilter(field_name='fecha_asignacion', lookup_expr='date')
+    fecha_desasignacion = DateFilter(field_name='fecha_desasignacion', lookup_expr='date')
+    fecha_actualizacion = DateFilter(field_name='fecha_actualizacion', lookup_expr='date')
 
     
     class Meta:

@@ -659,7 +659,8 @@ CREATE TABLE public.marketing_presupuestoproyecto (
     proyecto_id bigint NOT NULL,
     "usuarioActualizador_id" bigint,
     "usuarioCreador_id" bigint,
-    tarjeta character varying(100)
+    tarjeta character varying(100),
+    banco_id bigint
 );
 
 
@@ -2974,6 +2975,7 @@ COPY public.django_migrations (id, app, name, applied) FROM stdin;
 61	ventas	0009_estadoseparacionlead_lead_estadoseparacionlead	2024-03-18 17:24:35.123062-05
 62	ventas	0002_lead_producto	2024-03-20 14:29:41.84268-05
 63	marketing	0002_presupuestoproyecto_tarjeta_banco	2024-03-26 17:53:55.824493-05
+64	marketing	0003_presupuestoproyecto_banco	2024-03-26 18:03:38.85083-05
 \.
 
 
@@ -3045,9 +3047,9 @@ COPY public.marketing_gastocampania (id, "gastoSoles", "gastoDolares", "tipoCamb
 -- Data for Name: marketing_presupuestoproyecto; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public.marketing_presupuestoproyecto (id, "presupuestoSoles", "gastoTotalCampaniasSoles", "presupuestoDolares", "gastoTotalCampaniasDolares", "tipoCambioSoles", "fechaPresupuesto", fecha_creacion, fecha_actualizacion, estado_id, proyecto_id, "usuarioActualizador_id", "usuarioCreador_id", tarjeta) FROM stdin;
-1	18420	1842	5000	500	3.684	2024-03-17	2024-03-17 22:06:20.162866-05	2024-03-18 19:02:51.199812-05	A	1	\N	\N	\N
-3	3601.92	2925.54	938	761.8599999999999	3.84	2024-02-01	2024-03-18 18:47:09.507627-05	2024-03-18 19:05:50.647663-05	A	1	\N	\N	\N
+COPY public.marketing_presupuestoproyecto (id, "presupuestoSoles", "gastoTotalCampaniasSoles", "presupuestoDolares", "gastoTotalCampaniasDolares", "tipoCambioSoles", "fechaPresupuesto", fecha_creacion, fecha_actualizacion, estado_id, proyecto_id, "usuarioActualizador_id", "usuarioCreador_id", tarjeta, banco_id) FROM stdin;
+1	18420	1842	5000	500	3.684	2024-03-17	2024-03-17 22:06:20.162866-05	2024-03-18 19:02:51.199812-05	A	1	\N	\N	\N	\N
+3	3601.92	2925.54	938	761.8599999999999	3.84	2024-02-01	2024-03-18 18:47:09.507627-05	2024-03-18 19:05:50.647663-05	A	1	\N	\N	\N	\N
 \.
 
 
@@ -4459,7 +4461,7 @@ SELECT pg_catalog.setval('public.django_content_type_id_seq', 46, true);
 -- Name: django_migrations_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.django_migrations_id_seq', 63, true);
+SELECT pg_catalog.setval('public.django_migrations_id_seq', 64, true);
 
 
 --
@@ -5585,6 +5587,13 @@ CREATE INDEX "marketing_gastocampania_usuarioCreador_id_56a44e00" ON public.mark
 
 
 --
+-- Name: marketing_presupuestoproyecto_banco_id_42d29700; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE INDEX marketing_presupuestoproyecto_banco_id_42d29700 ON public.marketing_presupuestoproyecto USING btree (banco_id);
+
+
+--
 -- Name: marketing_presupuestoproyecto_estado_id_bc699b14; Type: INDEX; Schema: public; Owner: postgres
 --
 
@@ -6464,6 +6473,14 @@ ALTER TABLE ONLY public.marketing_gastocampania
 
 ALTER TABLE ONLY public.marketing_gastocampania
     ADD CONSTRAINT "marketing_gastocampa_usuarioCreador_id_56a44e00_fk_cuenta_us" FOREIGN KEY ("usuarioCreador_id") REFERENCES public.cuenta_user(id) DEFERRABLE INITIALLY DEFERRED;
+
+
+--
+-- Name: marketing_presupuestoproyecto marketing_presupuest_banco_id_42d29700_fk_marketing; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.marketing_presupuestoproyecto
+    ADD CONSTRAINT marketing_presupuest_banco_id_42d29700_fk_marketing FOREIGN KEY (banco_id) REFERENCES public.marketing_banco(id) DEFERRABLE INITIALLY DEFERRED;
 
 
 --

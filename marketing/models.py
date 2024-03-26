@@ -45,7 +45,7 @@ class PresupuestoProyecto(models.Model):
     proyecto = models.ForeignKey(Proyecto, on_delete=models.CASCADE)
     fechaPresupuesto= models.DateField(default=date.today)
     tarjeta = models.CharField(max_length=100, null=True, blank=True)
-    estado = models.ForeignKey(Banco, on_delete=models.SET_NULL, null=True)
+    banco = models.ForeignKey(Banco, on_delete=models.SET_NULL, null=True)
     estado = models.ForeignKey(
         EstadoRegistro, on_delete=models.SET_NULL, default='A', null=True)
     usuarioCreador = models.ForeignKey(

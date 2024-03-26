@@ -200,7 +200,6 @@ export const ViewLeadsNoAsignados = ({ startDate, endDate, flagReload, setFlagRe
 
       // se debe traer en un rango de 30 dias
       const rowData = await getLeadsByQuery(authTokens["access"], query)
-      console.log(rowData)
       setPaginationValue({count: rowData.count, next: rowData.next, previous: rowData.previous})
       const formatData = rowData.results.map((element) => {
         return {
@@ -239,6 +238,7 @@ export const ViewLeadsNoAsignados = ({ startDate, endDate, flagReload, setFlagRe
   useEffect(() => {
     traerInformacionLeadNoAsociados()
   }, [flagReload])
+
 
   return (
     <>

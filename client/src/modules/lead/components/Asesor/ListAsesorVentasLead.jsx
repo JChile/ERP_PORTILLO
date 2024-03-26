@@ -244,6 +244,11 @@ export const ListAsesorVentasLead = () => {
     }
   };
 
+  const handleChangingPage = (event, newPage) => {
+    handleChangePage(event, newPage)
+    setFlagReload(prev => !prev)
+  }
+
   useEffect(() => {
     traerLeadByAsesor();
   }, [flagReload]);
@@ -308,7 +313,7 @@ export const ListAsesorVentasLead = () => {
                 count={paginationValue.count}
                 rowsPerPage={rowsPerPage}
                 page={page}
-                onPageChange={handleChangePage}
+                onPageChange={handleChangingPage}
                 onRowsPerPageChange={handleChangeRowsPerPage}
               />
               <Table sx={{ minWidth: 700 }}>

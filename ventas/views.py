@@ -1272,7 +1272,7 @@ class ProductoView(generics.ListAPIView):
 
 
 from django_filters import FilterSet, AllValuesFilter
-from django_filters import CharFilter, NumberFilter, AllValuesFilter, BooleanFilter, DateFilter
+from django_filters import CharFilter, NumberFilter, AllValuesFilter, BooleanFilter, DateFilter, DateFromToRangeFilter
 
 class LeadFilter(FilterSet):
     celular = CharFilter(lookup_expr='icontains')
@@ -1294,6 +1294,7 @@ class LeadFilter(FilterSet):
     fecha_asignacion = DateFilter(field_name='fecha_asignacion', lookup_expr='date')
     fecha_desasignacion = DateFilter(field_name='fecha_desasignacion', lookup_expr='date')
     fecha_actualizacion = DateFilter(field_name='fecha_actualizacion', lookup_expr='date')
+    horaRecepcion_range = DateFromToRangeFilter(field_name='horaRecepcion', lookup_expr='date')
 
     
     class Meta:

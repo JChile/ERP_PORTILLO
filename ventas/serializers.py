@@ -163,6 +163,8 @@ class LeadBodySerializer(serializers.ModelSerializer):
     asesor = UserInfoSerializer()
     usuarioCreador= UserInfoSerializer()
     usuarioActualizador= UserInfoSerializer()
+    ultimoAsesor= serializers.SerializerMethodField()
+
     class Meta:
         model = Lead
         fields =  '__all__'
@@ -188,3 +190,13 @@ class LeadBodySerializer(serializers.ModelSerializer):
         asesor_logueado = self.context['request'].user.id  # Obtener el asesor logueado
         num_llamadas = Evento.objects.filter(asesor=asesor_logueado, lead=obj).count()
         return num_llamadas
+
+    def get_ultimoAsesor(self, obj):
+        asesor_logueado = self.context['request'].user.id  # Obtener el asesor logueado
+        ultimoAsesor = DesasignacionLeadAsesor.objects.filter(lead=obj).order_by('-fecha').first()
+        if ultimoAsesor != None:
+            ultimoAsesor_data = UserInfoSerializer(ultimoAsesor.usuario).data 
+        else:
+            ultimoAsesor_data = None
+
+        return ultimoAsesor_data

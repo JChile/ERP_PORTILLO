@@ -21,9 +21,19 @@ export const getLeadsByQuery = async (token, query) => {
       Authorization: `Bearer ${token}`
     }
   }
-  const { data, error } = await axios.get(URL, config)
-  if (error ) throw(error)
-  return data
+  try {
+    const resultPetition  = await axios.get(URL, config)
+    return resultPetition.data
+  }
+  catch (error ) {
+    console.log("error")
+    return {
+      previous: '',
+      next: '',
+      count: 0,
+      results: []
+    }
+  } 
 }
 
 /** Endpoints para realizar solitudes de leads por asesor,

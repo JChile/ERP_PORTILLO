@@ -206,7 +206,7 @@ export const ListAsesorVentasLead = () => {
   };
 
   const traerLeadByAsesor = async () => {
-    setFlagReset(false);
+    //setFlagReset(false);
     setVisibleProgress(true);
     setCountSelectedElements(0);
     try {

@@ -10,8 +10,8 @@ export const RowItemLeadMarketingRecienCreado = ({
   checkedElement,
   onChangeLead,
 }) => {
-  const { campania, id, proyecto } = item
-  //const { proyecto } = campania
+  const { campania, id, proyecto, estado } = item
+  const { estado: estadoValue } = estado
 
   const navigate = useNavigate()
 
@@ -35,7 +35,7 @@ export const RowItemLeadMarketingRecienCreado = ({
         />
         <CustomMoreVerticalActions
           onEdit={onEditItemSelected}
-          activeOnDelete={item["estado"] === "A"}
+          activeOnDelete={estadoValue === "A"}
           onActive={onChangeLeadSelected}
           onDelete={onChangeLeadSelected}
         />

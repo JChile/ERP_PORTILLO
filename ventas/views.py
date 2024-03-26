@@ -1344,4 +1344,4 @@ class LeadViewPagination(generics.ListAPIView):
             serializer = self.get_serializer(queryset, many=True)
             return Response(serializer.data)
         except Exception as e:
-            return Response({"result": []}, status=200)
+            return Response({"results": []}, status=200)

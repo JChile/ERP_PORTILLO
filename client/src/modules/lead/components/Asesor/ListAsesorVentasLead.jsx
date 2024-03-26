@@ -29,14 +29,15 @@ import { RowItemLeadsAsesor } from "./RowItemLeadsAsesor";
 import { MassActionsViewLeadsAsesor } from "./acciones-masivas/MassActionsViewLeadsAsesor";
 
 export const ListAsesorVentasLead = () => {
-  const { authTokens } = useContext(AuthContext);
-  const [leads, setLeads] = useState([]);
-  const [auxLeads, setAuxLeads] = useState([]);
-  const [checked, setChecked] = useState(false);
+  const { authTokens } = useContext(AuthContext)
+  const [leads, setLeads] = useState([])
+  const [auxLeads, setAuxLeads] = useState([])
+  const [checked, setChecked] = useState(false)
 
   // flag reset
   const [flagReset, setFlagReset] = useState();
   const [countSelectedElements, setCountSelectedElements] = useState(0);
+  const [paginationValue,setPaginationValue] = useState({count: 0, next: '', previous: ''});
 
   // pagination
   const {
@@ -112,48 +113,9 @@ export const ListAsesorVentasLead = () => {
   };
 
   const handledFilterData = () => {
-    setVisibleProgress(true);
-    const dataFilter = leads.filter((element) => {
-      const nombreElement = `${element["nombre"]
-        .toString()
-        .toLowerCase()} ${element["apellido"].toString().toLowerCase()}`;
-      const celularElement = element["celular"].toString().toLowerCase();
-      const proyectoElement = element["campania"]["proyecto"]["nombre"]
-        .toString()
-        .toLowerCase();
-      const importanteElement = element["importante"] ? "si" : "no"
-      const estadoLeadElement = element["estadoLead"]["nombre"].toString().toLowerCase();
-      const fechaAsignacionElement = formatDate_ISO861_to_date(
-        element["fecha_asignacion"]
-      );
-      const separacionLead = element["estadoSeparacionLead"]
-        ? element["estadoSeparacionLead"]["nombre"]
-        : "None";
-
-      if (
-        (filterData["nombre"] !== "" &&
-          !nombreElement.includes(filterData["nombre"].toLowerCase())) ||
-        (filterData["celular"] !== "" &&
-          !celularElement.includes(filterData["celular"].toLowerCase())) ||
-        (filterData["proyecto"] !== "" &&
-          !proyectoElement.includes(filterData["proyecto"].toLowerCase())) ||
-        (filterData["importante"] !== "" &&
-          !importanteElement.includes(filterData["importante"].toLowerCase())) ||
-        (filterData["fecha_asignacion"] !== "" &&
-          !fechaAsignacionElement.includes(filterData["fecha_asignacion"])) ||
-        (filterData["estadoLead"] !== "" &&
-          !estadoLeadElement.includes(filterData["estadoLead"].toLowerCase())) ||
-        (filterData["estadoSeparacionLead"] !== "" &&
-          !separacionLead.includes(filterData["estadoSeparacionLead"]))
-      ) {
-        return false;
-      }
-      return true;
-    });
-
-    setAuxLeads(dataFilter);
+    handleChangePage(null, 0)
+    setFlagReload(prev=> !prev)
     setFlagReset(true);
-    setVisibleProgress(false);
   };
 
   const handledResetDataFilter = () => {
@@ -246,21 +208,28 @@ export const ListAsesorVentasLead = () => {
     setVisibleProgress(true);
     setCountSelectedElements(0);
     try {
-      let query = 'estado=A';
-      //if (filterData['celular']) query += `celular=${filterData['celular']}`
-      //if (filterData['estadoLead']) 
-      if (startDate && endDate) {
-        query += `&desde=${startDate}T00:00:00&hasta=${endDate}T23:59:59`;
+      let query = `estado=A&page=${page+1}`
+      if (startDate && endDate) query += `&desde=${startDate}T00:00:00&hasta=${endDate}T23:59:59`;
+      if (filterData['celular']) query += `&celular=${filterData['celular']}`
+      if (filterData['estadoLead']) query += `&estadoLead=${filterData['estadoLead']}`
+      if (filterData['estadoSeparacionLead']) query += `&estadoSeparacionLead=${filterData['estadoSeparacionLead']}`
+      if (filterData['fecha_asignacion']) query += `&fecha_asignacion=${filterData['fecha_asignacion']}`
+      if (filterData['importante']) { 
+        let auxImportante = filterData['importante'] === 'Si' ? true : false
+        query += `&importante=${auxImportante}`
       }
+      if (filterData['nombre']) query += `&nombre=${filterData['nombre']}`
+      if (filterData['proyecto']) query += `&proyecto=${filterData['proyecto']}`  
 
-      const rowData = await getLeads(authTokens["access"], query);
-      const formatData = rowData.map((element) => {
+      const rowData = await getLeadsByQuery(authTokens["access"], query);
+      setPaginationValue({count: rowData.count, next: rowData.next, previous: rowData.previous})
+      const formatData = rowData.results.map((element) => {
         return {
           ...element,
           isSelected: false,
         };
       });
-      console.log(formatData);
+      //console.log(formatData);
       setLeads(formatData);
       setAuxLeads(formatData);
       setVisibleProgress(false);
@@ -336,7 +305,7 @@ export const ListAsesorVentasLead = () => {
                 sx={{ backgroundColor: "#F4F0F0" }}
                 rowsPerPageOptions={[25, 50, 75, 100]}
                 component="div"
-                count={auxLeads.length}
+                count={paginationValue.count}
                 rowsPerPage={rowsPerPage}
                 page={page}
                 onPageChange={handleChangePage}

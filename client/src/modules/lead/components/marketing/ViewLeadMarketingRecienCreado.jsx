@@ -39,7 +39,7 @@ export const ViewLeadMarketingRecienCreado = ({
   const [leads, setLeads] = useState([])
   const [auxLeads, setAuxLeads] = useState([])
   const [checked, setChecked] = useState(false)
-  const [paginationValue,setPaginationValue] = useState({count: 0, next: '', previous: ''});
+  const [paginationValue, setPaginationValue] = useState({ count: 0, next: '', previous: '' });
 
   // visible progress
   const [visibleProgress, setVisibleProgress] = useState(false)
@@ -51,7 +51,7 @@ export const ViewLeadMarketingRecienCreado = ({
     handleChangePage,
     handleChangeRowsPerPage,
     paginatedItems,
-  } = useCustomTablePagination(auxLeads, 10)
+  } = useCustomTablePagination(auxLeads, 25)
 
   const {
     feedbackCreate,
@@ -218,11 +218,11 @@ export const ViewLeadMarketingRecienCreado = ({
     setCountSelectedElements(0)
 
     try {
-      let query = `recienCreado=true&estado=A&page=${page+1}`
+      let query = `recienCreado=true&estado=A&page=${page + 1}&page_size=${rowsPerPage}&ordering=-fecha_creacion`
       if (startDate && endDate) query += `&desde=${startDate}T00:00:00&hasta=${endDate}T23:59:59`
       if (filterData['celular']) query += `&celular=${filterData['celular']}`
       if (filterData['nombre']) query += `&nombre=${filterData['nombre']}`
-      if (filterData['proyecto'])  query += `&proyecto=${filterData['proyecto']}`
+      if (filterData['proyecto']) query += `&proyecto=${filterData['proyecto']}`
       if (filterData['importante']) {
         let important = filterData['importante'] === 'Si' ? true : false
         query += `&importante=${important}`
@@ -230,13 +230,13 @@ export const ViewLeadMarketingRecienCreado = ({
       if (filterData['fecha_creacion']) {
         query += `&fecha_creacion=${filterData['fecha_creacion']}`
       }
-      if (filterData['horaRecepcion']){
+      if (filterData['horaRecepcion']) {
         query += `&horaRecepcion=${filterData['horaRecepcion']}`
       }
-      
+
 
       const rowData = await getLeadsByQuery(authTokens["access"], query)
-      setPaginationValue({count: rowData.count, next: rowData.next, previous: rowData.previous})
+      setPaginationValue({ count: rowData.count, next: rowData.next, previous: rowData.previous })
 
 
       const formatData = rowData.results.map((element) => {
@@ -261,6 +261,11 @@ export const ViewLeadMarketingRecienCreado = ({
 
   const handleChangingPage = (event, newPage) => {
     handleChangePage(event, newPage)
+    setFlagReload(prev => !prev)
+  }
+
+  const handleChangingRowsPerPage = (event) => {
+    handleChangeRowsPerPage(event)
     setFlagReload(prev => !prev)
   }
 
@@ -297,14 +302,14 @@ export const ViewLeadMarketingRecienCreado = ({
         >
           <TablePagination
             sx={{ backgroundColor: "#F4F0F0" }}
-            rowsPerPageOptions={[10, 20, 75, 100]}
+            rowsPerPageOptions={[25, 50, 75, 100]}
             component="div"
             count={paginationValue.count}
             rowsPerPage={rowsPerPage}
             page={page}
             onPageChange={handleChangingPage}
-            onRowsPerPageChange={handleChangeRowsPerPage}
-            
+            onRowsPerPageChange={handleChangingRowsPerPage}
+
           />
           <Table stickyHeader>
             <TableHead sx={{ background: "black" }}>

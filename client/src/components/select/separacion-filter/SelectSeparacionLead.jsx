@@ -52,7 +52,7 @@ export const SelectSeparacionLead = ({
           <em>None</em>
         </MenuItem>
         {options.map((element, index) => (
-          <MenuItem key={element.value} value={element.label}>
+          <MenuItem key={element.value} value={element.value}>
             {element.label}
           </MenuItem>
         ))}

@@ -1314,19 +1314,14 @@ class LeadViewPagination(generics.ListAPIView):
     filterset_class = LeadFilter
 
 
-
-
     # def get_queryset(self):
 
     #     fecha_limite = timezone.now() - timedelta(days=60)
-    #     desde = self.request.query_params.get('desde')
-    #     hasta = self.request.query_params.get('hasta')
+
     #     user = self.request.user
     #     lead_queryset = super().get_queryset()
-    #     if desde and hasta:
-    #         lead_queryset = lead_queryset.filter(horaRecepcion__range=[desde, hasta])
-    #     else:
-    #         lead_queryset = lead_queryset.filter(horaRecepcion__gte=fecha_limite)
+
+    #     lead_queryset = lead_queryset.filter(horaRecepcion__gte=fecha_limite)
         
     #     if user.groups.first().name == "marketing":
     #         pass
@@ -1340,7 +1335,7 @@ class LeadViewPagination(generics.ListAPIView):
     #     else:
     #         lead_queryset = {}
     #         pass
-
+        
     #     return lead_queryset
 
     def list(self, request, *args, **kwargs):
@@ -1355,4 +1350,4 @@ class LeadViewPagination(generics.ListAPIView):
             serializer = self.get_serializer(queryset, many=True)
             return Response(serializer.data)
         except Exception as e:
-            return Response({"result": []}, status=404)
+            return Response({"result": []}, status=200)

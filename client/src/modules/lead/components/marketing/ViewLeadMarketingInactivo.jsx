@@ -206,7 +206,7 @@ export const ViewLeadMarketingInactivo = ({
     setVisibleProgress(true)
     setCountSelectedElements(0)
     try {
-      let query = "estado=I"
+      let query = "estado=I&ordering=-fecha_creacion"
       if (startDate && endDate) query += `&desde=${startDate}T00:00:00&hasta=${endDate}T23:59:59`
       if (filterData['celular']) query += `&celular=${filterData['celular']}`
       if (filterData['asignado']) {

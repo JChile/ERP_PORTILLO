@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react"
-import { getLeads } from "../../helpers"
+import { getLeads, getLeadsByQuery } from "../../helpers"
 import { AuthContext } from "../../../../auth"
 import {
   Button,
@@ -29,8 +29,9 @@ import {
 import { MassActionsViewLeadsNoAsignados } from "./acciones-masivas/MassActionsViewLeadsNoAsignados"
 import { combinarErrores, formatDate_ISO861_to_date } from "../../../../utils"
 import SelectAsesor from "../../../../components/select/asesor-filter/SelectAsesor"
+import { getCurrentTime } from "../../utils/getCurrentTime"
 
-export const ViewLeadsNoAsignados = ({ startDate, endDate, flagReload }) => {
+export const ViewLeadsNoAsignados = ({ startDate, endDate, flagReload, setFlagReload }) => {
   // auth token
   const { authTokens } = useContext(AuthContext)
   // leads traidos de la peticion
@@ -56,6 +57,9 @@ export const ViewLeadsNoAsignados = ({ startDate, endDate, flagReload }) => {
   const [countSelectedElements, setCountSelectedElements] = useState(0)
   // visible progress
   const [visibleProgress, setVisibleProgress] = useState(true)
+  const [paginationValue,setPaginationValue] = useState({count: 0, next: '', previous: ''});
+
+
   // pagination
   const {
     page,
@@ -75,54 +79,9 @@ export const ViewLeadsNoAsignados = ({ startDate, endDate, flagReload }) => {
 
   // funcion para manejar los filtros
   const handledFilterData = () => {
-    setVisibleProgress(true)
-    const dataFilter = leadsNoAsignados.filter((element) => {
-      const celularElement = element["celular"].toString().toLowerCase()
-      const nombreElement = `${element["nombre"]
-        .toString()
-        .toLowerCase()} ${element["apellido"].toString().toLowerCase()}`
-      const proyectoElement = element["campania"]["proyecto"]["nombre"]
-        .toString()
-        .toLowerCase()
-      const estadoLeadElement = element["estadoLead"]["nombre"].toString().toLowerCase()
-      // Componente nombre completo
-      const asesorNombre = element["penultimo_asesor"]["first_name"]
-        .toString()
-        .toLowerCase()
-      const asesorApellido = element["penultimo_asesor"]["last_name"]
-        .toString()
-        .toLowerCase()
-
-      const asesorElement = `${asesorNombre} ${asesorApellido}`
-      const fechaDesasignacionElement = formatDate_ISO861_to_date(
-        element["fecha_desasignacion"]
-      )
-
-      // Verifica si alguna propiedad de filterData está vacía y omite el filtro
-      if (
-        (filterData["celular"] !== "" &&
-          !celularElement.includes(filterData["celular"].toLowerCase())) ||
-        (filterData["nombre"] !== "" &&
-          !nombreElement.includes(filterData["nombre"].toLowerCase())) ||
-        (filterData["proyecto"] !== "" &&
-          !proyectoElement.includes(filterData["proyecto"].toLowerCase())) ||
-        (filterData["estadoLead"] !== "" &&
-          !estadoLeadElement.includes(filterData["estadoLead"].toLowerCase())) ||
-        (filterData["asesor"] !== "" &&
-          !asesorElement.includes(filterData["asesor"].toLowerCase())) ||
-        (filterData["fecha_desasignacion"] !== "" &&
-          !fechaDesasignacionElement.includes(
-            filterData["fecha_desasignacion"].toLowerCase()
-          ))
-      ) {
-        return false
-      }
-
-      return true
-    })
-    setAuxLeadsNoAsignados(dataFilter)
+    handleChangePage(null, 0)
+    setFlagReload(prev=> !prev)
     setFlagReset(true)
-    setVisibleProgress(false)
   }
 
   // reseteamos la data
@@ -224,14 +183,26 @@ export const ViewLeadsNoAsignados = ({ startDate, endDate, flagReload }) => {
     setVisibleProgress(true)
     setCountSelectedElements(0)
     try {
-      let query = "asignado=False&estado=A&recienCreado=False"
+      let query = `asignado=false&estado=A&recienCreado=false&ordering=-fecha_desasignacion&page=${page+1}&page_size=${rowsPerPage}`
       if (startDate && endDate) {
-        query += `&desde=${startDate}T00:00:00&hasta=${endDate}T23:59:59`
+        query += `&horaRecepcion_range_after=${startDate}&horaRecepcion_range_before=${endDate}`
       }
+      else {
+        const rangeDate = getCurrentTime()
+        query += `&horaRecepcion_range_after=${rangeDate.startDate}&horaRecepcion_range_before=${rangeDate.endDate}`
+      }
+      if (filterData['celular']) query += `&celular=${filterData['celular']}`
+      if (filterData['nombre']) query += `&nombre=${filterData['nombre']}`
+      if (filterData['proyecto']) query += `&proyecto=${filterData['proyecto']}`
+      if (filterData['estadoLead']) query += `&estadoLead=${filterData['estadoLead']}`
+      if (filterData['fecha_desasignacion']) query += `&fecha_desasignacion=${filterData['fecha_desasignacion']}`
+      if (filterData['asesor']) query += `&ultimoAsesor=${filterData['asesor']}`
+
       // se debe traer en un rango de 30 dias
-      const result = await getLeads(authTokens["access"], query)
-      console.log(result)
-      const formatData = result.map((element) => {
+      const rowData = await getLeadsByQuery(authTokens["access"], query)
+      console.log(rowData)
+      setPaginationValue({count: rowData.count, next: rowData.next, previous: rowData.previous})
+      const formatData = rowData.results.map((element) => {
         return {
           ...element,
           isSelected: false,
@@ -252,6 +223,16 @@ export const ViewLeadsNoAsignados = ({ startDate, endDate, flagReload }) => {
       // ocultar el progress
       setVisibleProgress(false)
     }
+  }
+
+  const handleChangingPage = (event, newPage) => {
+    handleChangePage(event, newPage)
+    setFlagReload(prev => !prev)
+  }
+
+  const handleChangingRowsPerPage = (event) => {
+    handleChangeRowsPerPage(event)
+    setFlagReload(prev => !prev)
   }
 
   // eventos que se ejecutan antes de renderizar el componente
@@ -287,11 +268,11 @@ export const ViewLeadsNoAsignados = ({ startDate, endDate, flagReload }) => {
             sx={{ backgroundColor: "#F4F0F0" }}
             rowsPerPageOptions={[25, 50, 75, 100]}
             component="div"
-            count={auxLeadsNoAsignados.length}
+            count={paginationValue.count}
             rowsPerPage={rowsPerPage}
             page={page}
-            onPageChange={handleChangePage}
-            onRowsPerPageChange={handleChangeRowsPerPage}
+            onPageChange={handleChangingPage}
+            onRowsPerPageChange={handleChangingRowsPerPage}
           />
           <Table stickyHeader>
             <TableHead sx={{ background: "black" }}>

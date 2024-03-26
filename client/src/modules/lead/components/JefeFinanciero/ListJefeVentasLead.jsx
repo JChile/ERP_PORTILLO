@@ -108,6 +108,7 @@ const ListJefeVentasLead = () => {
             startDate={startDate}
             endDate={endDate}
             flagReload={flagReload}
+            setFlagReload={setFlagReload}
           />
         </CustomTabPanel>
         <CustomTabPanel value={value} index={1}>
@@ -115,6 +116,7 @@ const ListJefeVentasLead = () => {
             startDate={startDate}
             endDate={endDate}
             flagReload={flagReload}
+            setFlagReload={setFlagReload}
           />
         </CustomTabPanel>
       </div>

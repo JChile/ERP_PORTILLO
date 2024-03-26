@@ -6,11 +6,9 @@ import { formatDate_ISO861_to_formatdate } from "../../../../utils"
 import { FaEdit } from "react-icons/fa"
 
 export const RowItemLeadNoAsignado = ({ item, checkedElement }) => {
-  const { id, campania, estadoLead } = item
-  const { proyecto } = campania
+  const { id, campania, estadoLead, proyecto } = item
 
   const navigate = useNavigate()
-
   const onEditItemSelected = () => {
     navigate(`/lead/update/${id}`)
   }

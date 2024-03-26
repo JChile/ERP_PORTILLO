@@ -27,6 +27,7 @@ import { MassActionsViewLeadsMarketing } from "./acciones-masivas/MassActionsVie
 import { combinarErrores, formatDate_ISO861_to_date } from "../../../../utils"
 import { deleteLead, getLeads, getLeadsByQuery } from "../../helpers"
 import SelectAsesor from "../../../../components/select/asesor-filter/SelectAsesor"
+import { getCurrentTime } from "../../utils/getCurrentTime"
 
 export const ViewLeadMarketingActivo = ({ startDate, endDate, flagReload, setFlagReload }) => {
   const { authTokens } = useContext(AuthContext)
@@ -205,8 +206,12 @@ export const ViewLeadMarketingActivo = ({ startDate, endDate, flagReload, setFla
     setVisibleProgress(true)
     setCountSelectedElements(0)
     try {
-      let query = `asignado=true&estado=A&page=${page + 1}&page_size=${rowsPerPage}&ordering=-fecha_creacion`
-      if (startDate && endDate) query += `&desde=${startDate}T00:00:00&hasta=${endDate}T23:59:59`
+      let query = `asignado=true&estado=A&page=${page + 1}&page_size=${rowsPerPage}&ordering=-fecha_asignacion`
+      if (startDate && endDate) query += `&horaRecepcion_range_after=${startDate}&horaRecepcion_range_before=${endDate}`
+      else {
+        const rangeDate = getCurrentTime()
+        query += `&horaRecepcion_range_after=${rangeDate.startDate}&horaRecepcion_range_before=${rangeDate.endDate}`
+      }
       if (filterData['celular']) query += `&celular=${filterData['celular']}`
       if (filterData['nombre']) query += `&nombre=${filterData['nombre']}`
       if (filterData['proyecto']) query += `&proyecto=${filterData['proyecto']}`

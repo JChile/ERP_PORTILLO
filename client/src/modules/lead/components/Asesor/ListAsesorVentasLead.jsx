@@ -27,6 +27,7 @@ import { MdClose, MdFilterAlt, MdSearch } from "react-icons/md";
 import { SelectBoolean, SelectEstadoLead, SelectProyecto } from "../../../../components/select";
 import { RowItemLeadsAsesor } from "./RowItemLeadsAsesor";
 import { MassActionsViewLeadsAsesor } from "./acciones-masivas/MassActionsViewLeadsAsesor";
+import { getCurrentTime } from "../../utils/getCurrentTime";
 
 export const ListAsesorVentasLead = () => {
   const { authTokens } = useContext(AuthContext)
@@ -95,7 +96,7 @@ export const ListAsesorVentasLead = () => {
     // cambiamos el flag de reload
     handleChangePage(null, 0)
     setFlagReload((prev) => !prev)
-    setFlagReset(true)
+    //setFlagReset(true)
   };
 
   // funcion para cambiar fecha desde
@@ -117,7 +118,7 @@ export const ListAsesorVentasLead = () => {
   const handledFilterData = () => {
     handleChangePage(null, 0)
     setFlagReload(prev=> !prev)
-    setFlagReset(true);
+    setFlagReset(true)
   };
 
   const handledResetDataFilter = () => {
@@ -210,8 +211,22 @@ export const ListAsesorVentasLead = () => {
     setVisibleProgress(true);
     setCountSelectedElements(0);
     try {
-      let query = `estado=A&page=${page+1}&page_size=${rowsPerPage}&ordering=-fecha_creacion`
-      if (startDate && endDate) query += `&desde=${startDate}T00:00:00&hasta=${endDate}T23:59:59`;
+      let query = `estado=A&page=${page+1}&page_size=${rowsPerPage}&ordering=-fecha_asignacion`
+      /**
+       * Logica: En caso de que el usuario seleccione una fecha de inicia y fin,
+       * se inicia el filtro. Caso contrario, se automatiza para que se tenga un diferencia
+       * de 30 dias.
+       */
+      if (startDate && endDate) {
+        query += `&horaRecepcion_range_after=${startDate}&horaRecepcion_range_before=${endDate}`
+      }
+      else {
+        const rangeDate = getCurrentTime()
+        query += `&horaRecepcion_range_after=${rangeDate.startDate}&horaRecepcion_range_before=${rangeDate.endDate}`
+      }
+      /**
+       * 
+       */
       if (filterData['celular']) query += `&celular=${filterData['celular']}`
       if (filterData['estadoLead']) query += `&estadoLead=${filterData['estadoLead']}`
       if (filterData['estadoSeparacionLead']) query += `&estadoSeparacionLead=${filterData['estadoSeparacionLead']}`

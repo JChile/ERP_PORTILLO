@@ -13,7 +13,7 @@ import {
 } from "@mui/material";
 import React, { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../../../../auth";
-import { getLeads } from "../../helpers";
+import { getLeads, getLeadsByQuery } from "../../helpers";
 import RowItemLeadAsignado from "./RowItemLeadAsignado";
 import { MdClose, MdSearch } from "react-icons/md";
 import {
@@ -30,12 +30,15 @@ import {
   CustomDatePickerFilter,
 } from "../../../../components";
 import { SelectSeparacionLead } from "../../../../components/select/separacion-filter/SelectSeparacionLead";
+import { getCurrentTime } from "../../utils/getCurrentTime";
 
-const ViewLeadAsignados = ({ startDate, endDate, flagReload }) => {
+const ViewLeadAsignados = ({ startDate, endDate, flagReload, setFlagReload }) => {
   const { authTokens } = useContext(AuthContext);
   const [leadAsignados, setLeadsAsignados] = useState([]);
   const [auxLeadsAsignados, setAuxLeadsAsignados] = useState([]);
   const [checked, setChecked] = useState(false);
+  const [paginationValue, setPaginationValue] = useState({ count: 0, next: '', previous: '' });
+
   // numero de items seleccionados
   const [filterData, setFilterData] = useState({
     celular: "",
@@ -80,60 +83,10 @@ const ViewLeadAsignados = ({ startDate, endDate, flagReload }) => {
   } = useAlertMUI();
 
   const handledFilterData = () => {
-    setVisibleProgress(true);
-    const dataFilter = leadAsignados.filter((element) => {
-      const celularElement = element["celular"].toString().toLowerCase();
-      const nombreElement = `${element["nombre"]
-        .toString()
-        .toLowerCase()} ${element["apellido"].toString().toLowerCase()}`;
-      const proyectoElement = element["campania"]["proyecto"]["nombre"]
-        .toString()
-        .toLowerCase();
-      const estadoLeadElement = element["estadoLead"]["nombre"]
-        .toString()
-        .toLowerCase();
-      const separacionLead = element["estadoSeparacionLead"]
-        ? element["estadoSeparacionLead"]["nombre"]
-        : "None";
-      // Componente nombre completo
-      const asesorNombre = element["asesor"]["first_name"]
-        .toString()
-        .toLowerCase();
-      const asesorApellido = element["asesor"]["last_name"]
-        .toString()
-        .toLowerCase();
-      const asesorElement = `${asesorNombre} ${asesorApellido}`;
-      const fechaAsignacionElement = formatDate_ISO861_to_date(
-        element["fecha_asignacion"]
-      );
-
-      if (
-        (filterData["celular"] !== "" &&
-          !celularElement.includes(filterData["celular"].toLowerCase())) ||
-        (filterData["nombre"] !== "" &&
-          !nombreElement.includes(filterData["nombre"].toLowerCase())) ||
-        (filterData["proyecto"] !== "" &&
-          !proyectoElement.includes(filterData["proyecto"].toLowerCase())) ||
-        (filterData["estadoLead"] !== "" &&
-          !estadoLeadElement.includes(
-            filterData["estadoLead"].toLowerCase()
-          )) ||
-        (filterData["asesor"] !== "" &&
-          !asesorElement.includes(filterData["asesor"].toLowerCase())) ||
-        (filterData["fecha_asignacion"] !== "" &&
-          !fechaAsignacionElement.includes(filterData["fecha_asignacion"])) ||
-        (filterData["estadoSeparacionLead"] !== "" &&
-          !separacionLead.includes(filterData["estadoSeparacionLead"]))
-      ) {
-        return false;
-      }
-      return true;
-    });
-
-    setAuxLeadsAsignados(dataFilter);
-    setFlagReset(true);
-    setVisibleProgress(false);
-  };
+    handleChangePage(null, 0)
+    setFlagReload(prev => !prev)
+    setFlagReset(true)
+  }
 
   const handledResetDataFilter = () => {
     const resetDate = leadAsignados.map((element) => {
@@ -227,13 +180,28 @@ const ViewLeadAsignados = ({ startDate, endDate, flagReload }) => {
     setVisibleProgress(true);
     setCountSelectedElements(0);
     try {
-      let query = "asignado=True&estado=A";
-      if (startDate && endDate) {
-        query += `&desde=${startDate}T00:00:00&hasta=${endDate}T23:59:59`;
+      let query = `asignado=true&estado=A&page=${page+1}&page_size=${rowsPerPage}&ordering=-fecha_asignacion`;
+      //horaRecepcion_range_after
+      //horaRecepcion_range_before
+      if (startDate && endDate) query += `&horaRecepcion_range_after=${startDate}&horaRecepcion_range_before=${endDate}`
+      else {
+        const rangeDate = getCurrentTime()
+        query += `&horaRecepcion_range_after=${rangeDate.startDate}&horaRecepcion_range_before=${rangeDate.endDate}`
       }
+      if (filterData['celular']) query += `&celular=${filterData['celular']}`
+      if (filterData['nombre']) query += `&nombre=${filterData['nombre']}`
+      if (filterData['proyecto']) query += `&proyecto=${filterData['proyecto']}`
+      if (filterData['estadoLead']) {
+        let estadoLead = filterData['estadoLead']
+        query += `&estadoLead=${estadoLead}`
+      }
+      if (filterData['asesor']) query += `&asesor=${filterData['asesor']}`
+      if (filterData['fecha_asignacion']) query += `&fecha_asignacion=${filterData['fecha_asignacion']}`
+      if (filterData['estadoSeparacionLead']) query += `&estadoSeparacionLead=${filterData['estadoSeparacionLead']}`
 
-      const rowData = await getLeads(authTokens["access"], query);
-      const formatData = rowData.map((element) => {
+      const rowData = await getLeadsByQuery(authTokens["access"], query);
+      setPaginationValue({ count: rowData.count, next: rowData.next, previous: rowData.previous })
+      const formatData = rowData.results.map((element) => {
         return {
           ...element,
           isSelected: false,
@@ -252,6 +220,18 @@ const ViewLeadAsignados = ({ startDate, endDate, flagReload }) => {
       setVisibleProgress(false);
     }
   };
+
+   // handle change page
+   const handleChangingPage = (event, newPage) => {
+    handleChangePage(event, newPage)
+    setFlagReload(prev => !prev)
+  }
+
+  // handle change page rows
+  const handleChangingRowsPerPage = (event) => {
+    handleChangeRowsPerPage(event)
+    setFlagReload(prev => !prev)
+  }
 
   useEffect(() => {
     traerLeadAsiganados();
@@ -286,11 +266,11 @@ const ViewLeadAsignados = ({ startDate, endDate, flagReload }) => {
             sx={{ backgroundColor: "#F4F0F0" }}
             rowsPerPageOptions={[25, 50, 75, 100]}
             component="div"
-            count={auxLeadsAsignados.length}
+            count={paginationValue.count}
             rowsPerPage={rowsPerPage}
             page={page}
-            onPageChange={handleChangePage}
-            onRowsPerPageChange={handleChangeRowsPerPage}
+            onPageChange={handleChangingPage}
+            onRowsPerPageChange={handleChangingRowsPerPage}
           />
           <Table stickyHeader>
             <TableHead sx={{ background: "black" }}>

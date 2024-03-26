@@ -7,8 +7,7 @@ import { FaCalendarAlt, FaEdit, FaWhatsapp } from "react-icons/fa"
 import { IoIosCall } from "react-icons/io"
 
 const RowItemLeadAsignado = ({ item, checkedElement }) => {
-  const { id, campania, estadoLead } = item
-  const { proyecto } = campania
+  const { id, campania, estadoLead, proyecto } = item
 
   const navigate = useNavigate()
 
@@ -67,7 +66,7 @@ const RowItemLeadAsignado = ({ item, checkedElement }) => {
           </div>
           <div className="flex gap-x-2 gap-y-1 justify-center">
             <IoIosCall />
-            <span>{item["numLlamandas"]}</span>
+            <span>{item["numLlamadas"]}</span>
           </div>
           <div className="flex gap-x-2 gap-y-1 justify-center">
             <FaCalendarAlt />

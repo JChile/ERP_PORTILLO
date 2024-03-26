@@ -27,6 +27,7 @@ import { MassActionsViewLeadsMarketing } from "./acciones-masivas/MassActionsVie
 import { combinarErrores, formatDate_ISO861_to_date } from "../../../../utils"
 import { deleteLead, getLeads, getLeadsByQuery } from "../../helpers"
 import { RowItemLeadMarketingRecienCreado } from "./RowItemLeadMarketingRecienCreado"
+import { getCurrentTime } from "../../utils/getCurrentTime"
 
 export const ViewLeadMarketingRecienCreado = ({
   startDate,
@@ -219,7 +220,11 @@ export const ViewLeadMarketingRecienCreado = ({
 
     try {
       let query = `recienCreado=true&estado=A&page=${page + 1}&page_size=${rowsPerPage}&ordering=-fecha_creacion`
-      if (startDate && endDate) query += `&desde=${startDate}T00:00:00&hasta=${endDate}T23:59:59`
+      if (startDate && endDate) query += `&horaRecepcion_range_after=${startDate}&horaRecepcion_range_before=${endDate}`
+      else {
+        const rangeDate = getCurrentTime()
+        query += `&horaRecepcion_range_after=${rangeDate.startDate}&horaRecepcion_range_before=${rangeDate.endDate}`
+      }
       if (filterData['celular']) query += `&celular=${filterData['celular']}`
       if (filterData['nombre']) query += `&nombre=${filterData['nombre']}`
       if (filterData['proyecto']) query += `&proyecto=${filterData['proyecto']}`

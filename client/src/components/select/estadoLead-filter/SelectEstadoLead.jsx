@@ -15,7 +15,6 @@ export const SelectEstadoLead = ({
 
   const obtenerEstadoLeads = async () => {
     const result = await getEstadoLead(authTokens["access"])
-    console.log(result)
     const formatSelect = result.map((element) => {
       return {
         value: element.nombre,

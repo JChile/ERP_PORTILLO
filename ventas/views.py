@@ -1284,13 +1284,16 @@ class LeadFilter(FilterSet):
     estado = AllValuesFilter(field_name='estado__estado')
     asignado = BooleanFilter()
     recienCreado = BooleanFilter()
-    #estadoLead = AllValuesFilter(field_name='')
+    estadoLead = AllValuesFilter(field_name='estadoLead__nombre')
     estadoSeparacionLead = AllValuesFilter(field_name='estadoSeparacionLead__id')
     objecion = AllValuesFilter(field_name='objecion__id')
     proyecto = AllValuesFilter(field_name='campania__proyecto')
     importante =  BooleanFilter()
-    horaRecepcion = DateFilter(field_name='horaRecepcion', lookup_expr='startswith')
-    fecha_creacion = DateFilter(field_name='fecha_creacion', lookup_expr='startswith')
+    horaRecepcion = DateFilter(field_name='horaRecepcion', lookup_expr='date')
+    fecha_creacion = DateFilter(field_name='fecha_creacion', lookup_expr='date')
+    fecha_asignacion = DateFilter(field_name='fecha_asignacion', lookup_expr='date')
+    fecha_desasignacion = DateFilter(field_name='fecha_desasignacion', lookup_expr='date')
+    fecha_actualizacion = DateFilter(field_name='fecha_actualizacion', lookup_expr='date')
 
     
     class Meta:

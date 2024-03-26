@@ -46,7 +46,7 @@ export const ViewLeadMarketingActivo = ({ startDate, endDate, flagReload, setFla
     handleChangePage,
     handleChangeRowsPerPage,
     paginatedItems,
-  } = useCustomTablePagination(auxLeads, 25)
+  } = useCustomTablePagination(auxLeads, 10)
 
   const {
     feedbackCreate,
@@ -281,7 +281,7 @@ export const ViewLeadMarketingActivo = ({ startDate, endDate, flagReload, setFla
         >
           <TablePagination
             sx={{ backgroundColor: "#F4F0F0" }}
-            rowsPerPageOptions={[25, 50, 75, 100]}
+            rowsPerPageOptions={[10, 50, 75, 100]}
             component="div"
             count={paginationValue.count}
             rowsPerPage={rowsPerPage}

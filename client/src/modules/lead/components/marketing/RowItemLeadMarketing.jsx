@@ -12,9 +12,6 @@ export const RowItemLeadMarketing = ({
   onChangeLead,
 }) => {
   const { campania, id, estadoLead, asesor, proyecto } = item
-
-  console.log(item)
-
   const navigate = useNavigate()
 
   const onChangeLeadSelected = () => {

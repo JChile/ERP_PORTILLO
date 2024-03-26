@@ -93,7 +93,9 @@ export const ListAsesorVentasLead = () => {
   // change flag
   const onSubmitFilter = (event) => {
     // cambiamos el flag de reload
-    setFlagReload((prev) => !prev);
+    handleChangePage(null, 0)
+    setFlagReload((prev) => !prev)
+    setFlagReset(true)
   };
 
   // funcion para cambiar fecha desde
@@ -208,7 +210,7 @@ export const ListAsesorVentasLead = () => {
     setVisibleProgress(true);
     setCountSelectedElements(0);
     try {
-      let query = `estado=A&page=${page+1}`
+      let query = `estado=A&page=${page+1}&page_size=${rowsPerPage}&ordering=-fecha_creacion`
       if (startDate && endDate) query += `&desde=${startDate}T00:00:00&hasta=${endDate}T23:59:59`;
       if (filterData['celular']) query += `&celular=${filterData['celular']}`
       if (filterData['estadoLead']) query += `&estadoLead=${filterData['estadoLead']}`
@@ -248,6 +250,12 @@ export const ListAsesorVentasLead = () => {
     handleChangePage(event, newPage)
     setFlagReload(prev => !prev)
   }
+
+  const handleChangingRowsPerPage = (event) => {
+    handleChangeRowsPerPage(event)
+    setFlagReload(prev => !prev)
+  }
+
 
   useEffect(() => {
     traerLeadByAsesor();
@@ -314,7 +322,7 @@ export const ListAsesorVentasLead = () => {
                 rowsPerPage={rowsPerPage}
                 page={page}
                 onPageChange={handleChangingPage}
-                onRowsPerPageChange={handleChangeRowsPerPage}
+                onRowsPerPageChange={handleChangingRowsPerPage}
               />
               <Table sx={{ minWidth: 700 }}>
                 <TableHead sx={{ background: "black" }}>

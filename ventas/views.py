@@ -1275,6 +1275,7 @@ from django_filters import FilterSet, AllValuesFilter
 from django_filters import CharFilter, NumberFilter, AllValuesFilter, BooleanFilter, DateFilter, DateFromToRangeFilter
 
 class LeadFilter(FilterSet):
+
     celular = CharFilter(lookup_expr='icontains')
     celular2 = CharFilter(lookup_expr='icontains')
     nombre = CharFilter(lookup_expr='icontains')
@@ -1282,13 +1283,13 @@ class LeadFilter(FilterSet):
     campania = AllValuesFilter(field_name='campania__id')
     asesor = AllValuesFilter(field_name='asesor__id')
     estado = AllValuesFilter(field_name='estado__estado')
-    asignado = BooleanFilter()
-    recienCreado = BooleanFilter()
+    asignado = BooleanFilter(field_name='asignado')
+    recienCreado = BooleanFilter(field_name='recienCreado')
     estadoLead = AllValuesFilter(field_name='estadoLead__nombre')
     estadoSeparacionLead = AllValuesFilter(field_name='estadoSeparacionLead__id')
     objecion = AllValuesFilter(field_name='objecion__id')
     proyecto = AllValuesFilter(field_name='campania__proyecto')
-    importante =  BooleanFilter()
+    importante =  BooleanFilter(field_name='importante')
     horaRecepcion = DateFilter(field_name='horaRecepcion', lookup_expr='date')
     fecha_creacion = DateFilter(field_name='fecha_creacion', lookup_expr='date')
     fecha_asignacion = DateFilter(field_name='fecha_asignacion', lookup_expr='date')
@@ -1302,7 +1303,7 @@ class LeadFilter(FilterSet):
         fields = []
 
 
-@permission_classes([IsAuthenticated])
+#@permission_classes([IsAuthenticated])
 class LeadViewPagination(generics.ListAPIView):
     serializer_class = LeadBodySerializer
     queryset = Lead.objects.all() 
@@ -1314,17 +1315,8 @@ class LeadViewPagination(generics.ListAPIView):
 
 
     def get_queryset(self):
-
-        fecha_limite = timezone.now() - timedelta(days=60)
-        desde = self.request.query_params.get('desde')
-        hasta = self.request.query_params.get('hasta')
         user = self.request.user
         lead_queryset = super().get_queryset()
-        if desde and hasta:
-            lead_queryset = lead_queryset.filter(horaRecepcion__range=[desde, hasta])
-        else:
-            lead_queryset = lead_queryset.filter(horaRecepcion__gte=fecha_limite)
-        
         if user.groups.first().name == "marketing":
             pass
         elif user.groups.first().name == "asesor":
@@ -1337,5 +1329,7 @@ class LeadViewPagination(generics.ListAPIView):
         else:
             lead_queryset = {}
             pass
-
+        
         return lead_queryset
+
+

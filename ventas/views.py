@@ -1314,29 +1314,23 @@ class LeadViewPagination(generics.ListAPIView):
     filterset_class = LeadFilter
 
 
-    # def get_queryset(self):
-
-    #     fecha_limite = timezone.now() - timedelta(days=60)
-
-    #     user = self.request.user
-    #     lead_queryset = super().get_queryset()
-
-    #     lead_queryset = lead_queryset.filter(horaRecepcion__gte=fecha_limite)
+    def get_queryset(self):
+        user = self.request.user
+        lead_queryset = super().get_queryset()
+        if user.groups.first().name == "marketing":
+            pass
+        elif user.groups.first().name == "asesor":
+            if user.isAdmin == True:
+                pass
+            else:
+                lead_queryset = lead_queryset.filter(asesor=user.id)
+        elif user.groups.first().name == "administrador":
+            pass
+        else:
+            lead_queryset = {}
+            pass
         
-    #     if user.groups.first().name == "marketing":
-    #         pass
-    #     elif user.groups.first().name == "asesor":
-    #         if user.isAdmin == True:
-    #             pass
-    #         else:
-    #             lead_queryset = lead_queryset.filter(asesor=user.id)
-    #     elif user.groups.first().name == "administrador":
-    #         pass
-    #     else:
-    #         lead_queryset = {}
-    #         pass
-        
-    #     return lead_queryset
+        return lead_queryset
 
     def list(self, request, *args, **kwargs):
         try:

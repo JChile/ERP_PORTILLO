@@ -9,7 +9,8 @@ import { FaCalendarAlt } from "react-icons/fa";
 
 
 export const RowItemLeadsAsesor = ({ item, checkedElement }) => {
-  const { campania, id, estadoLead, proyecto } = item;
+  const { id, estadoLead, proyecto, estado } = item;
+  // const { estado: estadoValue } = estado
 
   const navigate = useNavigate();
 

@@ -34,7 +34,7 @@ export const ViewLeadMarketingActivo = ({ startDate, endDate, flagReload, setFla
   const [leads, setLeads] = useState([])
   const [auxLeads, setAuxLeads] = useState([])
   const [checked, setChecked] = useState(false)
-  const [paginationValue,setPaginationValue] = useState({count: 0, next: '', previous: ''});
+  const [paginationValue, setPaginationValue] = useState({ count: 0, next: '', previous: '' });
 
   // visible progress
   const [visibleProgress, setVisibleProgress] = useState(false)
@@ -46,7 +46,7 @@ export const ViewLeadMarketingActivo = ({ startDate, endDate, flagReload, setFla
     handleChangePage,
     handleChangeRowsPerPage,
     paginatedItems,
-  } = useCustomTablePagination(auxLeads, 10)
+  } = useCustomTablePagination(auxLeads, 25)
 
   const {
     feedbackCreate,
@@ -62,7 +62,7 @@ export const ViewLeadMarketingActivo = ({ startDate, endDate, flagReload, setFla
   // flag reset
   const [flagReset, setFlagReset] = useState()
   const [countSelectedElements, setCountSelectedElements] = useState(0)
-  
+
 
   // numero de items seleccionados
   const [filterData, setFilterData] = useState({
@@ -205,7 +205,7 @@ export const ViewLeadMarketingActivo = ({ startDate, endDate, flagReload, setFla
     setVisibleProgress(true)
     setCountSelectedElements(0)
     try {
-      let query = `asignado=true&estado=A&page=${page+1}&ordering=-fecha_creacion`
+      let query = `asignado=true&estado=A&page=${page + 1}&page_size=${rowsPerPage}&ordering=-fecha_creacion`
       if (startDate && endDate) query += `&desde=${startDate}T00:00:00&hasta=${endDate}T23:59:59`
       if (filterData['celular']) query += `&celular=${filterData['celular']}`
       if (filterData['nombre']) query += `&nombre=${filterData['nombre']}`
@@ -214,13 +214,13 @@ export const ViewLeadMarketingActivo = ({ startDate, endDate, flagReload, setFla
         let estadoLead = filterData['estadoLead']
         query += `&estadoLead=${estadoLead}`
       }
-      if (filterData['horaRecepcion']){
+      if (filterData['horaRecepcion']) {
         query += `&horaRecepcion=${filterData['horaRecepcion']}`
       }
-      if (filterData['asesor']) query += `&asesor=${filterData['asesor']}`      
+      if (filterData['asesor']) query += `&asesor=${filterData['asesor']}`
 
       const rowData = await getLeadsByQuery(authTokens["access"], query)
-      setPaginationValue({count: rowData.count, next: rowData.next, previous: rowData.previous})
+      setPaginationValue({ count: rowData.count, next: rowData.next, previous: rowData.previous })
 
       const formatData = rowData.results.map((element) => {
         return {
@@ -242,8 +242,15 @@ export const ViewLeadMarketingActivo = ({ startDate, endDate, flagReload, setFla
     }
   }
 
+  // handle change page
   const handleChangingPage = (event, newPage) => {
     handleChangePage(event, newPage)
+    setFlagReload(prev => !prev)
+  }
+
+  // handle change page rows
+  const handleChangingRowsPerPage = (event) => {
+    handleChangeRowsPerPage(event)
     setFlagReload(prev => !prev)
   }
 
@@ -281,13 +288,14 @@ export const ViewLeadMarketingActivo = ({ startDate, endDate, flagReload, setFla
         >
           <TablePagination
             sx={{ backgroundColor: "#F4F0F0" }}
-            rowsPerPageOptions={[10, 50, 75, 100]}
+            rowsPerPageOptions={[25, 50, 75, 100]}
             component="div"
             count={paginationValue.count}
             rowsPerPage={rowsPerPage}
             page={page}
             onPageChange={handleChangingPage}
-            onRowsPerPageChange={handleChangeRowsPerPage}
+            // onRowsPerPageChange={handleChangeRowsPerPage}
+            onRowsPerPageChange={handleChangingRowsPerPage}
           />
           <Table stickyHeader>
             <TableHead sx={{ background: "black" }}>
@@ -403,7 +411,7 @@ export const ViewLeadMarketingActivo = ({ startDate, endDate, flagReload, setFla
                   />
                 </TableCell>
                 <TableCell>
-                  <SelectAsesor 
+                  <SelectAsesor
                     filterName="asesor"
                     onNewInput={handledFilterSelectValues}
                     defaultValue={asesor}

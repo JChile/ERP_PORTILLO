@@ -1275,7 +1275,7 @@ from django_filters import FilterSet, AllValuesFilter
 from django_filters import CharFilter, NumberFilter, AllValuesFilter, BooleanFilter, DateFilter, DateFromToRangeFilter
 
 class LeadFilter(FilterSet):
-
+#941679269
     celular = CharFilter(lookup_expr='icontains')
     celular2 = CharFilter(lookup_expr='icontains')
     nombre = CharFilter(lookup_expr='icontains')
@@ -1296,12 +1296,19 @@ class LeadFilter(FilterSet):
     fecha_desasignacion = DateFilter(field_name='fecha_desasignacion', lookup_expr='date')
     fecha_actualizacion = DateFilter(field_name='fecha_actualizacion', lookup_expr='date')
     horaRecepcion_range = DateFromToRangeFilter(field_name='horaRecepcion', lookup_expr='date')
+    ultimoAsesor = NumberFilter(method='filtrar_valor_calculado')
 
     
     class Meta:
         model = Lead
-        fields = []
+        fields = ['ultimoAsesor']
 
+    def filtrar_valor_calculado(self, queryset, name, value):
+        historialDesasignacion = DesasignacionLeadAsesor.objects.all().order_by('lead_id','-fecha').distinct('lead_id').values_list('id', flat=True)
+        historialDesasignacion = DesasignacionLeadAsesor.objects.filter(id__in = historialDesasignacion).filter(usuario = value)
+        print(DesasignacionLeadAsesorSerlializer(historialDesasignacion, many = True).data)
+        leads = historialDesasignacion.values_list('lead_id', flat=True)
+        return queryset.filter(id__in=leads)
 
 #@permission_classes([IsAuthenticated])
 class LeadViewPagination(generics.ListAPIView):
@@ -1317,17 +1324,20 @@ class LeadViewPagination(generics.ListAPIView):
     def get_queryset(self):
         user = self.request.user
         lead_queryset = super().get_queryset()
-        if user.groups.first().name == "marketing":
-            pass
-        elif user.groups.first().name == "asesor":
-            if user.isAdmin == True:
+        try:
+            if user.groups.first().name == "marketing":
+                pass
+            elif user.groups.first().name == "asesor":
+                if user.isAdmin == True:
+                    pass
+                else:
+                    lead_queryset = lead_queryset.filter(asesor=user.id)
+            elif user.groups.first().name == "administrador":
                 pass
             else:
-                lead_queryset = lead_queryset.filter(asesor=user.id)
-        elif user.groups.first().name == "administrador":
-            pass
-        else:
-            lead_queryset = {}
+                lead_queryset = {}
+                pass
+        except:
             pass
         
         return lead_queryset

@@ -218,7 +218,7 @@ export const ViewLeadMarketingRecienCreado = ({
     setCountSelectedElements(0)
 
     try {
-      let query = `recienCreado=true&estado=A&page=${page+1}`
+      let query = `recienCreado=true&estado=A&page=${page+1}&ordering=-fecha_creacion`
       if (startDate && endDate) query += `&desde=${startDate}T00:00:00&hasta=${endDate}T23:59:59`
       if (filterData['celular']) query += `&celular=${filterData['celular']}`
       if (filterData['nombre']) query += `&nombre=${filterData['nombre']}`

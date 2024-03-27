@@ -34,20 +34,18 @@ import { getCurrentTime } from "../../utils/getCurrentTime"
 export const ViewLeadsNoAsignados = ({ startDate, endDate, flagReload, setFlagReload }) => {
   // auth token
   const { authTokens } = useContext(AuthContext)
-  // leads traidos de la peticion
-  const [leadsNoAsignados, setLeadsNoAsignados] = useState([])
   // leads filtrados
   const [auxLeadsNoAsignados, setAuxLeadsNoAsignados] = useState([])
   // option check all
   const [checked, setChecked] = React.useState(false)
   // filtros
   const [filterData, setFilterData] = useState({
-    celular: "",
-    nombre: "",
-    proyecto: "",
-    asesor: "",
-    estadoLead: "",
-    fecha_desasignacion: "",
+    celular: '',
+    nombre: '',
+    proyecto: '',
+    estadoLead: '',
+    asesor: '',
+    fecha_desasignacion: '',
   })
   const { celular, nombre, proyecto, asesor, estadoLead, fecha_desasignacion } = filterData
 
@@ -57,7 +55,7 @@ export const ViewLeadsNoAsignados = ({ startDate, endDate, flagReload, setFlagRe
   const [countSelectedElements, setCountSelectedElements] = useState(0)
   // visible progress
   const [visibleProgress, setVisibleProgress] = useState(true)
-  const [paginationValue,setPaginationValue] = useState({count: 0, next: '', previous: ''});
+  const [paginationValue, setPaginationValue] = useState({ count: 0, next: '', previous: '' });
 
 
   // pagination
@@ -80,31 +78,24 @@ export const ViewLeadsNoAsignados = ({ startDate, endDate, flagReload, setFlagRe
   // funcion para manejar los filtros
   const handledFilterData = () => {
     handleChangePage(null, 0)
-    setFlagReload(prev=> !prev)
+    setFlagReload(prev => !prev)
     setFlagReset(true)
   }
 
   // reseteamos la data
   const handledResetDataFilter = () => {
-    // primero reseteamos los valores
-    const resetData = leadsNoAsignados.map((element) => {
-      return {
-        ...element,
-        isSelected: false,
-      }
-    })
-    setAuxLeadsNoAsignados(resetData)
     //luego reseteamos los filtros
     setFilterData({
-      celular: "",
-      estadoLead: "",
-      nombre: "",
-      proyecto: "",
-      asesor: "",
-      fecha_desasignacion: "",
+      celular: '',
+      nombre: '',
+      proyecto: '',
+      estadoLead: '',
+      asesor: '',
+      fecha_desasignacion: '',
     })
     // cambiamos el flag de reset
     setFlagReset(false)
+    setFlagReload(prev => !prev)
   }
 
   // manejar filtros para campos de valor
@@ -183,13 +174,13 @@ export const ViewLeadsNoAsignados = ({ startDate, endDate, flagReload, setFlagRe
     setVisibleProgress(true)
     setCountSelectedElements(0)
     try {
-      let query = `asignado=false&estado=A&recienCreado=false&ordering=-fecha_desasignacion&page=${page+1}&page_size=${rowsPerPage}`
+      let query = `asignado=false&estado=A&recienCreado=false&ordering=-fecha_desasignacion&page=${page + 1}&page_size=${rowsPerPage}`
       if (startDate && endDate) {
-        query += `&horaRecepcion_range_after=${startDate}&horaRecepcion_range_before=${endDate}`
+        query += `&fecha_desasignacion_range_after=${startDate}&fecha_desasignacion_range_before=${endDate}`
       }
       else {
         const rangeDate = getCurrentTime()
-        query += `&horaRecepcion_range_after=${rangeDate.startDate}&horaRecepcion_range_before=${rangeDate.endDate}`
+        query += `&fecha_desasignacion_range_after=${rangeDate.startDate}&fecha_desasignacion_range_before=${rangeDate.endDate}`
       }
       if (filterData['celular']) query += `&celular=${filterData['celular']}`
       if (filterData['nombre']) query += `&nombre=${filterData['nombre']}`
@@ -200,14 +191,13 @@ export const ViewLeadsNoAsignados = ({ startDate, endDate, flagReload, setFlagRe
 
       // se debe traer en un rango de 30 dias
       const rowData = await getLeadsByQuery(authTokens["access"], query)
-      setPaginationValue({count: rowData.count, next: rowData.next, previous: rowData.previous})
+      setPaginationValue({ count: rowData.count, next: rowData.next, previous: rowData.previous })
       const formatData = rowData.results.map((element) => {
         return {
           ...element,
           isSelected: false,
         }
       })
-      setLeadsNoAsignados(formatData)
       setAuxLeadsNoAsignados(formatData)
       // ocultar el progress
       setVisibleProgress(false)

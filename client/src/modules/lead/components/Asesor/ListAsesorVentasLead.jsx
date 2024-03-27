@@ -31,14 +31,13 @@ import { getCurrentTime } from "../../utils/getCurrentTime";
 
 export const ListAsesorVentasLead = () => {
   const { authTokens } = useContext(AuthContext)
-  const [leads, setLeads] = useState([])
   const [auxLeads, setAuxLeads] = useState([])
   const [checked, setChecked] = useState(false)
 
   // flag reset
   const [flagReset, setFlagReset] = useState();
   const [countSelectedElements, setCountSelectedElements] = useState(0);
-  const [paginationValue,setPaginationValue] = useState({count: 0, next: '', previous: ''});
+  const [paginationValue, setPaginationValue] = useState({ count: 0, next: '', previous: '' });
 
   // pagination
   const {
@@ -62,23 +61,23 @@ export const ListAsesorVentasLead = () => {
 
   // numero de items seleccionados
   const [filterData, setFilterData] = useState({
-    nombre: "",
-    celular: "",
-    proyecto: "",
-    importante: "",
-    estadoLead: "",
-    fecha_asignacion: "",
-    estadoSeparacionLead: "",
+    celular: '',
+    nombre: '',
+    proyecto: '',
+    importante: '',
+    estadoLead: '',
+    estadoSeparacionLead: '',
+    fecha_asignacion: '',
   });
 
   const {
-    nombre,
     celular,
-    importante,
+    nombre,
     proyecto,
+    importante,
     estadoLead,
+    estadoSeparacionLead,
     fecha_asignacion,
-    estadoSeparacionLead
   } = filterData;
 
   // flag reload
@@ -117,26 +116,23 @@ export const ListAsesorVentasLead = () => {
 
   const handledFilterData = () => {
     handleChangePage(null, 0)
-    setFlagReload(prev=> !prev)
+    setFlagReload(prev => !prev)
     setFlagReset(true)
   };
 
   const handledResetDataFilter = () => {
-    const resetDate = leads.map((element) => {
-      return { ...element, isSelected: false };
-    });
-    setAuxLeads(resetDate);
     // reset filtros
     setFilterData({
-      nombre: "",
-      celular: "",
-      proyecto: "",
-      importante: "",
-      estadoLead: "",
-      fecha_asignacion: "",
-      estadoSeparacionLead: ""
+      celular: '',
+      nombre: '',
+      proyecto: '',
+      importante: '',
+      estadoLead: '',
+      estadoSeparacionLead: '',
+      fecha_asignacion: '',
     });
     setFlagReset(false);
+    setFlagReload(prev => !prev)
   };
 
   // manejador de filtros para select values
@@ -211,7 +207,7 @@ export const ListAsesorVentasLead = () => {
     setVisibleProgress(true);
     setCountSelectedElements(0);
     try {
-      let query = `estado=A&page=${page+1}&page_size=${rowsPerPage}&ordering=-fecha_asignacion`
+      let query = `estado=A&page=${page + 1}&page_size=${rowsPerPage}&ordering=-horaRecepcion`
       /**
        * Logica: En caso de que el usuario seleccione una fecha de inicia y fin,
        * se inicia el filtro. Caso contrario, se automatiza para que se tenga un diferencia
@@ -224,30 +220,26 @@ export const ListAsesorVentasLead = () => {
         const rangeDate = getCurrentTime()
         query += `&horaRecepcion_range_after=${rangeDate.startDate}&horaRecepcion_range_before=${rangeDate.endDate}`
       }
-      /**
-       * 
-       */
+
       if (filterData['celular']) query += `&celular=${filterData['celular']}`
       if (filterData['estadoLead']) query += `&estadoLead=${filterData['estadoLead']}`
       if (filterData['estadoSeparacionLead']) query += `&estadoSeparacionLead=${filterData['estadoSeparacionLead']}`
       if (filterData['fecha_asignacion']) query += `&fecha_asignacion=${filterData['fecha_asignacion']}`
-      if (filterData['importante']) { 
+      if (filterData['importante']) {
         let auxImportante = filterData['importante'] === 'Si' ? true : false
         query += `&importante=${auxImportante}`
       }
       if (filterData['nombre']) query += `&nombre=${filterData['nombre']}`
-      if (filterData['proyecto']) query += `&proyecto=${filterData['proyecto']}`  
+      if (filterData['proyecto']) query += `&proyecto=${filterData['proyecto']}`
 
       const rowData = await getLeadsByQuery(authTokens["access"], query);
-      setPaginationValue({count: rowData.count, next: rowData.next, previous: rowData.previous})
+      setPaginationValue({ count: rowData.count, next: rowData.next, previous: rowData.previous })
       const formatData = rowData.results.map((element) => {
         return {
           ...element,
           isSelected: false,
         };
       });
-      //console.log(formatData);
-      setLeads(formatData);
       setAuxLeads(formatData);
       setVisibleProgress(false);
     } catch (error) {
@@ -270,7 +262,6 @@ export const ListAsesorVentasLead = () => {
     handleChangeRowsPerPage(event)
     setFlagReload(prev => !prev)
   }
-
 
   useEffect(() => {
     traerLeadByAsesor();

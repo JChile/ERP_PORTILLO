@@ -214,11 +214,11 @@ export const ListAsesorVentasLead = () => {
        * de 30 dias.
        */
       if (startDate && endDate) {
-        query += `&horaRecepcion_range_after=${startDate}&horaRecepcion_range_before=${endDate}`
+        query += `&fecha_asignacion_range_after=${startDate}&fecha_asignacion_range_before=${endDate}`
       }
       else {
         const rangeDate = getCurrentTime()
-        query += `&horaRecepcion_range_after=${rangeDate.startDate}&horaRecepcion_range_before=${rangeDate.endDate}`
+        query += `&fecha_asignacion_range_after=${rangeDate.startDate}&fecha_asignacion_range_before=${rangeDate.endDate}`
       }
 
       if (filterData['celular']) query += `&celular=${filterData['celular']}`

@@ -176,11 +176,11 @@ export const ViewLeadsNoAsignados = ({ startDate, endDate, flagReload, setFlagRe
     try {
       let query = `asignado=false&estado=A&recienCreado=false&ordering=-fecha_desasignacion&page=${page + 1}&page_size=${rowsPerPage}`
       if (startDate && endDate) {
-        query += `&horaRecepcion_range_after=${startDate}&horaRecepcion_range_before=${endDate}`
+        query += `&fecha_desasignacion_range_after=${startDate}&fecha_desasignacion_range_before=${endDate}`
       }
       else {
         const rangeDate = getCurrentTime()
-        query += `&horaRecepcion_range_after=${rangeDate.startDate}&horaRecepcion_range_before=${rangeDate.endDate}`
+        query += `&fecha_desasignacion_range_after=${rangeDate.startDate}&fecha_desasignacion_range_before=${rangeDate.endDate}`
       }
       if (filterData['celular']) query += `&celular=${filterData['celular']}`
       if (filterData['nombre']) query += `&nombre=${filterData['nombre']}`

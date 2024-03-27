@@ -224,7 +224,7 @@ export const ListAsesorVentasLead = () => {
       if (filterData['celular']) query += `&celular=${filterData['celular']}`
       if (filterData['estadoLead']) query += `&estadoLead=${filterData['estadoLead']}`
       if (filterData['estadoSeparacionLead']) query += `&estadoSeparacionLead=${filterData['estadoSeparacionLead']}`
-      if (filterData['fecha_asignacion']) query += `&fecha_asignacion=${filterData['fecha_asignacion']}`
+      if (filterData['fecha_asignacion']) query += `&fecha_asignacion_range_after=${filterData['fecha_asignacion']}&fecha_asignacion_range_before=${filterData['fecha_asignacion']}`
       if (filterData['importante']) {
         let auxImportante = filterData['importante'] === 'Si' ? true : false
         query += `&importante=${auxImportante}`
@@ -322,7 +322,7 @@ export const ListAsesorVentasLead = () => {
             >
               <TablePagination
                 sx={{ backgroundColor: "#F4F0F0" }}
-                rowsPerPageOptions={[25, 50, 75, 100]}
+                rowsPerPageOptions={[25, 50, 75, 100, 500]}
                 component="div"
                 count={paginationValue.count}
                 rowsPerPage={rowsPerPage}

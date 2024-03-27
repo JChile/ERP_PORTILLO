@@ -229,10 +229,10 @@ export const ViewLeadMarketingRecienCreado = ({
         query += `&importante=${important}`
       }
       if (filterData['fecha_creacion']) {
-        query += `&fecha_creacion=${filterData['fecha_creacion']}`
+        query += `&fecha_creacion_range_after=${filterData['fecha_creacion']}&fecha_creacion_range_before=${filterData['fecha_creacion']}`
       }
       if (filterData['horaRecepcion']) {
-        query += `&horaRecepcion=${filterData['horaRecepcion']}`
+        query += `&horaRecepcion_range_after=${filterData['horaRecepcion']}&horaRecepcion_range_before=${filterData['horaRecepcion']}`
       }
 
 
@@ -302,7 +302,7 @@ export const ViewLeadMarketingRecienCreado = ({
         >
           <TablePagination
             sx={{ backgroundColor: "#F4F0F0" }}
-            rowsPerPageOptions={[25, 50, 75, 100]}
+            rowsPerPageOptions={[25, 50, 75, 100, 500]}
             component="div"
             count={paginationValue.count}
             rowsPerPage={rowsPerPage}

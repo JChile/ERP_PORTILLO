@@ -216,10 +216,11 @@ export const ViewLeadMarketingActivo = ({ startDate, endDate, flagReload, setFla
         query += `&estadoLead=${estadoLead}`
       }
       if (filterData['horaRecepcion']) {
-        query += `&horaRecepcion=${filterData['horaRecepcion']}`
+        console.log("------->>>"+filterData['horaRecepcion'])
+        query += `&horaRecepcion_range_after=${filterData['horaRecepcion']}&horaRecepcion_range_before=${filterData['horaRecepcion']}`
       }
       if (filterData['fechaAsignacion']) {
-        query += `&fechaAsignacion=${filterData['fechaAsignacion']}`
+        query += `&fecha_asignacion_range_after=${filterData['fechaAsignacion']}&fecha_asignacion_range_before=${filterData['fechaAsignacion']}`
       }
       if (filterData['asesor']) query += `&asesor=${filterData['asesor']}`
 
@@ -291,7 +292,7 @@ export const ViewLeadMarketingActivo = ({ startDate, endDate, flagReload, setFla
         >
           <TablePagination
             sx={{ backgroundColor: "#F4F0F0" }}
-            rowsPerPageOptions={[25, 50, 75, 100]}
+            rowsPerPageOptions={[25, 50, 75, 100, 500]}
             component="div"
             count={paginationValue.count}
             rowsPerPage={rowsPerPage}
@@ -406,13 +407,7 @@ export const ViewLeadMarketingActivo = ({ startDate, endDate, flagReload, setFla
                     defaultValue={asesor}
                   />
                 </TableCell>
-                <TableCell>
-                  <CustomDatePickerFilter
-                    onNewFecha={handledFilterDateValues}
-                    filterName="horaRecepcion"
-                    defaultValue={horaRecepcion}
-                  />
-                </TableCell>
+
                 <TableCell>
                   <CustomDatePickerFilter
                     onNewFecha={handledFilterDateValues}
@@ -420,6 +415,15 @@ export const ViewLeadMarketingActivo = ({ startDate, endDate, flagReload, setFla
                     defaultValue={fechaAsignacion}
                   />
                 </TableCell>
+
+                <TableCell>
+                  <CustomDatePickerFilter
+                    onNewFecha={handledFilterDateValues}
+                    filterName="horaRecepcion"
+                    defaultValue={horaRecepcion}
+                  />
+                </TableCell>
+
               </TableRow>
               {paginatedItems.map((item, index) => (
                 <RowItemLeadMarketing

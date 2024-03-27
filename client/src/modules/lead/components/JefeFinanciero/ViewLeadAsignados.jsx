@@ -189,7 +189,7 @@ const ViewLeadAsignados = ({ startDate, endDate, flagReload, setFlagReload }) =>
         query += `&estadoLead=${estadoLead}`
       }
       if (filterData['asesor']) query += `&asesor=${filterData['asesor']}`
-      if (filterData['fecha_asignacion']) query += `&fecha_asignacion=${filterData['fecha_asignacion']}`
+      if (filterData['fecha_asignacion']) query += `&fecha_asignacion_range_after=${filterData['fecha_asignacion']}&fecha_asignacion_range_before=${filterData['fecha_asignacion']}`
       if (filterData['estadoSeparacionLead']) query += `&estadoSeparacionLead=${filterData['estadoSeparacionLead']}`
 
       const rowData = await getLeadsByQuery(authTokens["access"], query);
@@ -256,7 +256,7 @@ const ViewLeadAsignados = ({ startDate, endDate, flagReload, setFlagReload }) =>
         >
           <TablePagination
             sx={{ backgroundColor: "#F4F0F0" }}
-            rowsPerPageOptions={[25, 50, 75, 100]}
+            rowsPerPageOptions={[25, 50, 75, 100, 500]}
             component="div"
             count={paginationValue.count}
             rowsPerPage={rowsPerPage}

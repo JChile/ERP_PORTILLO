@@ -32,7 +32,7 @@ def get_or_none(classmodel, **kwargs):
 class LargeResultsSetPagination(PageNumberPagination):
     page_size = 10
     page_size_query_param = 'page_size'
-    max_page_size = 100
+    max_page_size = 500
 
 
 @permission_classes([IsAuthenticated])
@@ -1272,7 +1272,7 @@ class ProductoView(generics.ListAPIView):
 
 
 from django_filters import FilterSet, AllValuesFilter
-from django_filters import CharFilter, NumberFilter, AllValuesFilter, BooleanFilter, DateFilter, DateFromToRangeFilter
+from django_filters import CharFilter, NumberFilter, AllValuesFilter, BooleanFilter, DateFilter, DateFromToRangeFilter, IsoDateTimeFilter
 
 class LeadFilter(FilterSet):
 #941679269
@@ -1290,16 +1290,16 @@ class LeadFilter(FilterSet):
     objecion = AllValuesFilter(field_name='objecion__id')
     proyecto = AllValuesFilter(field_name='campania__proyecto')
     importante =  BooleanFilter(field_name='importante')
-    horaRecepcion = DateFilter(field_name='horaRecepcion', lookup_expr='date')
-    fecha_creacion = DateFilter(field_name='fecha_creacion', lookup_expr='date')
-    fecha_asignacion = DateFilter(field_name='fecha_asignacion', lookup_expr='date')
-    fecha_desasignacion = DateFilter(field_name='fecha_desasignacion', lookup_expr='date')
-    fecha_actualizacion = DateFilter(field_name='fecha_actualizacion', lookup_expr='date')
+    # horaRecepcion = DateFilter(field_name='horaRecepcion', lookup_expr='date')
+    # fecha_creacion = DateFilter(field_name='fecha_creacion', lookup_expr='date')
+    # fecha_asignacion = DateFilter(field_name='fecha_asignacion', lookup_expr='date')
+    # fecha_desasignacion = DateFilter(field_name='fecha_desasignacion', lookup_expr='date')
+    # fecha_actualizacion = DateFilter(field_name='fecha_actualizacion', lookup_expr='date')
     horaRecepcion_range = DateFromToRangeFilter(field_name='horaRecepcion', lookup_expr='date')
     fecha_asignacion_range = DateFromToRangeFilter(field_name='fecha_asignacion', lookup_expr='date')
     fecha_desasignacion_range = DateFromToRangeFilter(field_name='fecha_desasignacion', lookup_expr='date')
-
-
+    fecha_creacion_range = DateFromToRangeFilter(field_name='fecha_creacion', lookup_expr='date')
+    fecha_actualizacion_range = DateFromToRangeFilter(field_name='fecha_actualizacion', lookup_expr='date')
     ultimoAsesor = NumberFilter(method='filtrar_valor_calculado')
 
     

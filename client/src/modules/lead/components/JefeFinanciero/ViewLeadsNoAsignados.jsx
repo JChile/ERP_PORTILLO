@@ -186,7 +186,7 @@ export const ViewLeadsNoAsignados = ({ startDate, endDate, flagReload, setFlagRe
       if (filterData['nombre']) query += `&nombre=${filterData['nombre']}`
       if (filterData['proyecto']) query += `&proyecto=${filterData['proyecto']}`
       if (filterData['estadoLead']) query += `&estadoLead=${filterData['estadoLead']}`
-      if (filterData['fecha_desasignacion']) query += `&fecha_desasignacion=${filterData['fecha_desasignacion']}`
+      if (filterData['fecha_desasignacion']) query += `&fecha_desasignacion_range_after=${filterData['fecha_desasignacion']}&fecha_desasignacion_range_before=${filterData['fecha_desasignacion']}`
       if (filterData['asesor']) query += `&ultimoAsesor=${filterData['asesor']}`
 
       // se debe traer en un rango de 30 dias
@@ -256,7 +256,7 @@ export const ViewLeadsNoAsignados = ({ startDate, endDate, flagReload, setFlagRe
           {/* PAGINACION DE LA TABLA */}
           <TablePagination
             sx={{ backgroundColor: "#F4F0F0" }}
-            rowsPerPageOptions={[25, 50, 75, 100]}
+            rowsPerPageOptions={[25, 50, 75, 100, 500]}
             component="div"
             count={paginationValue.count}
             rowsPerPage={rowsPerPage}

@@ -36,7 +36,6 @@ export const ViewLeadMarketingInactivo = ({
 }) => {
   const { authTokens } = useContext(AuthContext)
 
-  const [leads, setLeads] = useState([])
   const [auxLeads, setAuxLeads] = useState([])
   const [checked, setChecked] = useState(false)
   const [paginationValue, setPaginationValue] = useState({ count: 0, next: '', previous: '' });
@@ -70,12 +69,12 @@ export const ViewLeadMarketingInactivo = ({
 
   // numero de items seleccionados
   const [filterData, setFilterData] = useState({
-    celular: "",
-    nombre: "",
-    proyecto: "",
-    asignado: "",
-    horaRecepcion: "",
-    fecha_creacion: "",
+    celular: '',
+    nombre: '',
+    proyecto: '',
+    asignado: '',
+    horaRecepcion: '',
+    fecha_creacion: '',
   })
 
   const { celular, nombre, asignado, proyecto, horaRecepcion, fecha_creacion } =
@@ -88,20 +87,17 @@ export const ViewLeadMarketingInactivo = ({
   }
 
   const handledResetDataFilter = () => {
-    const resetDate = leads.map((element) => {
-      return { ...element, isSelected: false }
-    })
-    setAuxLeads(resetDate)
     // reset filtros
     setFilterData({
-      celular: "",
-      nombre: "",
-      proyecto: "",
-      asignado: "",
-      horaRecepcion: "",
-      fecha_creacion: "",
+      celular: '',
+      nombre: '',
+      proyecto: '',
+      asignado: '',
+      horaRecepcion: '',
+      fecha_creacion: '',
     })
     setFlagReset(false)
+    setFlagReload(prev => !prev)
   }
 
   // manejador de filtros para select values
@@ -231,7 +227,6 @@ export const ViewLeadMarketingInactivo = ({
           isSelected: false,
         }
       })
-      setLeads(formatData)
       setAuxLeads(formatData)
       setVisibleProgress(false)
     } catch (error) {

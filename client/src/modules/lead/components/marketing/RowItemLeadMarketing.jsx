@@ -68,28 +68,16 @@ export const RowItemLeadMarketing = ({
       <TableCell>{proyecto["nombre"]}</TableCell>
       <TableCell>{campania["nombre"]}</TableCell>
       <TableCell align="center">
-        {item["asignado"] === true ? (
-          <FiCheckCircle
-            color="green"
-            style={{ margin: "auto", display: "block", fontSize: "20px" }}
-          />
-        ) : (
-          <FiXCircle
-            color="red"
-            style={{ margin: "auto", display: "block", fontSize: "20px" }}
-          />
-        )}
-      </TableCell>
-      <TableCell align="center">
         <span style={{ backgroundColor: estadoLead["color"] }} className={`inline-block px-2 py-1 text-sm font-semibold leading-none rounded-full text-white`}>
           {estadoLead["nombre"]}
         </span>
       </TableCell>
       <TableCell>
-        {formatDate_ISO861_to_formatdate(item["horaRecepcion"])}
-      </TableCell>
-      <TableCell>
         {`${asesor["first_name"]} ${asesor["last_name"]}`}
+      </TableCell>
+      <TableCell>{formatDate_ISO861_to_formatdate(item["fecha_asignacion"])}</TableCell>
+      <TableCell>
+        {formatDate_ISO861_to_formatdate(item["horaRecepcion"])}
       </TableCell>
     </TableRow>
   )

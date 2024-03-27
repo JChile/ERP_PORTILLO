@@ -37,7 +37,6 @@ export const ViewLeadMarketingRecienCreado = ({
 }) => {
   const { authTokens } = useContext(AuthContext)
 
-  const [leads, setLeads] = useState([])
   const [auxLeads, setAuxLeads] = useState([])
   const [checked, setChecked] = useState(false)
   const [paginationValue, setPaginationValue] = useState({ count: 0, next: '', previous: '' });
@@ -71,12 +70,12 @@ export const ViewLeadMarketingRecienCreado = ({
 
   // numero de items seleccionados
   const [filterData, setFilterData] = useState({
-    celular: "",
-    nombre: "",
-    proyecto: "",
-    importante: "",
-    horaRecepcion: "",
-    fecha_creacion: "",
+    celular: '',
+    nombre: '',
+    proyecto: '',
+    importante: '',
+    horaRecepcion: '',
+    fecha_creacion: '',
   })
 
   const { celular, nombre, proyecto, importante, horaRecepcion, fecha_creacion } = filterData
@@ -93,20 +92,17 @@ export const ViewLeadMarketingRecienCreado = ({
   }
 
   const handledResetDataFilter = () => {
-    const resetDate = leads.map((element) => {
-      return { ...element, isSelected: false }
-    })
-    setAuxLeads(resetDate)
     // reset filtros
     setFilterData({
-      celular: "",
-      nombre: "",
-      proyecto: "",
-      importante: "",
-      horaRecepcion: "",
-      fecha_creacion: "",
+      celular: '',
+      nombre: '',
+      proyecto: '',
+      importante: '',
+      horaRecepcion: '',
+      fecha_creacion: '',
     })
     setFlagReset(false)
+    setFlagReload(prev => !prev)
   }
 
   // manejador de filtros para select values
@@ -219,7 +215,7 @@ export const ViewLeadMarketingRecienCreado = ({
     setCountSelectedElements(0)
 
     try {
-      let query = `recienCreado=true&estado=A&page=${page + 1}&page_size=${rowsPerPage}&ordering=-fecha_creacion`
+      let query = `recienCreado=true&estado=A&page=${page + 1}&page_size=${rowsPerPage}&ordering=-horaRecepcion`
       if (startDate && endDate) query += `&horaRecepcion_range_after=${startDate}&horaRecepcion_range_before=${endDate}`
       else {
         const rangeDate = getCurrentTime()
@@ -250,7 +246,6 @@ export const ViewLeadMarketingRecienCreado = ({
           isSelected: false,
         }
       })
-      setLeads(formatData)
       setAuxLeads(formatData)
       setVisibleProgress(false)
     } catch (error) {
@@ -337,7 +332,7 @@ export const ViewLeadMarketingRecienCreado = ({
                 <TableCell>Nombre</TableCell>
                 <TableCell>Proyecto</TableCell>
                 <TableCell>Campaña</TableCell>
-                <TableCell>Importante</TableCell>
+                <TableCell align="center">Importante</TableCell>
                 <TableCell>Fecha recepción</TableCell>
                 <TableCell>Fecha creación</TableCell>
               </TableRow>

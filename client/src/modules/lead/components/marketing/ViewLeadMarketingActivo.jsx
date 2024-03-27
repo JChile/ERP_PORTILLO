@@ -32,7 +32,6 @@ import { getCurrentTime } from "../../utils/getCurrentTime"
 export const ViewLeadMarketingActivo = ({ startDate, endDate, flagReload, setFlagReload }) => {
   const { authTokens } = useContext(AuthContext)
 
-  const [leads, setLeads] = useState([])
   const [auxLeads, setAuxLeads] = useState([])
   const [checked, setChecked] = useState(false)
   const [paginationValue, setPaginationValue] = useState({ count: 0, next: '', previous: '' });
@@ -67,16 +66,16 @@ export const ViewLeadMarketingActivo = ({ startDate, endDate, flagReload, setFla
 
   // numero de items seleccionados
   const [filterData, setFilterData] = useState({
-    celular: "",
-    nombre: "",
-    estadoLead: "",
-    proyecto: "",
-    asignado: "",
-    horaRecepcion: "",
-    asesor: ""
+    celular: '',
+    nombre: '',
+    estadoLead: '',
+    proyecto: '',
+    horaRecepcion: '',
+    fechaAsignacion: '',
+    asesor: ''
   })
 
-  const { celular, nombre, estadoLead, asignado, proyecto, horaRecepcion, asesor } =
+  const { celular, nombre, estadoLead, proyecto, horaRecepcion, asesor, fechaAsignacion } =
     filterData
 
   const handledFilterData = () => {
@@ -86,21 +85,18 @@ export const ViewLeadMarketingActivo = ({ startDate, endDate, flagReload, setFla
   }
 
   const handledResetDataFilter = () => {
-    const resetDate = leads.map((element) => {
-      return { ...element, isSelected: false }
-    })
-    setAuxLeads(resetDate)
-    // reset filtros
     setFilterData({
-      celular: "",
-      nombre: "",
-      proyecto: "",
-      estadoLead: "",
-      asignado: "",
-      horaRecepcion: "",
-      asesor: ''
+      celular: '',
+      nombre: '',
+      proyecto: '',
+      estadoLead: '',
+      asesor: '',
+      horaRecepcion: '',
+      fechaAsignacion: ''
     })
+    traerLeads()
     setFlagReset(false)
+    setFlagReload(prev => !prev)
   }
 
   // manejador de filtros para select values
@@ -207,10 +203,10 @@ export const ViewLeadMarketingActivo = ({ startDate, endDate, flagReload, setFla
     setCountSelectedElements(0)
     try {
       let query = `asignado=true&estado=A&page=${page + 1}&page_size=${rowsPerPage}&ordering=-fecha_asignacion`
-      if (startDate && endDate) query += `&horaRecepcion_range_after=${startDate}&horaRecepcion_range_before=${endDate}`
+      if (startDate && endDate) query += `&fecha_asignacion_range_after=${startDate}&fecha_asignacion_range_before=${endDate}`
       else {
         const rangeDate = getCurrentTime()
-        query += `&horaRecepcion_range_after=${rangeDate.startDate}&horaRecepcion_range_before=${rangeDate.endDate}`
+        query += `&fecha_asignacion_range_after=${rangeDate.startDate}&fecha_asignacion_range_before=${rangeDate.endDate}`
       }
       if (filterData['celular']) query += `&celular=${filterData['celular']}`
       if (filterData['nombre']) query += `&nombre=${filterData['nombre']}`
@@ -221,6 +217,9 @@ export const ViewLeadMarketingActivo = ({ startDate, endDate, flagReload, setFla
       }
       if (filterData['horaRecepcion']) {
         query += `&horaRecepcion=${filterData['horaRecepcion']}`
+      }
+      if (filterData['fechaAsignacion']) {
+        query += `&fechaAsignacion=${filterData['fechaAsignacion']}`
       }
       if (filterData['asesor']) query += `&asesor=${filterData['asesor']}`
 
@@ -233,7 +232,6 @@ export const ViewLeadMarketingActivo = ({ startDate, endDate, flagReload, setFla
           isSelected: false,
         }
       })
-      setLeads(formatData)
       setAuxLeads(formatData)
       setVisibleProgress(false)
     } catch (error) {
@@ -323,10 +321,10 @@ export const ViewLeadMarketingActivo = ({ startDate, endDate, flagReload, setFla
                 <TableCell>Nombre</TableCell>
                 <TableCell>Proyecto</TableCell>
                 <TableCell>Campaña</TableCell>
-                <TableCell align="center">Asignado</TableCell>
                 <TableCell align="center">Estado Lead</TableCell>
-                <TableCell>Fecha recepción</TableCell>
                 <TableCell>Asesor</TableCell>
+                <TableCell>Fecha asignado</TableCell>
+                <TableCell>Fecha recepción</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -395,17 +393,17 @@ export const ViewLeadMarketingActivo = ({ startDate, endDate, flagReload, setFla
                   Sin filtros
                 </TableCell>
                 <TableCell align="center">
-                  <SelectBoolean
-                    filterName="asignado"
-                    onNewInput={handledFilterSelectValues}
-                    defaultValue={asignado}
-                  />
-                </TableCell>
-                <TableCell>
                   <SelectEstadoLead
                     size="small"
                     onNewInput={handledFilterSelectValues}
                     defaultValue={estadoLead}
+                  />
+                </TableCell>
+                <TableCell>
+                  <SelectAsesor
+                    filterName="asesor"
+                    onNewInput={handledFilterSelectValues}
+                    defaultValue={asesor}
                   />
                 </TableCell>
                 <TableCell>
@@ -416,10 +414,10 @@ export const ViewLeadMarketingActivo = ({ startDate, endDate, flagReload, setFla
                   />
                 </TableCell>
                 <TableCell>
-                  <SelectAsesor
-                    filterName="asesor"
-                    onNewInput={handledFilterSelectValues}
-                    defaultValue={asesor}
+                  <CustomDatePickerFilter
+                    onNewFecha={handledFilterDateValues}
+                    filterName="fechaAsignacion"
+                    defaultValue={fechaAsignacion}
                   />
                 </TableCell>
               </TableRow>

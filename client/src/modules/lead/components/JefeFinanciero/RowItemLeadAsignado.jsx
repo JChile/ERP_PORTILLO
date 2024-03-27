@@ -23,7 +23,7 @@ const RowItemLeadAsignado = ({ item, checkedElement }) => {
           onChange={(e) => checkedElement(e, item.id)}
           inputProps={{ "aria-label": "controlled" }}
         />
-        <FaEdit className="inline-block mx-1 cursor-pointer shadow-lg hover:shadow-blue-900" size={16} color="blue" onClick={onEditItemSelected}/>
+        <FaEdit className="inline-block mx-1 cursor-pointer shadow-lg hover:shadow-blue-900" size={20} color="blue" onClick={onEditItemSelected} />
       </TableCell>
       <TableCell>
         <Link
@@ -54,25 +54,25 @@ const RowItemLeadAsignado = ({ item, checkedElement }) => {
         </span>
       </TableCell>
       <TableCell>
+        <div className="flex gap-x-2 gap-y-1 justify-center">
+          <FaWhatsapp />
+          <span>{item["numWhatsapps"]}</span>
+        </div>
+        <div className="flex gap-x-2 gap-y-1 justify-center">
+          <IoIosCall />
+          <span>{item["numLlamadas"]}</span>
+        </div>
+        <div className="flex gap-x-2 gap-y-1 justify-center">
+          <FaCalendarAlt />
+          <span>{item["numEventos"]}</span>
+        </div>
+      </TableCell>
+      <TableCell align="center">
         {item["estadoSeparacionLead"] ? item["estadoSeparacionLead"]["nombre"] : "No"}
       </TableCell>
       <TableCell>
         {item["asesor"]["first_name"]} {item["asesor"]["last_name"]}
       </TableCell>
-      <TableCell>
-          <div className="flex gap-x-2 gap-y-1 justify-center">
-            <FaWhatsapp />
-            <span>{item["numWhatsapps"]}</span>
-          </div>
-          <div className="flex gap-x-2 gap-y-1 justify-center">
-            <IoIosCall />
-            <span>{item["numLlamadas"]}</span>
-          </div>
-          <div className="flex gap-x-2 gap-y-1 justify-center">
-            <FaCalendarAlt />
-            <span>{item["numEventos"]}</span>
-          </div>
-        </TableCell>
       <TableCell>
         {formatDate_ISO861_to_formatdate(item["fecha_asignacion"])}
       </TableCell>

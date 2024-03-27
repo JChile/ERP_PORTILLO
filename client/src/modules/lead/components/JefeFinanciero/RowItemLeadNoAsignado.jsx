@@ -23,7 +23,7 @@ export const RowItemLeadNoAsignado = ({ item, checkedElement }) => {
           }}
           inputProps={{ "aria-label": "controlled" }}
         />
-        <FaEdit className="inline-block mx-1 cursor-pointer shadow-lg hover:shadow-blue-900" size={16} color="blue" onClick={onEditItemSelected}/>
+        <FaEdit className="inline-block mx-1 cursor-pointer shadow-lg hover:shadow-blue-900" size={20} color="blue" onClick={onEditItemSelected} />
       </TableCell>
       <TableCell>
         <Link

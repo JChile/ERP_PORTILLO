@@ -34,7 +34,6 @@ import { getCurrentTime } from "../../utils/getCurrentTime";
 
 const ViewLeadAsignados = ({ startDate, endDate, flagReload, setFlagReload }) => {
   const { authTokens } = useContext(AuthContext);
-  const [leadAsignados, setLeadsAsignados] = useState([]);
   const [auxLeadsAsignados, setAuxLeadsAsignados] = useState([]);
   const [checked, setChecked] = useState(false);
   const [paginationValue, setPaginationValue] = useState({ count: 0, next: '', previous: '' });
@@ -43,21 +42,21 @@ const ViewLeadAsignados = ({ startDate, endDate, flagReload, setFlagReload }) =>
   const [filterData, setFilterData] = useState({
     celular: "",
     nombre: "",
-    estadoLead: "",
     proyecto: "",
+    estadoLead: "",
+    estadoSeparacionLead: "",
     asesor: "",
     fecha_asignacion: "",
-    estadoSeparacionLead: "",
   });
 
   const {
     celular,
     nombre,
     proyecto,
-    asesor,
     estadoLead,
-    fecha_asignacion,
     estadoSeparacionLead,
+    asesor,
+    fecha_asignacion,
   } = filterData;
 
   // flag reset
@@ -89,15 +88,10 @@ const ViewLeadAsignados = ({ startDate, endDate, flagReload, setFlagReload }) =>
   }
 
   const handledResetDataFilter = () => {
-    const resetDate = leadAsignados.map((element) => {
-      return { ...element, isSelected: false };
-    });
-    setAuxLeadsAsignados(resetDate);
     // reset filtros
     setFilterData({
       celular: "",
       nombre: "",
-      apellido: "",
       proyecto: "",
       estadoLead: "",
       asesor: "",
@@ -105,6 +99,7 @@ const ViewLeadAsignados = ({ startDate, endDate, flagReload, setFlagReload }) =>
       estadoSeparacionLead: "",
     });
     setFlagReset(false);
+    setFlagReload(prev => !prev)
   };
 
   const handledFilterSelectValues = (value, name) => {
@@ -180,13 +175,11 @@ const ViewLeadAsignados = ({ startDate, endDate, flagReload, setFlagReload }) =>
     setVisibleProgress(true);
     setCountSelectedElements(0);
     try {
-      let query = `asignado=true&estado=A&page=${page+1}&page_size=${rowsPerPage}&ordering=-fecha_asignacion`;
-      //horaRecepcion_range_after
-      //horaRecepcion_range_before
-      if (startDate && endDate) query += `&horaRecepcion_range_after=${startDate}&horaRecepcion_range_before=${endDate}`
+      let query = `asignado=true&estado=A&page=${page + 1}&page_size=${rowsPerPage}&ordering=-fecha_asignacion`;
+      if (startDate && endDate) query += `&fecha_asignacion_range_after=${startDate}&fecha_asignacion_range_before=${endDate}`
       else {
         const rangeDate = getCurrentTime()
-        query += `&horaRecepcion_range_after=${rangeDate.startDate}&horaRecepcion_range_before=${rangeDate.endDate}`
+        query += `&fecha_asignacion_range_after=${rangeDate.startDate}&fecha_asignacion_range_before=${rangeDate.endDate}`
       }
       if (filterData['celular']) query += `&celular=${filterData['celular']}`
       if (filterData['nombre']) query += `&nombre=${filterData['nombre']}`
@@ -207,7 +200,6 @@ const ViewLeadAsignados = ({ startDate, endDate, flagReload, setFlagReload }) =>
           isSelected: false,
         };
       });
-      setLeadsAsignados(formatData);
       setAuxLeadsAsignados(formatData);
       setVisibleProgress(false);
     } catch (error) {
@@ -221,8 +213,8 @@ const ViewLeadAsignados = ({ startDate, endDate, flagReload, setFlagReload }) =>
     }
   };
 
-   // handle change page
-   const handleChangingPage = (event, newPage) => {
+  // handle change page
+  const handleChangingPage = (event, newPage) => {
     handleChangePage(event, newPage)
     setFlagReload(prev => !prev)
   }
@@ -294,9 +286,9 @@ const ViewLeadAsignados = ({ startDate, endDate, flagReload, setFlagReload }) =>
                 <TableCell>Proyecto</TableCell>
                 <TableCell>Campaña</TableCell>
                 <TableCell align="center">Estado</TableCell>
-                <TableCell>Separación</TableCell>
+                <TableCell align="center">Registros</TableCell>
+                <TableCell align="center">Separación</TableCell>
                 <TableCell>Actual asesor</TableCell>
-                <TableCell>Registros</TableCell>
                 <TableCell>Fecha asignacion</TableCell>
               </TableRow>
             </TableHead>
@@ -350,6 +342,7 @@ const ViewLeadAsignados = ({ startDate, endDate, flagReload, setFlagReload }) =>
                     onChange={handledFilterInputValues}
                   />
                 </TableCell>
+                <TableCell></TableCell>
                 <TableCell>
                   <SelectProyecto
                     size="small"
@@ -379,7 +372,6 @@ const ViewLeadAsignados = ({ startDate, endDate, flagReload, setFlagReload }) =>
                     defaultValue={asesor}
                   />
                 </TableCell>
-                <TableCell></TableCell>
                 <TableCell>
                   <CustomDatePickerFilter
                     onNewFecha={handledFilterDateValues}

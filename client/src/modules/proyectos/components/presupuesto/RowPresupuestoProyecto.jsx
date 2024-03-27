@@ -48,6 +48,9 @@ export const RowPresupuestoProyecto = ({ presupuesto, onEdit }) => {
                 </span>
             </TableCell>
             <TableCell>
+                {presupuesto["tarjeta"]}
+            </TableCell>
+            <TableCell>
                 S/ {presupuesto["tipoCambioSoles"].toFixed(2)}
             </TableCell>
         </TableRow >

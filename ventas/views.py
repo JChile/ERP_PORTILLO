@@ -1296,6 +1296,10 @@ class LeadFilter(FilterSet):
     fecha_desasignacion = DateFilter(field_name='fecha_desasignacion', lookup_expr='date')
     fecha_actualizacion = DateFilter(field_name='fecha_actualizacion', lookup_expr='date')
     horaRecepcion_range = DateFromToRangeFilter(field_name='horaRecepcion', lookup_expr='date')
+    fecha_asignacion_range = DateFromToRangeFilter(field_name='fecha_asignacion', lookup_expr='date')
+    fecha_desasignacion_range = DateFromToRangeFilter(field_name='fecha_desasignacion', lookup_expr='date')
+
+
     ultimoAsesor = NumberFilter(method='filtrar_valor_calculado')
 
     

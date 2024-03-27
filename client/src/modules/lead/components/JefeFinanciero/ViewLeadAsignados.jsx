@@ -176,10 +176,10 @@ const ViewLeadAsignados = ({ startDate, endDate, flagReload, setFlagReload }) =>
     setCountSelectedElements(0);
     try {
       let query = `asignado=true&estado=A&page=${page + 1}&page_size=${rowsPerPage}&ordering=-fecha_asignacion`;
-      if (startDate && endDate) query += `&fecha_asignacion_range_after=${startDate}&fecha_asignacion_range_before=${endDate}`
+      if (startDate && endDate) query += `&horaRecepcion_range_after=${startDate}&horaRecepcion_range_before=${endDate}`
       else {
         const rangeDate = getCurrentTime()
-        query += `&fecha_asignacion_range_after=${rangeDate.startDate}&fecha_asignacion_range_before=${rangeDate.endDate}`
+        query += `&horaRecepcion_range_after=${rangeDate.startDate}&horaRecepcion_range_before=${rangeDate.endDate}`
       }
       if (filterData['celular']) query += `&celular=${filterData['celular']}`
       if (filterData['nombre']) query += `&nombre=${filterData['nombre']}`

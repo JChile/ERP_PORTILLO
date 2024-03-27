@@ -144,6 +144,7 @@ export const PresupuestoProyecto = () => {
                     <TableCell>Presupuesto inicial</TableCell>
                     <TableCell>Gasto total</TableCell>
                     <TableCell>Presupuesto resto</TableCell>
+                    <TableCell>Tarjeta</TableCell>
                     <TableCell>
                       <span>Tipo de cambio</span>
                     </TableCell>

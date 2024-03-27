@@ -10,11 +10,13 @@ import {
   InputLabel,
   OutlinedInput,
   InputAdornment,
+  FormHelperText,
 } from "@mui/material"
 import { IoIosAlert } from "react-icons/io"
 import { CustomDatePicker } from "../../../../components"
 import { registrarPresupuesto } from "../../helpers/registrarPresupuesto"
 import { consultTipoCambio } from "../../../campania/helpers/gastos/consultTipoCambio"
+import { FilterBanco } from "../../../../components/filters/banco/FilterBanco"
 
 export const CreatePresupuesto = ({
   idProyecto,
@@ -24,6 +26,7 @@ export const CreatePresupuesto = ({
   const [alertDolar, setAlertDolar] = useState(false)
   const [alertSol, setAlertSol] = useState(false)
   const [alertFecha, setAlertFecha] = useState(false)
+  const [alertTarjeta, setAlertTarjeta] = useState(false)
   const [tipoCambio, settipoCambio] = useState(3.66)
   const [presupuesto, setPresupuesto] = useState({
     presupuestoSoles: 0,
@@ -31,12 +34,16 @@ export const CreatePresupuesto = ({
     fechaPresupuesto: "",
     proyecto: idProyecto,
     estado: "A",
+    banco: null,
+    tarjeta: ""
   })
 
   const {
     presupuestoSoles,
     presupuestoDolares,
     fechaPresupuesto,
+    tarjeta,
+    banco
   } = presupuesto
 
   const handleInputChange = (event) => {
@@ -50,20 +57,34 @@ export const CreatePresupuesto = ({
       setAlertSol(false)
       setAlertDolar(false)
     }
-    if (name === "presupuestoSoles") {
-      newValue = (parseFloat(value) / tipoCambio).toFixed(2)
-    } else if (name === "presupuestoDolares") {
-      newValue = (parseFloat(value) * tipoCambio).toFixed(2)
+
+    if ( name === 'tarjeta' ) {
+      const isTarjetaValid = value.length === 4 && /^\d+$/.test(value);
+      setAlertTarjeta(!isTarjetaValid)
     }
 
-    setPresupuesto({
-      ...presupuesto,
-      [name]: value,
-      // Actualiza el otro campo en tiempo real
-      ...(name === "presupuestoSoles"
-        ? { presupuestoDolares: newValue }
-        : { presupuestoSoles: newValue }),
-    })
+    // Calcula el nuevo valor en función del tipo de cambio
+    if (name === "presupuestoSoles") {
+      newValue = (parseFloat(value) / tipoCambio).toFixed(2);
+      setPresupuesto({
+        ...presupuesto,
+        presupuestoSoles: value,
+        presupuestoDolares: newValue,
+      });
+    } else if (name === "presupuestoDolares") {
+      newValue = (parseFloat(value) * tipoCambio).toFixed(2);
+      setPresupuesto({
+        ...presupuesto,
+        presupuestoDolares: value,
+        presupuestoSoles: newValue,
+      });
+    } else {
+      // Si el valor no es numérico o es negativo, actualiza solo el campo actual
+      setPresupuesto({
+        ...presupuesto,
+        [name]: value,
+      });
+    }
   }
 
   const handleFecha = (newDate) => {
@@ -73,6 +94,12 @@ export const CreatePresupuesto = ({
     setPresupuesto({
       ...presupuesto,
       fechaPresupuesto: newDate,
+    })
+  }
+
+  const onAddBanco = (item) => { 
+    setPresupuesto({
+      ...presupuesto, banco: item.id
     })
   }
 
@@ -104,17 +131,34 @@ export const CreatePresupuesto = ({
     presupuestoSoles > 0 && presupuestoDolares > 0 && fechaPresupuesto !== ""
 
   const handleFormSubmit = async () => {
-    if (validateData()) {
+      // Validación del campo tarjeta
+    const isTarjetaValid = tarjeta.length === 4 && /^\d+$/.test(tarjeta);
+
+    // Validación del campo banco
+    const isBancoValid = !!banco;
+
+    // Validación de la fecha
+    const isFechaValid = !!fechaPresupuesto;
+
+    if (validateData() && isTarjetaValid && isBancoValid && isFechaValid) {
       const formatData = {
         ...presupuesto,
         tipoCambioSoles: tipoCambio
-      }
-      await registrarPresupuesto(formatData)
-      submit()
+      };
+      await registrarPresupuesto(formatData);
+      submit();
     } else {
-      setAlertSol(presupuestoSoles <= 0)
-      setAlertDolar(presupuestoDolares <= 0)
-      setAlertFecha(fechaPresupuesto === "")
+      setAlertSol(presupuestoSoles <= 0);
+      setAlertDolar(presupuestoDolares <= 0);
+      setAlertFecha(!isFechaValid);
+      if (!isTarjetaValid) {
+        // La tarjeta no tiene 4 dígitos o contiene caracteres no numéricos
+        setAlertTarjeta(!isTarjetaValid)
+      }
+      if (!isBancoValid) {
+        // El campo banco no ha sido seleccionado
+        alert("Debe seleccionar un banco.");
+      }
     }
   }
 
@@ -128,6 +172,8 @@ export const CreatePresupuesto = ({
       alert(e.message)
     }
   }
+
+
 
   useEffect(() => {
     consultarTipoCambioDolares()
@@ -203,8 +249,33 @@ export const CreatePresupuesto = ({
               }
               label="Presupuesto en Dólares"
             />
-          </FormControl>
+            <div className="mt-5">
+              <FilterBanco label="Banco" size="medium" onNewInput={onAddBanco} defaultValue={banco}/>
+            </div>
+            <FormControl sx={{ marginTop: 2}}>
+              <InputLabel htmlFor="tarjeta">
+                Tarjeta
+              </InputLabel>
+              <OutlinedInput
+                value={tarjeta}
+                onChange={handleInputChange}
+                endAdornment={
+                  <InputAdornment position="end">
+                    {alertTarjeta && (
+                      <IoIosAlert style={{ color: "#d32f2f", fontSize: "2rem" }} />
+                    )}
+                  </InputAdornment>
+                }
+                type="text"
+                id="tarjeta"
+                name="tarjeta"
+                label="tarjeta"
+                placeholder="3456"
 
+              />
+              <FormHelperText id="tarjeta">Escriba 4 dígitos</FormHelperText>
+            </FormControl>
+          </FormControl>
           <label className="flex flex-col gap-y-1">
             <span className=" block text-sm">Fecha en relacion al mes</span>
             <div className="flex flex-row items-center">
@@ -217,6 +288,8 @@ export const CreatePresupuesto = ({
               )}
             </div>
           </label>
+          
+
         </form>
       </DialogContent>
       <DialogActions>

@@ -178,19 +178,31 @@ class LeadBodySerializer(serializers.ModelSerializer):
     
     def get_numLlamadas(self, obj):
         asesor_logueado = self.context['request'].user.id  # Obtener el asesor logueado
-        num_llamadas = Llamada.objects.filter(asesor=asesor_logueado, lead=obj).count()
+        if self.context["request"].user.isAdmin:
+            num_llamadas = Llamada.objects.filter(lead=obj).count()
+        else:
+            num_llamadas = Llamada.objects.filter(asesor=asesor_logueado, lead=obj).count()
+        
         return num_llamadas
 
     def get_numWhatsapps(self, obj):
         asesor_logueado = self.context['request'].user.id  # Obtener el asesor logueado
-        num_llamadas = WhatsApp.objects.filter(asesor=asesor_logueado, lead=obj).count()
+        
+        if self.context["request"].user.isAdmin:
+            num_llamadas = WhatsApp.objects.filter(lead=obj).count()
+        else:
+            num_llamadas = WhatsApp.objects.filter(asesor=asesor_logueado, lead=obj).count()
+        
         return num_llamadas
     
     def get_numEventos(self, obj):
         asesor_logueado = self.context['request'].user.id  # Obtener el asesor logueado
-        num_llamadas = Evento.objects.filter(asesor=asesor_logueado, lead=obj).count()
-        return num_llamadas
+        if self.context["request"].user.isAdmin:
+            num_llamadas = Evento.objects.filter(lead=obj).count()
+        else:
+            num_llamadas = Evento.objects.filter(asesor=asesor_logueado, lead=obj).count()
 
+        return num_llamadas
     def get_ultimoAsesor(self, obj):
         asesor_logueado = self.context['request'].user.id  # Obtener el asesor logueado
         ultimoAsesor = DesasignacionLeadAsesor.objects.filter(lead=obj).order_by('-fecha').first()

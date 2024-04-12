@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt.token_blacklist',
     'django_crontab',
     'django_celery_beat',
+    'drf_spectacular'
 ]
 
 
@@ -59,6 +60,9 @@ REST_FRAMEWORK = {
     ),
 
     'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend'],
+
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+
 
 }
 
@@ -100,18 +104,11 @@ WSGI_APPLICATION = 'portillo_erp.wsgi.application'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'portillo_erp',
-        'USER': 'postgres',
-        'PASSWORD': '123',
-        'HOST': 'localhost',
-        'PORT': ''
+    "default": {
+        "ENGINE": "django.db.backends.sqlite3",
+        "NAME": "mydatabase",
     }
-
-    
 }
-
 
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(days=30),
@@ -212,3 +209,10 @@ STATIC_ROOT = BASE_DIR / 'static/'
 
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
 
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'PORTILLO API',
+    'DESCRIPTION': 'Crm portillo',
+    'VERSION': '1.0.0',
+    'SERVE_INCLUDE_SCHEMA': False,
+    # OTHER SETTINGS
+}
